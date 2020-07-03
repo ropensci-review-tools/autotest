@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Stress Testing
-Version: 0.0.1.003
+Version: 0.0.1.004
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -13,7 +13,8 @@ URL: https://github.com/mpadge/autotest
 BugReports: https://github.com/mpadge/autotest/issues
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
