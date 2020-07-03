@@ -1,0 +1,12 @@
+^README\.Rmd$
+^_pkgdown\.yml$
+^README\.md$
+^makefile$
+^aaa.Rmd$
+^vignettes/makefile$
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.github$
+^LICENSE\.md$
+^codemeta\.json$
+^\.pre-commit-config\.yaml$

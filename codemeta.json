@@ -1,0 +1,70 @@
+{
+  "@context": [
+    "https://doi.org/10.5063/schema/codemeta-2.0",
+    "http://schema.org"
+  ],
+  "@type": "SoftwareSourceCode",
+  "identifier": "autotest",
+  "description": "Automatic stress testing of R packages via a simple\n    YAML schema.",
+  "name": "autotest: Automatic Stress Testing",
+  "codeRepository": "https://github.com/mpadge/autotest",
+  "issueTracker": "https://github.com/mpadge/autotest/issues",
+  "license": "https://spdx.org/licenses/GPL-3.0",
+  "version": "0.0.1.3",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "R",
+    "version": "4.0.1",
+    "url": "https://r-project.org"
+  },
+  "runtimePlatform": "R version 4.0.1 (2020-06-06)",
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Mark",
+      "familyName": "Padgham",
+      "email": "mark.padgham@email.com"
+    }
+  ],
+  "contributor": {},
+  "copyrightHolder": {},
+  "funder": {},
+  "maintainer": [
+    {
+      "@type": "Person",
+      "givenName": "Mark",
+      "familyName": "Padgham",
+      "email": "mark.padgham@email.com"
+    }
+  ],
+  "softwareSuggestions": [
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "knitr",
+      "name": "knitr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=knitr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "rmarkdown",
+      "name": "rmarkdown",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=rmarkdown"
+    }
+  ],
+  "softwareRequirements": [],
+  "fileSize": "1.494KB",
+  "contIntegration": "https://codecov.io/gh/mpadge/allcontributor",
+  "developmentStatus": "https://www.repostatus.org/#concept"
+}
