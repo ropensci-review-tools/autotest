@@ -12,3 +12,38 @@ Concept](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repo
 # autotest
 
 Automatic stress testing of R packages via a simple YAML schema
+specifying one or more example workflows for each function of a package.
+The simplest workflows involve nominating data sets which may be
+submitted to a function, while more complicated workflows may involve
+multiple data sets, intermediate pre-processing stages, and other
+transformations prior to submission to a nominated function.
+
+The following illustrates a typical `yaml` schema, where items in
+angle-brackets (“\<”, “\>”) must be completed. Note that the `libraries`
+field identifies any libraries beyond those required by the package
+itself (via “Depends”, “Imports”, or “Suggests”). These typically
+included packages holding data to be used in the `autotest` workflow.
+
+    package: <package_name>
+    libraries:
+        - <required library 1>
+        - <required library 2>
+    functions:
+        - <name of first function>:
+            - data:
+                - name: <name of a data set, in pkg::name format when from another package>
+                - preprocess:
+                    - "<R code required for pre-processing exlosed in quotation marks>"
+                    - "<second line of pre-processing code>"
+                    - "<more code>"
+            - data:
+                - name: <name of another data set which may be sumibted to funciton>
+                - preprocess:
+                    - "<more lines of pre-processing code>"
+        - <name of secon function>::
+            - data: <single data set>
+            - preprocess: "<single line of pre-processing code>"
+
+This `yaml` code should be in the `test` directory of a package – not in
+the `test/testthat` directory. The above template can be generated via
+the function `at_template()`.
