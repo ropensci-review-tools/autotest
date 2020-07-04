@@ -6,7 +6,8 @@
 \alias{autotest-package}
 \title{autotest: Automatic Stress Testing}
 \description{
-Automatic stress testing of R packages via a simple YAML schema.
+Automatic stress testing of R packages via a simple
+    YAML schema.
 }
 \seealso{
 Useful links:

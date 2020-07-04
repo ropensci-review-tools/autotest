@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Stress Testing
-Version: 0.0.1.005
+Version: 0.0.1.006
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -12,6 +12,7 @@ License: GPL-3
 URL: https://github.com/mpadge/autotest
 BugReports: https://github.com/mpadge/autotest/issues
 Suggests: 
+    here,
     knitr,
     rmarkdown,
     testthat
