@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Stress Testing
-Version: 0.0.1.006
+Version: 0.0.1.007
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",

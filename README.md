@@ -46,4 +46,4 @@ included packages holding data to be used in the `autotest` workflow.
 
 This `yaml` code should be in the `test` directory of a package – not in
 the `test/testthat` directory. The above template can be generated via
-the function `at_template()`.
+the function `at_yaml_template()`.
