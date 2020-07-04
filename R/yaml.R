@@ -1,4 +1,34 @@
 
+parse_yaml_template <- function () {
+    d <- file.path (here::here(), "tests")
+    f <- file.path (d, "autotest.yaml")
+    x <- yaml::yaml.load (readLines (f))
+
+    load_libraries (x)
+
+
+    datasets <- preprocess <- list ()
+    for (f in x$functions) {
+        this_fn <- names (f)
+        i <- f [[1]]
+        datasets [[length (datasets) + 1]] <-
+            vapply (i, function (j)
+                    j$data [[1]]$name,
+                    character (1))
+        preprocess [[length (preprocess) + 1]] <-
+            lapply (i, function (j)
+                    j$data [[2]]$preprocess)
+    }
+
+    list (datasets = datasets,
+          preprocess = preprocess)
+}
+
+load_libraries <- function (x) {
+    chk <- lapply (x$libraries, function (i)
+                   do.call (library, as.list (i)))
+}
+
 #' at_yaml_template
 #'
 #' Generate a 'yaml' template for an 'autotest' in the 'test' directory of
@@ -19,7 +49,6 @@ at_yaml_template <- function () {
         message ("yaml template [", f, "] already exists")
     } else {
         con <- file (f, "w")
-        x <- yaml_template ()
         writeLines (yaml_template (), con)
         message ("template written to [", f, "]")
         close (con)

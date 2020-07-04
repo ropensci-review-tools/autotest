@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Stress Testing
-Version: 0.0.1.007
+Version: 0.0.1.008
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -15,7 +15,8 @@ Suggests:
     here,
     knitr,
     rmarkdown,
-    testthat
+    testthat,
+    yaml
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
