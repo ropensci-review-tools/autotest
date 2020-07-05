@@ -11,23 +11,16 @@ Concept](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repo
 
 # autotest
 
-Automatic stress testing of R packages via a simple YAML schema
-specifying one or more example workflows for each function of a package.
-The simplest workflows involve nominating data sets which may be
-submitted to a function, while more complicated workflows may involve
-multiple data sets, intermediate pre-processing stages, and other
-transformations prior to submission to a nominated function.
-
-The following illustrates a typical `yaml` schema, where items in
-angle-brackets (“\<”, “\>”) must be completed. Note that the `libraries`
-field identifies any libraries beyond those required by the package
-itself (via “Depends”, “Imports”, or “Suggests”). These typically
-included packages holding data to be used in the `autotest` workflow.
+Automatic testing of R packages via a simple YAML schema specifying one
+or more example workflows for each function of a package. The simplest
+workflows involve nominating data sets which may be submitted to a
+function, while more complicated workflows may involve multiple data
+sets, intermediate pre-processing stages, and other transformations
+prior to submission to a nominated function. The following illustrates a
+typical `yaml` schema, where items in angle-brackets (`<`, `>`) must be
+completed.
 
     package: <package_name>
-    libraries:
-        - <required library 1>
-        - <required library 2>
     functions:
         - <name of first function>:
             - data:
