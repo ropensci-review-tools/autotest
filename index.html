@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.009</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.010</span>
       </span>
     </div>
 
@@ -90,6 +90,11 @@
 <span id="cb1-15"><a href="#cb1-15"></a><span class="st">        </span><span class="op">-</span><span class="st"> </span>data<span class="op">:</span><span class="st"> </span><span class="er">&lt;</span>single data set<span class="op">&gt;</span></span>
 <span id="cb1-16"><a href="#cb1-16"></a><span class="st">        </span><span class="op">-</span><span class="st"> </span>preprocess<span class="op">:</span><span class="st"> "&lt;single line of pre-processing code&gt;"</span></span></code></pre></div>
 <p>This <code>yaml</code> code should be in the <code>test</code> directory of a package – not in the <code>test/testthat</code> directory. The above template can be generated via the function <code><a href="reference/at_yaml_template.html">at_yaml_template()</a></code>.</p>
+<div id="what-gets-tested" class="section level2">
+<h2 class="hasAnchor">
+<a href="#what-gets-tested" class="anchor"></a>What gets tested?</h2>
+<p>The package is primarily intended to test packages and functions intended to process <em>data</em>, with data suitable for input into functions within a package specified in the <code>autotest.yaml</code> template. Other types of packages, such as those which provide access to data, will not be effectively tested by <code>autotest</code>. Standard tests include translation, substitution, and manipulation of classes and attributes of most standard one- and two-dimensional forms for representing data in R.</p>
+</div>
 </div>
 
   </div>
