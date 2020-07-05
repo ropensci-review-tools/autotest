@@ -40,3 +40,13 @@ completed.
 This `yaml` code should be in the `test` directory of a package – not in
 the `test/testthat` directory. The above template can be generated via
 the function `at_yaml_template()`.
+
+## What gets tested?
+
+The package is primarily intended to test packages and functions
+intended to process *data*, with data suitable for input into functions
+within a package specified in the `autotest.yaml` template. Other types
+of packages, such as those which provide access to data, will not be
+effectively tested by `autotest`. Standard tests include translation,
+substitution, and manipulation of classes and attributes of most
+standard one- and two-dimensional forms for representing data in R.
