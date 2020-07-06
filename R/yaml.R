@@ -1,12 +1,15 @@
 
-parse_yaml_template <- function () {
-    d <- file.path (here::here(), "tests")
-    f <- file.path (d, "autotest.yaml")
-    fl <- readLines (f)
+parse_yaml_template <- function (yaml = NULL, filename = NULL) {
+    if (is.null (yaml) & is.null (filename)) {
+        d <- file.path (here::here(), "tests")
+        filename <- file.path (d, "autotest.yaml")
+        yaml <- readLines (filename)
+    } else if (!is.null (filename))
+        yaml <- readLines (filename)
 
-    load_libraries (fl)
+    load_libraries (yaml)
 
-    x <- yaml::yaml.load (fl)
+    x <- yaml::yaml.load (yaml)
 
     datasets <- preprocess <- list ()
     for (f in x$functions) {
@@ -26,13 +29,20 @@ parse_yaml_template <- function () {
 }
 
 # x is raw yaml from 'readLines' NOY parsed from yaml.load
-load_libraries <- function (x) {
+load_libraries <- function (x, quiet = FALSE) {
     libraries <- vapply (x [grep ("::", x)], function (i) {
                              first_bit <- strsplit (i, "::") [[1]] [1]
                              # then remove everything before space
-                             utils::tail (strsplit (a, "\\s+") [[1]], 1) },
+                             utils::tail (strsplit (first_bit, "\\s+") [[1]], 1) },
                              character (1), USE.NAMES = FALSE)
-    chk <- lapply (unique (libraries), function (i)
+    # then main package
+    this_lib <- gsub ("package:\\s", "", x [grep ("package:", x)])
+    libraries <- unique (c (libraries, this_lib))
+    if (!quiet) {
+        message (cli::col_green (cli::symbol$star, " Loading the following libraries:"))
+        cli::cli_ul (libraries)
+    }
+    chk <- lapply (libraries, function (i)
                    do.call (library, as.list (i)))
 }
 
