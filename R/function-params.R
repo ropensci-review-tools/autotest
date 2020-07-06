@@ -22,7 +22,9 @@ at_get_fn_params <- function (fn_name = NULL, pkg_name = NULL) {
     }
 
     if (!pkg_name %in% search ())
-        library (pkg_name, character.only = TRUE)
+        suppressMessages (
+            library (pkg_name, character.only = TRUE)
+            )
 
     e <- as.environment (paste0 ("package:", pkg_name))
     . <- NULL # suppress no visible binding note

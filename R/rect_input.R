@@ -82,7 +82,9 @@ get_params <- function (res, i, this_fn) {
         if (grepl ("::", this_val)) {
             this_pkg <- strsplit (p_vals [p], "::") [[1]] [1]
             if (!this_pkg %in% search ())
-                library (this_pkg, character.only = TRUE)
+                suppressMessages (
+                    library (this_pkg, character.only = TRUE)
+                    )
             this_val <- parse (text = this_val) %>%
                 eval (envir = as.environment (paste0 ("package:", this_pkg)))
         } else if (this_val %in% names (e))

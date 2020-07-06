@@ -65,8 +65,10 @@ load_libraries <- function (x, quiet = FALSE) {
         message (cli::col_green (cli::symbol$star, " Loading the following libraries:"))
         cli::cli_ul (libraries)
     }
-    chk <- lapply (libraries, function (i)
-                   do.call (library, as.list (i)))
+    suppressMessages (
+        chk <- lapply (libraries, function (i)
+                       do.call (library, as.list (i)))
+        )
 }
 
 #' at_yaml_template

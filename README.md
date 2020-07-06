@@ -38,6 +38,27 @@ This `yaml` code should be in the `test` directory of a package – not in
 the `test/testthat` directory. The above template can be generated via
 the function `at_yaml_template()`.
 
+## Installation
+
+Not yet on CRAN, so must be installed from remote repository host
+systems using any one of the following options:
+
+``` r
+# install.packages("remotes")
+remotes::install_git("https://git.sr.ht/~mpadge/autotest")
+remotes::install_bitbucket("mpadge/autotest")
+remotes::install_gitlab("mpadge/autotest")
+remotes::install_github("mpadge/autotest")
+```
+
+The package can then be loaded the usual way:
+
+``` r
+#library (autotest)
+devtools::load_all (".", export_all = FALSE)
+#> Loading autotest
+```
+
 ## What gets tested?
 
 The package is primarily intended to test packages and functions
@@ -47,3 +68,48 @@ of packages, such as those which provide access to data, will not be
 effectively tested by `autotest`. Standard tests include translation,
 substitution, and manipulation of classes and attributes of most
 standard one- and two-dimensional forms for representing data in R.
+
+## Example
+
+Current functionality applied to the [`SmartEDA`
+package](https://github.com/daya6489/SmartEDA), testing the two
+functions specified in the following `yaml`:
+
+``` r
+yaml <- c ("package: SmartEDA",
+"functions:",
+"   - ExpData:",
+"       - preprocess:",
+"           - 'x <- ISLR::Carseats'",
+"           - 'x$Sales <- sqrt (x$Sales)'",
+"           - 'x$CompPrice <- as.integer (x$CompPrice)'",
+"           - 'x$Sales [ceiling (runif (10) * nrow (x))] <- NA'",
+"       - parameters:",
+"           - data: x",
+"   - ExpData:",
+"       - parameters:",
+"           - data: ISLR::College",
+"   - ExpStat:",
+"       - parameters:",
+"           - X: ISLR::Carseats$Sales",
+"           - Y: ISLR::Carseats$Urban",
+"           - valueOfGood: 'Yes'")
+```
+
+Both functions `ExpData` and `ExpStat` accept rectangular input, and so
+can be tested via the `autotest_rectangular()` function:
+
+``` r
+autotest_rectangular (yaml = yaml)
+```
+
+    #> ★ Loading the following libraries:
+    #> ● ISLR
+    #> ● SmartEDA
+    #> ★ Testing functions:
+    #> ● ExpData
+    #> ● ExpData
+    #> ● ExpStat
+
+All tests work for those functions, so no additional diagnostic output
+is generated.
