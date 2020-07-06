@@ -2,4 +2,5 @@
 
 export(at_get_fn_params)
 export(at_yaml_template)
+export(autotest_rectangular)
 importFrom(magrittr,"%>%")
