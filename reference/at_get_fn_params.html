@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>autotest: Automatic Stress Testing — autotest-package • autotest</title>
+<title>at_get_fn_params — at_get_fn_params • autotest</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,8 @@
 
 
 
-<meta property="og:title" content="autotest: Automatic Stress Testing — autotest-package" />
-<meta property="og:description" content="Automatic stress testing of R packages via a simple
-    YAML schema." />
+<meta property="og:title" content="at_get_fn_params — at_get_fn_params" />
+<meta property="og:description" content="Get parameters of a specified function" />
 
 
 
@@ -109,29 +108,33 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>autotest: Automatic Stress Testing</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mpadge/autotest/blob/master/R/autotest-package.R'><code>R/autotest-package.R</code></a></small>
-    <div class="hidden name"><code>autotest-package.Rd</code></div>
+    <h1>at_get_fn_params</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mpadge/autotest/blob/master/R/function-params.R'><code>R/function-params.R</code></a></small>
+    <div class="hidden name"><code>at_get_fn_params.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Automatic stress testing of R packages via a simple
-    YAML schema.</p>
+    <p>Get parameters of a specified function</p>
     </div>
 
+    <pre class="usage"><span class='fu'>at_get_fn_params</span>(fn_name = <span class='kw'>NULL</span>, pkg_name = <span class='kw'>NULL</span>)</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>fn_name</th>
+      <td><p>The function for which parameters are to be extracted, either
+as a simply function name along with 'package' parameter, or in double-colon
+form as 'fn_name::pkg_name', in which case the 'pkg_name' parameter need not
+be provided.</p></td>
+    </tr>
+    <tr>
+      <th>pkg_name</th>
+      <td><p>The package defining the named function.</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>Useful links:</p><ul>
-<li><p><a href='https://github.com/mpadge/autotest'>https://github.com/mpadge/autotest</a></p></li>
-<li><p>Report bugs at <a href='https://github.com/mpadge/autotest/issues'>https://github.com/mpadge/autotest/issues</a></p></li>
-</ul>
-
-</div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
-    <p><strong>Maintainer</strong>: Mark Padgham <a href='mailto:mark.padgham@email.com'>mark.padgham@email.com</a></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
