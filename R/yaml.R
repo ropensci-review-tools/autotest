@@ -12,8 +12,9 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
     x <- yaml::yaml.load (yaml)
 
     datasets <- preprocess <- list ()
+    fn_names <- NULL
     for (f in x$functions) {
-        this_fn <- names (f)
+        fn_names <- c (fn_names, names (f))
         i <- f [[1]]
         datasets [[length (datasets) + 1]] <-
             vapply (i, function (j)
@@ -23,8 +24,10 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
             lapply (i, function (j)
                     j$data [[2]]$preprocess)
     }
+    names (datasets) <- names (preprocess) <- fn_names
 
-    list (datasets = datasets,
+    list (package = x$package,
+          datasets = datasets,
           preprocess = preprocess)
 }
 
