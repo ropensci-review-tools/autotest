@@ -2,10 +2,11 @@
 parse_yaml_template <- function () {
     d <- file.path (here::here(), "tests")
     f <- file.path (d, "autotest.yaml")
-    x <- yaml::yaml.load (readLines (f))
+    fl <- readLines (f)
 
-    load_libraries (x)
+    load_libraries (fl)
 
+    x <- yaml::yaml.load (fl)
 
     datasets <- preprocess <- list ()
     for (f in x$functions) {
@@ -24,8 +25,14 @@ parse_yaml_template <- function () {
           preprocess = preprocess)
 }
 
+# x is raw yaml from 'readLines' NOY parsed from yaml.load
 load_libraries <- function (x) {
-    chk <- lapply (x$libraries, function (i)
+    libraries <- vapply (x [grep ("::", x)], function (i) {
+                             first_bit <- strsplit (i, "::") [[1]] [1]
+                             # then remove everything before space
+                             utils::tail (strsplit (a, "\\s+") [[1]], 1) },
+                             character (1), USE.NAMES = FALSE)
+    chk <- lapply (unique (libraries), function (i)
                    do.call (library, as.list (i)))
 }
 
