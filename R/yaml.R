@@ -9,25 +9,45 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
 
     load_libraries (yaml)
 
-    x <- yaml::yaml.load (yaml)
+    # YAML spec dictates "y", "yes", "Y", and so on are converted to boolean.
+    # These handlers prevent that
+    # see https://github.com/viking/r-yaml/issues/5
+    handlers <- list('bool#yes' = function(x) {
+                         if (substr (tolower (x), 1, 1) == "y")
+                             x
+                         else
+                             TRUE   },
+                      "bool#no" = function(x) {
+                          if (substr (tolower (x), 1, 1) == "n")
+                              x
+                          else
+                              TRUE  })
 
-    datasets <- preprocess <- list ()
+    x <- yaml::yaml.load (yaml, handlers = handlers)
+
+    parameters <- preprocess <- list ()
     fn_names <- NULL
+
     for (f in x$functions) {
         fn_names <- c (fn_names, names (f))
+
         i <- f [[1]]
-        datasets [[length (datasets) + 1]] <-
-            vapply (i, function (j)
-                    j$data [[1]]$name,
-                    character (1))
-        preprocess [[length (preprocess) + 1]] <-
-            lapply (i, function (j)
-                    j$data [[2]]$preprocess)
+        nms <- vapply (i, function (i) names (i), character (1))
+
+        parameters [[length (parameters) + 1]] <-
+            i [[which (nms == "parameters")]]$parameters
+
+        if ("preprocess" %in% nms)
+            preprocess [[length (preprocess) + 1]] <-
+                i [[which (nms == "preprocess")]]$preprocess
+        else
+            preprocess [[length (preprocess) + 1]] <- NA_character_
+
     }
-    names (datasets) <- names (preprocess) <- fn_names
+    names (parameters) <- names (preprocess) <- fn_names
 
     list (package = x$package,
-          datasets = datasets,
+          parameters = parameters,
           preprocess = preprocess)
 }
 
@@ -77,22 +97,16 @@ at_yaml_template <- function () {
 
 yaml_template <- function () {
     c ("package: <package_name>",
-       "libraries:",
-       "    - <required library 1>",
-       "    - <required library 2>",
        "functions:",
-       "    - <name of first function>:",
-       "        - data:",
-       "            - name: <name of a data set, in pkg::name format when from another package>",
-       "            - preprocess:",
-       "                - '<R code required for pre-processing enclosed in quotation marks>'",
-       "                - '<second line of pre-processing code>'",
-       "                - '<more code>'",
-       "        - data:",
-       "            - name: <name of another data set which may be submitted to function>",
-       "            - preprocess:",
-       "                - '<more lines of pre-processing code>'",
-       "    - <name of second function>:",
-       "        - data: <single data set>",
-       "        - preprocess: '<single line of pre-processing code>'")
+       "    - <name of function>:",
+       "        - preprocess:",
+       "            - '<R code required for pre-processing exlosed in quotation marks>'",
+       "            - '<second line of pre-processing code>'",
+       "            - '<more code>'",
+       "        - parameters:",
+       "            - <param_name>: <value>",
+       "            - <another_param>: <value>",
+       "    - <name of same or different function>::",
+       "        - parameters:",
+       "            - <param_name>: <value>")
 }
