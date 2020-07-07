@@ -71,9 +71,13 @@ standard one- and two-dimensional forms for representing data in R.
 
 ## Example
 
-Current functionality applied to the [`SmartEDA`
-package](https://github.com/daya6489/SmartEDA), testing the two
-functions specified in the following `yaml`:
+Current functionality applied to test two functions from the [`SmartEDA`
+package](https://github.com/daya6489/SmartEDA) as specified in the
+following `yaml`. This also illustrates the use of data transformation
+steps, in this case implementing a couple of simple transformations on
+columns the external data set,
+[`ISLR::Carseats`](https://cran.r-project.org/package=ISLR), including
+introducing some missing data through replacing values with `NA`.
 
 ``` r
 yaml <- c ("package: SmartEDA",
