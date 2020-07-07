@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.017</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.018</span>
       </span>
     </div>
 
@@ -112,7 +112,7 @@
 <div id="example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
-<p>Current functionality applied to the <a href="https://github.com/daya6489/SmartEDA"><code>SmartEDA</code> package</a>, testing the two functions specified in the following <code>yaml</code>:</p>
+<p>Current functionality applied to test two functions from the <a href="https://github.com/daya6489/SmartEDA"><code>SmartEDA</code> package</a> as specified in the following <code>yaml</code>. This also illustrates the use of data transformation steps, in this case implementing a couple of simple transformations on columns the external data set, <a href="https://cran.r-project.org/package=ISLR"><code>ISLR::Carseats</code></a>, including introducing some missing data through replacing values with <code>NA</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="kw">yaml</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span> (<span class="st">"package: SmartEDA"</span>,
 <span class="st">"functions:"</span>,
