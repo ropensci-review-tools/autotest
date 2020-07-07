@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.016</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.017</span>
       </span>
     </div>
 
@@ -100,10 +100,9 @@
 </pre></div>
 <p>The package can then be loaded the usual way:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="co">#library (autotest)</span>
-<span class="kw">devtools</span>::<span class="fu">load_all</span> (<span class="st">"."</span>, export_all = <span class="fl">FALSE</span>)
-<span class="co">#&gt; Loading autotest</span>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span> (<span class="kw"><a href="https://github.com/mpadge/autotest">autotest</a></span>)
 </pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co">#&gt; Loading autotest</span></span></code></pre></div>
 </div>
 <div id="what-gets-tested" class="section level2">
 <h2 class="hasAnchor">
@@ -114,7 +113,7 @@
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
 <p>Current functionality applied to the <a href="https://github.com/daya6489/SmartEDA"><code>SmartEDA</code> package</a>, testing the two functions specified in the following <code>yaml</code>:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
+<div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="kw">yaml</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span> (<span class="st">"package: SmartEDA"</span>,
 <span class="st">"functions:"</span>,
 <span class="st">"   - ExpData:"</span>,
@@ -135,16 +134,16 @@
 <span class="st">"           - valueOfGood: 'Yes'"</span>)
 </pre></div>
 <p>Both functions <code>ExpData</code> and <code>ExpStat</code> accept rectangular input, and so can be tested via the <code><a href="reference/autotest_rectangular.html">autotest_rectangular()</a></code> function:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
+<div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="fu"><a href="reference/autotest_rectangular.html">autotest_rectangular</a></span> (yaml = <span class="kw">yaml</span>)
 </pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co">#&gt; ★ Loading the following libraries:</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a><span class="co">#&gt; ● ISLR</span></span>
-<span id="cb6-3"><a href="#cb6-3"></a><span class="co">#&gt; ● SmartEDA</span></span>
-<span id="cb6-4"><a href="#cb6-4"></a><span class="co">#&gt; ★ Testing functions:</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a><span class="co">#&gt; ● ExpData</span></span>
-<span id="cb6-6"><a href="#cb6-6"></a><span class="co">#&gt; ● ExpData</span></span>
-<span id="cb6-7"><a href="#cb6-7"></a><span class="co">#&gt; ● ExpStat</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co">#&gt; ★ Loading the following libraries:</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="co">#&gt; ● ISLR</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="co">#&gt; ● SmartEDA</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="co">#&gt; ★ Testing functions:</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="co">#&gt; ● ExpData</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="co">#&gt; ● ExpData</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="co">#&gt; ● ExpStat</span></span></code></pre></div>
 <p>All tests work for those functions, so no additional diagnostic output is generated.</p>
 </div>
 </div>
