@@ -76,8 +76,10 @@ remotes::install_github("mpadge/autotest")
 ```
 
 The package can then be loaded the usual way:
-```{r load}
-#library (autotest)
+```{r load-fakey, eval = FALSE}
+library (autotest)
+```
+```{r load, echo = FALSE}
 devtools::load_all (".", export_all = FALSE)
 ```
 

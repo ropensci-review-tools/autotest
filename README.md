@@ -54,10 +54,10 @@ remotes::install_github("mpadge/autotest")
 The package can then be loaded the usual way:
 
 ``` r
-#library (autotest)
-devtools::load_all (".", export_all = FALSE)
-#> Loading autotest
+library (autotest)
 ```
+
+    #> Loading autotest
 
 ## What gets tested?
 
