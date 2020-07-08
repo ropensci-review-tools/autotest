@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.018</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.020</span>
       </span>
     </div>
 
@@ -102,7 +102,6 @@
 <div class="sourceCode" id="cb3"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span> (<span class="kw"><a href="https://github.com/mpadge/autotest">autotest</a></span>)
 </pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co">#&gt; Loading autotest</span></span></code></pre></div>
 </div>
 <div id="what-gets-tested" class="section level2">
 <h2 class="hasAnchor">
@@ -113,7 +112,7 @@
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
 <p>Current functionality applied to test two functions from the <a href="https://github.com/daya6489/SmartEDA"><code>SmartEDA</code> package</a> as specified in the following <code>yaml</code>. This also illustrates the use of data transformation steps, in this case implementing a couple of simple transformations on columns the external data set, <a href="https://cran.r-project.org/package=ISLR"><code>ISLR::Carseats</code></a>, including introducing some missing data through replacing values with <code>NA</code>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
+<div class="sourceCode" id="cb4"><pre class="downlit">
 <span class="kw">yaml</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span> (<span class="st">"package: SmartEDA"</span>,
 <span class="st">"functions:"</span>,
 <span class="st">"   - ExpData:"</span>,
@@ -134,16 +133,16 @@
 <span class="st">"           - valueOfGood: 'Yes'"</span>)
 </pre></div>
 <p>Both functions <code>ExpData</code> and <code>ExpStat</code> accept rectangular input, and so can be tested via the <code><a href="reference/autotest_rectangular.html">autotest_rectangular()</a></code> function:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
+<div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="fu"><a href="reference/autotest_rectangular.html">autotest_rectangular</a></span> (yaml = <span class="kw">yaml</span>)
+<span class="co">#&gt; ★ Loading the following libraries:</span>
+<span class="co">#&gt; ● ISLR</span>
+<span class="co">#&gt; ● SmartEDA</span>
+<span class="co">#&gt; ★ Testing functions:</span>
+<span class="co">#&gt; ● ExpData</span>
+<span class="co">#&gt; ● ExpData</span>
+<span class="co">#&gt; ● ExpStat</span>
 </pre></div>
-<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co">#&gt; ★ Loading the following libraries:</span></span>
-<span id="cb7-2"><a href="#cb7-2"></a><span class="co">#&gt; ● ISLR</span></span>
-<span id="cb7-3"><a href="#cb7-3"></a><span class="co">#&gt; ● SmartEDA</span></span>
-<span id="cb7-4"><a href="#cb7-4"></a><span class="co">#&gt; ★ Testing functions:</span></span>
-<span id="cb7-5"><a href="#cb7-5"></a><span class="co">#&gt; ● ExpData</span></span>
-<span id="cb7-6"><a href="#cb7-6"></a><span class="co">#&gt; ● ExpData</span></span>
-<span id="cb7-7"><a href="#cb7-7"></a><span class="co">#&gt; ● ExpStat</span></span></code></pre></div>
 <p>All tests work for those functions, so no additional diagnostic output is generated.</p>
 </div>
 </div>
