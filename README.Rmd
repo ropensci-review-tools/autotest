@@ -132,3 +132,10 @@ autotest_rectangular (yaml = yaml)
 
 All tests work for those functions, so no additional diagnostic output is
 generated.
+
+## Prior work
+
+The
+[`great-expectations`](https://github.com/great-expectations/great_expectations)
+framework for python, described in [this medium
+article](https://medium.com/@expectgreatdata/down-with-pipeline-debt-introducing-great-expectations-862ddc46782a).
