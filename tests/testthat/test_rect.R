@@ -1,4 +1,4 @@
-context("dummy")
+context("rect")
 
 yaml <- c ("package: SmartEDA",
 "functions:",
@@ -19,11 +19,10 @@ yaml <- c ("package: SmartEDA",
 "           - Y: ISLR::Carseats$Urban",
 "           - valueOfGood: 'Yes'")
 
-test_that("dummy test", {
+test_that("rect test", {
 
-    expect_true (TRUE)
     expect_message (
-    autotest_rectangular (yaml)
+        autotest_rectangular (yaml)
     )
 
              })

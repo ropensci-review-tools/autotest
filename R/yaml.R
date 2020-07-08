@@ -73,26 +73,25 @@ load_libraries <- function (x, quiet = FALSE) {
 
 #' at_yaml_template
 #'
-#' Generate a 'yaml' template for an 'autotest' in the 'test' directory of
-#' current package directory.
+#' Generate a 'yaml' template for an 'autotest'.
+#' @param loc Location in this to generate template file. Append with filename
+#' and '.yaml' suffix to overwrite default name of 'autotest.yaml', otherwise
+#' this parameter will be used to specify directory only.
 #' @export
-at_yaml_template <- function () {
+at_yaml_template <- function (loc = tempdir ()) {
 
-    if (!"DESCRIPTION" %in% list.files (here::here ()))
-        stop ("You do not appear to be in any directory of a current R package")
-
-    d <- file.path (here::here(), "tests")
-    if (!file.exists (d)) {
-        dir.create (d)
+    if (!grepl ("\\.yaml$", loc [1])) {
+        if (!file.exists (loc))
+            stop ("Directory [", loc, "] does not exist")
+        loc <- file.path (loc, "autotest.yaml")
     }
 
-    f <- file.path (d, "autotest.yaml")
-    if (file.exists (f)) {
-        message ("yaml template [", f, "] already exists")
+    if (file.exists (loc)) {
+        message ("yaml template [", loc, "] already exists")
     } else {
-        con <- file (f, "w")
+        con <- file (loc, "w")
         writeLines (yaml_template (), con)
-        message ("template written to [", f, "]")
+        message ("template written to [", loc, "]")
         close (con)
     }
 }
