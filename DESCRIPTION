@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Stress Testing
-Version: 0.0.1.021
+Version: 0.0.1.022
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -20,8 +20,10 @@ Imports:
     tibble,
     yaml
 Suggests: 
+    ISLR,
     knitr,
-    rmarkdown
+    rmarkdown,
+    SmartEDA
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

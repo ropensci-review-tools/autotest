@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/mpadge/autotest",
   "issueTracker": "https://github.com/mpadge/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.1.21",
+  "version": "0.0.1.22",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -40,6 +40,18 @@
   "softwareSuggestions": [
     {
       "@type": "SoftwareApplication",
+      "identifier": "ISLR",
+      "name": "ISLR",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=ISLR"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "knitr",
       "name": "knitr",
       "provider": {
@@ -61,6 +73,18 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=rmarkdown"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "SmartEDA",
+      "name": "SmartEDA",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=SmartEDA"
     }
   ],
   "softwareRequirements": [
@@ -149,7 +173,7 @@
       "sameAs": "https://CRAN.R-project.org/package=yaml"
     }
   ],
-  "fileSize": "5.95KB",
+  "fileSize": "6.093KB",
   "contIntegration": "https://codecov.io/gh/mpadge/allcontributor",
   "developmentStatus": "https://www.repostatus.org/#concept",
   "readme": "https://github.com/mpadge/autotest/blob/master/README.md"
