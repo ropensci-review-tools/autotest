@@ -30,7 +30,7 @@ at_get_fn_params <- function (fn_name = NULL, pkg_name = NULL) {
     . <- NULL # suppress no visible binding note
     x <- get (fn_name, envir = e) %>%
         deparse () %>%
-        parse (text = .) %>%
+        parse (text = ., keep.source = TRUE) %>%
         utils::getParseData ()
     n <- which (x$token == "'{'") [1]
 
@@ -52,7 +52,7 @@ at_get_fn_params <- function (fn_name = NULL, pkg_name = NULL) {
                            if (regexpr ("L", sval) > 0)
                                sval <- as.integer (gsub ("L", "", sval))
                            else if (sval %in% c ("TRUE", "FALSE"))
-                               sval <- eval (parse (text = sval))
+                               sval <- eval (parse (text = sval, keep.source = TRUE))
                            else
                                sval <- as.numeric (sval)
                        }
