@@ -1,9 +1,7 @@
 
 parse_yaml_template <- function (yaml = NULL, filename = NULL) {
     if (is.null (yaml) & is.null (filename)) {
-        d <- file.path (here::here(), "tests")
-        filename <- file.path (d, "autotest.yaml")
-        yaml <- readLines (filename)
+        stop ("either yaml or filename must be given")
     } else if (!is.null (filename))
         yaml <- readLines (filename)
 
