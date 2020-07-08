@@ -57,8 +57,6 @@ The package can then be loaded the usual way:
 library (autotest)
 ```
 
-    #> Loading autotest
-
 ## What gets tested?
 
 The package is primarily intended to test packages and functions
@@ -105,15 +103,14 @@ can be tested via the `autotest_rectangular()` function:
 
 ``` r
 autotest_rectangular (yaml = yaml)
+#> ★ Loading the following libraries:
+#> ● ISLR
+#> ● SmartEDA
+#> ★ Testing functions:
+#> ● ExpData
+#> ● ExpData
+#> ● ExpStat
 ```
-
-    #> ★ Loading the following libraries:
-    #> ● ISLR
-    #> ● SmartEDA
-    #> ★ Testing functions:
-    #> ● ExpData
-    #> ● ExpData
-    #> ● ExpStat
 
 All tests work for those functions, so no additional diagnostic output
 is generated.

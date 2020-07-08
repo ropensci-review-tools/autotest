@@ -79,7 +79,7 @@ The package can then be loaded the usual way:
 ```{r load-fakey, eval = FALSE}
 library (autotest)
 ```
-```{r load, echo = FALSE}
+```{r load, echo = FALSE, message = FALSE}
 devtools::load_all (".", export_all = FALSE)
 ```
 
@@ -126,15 +126,8 @@ yaml <- c ("package: SmartEDA",
 Both functions `ExpData` and `ExpStat` accept rectangular input, and so can be
 tested via the `autotest_rectangular()` function:
 
-```{r autotest, eval = FALSE}
+```{r autotest, eval = TRUE}
 autotest_rectangular (yaml = yaml)
-```
-```{r fakey-output, echo = FALSE}
-libraries <- c ("ISLR", "SmartEDA")
-message (cli::col_green (cli::symbol$star, " Loading the following libraries:"))
-cli::cli_ul (libraries)
-message (cli::symbol$star, " Testing functions:")
-cli::cli_ul (c ("ExpData", "ExpData", "ExpStat"))
 ```
 
 All tests work for those functions, so no additional diagnostic output is
