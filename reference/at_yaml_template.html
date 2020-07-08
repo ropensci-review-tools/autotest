@@ -40,8 +40,7 @@
 
 
 <meta property="og:title" content="at_yaml_template — at_yaml_template" />
-<meta property="og:description" content="Generate a 'yaml' template for an 'autotest' in the 'test' directory of
-current package directory." />
+<meta property="og:description" content="Generate a 'yaml' template for an 'autotest'." />
 
 
 
@@ -73,7 +72,7 @@ current package directory." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.022</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.024</span>
       </span>
     </div>
 
@@ -115,12 +114,21 @@ current package directory." />
     </div>
 
     <div class="ref-description">
-    <p>Generate a 'yaml' template for an 'autotest' in the 'test' directory of
-current package directory.</p>
+    <p>Generate a 'yaml' template for an 'autotest'.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/autotest/man/at_yaml_template.html'>at_yaml_template</a></span>()</pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/autotest/man/at_yaml_template.html'>at_yaml_template</a></span>(loc = <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span>())</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>loc</th>
+      <td><p>Location in this to generate template file. Append with filename
+and '.yaml' suffix to overwrite default name of 'autotest.yaml', otherwise
+this parameter will be used to specify directory only.</p></td>
+    </tr>
+    </table>
 
 
   </div>
