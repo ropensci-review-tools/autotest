@@ -1,15 +1,17 @@
 context("rect")
 
+# pre-process variable is 'n' so yaml handlers are activated
+# R/yaml.R#13-22
 yaml <- c ("package: SmartEDA",
 "functions:",
 "   - ExpData:",
 "       - preprocess:",
-"           - 'x <- ISLR::Carseats'",
-"           - 'x$Sales <- sqrt (x$Sales)'",
-"           - 'x$CompPrice <- as.integer (x$CompPrice)'",
-"           - 'x$Sales [ceiling (runif (10) * nrow (x))] <- NA'",
+"           - 'n <- ISLR::Carseats'",
+"           - 'n$Sales <- sqrt (n$Sales)'",
+"           - 'n$CompPrice <- as.integer (n$CompPrice)'",
+"           - 'n$Sales [ceiling (runif (10) * nrow (n))] <- NA'",
 "       - parameters:",
-"           - data: x",
+"           - data: n",
 "   - ExpData:",
 "       - parameters:",
 "           - data: ISLR::College",
@@ -25,4 +27,13 @@ test_that("rect test", {
         autotest_rectangular (yaml)
     )
 
+    f <- file.path (tempdir (), "junk2.yaml")
+    con <- file (f)
+    writeLines (yaml, con = con)
+    close (con)
+    expect_true (file.exists (f))
+
+    expect_message (
+        autotest_rectangular (filename = f)
+    )
              })
