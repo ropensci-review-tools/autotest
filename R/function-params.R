@@ -45,8 +45,6 @@ at_get_fn_params <- function (fn_name = NULL, pkg_name = NULL) {
                    sval <- NA
                    if ("EQ_FORMALS" %in% i$token) {
                        i2 <- split (i, cumsum (i$token == "EQ_FORMALS")) [[2]] [2, ]
-                       if (nrow (i2) > 2)
-                           stop ("whooops")
                        sval <- i2$text
                        if (i2$token == "NUM_CONST") {
                            if (regexpr ("L", sval) > 0)
