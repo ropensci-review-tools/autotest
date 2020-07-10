@@ -97,8 +97,17 @@ get_params <- function (res, i, this_fn) {
 
     # Parse fn definition to get list of all parameters:
     pars <- at_get_fn_params (fn_name = this_fn, pkg_name = res$package)
-    #pars <- c (pars, list (`3` = list (name = "stuff", val = 10)))
     nms <- vapply (pars, function (i) i$name, character (1))
+
+    # If fn includes ... AND any submitted params are not named, then remove the
+    # ... from returned list
+    if ("..." %in% nms & any (!names (params) %in% nms)) {
+        pars <- pars [which (!nms == "...")]
+        nms <- nms [which (!nms == "...")]
+    }
+
+    # Add all resultant params from fn definition yet not directly specified to
+    # the return list.
     pars <- pars [which (!nms %in% names (params))]
     for (p in pars) {
         params [[length (params) + 1]] <- p$val
