@@ -1,5 +1,8 @@
 context("yaml")
 
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
+             identical (Sys.getenv ("TEST_ALL"), "true"))
+
 test_that("yaml test", {
 
     expect_message (
@@ -27,7 +30,8 @@ test_that("yaml test", {
     if (substr (td, nchar (td), nchar (td)) == s)
         s <- "B"
     td <- paste0 (substr (td, 1, nchar (td) - 1), s)
-    expect_error (at_yaml_template (loc = td), "Directory") # does not exist
+    if (test_all)
+        expect_error (at_yaml_template (loc = td), "Directory") # does not exist
 
              })
 
