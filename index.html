@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.037</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.038</span>
       </span>
     </div>
 
@@ -132,18 +132,26 @@
 <span class="st">"           - Y: ISLR::Carseats$Urban"</span>,
 <span class="st">"           - valueOfGood: 'Yes'"</span>)
 </pre></div>
-<p>Both functions <code>ExpData</code> and <code>ExpStat</code> accept rectangular input, and so can be tested via the <code>autotest_rectangular()</code> function:</p>
+<p>Submitting this <code>yaml</code> to the <code>autotest</code> function gives the following results:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="fu">autotest_rectangular</span> (yaml = <span class="kw">yaml</span>)
+<span class="fu"><a href="reference/autotest.html">autotest</a></span> (yaml = <span class="kw">yaml</span>)
 <span class="co">#&gt; ★ Loading the following libraries:</span>
 <span class="co">#&gt; ● ISLR</span>
 <span class="co">#&gt; ● SmartEDA</span>
 <span class="co">#&gt; ★ Testing functions:</span>
-<span class="co">#&gt; ● ExpData</span>
-<span class="co">#&gt; ● ExpData</span>
-<span class="co">#&gt; ● ExpStat</span>
+<span class="co">#&gt; ✔ ExpData</span>
+<span class="co">#&gt; ✔ ExpData</span>
+<span class="co">#&gt; function [ExpStat] issued a Warning:</span>
+<span class="co">#&gt;  Chi-squared approximation may be incorrect</span>
+<span class="co">#&gt; Warning in autotest_vector(res, params, this_fn, quiet): Function [ExpStat] errors on list-columns when submitted as X</span>
+<span class="co">#&gt;   Error message: unimplemented type 'list' in 'orderVector1'</span>
+<span class="co">#&gt; function [ExpStat] issued a Warning:</span>
+<span class="co">#&gt;  Chi-squared approximation may be incorrect</span>
+<span class="co">#&gt; Warning in autotest_vector(res, params, this_fn, quiet): Function [ExpStat] errors on list-columns when submitted as Y</span>
+<span class="co">#&gt;   Error message: unimplemented type 'list' in 'orderVector1'</span>
+<span class="co">#&gt; ✖ ExpStat</span>
 </pre></div>
-<p>All tests work for those functions, so no additional diagnostic output is generated.</p>
+<p>And the <code>ExpData</code> function passes all tests, while the <code>ExpStat</code> function fail when input data are list-columns.</p>
 </div>
 <div id="prior-work" class="section level2">
 <h2 class="hasAnchor">
