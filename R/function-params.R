@@ -1,70 +1,5 @@
 
-#' at_get_fn_params
-#'
-#' Get parameters of a specified function
-#' @param fn_name The function for which parameters are to be extracted, either
-#' as a simply function name along with 'package' parameter, or in double-colon
-#' form as 'fn_name::pkg_name', in which case the 'pkg_name' parameter need not
-#' be provided. 
-#' @param pkg_name The package defining the named function.
-#' @export
-at_get_fn_params <- function (fn_name = NULL, pkg_name = NULL) {
-    if (is.null (fn_name))
-        stop ("function must be specified")
-    else if (is.null (pkg_name)) {
-        if (grepl ("::", fn_name)) {
-            x <- strsplit (fn_name, "::") [[1]]
-            pkg_name <- x [1]
-            fn_name <- x [2]
-        } else
-            stop ("If pkg_name not specified, fn_name must be in double-colon format, ",
-                  "'fn_name::pkg_name'")
-    }
-
-    if (!pkg_name %in% search ())
-        suppressMessages (
-            library (pkg_name, character.only = TRUE)
-            )
-
-    e <- as.environment (paste0 ("package:", pkg_name))
-    . <- NULL # suppress no visible binding note
-    x <- get (fn_name, envir = e) %>%
-        deparse () %>%
-        parse (text = ., keep.source = TRUE) %>%
-        utils::getParseData ()
-    n <- which (x$token == "'{'") [1]
-
-    i1 <- which (x$token == "'('") [1]
-    i2 <- which (x$token == "')'") [1]
-    xhead <- x [(i1 + 1):(i2 - 1), ]
-    xfn <- split (xhead, cumsum (xhead$token == "','"))
-    xfn <- lapply (xfn, function (i)
-                   i [!i$token %in% c ("','", "expr"), ])
-    xfn <- lapply (xfn, function (i) {
-                   sname <- i$text [i$token == "SYMBOL_FORMALS"]
-                   sval <- NA
-                   if ("EQ_FORMALS" %in% i$token) {
-                       i2 <- split (i, cumsum (i$token == "EQ_FORMALS")) [[2]] [2, ]
-                       sval <- i2$text
-                       if (i2$token == "NUM_CONST") {
-                           if (regexpr ("L", sval) > 0)
-                               sval <- as.integer (gsub ("L", "", sval))
-                           else if (sval %in% c ("TRUE", "FALSE"))
-                               sval <- eval (parse (text = sval, keep.source = TRUE))
-                           else
-                               sval <- as.numeric (sval)
-                       }
-
-                   }
-                   list (name = sname, val = sval)
-                   })
-    return (xfn)
-}
-
-
-# The above fn, at_get_fn_params, returns a list of lists of parameter names and
-# values for each function defined in an autotest yaml. The following function 
-# extracts the i-th list of parameters from that result
+# extracts the i-th list of complete parameters from the result of a parsed yaml
 get_params <- function (res, i, this_fn) {
     p <- unlist (res$parameters [[i]])
     p_keys <- names (p)
@@ -99,8 +34,14 @@ get_params <- function (res, i, this_fn) {
     }
 
     # Parse fn definition to get list of all parameters:
-    pars <- at_get_fn_params (fn_name = this_fn, pkg_name = res$package)
-    nms <- vapply (pars, function (i) i$name, character (1))
+    #pars <- at_get_fn_params (fn_name = this_fn, pkg_name = res$package)
+    if (!res$package %in% search ())
+        suppressMessages (
+            library (res$package, character.only = TRUE)
+            )
+    pkg_env <- as.environment (paste0 ("package:", res$package))
+    pars <- formals (fun = this_fn, envir = pkg_env)
+    nms <- names (pars)
 
     # If fn includes ... AND any submitted params are not named, then remove the
     # ... from returned list
@@ -109,12 +50,35 @@ get_params <- function (res, i, this_fn) {
         nms <- nms [which (!nms == "...")]
     }
 
+    # parameters in formals with no default values are returned as empty
+    # 'symbol' expressions - this converts these to "MISSING":
+    pars <- lapply (pars, function (i) {
+                if (typeof (i) == "symbol" & deparse (i) == "")
+                    return ("MISSING")
+                else if (is.null (i))
+                    return ("NULL")
+                else
+                    return (i)
+            })
+    # That can then be used to check that any with non-default values have been
+    # provided:
+    if (any (pars == "MISSING")) {
+        no_defaults <- nms [which (pars == "MISSING")]
+        no_defaults <- no_defaults [which (!no_defaults %in% names (params))]
+        if (length (no_defaults) > 0)
+            stop ("function includes the following parameters which require ",
+                  "non-default values:\n   [", paste0 (no_defaults, collapse = ", "),
+                  "]")
+        # The rest must be in params, so the default "MISSING" entries can be
+        # removed here:
+        pars <- pars [which (pars != "MISSING")]
+    }
+
     # Add all resultant params from fn definition yet not directly specified to
     # the return list.
-    pars <- pars [which (!nms %in% names (params))]
-    for (p in pars) {
-        params [[length (params) + 1]] <- p$val
-        names (params) [length (params)] <- p$name
+    for (p in seq (pars)) {
+        params [[length (params) + 1]] <- pars [[p]]
+        names (params) [length (params)] <- names (pars) [p]
     }
 
     return (params)
