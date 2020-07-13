@@ -1,4 +1,4 @@
-context("rect")
+context("autotest")
 
 # pre-process variable is 'n' so yaml handlers are activated
 # R/yaml.R#13-22
@@ -21,10 +21,10 @@ yaml <- c ("package: SmartEDA",
 "           - Y: ISLR::Carseats$Urban",
 "           - valueOfGood: 'Yes'")
 
-test_that("rect test", {
+test_that("autotest", {
 
-    expect_message (
-        autotest_rectangular (yaml)
+    expect_warning (
+        autotest (yaml)
     )
 
     f <- file.path (tempdir (), "junk2.yaml")
@@ -33,7 +33,7 @@ test_that("rect test", {
     close (con)
     expect_true (file.exists (f))
 
-    expect_message (
-        autotest_rectangular (filename = f)
+    expect_warning (
+        autotest (filename = f)
     )
              })

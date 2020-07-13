@@ -14,16 +14,7 @@
 #' @export
 autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
 
-    autotest_rectangular (yaml, filename, quiet)
-    autotest_vector (yaml, filename, quiet)
-}
-
-
-autotest_rectangular <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
-    
     res <- parse_yaml_template (yaml = yaml, filename = filename)
-
-    . <- NULL # suppress no visible binding note
 
     if (!quiet)
         message (cli::symbol$star, " Testing functions:")
@@ -36,107 +27,99 @@ autotest_rectangular <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
 
         params <- get_params (res, i, this_fn)
 
-        #out <- do.call (this_fn, params)
-        rect_index <- which (vapply (params, function (i)
-                                     length (dim (i)) == 2, logical (1)))
-        for (r in rect_index) {
-            x <- params [[r]]
-            params_r <- params
-
-            params_r [[r]] <- data.frame (x)
-            res1 <- do.call (this_fn, params_r)
-
-            params_r [[r]] <- tibble::tibble (x)
-            res2 <- do.call (this_fn, params_r)
-
-            params_r [[r]] <- data.table::data.table (x)
-            res3 <- do.call (this_fn, params_r)
-
-            testthat::expect_identical (res1, res2)
-            testthat::expect_identical (res1, res3)
-
-            # extended class structure should still work:
-            params_r [[r]] <- structure (x, class = c ("newclass", class (x)))
-            res4 <- do.call (this_fn, params_r)
-            testthat::expect_identical (res1, res4)
-
-            # new class structure which exposes 'List` structure of `data.frame`
-            # and should generally fail:
-            params_r [[r]] <- structure (x, class = c ("newclass"))
-            testthat::expect_error (do.call (this_fn, params_r))
-        }
+        autotest_rectangular (res, params, this_fn, quiet)
+        autotest_vector (res, params, this_fn, quiet)
     }
 }
 
-autotest_vector <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
-    res <- parse_yaml_template (yaml = yaml, filename = filename)
 
-    . <- NULL # suppress no visible binding note
+autotest_rectangular <- function (res, params, this_fn, quiet) {
+    
+    rect_index <- which (vapply (params, function (i)
+                                 length (dim (i)) == 2, logical (1)))
+    for (r in rect_index) {
+        x <- params [[r]]
+        params_r <- params
 
-    if (!quiet)
-        message (cli::symbol$star, " Testing vector inputs to functions:")
+        params_r [[r]] <- data.frame (x)
+        res1 <- do.call (this_fn, params_r)
 
-    for (i in seq (res$parameters)) {
-        this_fn <- names (res$parameters) [i]
+        params_r [[r]] <- tibble::tibble (x)
+        res2 <- do.call (this_fn, params_r)
 
-        if (!quiet)
-            cli::cli_ul (this_fn)
+        params_r [[r]] <- data.table::data.table (x)
+        res3 <- do.call (this_fn, params_r)
 
-        params <- get_params (res, i, this_fn)
-        null_params <- NULL
-        if (any (params == "NULL")) {
-            null_params <- params [params == "NULL"]
-            params <- params [params != "NULL"]
+        testthat::expect_identical (res1, res2)
+        testthat::expect_identical (res1, res3)
+
+        # extended class structure should still work:
+        params_r [[r]] <- structure (x, class = c ("newclass", class (x)))
+        res4 <- do.call (this_fn, params_r)
+        testthat::expect_identical (res1, res4)
+
+        # new class structure which exposes 'List` structure of `data.frame`
+        # and should generally fail:
+        params_r [[r]] <- structure (x, class = c ("newclass"))
+        testthat::expect_error (do.call (this_fn, params_r))
+    }
+}
+
+autotest_vector <- function (res, params, this_fn, quiet) {
+
+    null_params <- NULL
+    if (any (params == "NULL")) {
+        null_params <- params [params == "NULL"]
+        params <- params [params != "NULL"]
+    }
+
+    vec_index <- which (vapply (params, function (i)
+                                length (i) > 1 && is.null (dim (i)), logical (1)))
+    for (v in vec_index) {
+        params_v <- params
+
+        res1 <- do.call (this_fn, params_v)
+
+        # int columns submitted as double should return different result:
+        if (typeof (params_v [[v]]) == "integer") {
+            params_v [[v]] <- as.numeric (params_v [[v]])
+            res2 <- do.call (this_fn, params_v)
+            testthat::expect_true (!identical (res1, res2))
+            params_v <- params
         }
 
-        vec_index <- which (vapply (params, function (i)
-                                    length (i) > 1 && is.null (dim (i)), logical (1)))
-        for (v in vec_index) {
-            params_v <- params
+        # class definitions for vector columns should be ignored
+        x <- params_v [[v]]
+        class (x) <- "different"
+        params_v [[v]] <- x
+        res3 <- tryCatch (
+                          do.call (this_fn, params_v),
+                          error = function (e) e)
+        if (methods::is (res3, "error"))
+            warning ("Function [", this_fn, "] errors on vector columns with ",
+                     "different classes when submitted as ", names (params) [v],
+                     "\n  Error message: ", res3$message)
+        else {
+            # TODO: Expectation - they need not be identical, because class
+            # def may be carried over to result
+            #expect_identical (res1, res3)
+        }
+        params_v <- params
 
-            res1 <- do.call (this_fn, params_v)
-
-            # int columns submitted as double should return different result:
-            if (typeof (params_v [[v]]) == "integer") {
-                params_v [[v]] <- as.numeric (params_v [[v]])
-                res2 <- do.call (this_fn, params_v)
-                testthat::expect_true (!identical (res1, res2))
-                params_v <- params
-            }
-
-            # class definitions for vector columns should be ignored
-            x <- params_v [[v]]
-            class (x) <- "different"
-            params_v [[v]] <- x
-            res3 <- tryCatch (
-                              do.call (this_fn, params_v),
-                              error = function (e) e)
-            if (methods::is (res3, "error"))
-                warning ("Function [", this_fn, "] errors on vector columns with ",
-                         "different classes when submitted as ", names (params) [v],
-                         "\n  Error message: ", res3$message)
-            else {
-                # TODO: Expectation - they need not be identical, because class
-                # def may be carried over to result
-                #expect_identical (res1, res3)
-            }
-            params_v <- params
-
-            # List-columns
-            x <- params_v [[v]]
-            x <- I (as.list (x))
-            params_v [[v]] <- x
-            res4 <- tryCatch (
-                              do.call (this_fn, params_v),
-                              error = function (e) e)
-            if (methods::is (res4, "error"))
-                warning ("Function [", this_fn, "] errors on list-columns ",
-                         "when submitted as ", names (params) [v],
-                         "\n  Error message: ", res4$message)
-            else {
-                # TODO: Expectation here too
-                #expect_identical (res1, res4)
-            }
+        # List-columns
+        x <- params_v [[v]]
+        x <- I (as.list (x))
+        params_v [[v]] <- x
+        res4 <- tryCatch (
+                          do.call (this_fn, params_v),
+                          error = function (e) e)
+        if (methods::is (res4, "error"))
+            warning ("Function [", this_fn, "] errors on list-columns ",
+                     "when submitted as ", names (params) [v],
+                     "\n  Error message: ", res4$message)
+        else {
+            # TODO: Expectation here too
+            #expect_identical (res1, res4)
         }
     }
 }
