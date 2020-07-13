@@ -2,8 +2,8 @@
 % Please edit documentation in R/autotest-package.R
 \docType{package}
 \name{autotest-package}
-\alias{autotest}
 \alias{autotest-package}
+\alias{_PACKAGE}
 \title{autotest: Automatic Stress Testing}
 \description{
 Automatic stress testing of R packages via a simple

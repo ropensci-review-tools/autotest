@@ -1,5 +1,6 @@
 #' @keywords internal
 #' @importFrom magrittr %>%
+#' @aliases autotest-package
 "_PACKAGE"
 
 # The following block is used by usethis to automatically manage
