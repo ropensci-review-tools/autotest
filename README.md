@@ -98,22 +98,30 @@ yaml <- c ("package: SmartEDA",
 "           - valueOfGood: 'Yes'")
 ```
 
-Both functions `ExpData` and `ExpStat` accept rectangular input, and so
-can be tested via the `autotest_rectangular()` function:
+Submitting this `yaml` to the `autotest` function gives the following
+results:
 
 ``` r
-autotest_rectangular (yaml = yaml)
+autotest (yaml = yaml)
 #> ★ Loading the following libraries:
 #> ● ISLR
 #> ● SmartEDA
 #> ★ Testing functions:
-#> ● ExpData
-#> ● ExpData
-#> ● ExpStat
+#> ✔ ExpData
+#> ✔ ExpData
+#> function [ExpStat] issued a Warning:
+#>  Chi-squared approximation may be incorrect
+#> Warning in autotest_vector(res, params, this_fn, quiet): Function [ExpStat] errors on list-columns when submitted as X
+#>   Error message: unimplemented type 'list' in 'orderVector1'
+#> function [ExpStat] issued a Warning:
+#>  Chi-squared approximation may be incorrect
+#> Warning in autotest_vector(res, params, this_fn, quiet): Function [ExpStat] errors on list-columns when submitted as Y
+#>   Error message: unimplemented type 'list' in 'orderVector1'
+#> ✖ ExpStat
 ```
 
-All tests work for those functions, so no additional diagnostic output
-is generated.
+And the `ExpData` function passes all tests, while the `ExpStat`
+function fail when input data are list-columns.
 
 ## Prior work
 

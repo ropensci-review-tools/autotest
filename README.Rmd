@@ -123,15 +123,15 @@ yaml <- c ("package: SmartEDA",
 "           - valueOfGood: 'Yes'")
 ```
 
-Both functions `ExpData` and `ExpStat` accept rectangular input, and so can be
-tested via the `autotest_rectangular()` function:
+Submitting this `yaml` to the `autotest` function gives the following results:
 
 ```{r autotest, eval = TRUE}
-autotest_rectangular (yaml = yaml)
+autotest (yaml = yaml)
 ```
 
-All tests work for those functions, so no additional diagnostic output is
-generated.
+And the `ExpData` function passes all tests, while the `ExpStat` function fail
+when input data are list-columns.
+
 
 ## Prior work
 
