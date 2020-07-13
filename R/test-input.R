@@ -22,18 +22,22 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
     for (i in seq (res$parameters)) {
         this_fn <- names (res$parameters) [i]
 
-        if (!quiet)
-            cli::cli_ul (this_fn)
-
         params <- get_params (res, i, this_fn)
 
-        autotest_rectangular (res, params, this_fn, quiet)
-        autotest_vector (res, params, this_fn, quiet)
+        chk1 <- autotest_rectangular (res, params, this_fn, quiet)
+        chk2 <- autotest_vector (res, params, this_fn, quiet)
+
+        if (chk1 && chk2)
+            message (cli::col_green (cli::symbol$tick, " ", this_fn))
+        else
+            message (cli::col_red (cli::symbol$cross), " ", cli::col_yellow (this_fn))
     }
 }
 
 
 autotest_rectangular <- function (res, params, this_fn, quiet) {
+
+    chk <- TRUE # Not implemented; TODO: Implement
     
     rect_index <- which (vapply (params, function (i)
                                  length (dim (i)) == 2, logical (1)))
@@ -63,9 +67,12 @@ autotest_rectangular <- function (res, params, this_fn, quiet) {
         params_r [[r]] <- structure (x, class = c ("newclass"))
         testthat::expect_error (do.call (this_fn, params_r))
     }
+    return (chk)
 }
 
 autotest_vector <- function (res, params, this_fn, quiet) {
+
+    chk <- TRUE
 
     null_params <- NULL
     if (any (params == "NULL")) {
@@ -78,12 +85,23 @@ autotest_vector <- function (res, params, this_fn, quiet) {
     for (v in vec_index) {
         params_v <- params
 
-        res1 <- do.call (this_fn, params_v)
+        res1 <- tryCatch (do.call (this_fn, params_v),
+                          warning = function (w) w)
+        warn <- FALSE
+        if (methods::is (res1, "warning")) {
+            message ("function [", this_fn, "] issued a Warning:\n ",
+                     res1$message)
+            warn <- TRUE
+            res1 <- suppressWarnings (do.call (this_fn, params_v))
+        }
 
         # int columns submitted as double should return different result:
         if (typeof (params_v [[v]]) == "integer") {
             params_v [[v]] <- as.numeric (params_v [[v]])
-            res2 <- do.call (this_fn, params_v)
+            if (warn)
+                res2 <- suppressWarnings (do.call (this_fn, params_v))
+            else
+                res2 <- do.call (this_fn, params_v)
             testthat::expect_true (!identical (res1, res2))
             params_v <- params
         }
@@ -94,12 +112,14 @@ autotest_vector <- function (res, params, this_fn, quiet) {
         params_v [[v]] <- x
         res3 <- tryCatch (
                           do.call (this_fn, params_v),
+                          warning = function (w) w,
                           error = function (e) e)
-        if (methods::is (res3, "error"))
+        if (methods::is (res3, "error")) {
+            chk <- FALSE
             warning ("Function [", this_fn, "] errors on vector columns with ",
                      "different classes when submitted as ", names (params) [v],
                      "\n  Error message: ", res3$message)
-        else {
+        } else {
             # TODO: Expectation - they need not be identical, because class
             # def may be carried over to result
             #expect_identical (res1, res3)
@@ -112,14 +132,18 @@ autotest_vector <- function (res, params, this_fn, quiet) {
         params_v [[v]] <- x
         res4 <- tryCatch (
                           do.call (this_fn, params_v),
+                          warning = function (w) w,
                           error = function (e) e)
-        if (methods::is (res4, "error"))
+        if (methods::is (res4, "error")) {
+            chk <- FALSE
             warning ("Function [", this_fn, "] errors on list-columns ",
                      "when submitted as ", names (params) [v],
                      "\n  Error message: ", res4$message)
-        else {
+        } else {
             # TODO: Expectation here too
             #expect_identical (res1, res4)
         }
     }
+
+    return (chk)
 }

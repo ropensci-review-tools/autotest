@@ -60,6 +60,7 @@ get_params <- function (res, i, this_fn) {
                 else
                     return (i)
             })
+    pars <- pars [which (!names (pars) %in% names (params))]
     # That can then be used to check that any with non-default values have been
     # provided:
     if (any (pars == "MISSING")) {
