@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.044</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.045</span>
       </span>
     </div>
 
@@ -143,7 +143,11 @@
 <span class="co">#&gt; ● ISLR</span>
 <span class="co">#&gt; ● SmartEDA</span>
 <span class="co">#&gt; ★ Testing functions:</span>
+<span class="co">#&gt; Warning in autotest_return(res$package, params, this_fn): Function [ExpData]</span>
+<span class="co">#&gt; does not specify a return value, yet returns a value of class [data.frame]</span>
 <span class="co">#&gt; ✔ ExpData</span>
+<span class="co">#&gt; Warning in autotest_return(res$package, params, this_fn): Function [ExpData]</span>
+<span class="co">#&gt; does not specify a return value, yet returns a value of class [data.frame]</span>
 <span class="co">#&gt; ✔ ExpData</span>
 <span class="co">#&gt; function [ExpStat] issued a Warning:</span>
 <span class="co">#&gt;  Chi-squared approximation may be incorrect</span>
@@ -153,6 +157,7 @@
 <span class="co">#&gt;  Chi-squared approximation may be incorrect</span>
 <span class="co">#&gt; Warning in autotest_vector(params, this_fn, classes, quiet): Function [ExpStat] errors on list-columns when submitted as Y</span>
 <span class="co">#&gt;   Error message: unimplemented type 'list' in 'orderVector1'</span>
+<span class="co">#&gt; Warning in chisq.test(tb): Chi-squared approximation may be incorrect</span>
 <span class="co">#&gt; ✖ ExpStat</span>
 </pre></div>
 <p>And the <code>ExpData</code> function passes all tests, while the <code>ExpStat</code> function fail when input data are list-columns.</p>
