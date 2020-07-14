@@ -51,6 +51,8 @@ functions:
             - "<R code required for pre-processing exlosed in quotation marks>"
             - "<second line of pre-processing code>"
             - "<more code>"
+        - class:
+            - <param_name>: [<class1>, <class2>]
         - parameters:
             - <param_name>: <value>
             - <another_param>: <value>
@@ -59,9 +61,14 @@ functions:
             - <param_name>: <value>
 ```
 
-This `yaml` code should be in the `test` directory of a package -- not in the
-`test/testthat` directory. The above template can be generated via the function
-`at_yaml_template()`.
+The `class` line declares an input parameter, `<param_name>`, to be of one or
+more defined classes. If not given, and if nominated input data are, for
+example, of any standard rectangular format, the `autotest` will test the
+response to the nominated function to input of *all* standard rectangular
+formats. The `class` parameter can thus be used to declare that the function is
+only expected to receive input data in one or more pre-defined class formats,
+and so responses to potentially different classes will not be tested. The above
+template can be generated via the function `at_yaml_template()`.
 
 ## Installation
 
@@ -114,6 +121,8 @@ yaml <- c ("package: SmartEDA",
 "       - parameters:",
 "           - data: x",
 "   - ExpData:",
+"       - class:",
+"           - data: data.frame",
 "       - parameters:",
 "           - data: ISLR::College",
 "   - ExpStat:",
@@ -123,7 +132,11 @@ yaml <- c ("package: SmartEDA",
 "           - valueOfGood: 'Yes'")
 ```
 
-Submitting this `yaml` to the `autotest` function gives the following results:
+Note that the second function definition is for the same function as the first
+(namely, `ExpData`), but specifies alternative input data, and also includes
+the restriction that input data to the function should be of class `data.frame`
+only. Submitting this `yaml` to the `autotest` function gives the following
+results:
 
 ```{r autotest, eval = TRUE}
 autotest (yaml = yaml)
