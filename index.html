@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.045</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.048</span>
       </span>
     </div>
 
@@ -72,7 +72,7 @@
 <div id="autotest" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#autotest" class="anchor"></a>autotest</h1></div>
-<p>Automatic testing of R packages via a simple YAML schema specifying one or more example workflows for each function of a package. The simplest workflows involve nominating data sets which may be submitted to a function, while more complicated workflows may involve multiple data sets, intermediate pre-processing stages, and other transformations prior to submission to a nominated function. The following illustrates a typical <code>yaml</code> schema, where items in angle-brackets (<code><a href="https://rdrr.io/r/base/Comparison.html">&lt;</a></code>, <code><a href="https://rdrr.io/r/base/Comparison.html">&gt;</a></code>) must be completed.</p>
+<p>Automatic testing of R packages via a simple YAML schema specifying one or more example workflows for each function of a package. The simplest workflows involve nominating data sets which may be submitted to a function, while more complicated workflows may involve multiple data sets, intermediate pre-processing stages, and other transformations prior to submission to a nominated function. The following illustrates a typical <code>yaml</code> schema, where items in angle-brackets (<code><a href="https://rdrr.io/r/base/Comparison.html">&lt;</a></code>, <code><a href="https://rdrr.io/r/base/Comparison.html">&gt;</a></code>) indicate placeholders be completed for a specific package and functions.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>package<span class="op">:</span><span class="st"> </span><span class="er">&lt;</span>package_name<span class="op">&gt;</span></span>
 <span id="cb1-2"><a href="#cb1-2"></a>functions<span class="op">:</span></span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="st">    </span><span class="op">-</span><span class="st"> </span><span class="er">&lt;</span>name of <span class="cf">function</span><span class="op">&gt;</span><span class="er">:</span></span>
@@ -88,7 +88,7 @@
 <span id="cb1-13"><a href="#cb1-13"></a><span class="st">    </span><span class="op">-</span><span class="st"> </span><span class="er">&lt;</span>name of same or different <span class="cf">function</span><span class="op">&gt;</span><span class="er">::</span></span>
 <span id="cb1-14"><a href="#cb1-14"></a><span class="st">        </span><span class="op">-</span><span class="st"> </span>parameters<span class="op">:</span></span>
 <span id="cb1-15"><a href="#cb1-15"></a><span class="st">            </span><span class="op">-</span><span class="st"> </span><span class="er">&lt;</span>param_name<span class="op">&gt;</span><span class="er">:</span><span class="st"> </span><span class="er">&lt;</span>value<span class="op">&gt;</span></span></code></pre></div>
-<p>The <code>class</code> line declares an input parameter, <code>&lt;param_name&gt;</code>, to be of one or more defined classes. If not given, and if nominated input data are, for example, of any standard rectangular format, the <code>autotest</code> will test the response to the nominated function to input of <em>all</em> standard rectangular formats. The <code>class</code> parameter can thus be used to declare that the function is only expected to receive input data in one or more pre-defined class formats, and so responses to potentially different classes will not be tested. The above template can be generated via the function <code><a href="reference/at_yaml_template.html">at_yaml_template()</a></code>.</p>
+<p>The <code>class</code> line declares an input parameter, <code>&lt;param_name&gt;</code>, to be of one or more defined classes. If not given, and if nominated input data are, for example, of any standard rectangular format, then <code>autotest</code> will test the response to the nominated function to input of <em>all</em> standard rectangular formats. The <code>class</code> parameter can thus be used to declare that the function is only expected to receive input data in one or more pre-defined class formats, and so responses to potentially different classes will not be tested. The above template can be generated via the function <code><a href="reference/at_yaml_template.html">at_yaml_template()</a></code>.</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -113,7 +113,7 @@
 <div id="example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
-<p>Current functionality applied to test two functions from the <a href="https://github.com/daya6489/SmartEDA"><code>SmartEDA</code> package</a> as specified in the following <code>yaml</code>. This also illustrates the use of data transformation steps, in this case implementing a couple of simple transformations on columns the external data set, <a href="https://cran.r-project.org/package=ISLR"><code>ISLR::Carseats</code></a>, including introducing some missing data through replacing values with <code>NA</code>.</p>
+<p>Current functionality applied to test two functions from the <a href="https://github.com/daya6489/SmartEDA"><code>SmartEDA</code> package</a> as specified in the following <code>yaml</code>. This also illustrates the use of data transformation steps, in this case implementing a couple of simple transformations on columns of the external data set, <a href="https://cran.r-project.org/package=ISLR"><code>ISLR::Carseats</code></a>, including introducing some missing data through replacing values with <code>NA</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit">
 <span class="kw">yaml</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span> (<span class="st">"package: SmartEDA"</span>,
 <span class="st">"functions:"</span>,
@@ -143,21 +143,19 @@
 <span class="co">#&gt; ● ISLR</span>
 <span class="co">#&gt; ● SmartEDA</span>
 <span class="co">#&gt; ★ Testing functions:</span>
-<span class="co">#&gt; Warning in autotest_return(res$package, params, this_fn): Function [ExpData]</span>
-<span class="co">#&gt; does not specify a return value, yet returns a value of class [data.frame]</span>
-<span class="co">#&gt; ✔ ExpData</span>
-<span class="co">#&gt; Warning in autotest_return(res$package, params, this_fn): Function [ExpData]</span>
-<span class="co">#&gt; does not specify a return value, yet returns a value of class [data.frame]</span>
-<span class="co">#&gt; ✔ ExpData</span>
-<span class="co">#&gt; function [ExpStat] issued a Warning:</span>
-<span class="co">#&gt;  Chi-squared approximation may be incorrect</span>
-<span class="co">#&gt; Warning in autotest_vector(params, this_fn, classes, quiet): Function [ExpStat] errors on list-columns when submitted as X</span>
+<span class="co">#&gt; Warning: Function [ExpData] does not specify a return value, yet returns a value</span>
+<span class="co">#&gt; of class [data.frame]</span>
+<span class="co">#&gt; ✖ ExpData</span>
+<span class="co">#&gt; Warning: Function [ExpData] does not specify a return value, yet returns a value</span>
+<span class="co">#&gt; of class [data.frame]</span>
+<span class="co">#&gt; ✖ ExpData</span>
+<span class="co">#&gt; function [ExpStat] issued a Warning: Chi-squared approximation may be incorrect</span>
+<span class="co">#&gt; Warning: Function [ExpStat] errors on list-columns when submitted as X</span>
 <span class="co">#&gt;   Error message: unimplemented type 'list' in 'orderVector1'</span>
-<span class="co">#&gt; function [ExpStat] issued a Warning:</span>
-<span class="co">#&gt;  Chi-squared approximation may be incorrect</span>
-<span class="co">#&gt; Warning in autotest_vector(params, this_fn, classes, quiet): Function [ExpStat] errors on list-columns when submitted as Y</span>
+<span class="co">#&gt; function [ExpStat] issued a Warning: Chi-squared approximation may be incorrect</span>
+<span class="co">#&gt; Warning: Function [ExpStat] errors on list-columns when submitted as Y</span>
 <span class="co">#&gt;   Error message: unimplemented type 'list' in 'orderVector1'</span>
-<span class="co">#&gt; Warning in chisq.test(tb): Chi-squared approximation may be incorrect</span>
+<span class="co">#&gt; Function [ExpStat] issued a Warning: Chi-squared approximation may be incorrect</span>
 <span class="co">#&gt; ✖ ExpStat</span>
 </pre></div>
 <p>And the <code>ExpData</code> function passes all tests, while the <code>ExpStat</code> function fail when input data are list-columns.</p>
