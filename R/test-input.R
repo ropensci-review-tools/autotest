@@ -24,8 +24,8 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
 
         params <- get_params (res, i, this_fn)
 
-        chk1 <- autotest_rectangular (res, params, this_fn, quiet)
-        chk2 <- autotest_vector (res, params, this_fn, quiet)
+        chk1 <- autotest_rectangular (params, this_fn, quiet)
+        chk2 <- autotest_vector (params, this_fn, quiet)
 
         if (chk1 && chk2)
             message (cli::col_green (cli::symbol$tick, " ", this_fn))
@@ -35,7 +35,7 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
 }
 
 
-autotest_rectangular <- function (res, params, this_fn, quiet) {
+autotest_rectangular <- function (params, this_fn, quiet) {
 
     chk <- TRUE # Not implemented; TODO: Implement
     
@@ -70,7 +70,7 @@ autotest_rectangular <- function (res, params, this_fn, quiet) {
     return (chk)
 }
 
-autotest_vector <- function (res, params, this_fn, quiet) {
+autotest_vector <- function (params, this_fn, quiet) {
 
     chk <- TRUE
 
