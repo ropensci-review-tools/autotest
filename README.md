@@ -17,8 +17,8 @@ workflows involve nominating data sets which may be submitted to a
 function, while more complicated workflows may involve multiple data
 sets, intermediate pre-processing stages, and other transformations
 prior to submission to a nominated function. The following illustrates a
-typical `yaml` schema, where items in angle-brackets (`<`, `>`) must be
-completed.
+typical `yaml` schema, where items in angle-brackets (`<`, `>`) indicate
+placeholders be completed for a specific package and functions.
 
     package: <package_name>
     functions:
@@ -38,7 +38,7 @@ completed.
 
 The `class` line declares an input parameter, `<param_name>`, to be of
 one or more defined classes. If not given, and if nominated input data
-are, for example, of any standard rectangular format, the `autotest`
+are, for example, of any standard rectangular format, then `autotest`
 will test the response to the nominated function to input of *all*
 standard rectangular formats. The `class` parameter can thus be used to
 declare that the function is only expected to receive input data in one
@@ -81,7 +81,7 @@ Current functionality applied to test two functions from the [`SmartEDA`
 package](https://github.com/daya6489/SmartEDA) as specified in the
 following `yaml`. This also illustrates the use of data transformation
 steps, in this case implementing a couple of simple transformations on
-columns the external data set,
+columns of the external data set,
 [`ISLR::Carseats`](https://cran.r-project.org/package=ISLR), including
 introducing some missing data through replacing values with `NA`.
 
