@@ -17,7 +17,7 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
     res <- parse_yaml_template (yaml = yaml, filename = filename)
 
     if (!quiet)
-        message (cli::symbol$star, " Testing functions:")
+        message (cli::col_green (cli::symbol$star, " Testing functions:"))
 
     for (i in seq (res$parameters)) {
         this_fn <- names (res$parameters) [i]
@@ -98,8 +98,9 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
                           warning = function (w) w)
         warn <- FALSE
         if (methods::is (res1, "warning")) {
-            message ("function [", this_fn, "] issued a Warning:\n ",
-                     res1$message)
+            cli::cli_text (cli::col_yellow ("function [", this_fn,
+                                            "] issued a Warning: ",
+                                            res1$message))
             warn <- TRUE
             res1 <- suppressWarnings (do.call (this_fn, params_v))
         }
@@ -128,7 +129,8 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
                 chk <- FALSE
                 warning ("Function [", this_fn, "] errors on vector columns with ",
                          "different classes when submitted as ", names (params) [v],
-                         "\n  Error message: ", res3$message)
+                         "\n  Error message: ", res3$message,
+                         call. = FALSE, immediate. = TRUE)
             } else {
                 # TODO: Expectation - they need not be identical, because class
                 # def may be carried over to result
@@ -151,7 +153,8 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
             chk <- FALSE
             warning ("Function [", this_fn, "] errors on list-columns ",
                      "when submitted as ", names (params) [v],
-                     "\n  Error message: ", res4$message)
+                     "\n  Error message: ", res4$message,
+                     call. = FALSE, immediate. = TRUE)
         } else {
             # TODO: Expectation here too
             #expect_identical (res1, res4)
@@ -165,17 +168,29 @@ autotest_return <- function (pkg, params, this_fn) {
 
     chk <- TRUE
 
-    retval <- do.call (this_fn, params)
+    retval <- tryCatch (
+                        do.call (this_fn, params),
+                        warning = function (w) w)
+    if (methods::is (retval, "warning")) {
+        cli::cli_text (cli::col_yellow ("Function [", this_fn,
+                                        "] issued a Warning: ",
+                                        retval$message))
+        retval <- suppressWarnings (do.call (this_fn, params))
+    }
+
     if (!is.null (attr (retval, "class"))) {
         Rd_value <- get_Rd_value (package = pkg, fn_name = this_fn)
         if (is.null (Rd_value)) {
+            chk <- FALSE
             warning ("Function [", this_fn, "] does not specify a return value, ",
-                     "yet returns a value of class [", attr (retval, "class"), "]")
+                     "yet returns a value of class [", attr (retval, "class"), "]",
+                     call. = FALSE, immediate. = TRUE)
         } else {
             chk <- grepl ("[Cc]lass", Rd_value)
             if (!chk)
                 warning ("Function [", this_fn, "] does not specify class of return value, ",
-                         "yet returns a value of class [", attr (retval, "class"), "]")
+                         "yet returns a value of class [", attr (retval, "class"), "]",
+                         call. = FALSE, immediate. = TRUE)
         }
     }
 
