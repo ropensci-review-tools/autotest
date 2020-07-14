@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.049</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.050</span>
       </span>
     </div>
 
@@ -158,7 +158,7 @@
 <span class="co">#&gt; Function [ExpStat] issued a Warning: Chi-squared approximation may be incorrect</span>
 <span class="co">#&gt; ✖ ExpStat</span>
 </pre></div>
-<p>And the <code>ExpData</code> function passes all tests, while the <code>ExpStat</code> function fail when input data are list-columns.</p>
+<p>And neither the <code>ExpData</code> nor the <code>ExpStat</code> function pass <code>autotest</code> conditions, with <code>ExpData</code> failing to specify the class of return value, and <code>ExpData</code> failing to appropriately <code>unlist</code> or <code>unnest</code> list-columns.</p>
 </div>
 <div id="prior-work" class="section level2">
 <h2 class="hasAnchor">
