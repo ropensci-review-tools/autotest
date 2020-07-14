@@ -28,7 +28,9 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
         chk1 <- autotest_rectangular (params, this_fn, classes, quiet)
         chk2 <- autotest_vector (params, this_fn, classes, quiet)
 
-        if (chk1 && chk2)
+        chk3 <- autotest_return (res$package, params, this_fn)
+
+        if (chk1 && chk2 && chk3)
             message (cli::col_green (cli::symbol$tick, " ", this_fn))
         else
             message (cli::col_red (cli::symbol$cross), " ", cli::col_yellow (this_fn))
@@ -153,6 +155,27 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
         } else {
             # TODO: Expectation here too
             #expect_identical (res1, res4)
+        }
+    }
+
+    return (chk)
+}
+
+autotest_return <- function (pkg, params, this_fn) {
+
+    chk <- TRUE
+
+    retval <- do.call (this_fn, params)
+    if (!is.null (attr (retval, "class"))) {
+        Rd_value <- get_Rd_value (package = pkg, fn_name = this_fn)
+        if (is.null (Rd_value)) {
+            warning ("Function [", this_fn, "] does not specify a return value, ",
+                     "yet returns a value of class [", attr (retval, "class"), "]")
+        } else {
+            chk <- grepl ("[Cc]lass", Rd_value)
+            if (!chk)
+                warning ("Function [", this_fn, "] does not specify class of return value, ",
+                         "yet returns a value of class [", attr (retval, "class"), "]")
         }
     }
 

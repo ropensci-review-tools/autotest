@@ -84,3 +84,19 @@ get_params <- function (res, i, this_fn) {
 
     return (params)
 }
+
+# Get the 'value' field from an Rd entry for a given package function:
+get_Rd_value <- function (package, fn_name) {
+    x <- tools::Rd_db (package = package)
+    xfn <- x [[paste0 (fn_name, ".Rd")]]
+
+    tags <- vapply (xfn, function (i) attr (i, "Rd_tag"), character (1))
+    val <- NULL
+    if ("\\value" %in% tags) {
+        val <- unlist (x1 [[which (tags == "\\value")]])
+        val <- gsub ("\n", "", paste0 (val, collapse = " "))
+        val <- gsub ("\\s+", " ", gsub ("^\\s", "", val))
+    }
+
+    return (val)
+}
