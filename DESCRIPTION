@@ -1,13 +1,13 @@
 Package: autotest
-Title: Automatic Stress Testing
-Version: 0.0.1.048
+Title: Automatic Package Testing
+Version: 0.0.1.049
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
            role = c("aut", "cre"),
            email = "mark.padgham@email.com")
-Description: Automatic stress testing of R packages via a simple
-    YAML schema.
+Description: Automatic testing of R packages via a simple YAML
+    schema.
 License: GPL-3
 URL: https://github.com/mpadge/autotest
 BugReports: https://github.com/mpadge/autotest/issues

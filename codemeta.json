@@ -5,12 +5,12 @@
   ],
   "@type": "SoftwareSourceCode",
   "identifier": "autotest",
-  "description": "Automatic stress testing of R packages via a simple\n    YAML schema.",
-  "name": "autotest: Automatic Stress Testing",
+  "description": "Automatic testing of R packages via a simple YAML\n    schema.",
+  "name": "autotest: Automatic Package Testing",
   "codeRepository": "https://github.com/mpadge/autotest",
   "issueTracker": "https://github.com/mpadge/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.1.048",
+  "version": "0.0.1.49",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -178,7 +178,7 @@
       "sameAs": "https://CRAN.R-project.org/package=yaml"
     }
   ],
-  "fileSize": "6.884KB",
+  "fileSize": "6.962KB",
   "contIntegration": "https://codecov.io/gh/mpadge/allcontributor",
   "developmentStatus": "https://www.repostatus.org/#concept",
   "readme": "https://github.com/mpadge/autotest/blob/master/README.md"
