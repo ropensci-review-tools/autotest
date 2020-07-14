@@ -23,7 +23,7 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
 
     x <- yaml::yaml.load (yaml, handlers = handlers)
 
-    parameters <- preprocess <- list ()
+    parameters <- preprocess <- classes <- list ()
     fn_names <- NULL
 
     for (f in x$functions) {
@@ -41,12 +41,18 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
         else
             preprocess [[length (preprocess) + 1]] <- NA_character_
 
+        if ("class" %in% nms)
+            classes [[length (classes) + 1]] <-
+                i [[which (nms == "class")]]$class [[1]]
+        else
+            classes [[length (classes) + 1]] <- NA_character_
     }
-    names (parameters) <- names (preprocess) <- fn_names
+    names (parameters) <- names (preprocess) <- names (classes) <- fn_names
 
     list (package = x$package,
           parameters = parameters,
-          preprocess = preprocess)
+          preprocess = preprocess,
+          classes = classes)
 }
 
 # x is raw yaml from 'readLines' NOY parsed from yaml.load
