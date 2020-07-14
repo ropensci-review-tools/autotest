@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.038</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.043</span>
       </span>
     </div>
 
@@ -80,13 +80,15 @@
 <span id="cb1-5"><a href="#cb1-5"></a><span class="st">            </span><span class="op">-</span><span class="st"> "&lt;R code required for pre-processing exlosed in quotation marks&gt;"</span></span>
 <span id="cb1-6"><a href="#cb1-6"></a>            <span class="op">-</span><span class="st"> "&lt;second line of pre-processing code&gt;"</span></span>
 <span id="cb1-7"><a href="#cb1-7"></a>            <span class="op">-</span><span class="st"> "&lt;more code&gt;"</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a>        <span class="op">-</span><span class="st"> </span>parameters<span class="op">:</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="st">            </span><span class="op">-</span><span class="st"> </span><span class="er">&lt;</span>param_name<span class="op">&gt;</span><span class="er">:</span><span class="st"> </span><span class="er">&lt;</span>value<span class="op">&gt;</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="st">            </span><span class="op">-</span><span class="st"> </span><span class="er">&lt;</span>another_param<span class="op">&gt;</span><span class="er">:</span><span class="st"> </span><span class="er">&lt;</span>value<span class="op">&gt;</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a><span class="st">    </span><span class="op">-</span><span class="st"> </span><span class="er">&lt;</span>name of same or different <span class="cf">function</span><span class="op">&gt;</span><span class="er">::</span></span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="st">        </span><span class="op">-</span><span class="st"> </span>parameters<span class="op">:</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a><span class="st">            </span><span class="op">-</span><span class="st"> </span><span class="er">&lt;</span>param_name<span class="op">&gt;</span><span class="er">:</span><span class="st"> </span><span class="er">&lt;</span>value<span class="op">&gt;</span></span></code></pre></div>
-<p>This <code>yaml</code> code should be in the <code>test</code> directory of a package – not in the <code>test/testthat</code> directory. The above template can be generated via the function <code><a href="reference/at_yaml_template.html">at_yaml_template()</a></code>.</p>
+<span id="cb1-8"><a href="#cb1-8"></a>        <span class="op">-</span><span class="st"> </span>class<span class="op">:</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="st">            </span><span class="op">-</span><span class="st"> </span><span class="er">&lt;</span>param_name<span class="op">&gt;</span><span class="er">:</span><span class="st"> </span>[<span class="op">&lt;</span>class1<span class="op">&gt;</span>, <span class="op">&lt;</span>class2<span class="op">&gt;</span>]</span>
+<span id="cb1-10"><a href="#cb1-10"></a>        <span class="op">-</span><span class="st"> </span>parameters<span class="op">:</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="st">            </span><span class="op">-</span><span class="st"> </span><span class="er">&lt;</span>param_name<span class="op">&gt;</span><span class="er">:</span><span class="st"> </span><span class="er">&lt;</span>value<span class="op">&gt;</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="st">            </span><span class="op">-</span><span class="st"> </span><span class="er">&lt;</span>another_param<span class="op">&gt;</span><span class="er">:</span><span class="st"> </span><span class="er">&lt;</span>value<span class="op">&gt;</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="st">    </span><span class="op">-</span><span class="st"> </span><span class="er">&lt;</span>name of same or different <span class="cf">function</span><span class="op">&gt;</span><span class="er">::</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="st">        </span><span class="op">-</span><span class="st"> </span>parameters<span class="op">:</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="st">            </span><span class="op">-</span><span class="st"> </span><span class="er">&lt;</span>param_name<span class="op">&gt;</span><span class="er">:</span><span class="st"> </span><span class="er">&lt;</span>value<span class="op">&gt;</span></span></code></pre></div>
+<p>The <code>class</code> line declares an input parameter, <code>&lt;param_name&gt;</code>, to be of one or more defined classes. If not given, and if nominated input data are, for example, of any standard rectangular format, the <code>autotest</code> will test the response to the nominated function to input of <em>all</em> standard rectangular formats. The <code>class</code> parameter can thus be used to declare that the function is only expected to receive input data in one or more pre-defined class formats, and so responses to potentially different classes will not be tested. The above template can be generated via the function <code><a href="reference/at_yaml_template.html">at_yaml_template()</a></code>.</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -124,6 +126,8 @@
 <span class="st">"       - parameters:"</span>,
 <span class="st">"           - data: x"</span>,
 <span class="st">"   - ExpData:"</span>,
+<span class="st">"       - class:"</span>,
+<span class="st">"           - data: data.frame"</span>,
 <span class="st">"       - parameters:"</span>,
 <span class="st">"           - data: ISLR::College"</span>,
 <span class="st">"   - ExpStat:"</span>,
@@ -132,7 +136,7 @@
 <span class="st">"           - Y: ISLR::Carseats$Urban"</span>,
 <span class="st">"           - valueOfGood: 'Yes'"</span>)
 </pre></div>
-<p>Submitting this <code>yaml</code> to the <code>autotest</code> function gives the following results:</p>
+<p>Note that the second function definition is for the same function as the first (namely, <code>ExpData</code>), but specifies alternative input data, and also includes the restriction that input data to the function should be of class <code>data.frame</code> only. Submitting this <code>yaml</code> to the <code>autotest</code> function gives the following results:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="fu"><a href="reference/autotest.html">autotest</a></span> (yaml = <span class="kw">yaml</span>)
 <span class="co">#&gt; ★ Loading the following libraries:</span>
@@ -143,11 +147,11 @@
 <span class="co">#&gt; ✔ ExpData</span>
 <span class="co">#&gt; function [ExpStat] issued a Warning:</span>
 <span class="co">#&gt;  Chi-squared approximation may be incorrect</span>
-<span class="co">#&gt; Warning in autotest_vector(res, params, this_fn, quiet): Function [ExpStat] errors on list-columns when submitted as X</span>
+<span class="co">#&gt; Warning in autotest_vector(params, this_fn, classes, quiet): Function [ExpStat] errors on list-columns when submitted as X</span>
 <span class="co">#&gt;   Error message: unimplemented type 'list' in 'orderVector1'</span>
 <span class="co">#&gt; function [ExpStat] issued a Warning:</span>
 <span class="co">#&gt;  Chi-squared approximation may be incorrect</span>
-<span class="co">#&gt; Warning in autotest_vector(res, params, this_fn, quiet): Function [ExpStat] errors on list-columns when submitted as Y</span>
+<span class="co">#&gt; Warning in autotest_vector(params, this_fn, classes, quiet): Function [ExpStat] errors on list-columns when submitted as Y</span>
 <span class="co">#&gt;   Error message: unimplemented type 'list' in 'orderVector1'</span>
 <span class="co">#&gt; ✖ ExpStat</span>
 </pre></div>
