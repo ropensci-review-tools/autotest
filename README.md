@@ -120,21 +120,19 @@ autotest (yaml = yaml)
 #> ● ISLR
 #> ● SmartEDA
 #> ★ Testing functions:
-#> Warning in autotest_return(res$package, params, this_fn): Function [ExpData]
-#> does not specify a return value, yet returns a value of class [data.frame]
-#> ✔ ExpData
-#> Warning in autotest_return(res$package, params, this_fn): Function [ExpData]
-#> does not specify a return value, yet returns a value of class [data.frame]
-#> ✔ ExpData
-#> function [ExpStat] issued a Warning:
-#>  Chi-squared approximation may be incorrect
-#> Warning in autotest_vector(params, this_fn, classes, quiet): Function [ExpStat] errors on list-columns when submitted as X
+#> Warning: Function [ExpData] does not specify a return value, yet returns a value
+#> of class [data.frame]
+#> ✖ ExpData
+#> Warning: Function [ExpData] does not specify a return value, yet returns a value
+#> of class [data.frame]
+#> ✖ ExpData
+#> function [ExpStat] issued a Warning: Chi-squared approximation may be incorrect
+#> Warning: Function [ExpStat] errors on list-columns when submitted as X
 #>   Error message: unimplemented type 'list' in 'orderVector1'
-#> function [ExpStat] issued a Warning:
-#>  Chi-squared approximation may be incorrect
-#> Warning in autotest_vector(params, this_fn, classes, quiet): Function [ExpStat] errors on list-columns when submitted as Y
+#> function [ExpStat] issued a Warning: Chi-squared approximation may be incorrect
+#> Warning: Function [ExpStat] errors on list-columns when submitted as Y
 #>   Error message: unimplemented type 'list' in 'orderVector1'
-#> Warning in chisq.test(tb): Chi-squared approximation may be incorrect
+#> Function [ExpStat] issued a Warning: Chi-squared approximation may be incorrect
 #> ✖ ExpStat
 ```
 
