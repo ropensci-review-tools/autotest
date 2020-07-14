@@ -23,9 +23,10 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
         this_fn <- names (res$parameters) [i]
 
         params <- get_params (res, i, this_fn)
+        classes <- res$classes [[i]]
 
-        chk1 <- autotest_rectangular (params, this_fn, quiet)
-        chk2 <- autotest_vector (params, this_fn, quiet)
+        chk1 <- autotest_rectangular (params, this_fn, classes, quiet)
+        chk2 <- autotest_vector (params, this_fn, classes, quiet)
 
         if (chk1 && chk2)
             message (cli::col_green (cli::symbol$tick, " ", this_fn))
@@ -35,7 +36,7 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
 }
 
 
-autotest_rectangular <- function (params, this_fn, quiet) {
+autotest_rectangular <- function (params, this_fn, classes, quiet) {
 
     chk <- TRUE # Not implemented; TODO: Implement
     
@@ -57,20 +58,26 @@ autotest_rectangular <- function (params, this_fn, quiet) {
         testthat::expect_identical (res1, res2)
         testthat::expect_identical (res1, res3)
 
-        # extended class structure should still work:
-        params_r [[r]] <- structure (x, class = c ("newclass", class (x)))
-        res4 <- do.call (this_fn, params_r)
-        testthat::expect_identical (res1, res4)
+        # Modify class definitions for rectangular inputs if not excluded by
+        # yaml class definitions
+        if (!names (params_r) [rect_index [r]] %in% names (classes)) {
+            # extended class structure should still work:
+            params_r [[r]] <- structure (x, class = c ("newclass", class (x)))
+            res4 <- do.call (this_fn, params_r)
+            testthat::expect_identical (res1, res4)
 
-        # new class structure which exposes 'List` structure of `data.frame`
-        # and should generally fail:
-        params_r [[r]] <- structure (x, class = c ("newclass"))
-        testthat::expect_error (do.call (this_fn, params_r))
+            # new class structure which exposes 'List` structure of `data.frame`
+            # and should generally fail:
+            params_r [[r]] <- structure (x, class = c ("newclass"))
+            testthat::expect_error (do.call (this_fn, params_r))
+        } else {
+            # TODO: Implement check for all nominated classes
+        }
     }
     return (chk)
 }
 
-autotest_vector <- function (params, this_fn, quiet) {
+autotest_vector <- function (params, this_fn, classes, quiet) {
 
     chk <- TRUE
 
@@ -107,24 +114,28 @@ autotest_vector <- function (params, this_fn, quiet) {
         }
 
         # class definitions for vector columns should be ignored
-        x <- params_v [[v]]
-        class (x) <- "different"
-        params_v [[v]] <- x
-        res3 <- tryCatch (
-                          do.call (this_fn, params_v),
-                          warning = function (w) w,
-                          error = function (e) e)
-        if (methods::is (res3, "error")) {
-            chk <- FALSE
-            warning ("Function [", this_fn, "] errors on vector columns with ",
-                     "different classes when submitted as ", names (params) [v],
-                     "\n  Error message: ", res3$message)
+        if (!names (params_v) [vec_index [v]] %in% names (classes)) {
+            x <- params_v [[v]]
+            class (x) <- "different"
+            params_v [[v]] <- x
+            res3 <- tryCatch (
+                              do.call (this_fn, params_v),
+                              warning = function (w) w,
+                              error = function (e) e)
+            if (methods::is (res3, "error")) {
+                chk <- FALSE
+                warning ("Function [", this_fn, "] errors on vector columns with ",
+                         "different classes when submitted as ", names (params) [v],
+                         "\n  Error message: ", res3$message)
+            } else {
+                # TODO: Expectation - they need not be identical, because class
+                # def may be carried over to result
+                #expect_identical (res1, res3)
+            }
+            params_v <- params
         } else {
-            # TODO: Expectation - they need not be identical, because class
-            # def may be carried over to result
-            #expect_identical (res1, res3)
+            # TODO: Implement check for all nominated classes
         }
-        params_v <- params
 
         # List-columns
         x <- params_v [[v]]
