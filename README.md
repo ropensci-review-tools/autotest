@@ -143,7 +143,9 @@ list-columns.
 
 ## Prior work
 
-The
-[`great-expectations`](https://github.com/great-expectations/great_expectations)
-framework for python, described in [this medium
-article](https://medium.com/@expectgreatdata/down-with-pipeline-debt-introducing-great-expectations-862ddc46782a).
+1.  The
+    [`great-expectations`](https://github.com/great-expectations/great_expectations)
+    framework for python, described in [this medium
+    article](https://medium.com/@expectgreatdata/down-with-pipeline-debt-introducing-great-expectations-862ddc46782a).
+2.  [`QuickCheck`](https://hackage.haskell.org/package/QuickCheck) for
+    Haskell
