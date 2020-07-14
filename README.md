@@ -136,8 +136,10 @@ autotest (yaml = yaml)
 #> ✖ ExpStat
 ```
 
-And the `ExpData` function passes all tests, while the `ExpStat`
-function fail when input data are list-columns.
+And neither the `ExpData` nor the `ExpStat` function pass `autotest`
+conditions, with `ExpData` failing to specify the class of return value,
+and `ExpData` failing to appropriately `unlist` or `unnest`
+list-columns.
 
 ## Prior work
 
