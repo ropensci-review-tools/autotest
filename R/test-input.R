@@ -164,6 +164,9 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
     return (chk)
 }
 
+# Check (1) whether return values are documented at all; and (2) If so, whether
+# they describe the class or type of return object. The latter is currently only
+# crudely tested with a simple `grep([[Cc]lass|[Oo]bject)`.
 autotest_return <- function (pkg, params, this_fn) {
 
     chk <- TRUE
