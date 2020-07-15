@@ -168,6 +168,12 @@ autotest_return <- function (pkg, params, this_fn) {
 
     chk <- TRUE
 
+    null_params <- NULL
+    if (any (params == "NULL")) {
+        null_params <- params [params == "NULL"]
+        params <- params [params != "NULL"]
+    }
+
     retval <- tryCatch (
                         do.call (this_fn, params),
                         warning = function (w) w)
@@ -186,7 +192,7 @@ autotest_return <- function (pkg, params, this_fn) {
                      "yet returns a value of class [", attr (retval, "class"), "]",
                      call. = FALSE, immediate. = TRUE)
         } else {
-            chk <- grepl ("[Cc]lass", Rd_value)
+            chk <- grepl ("[Cc]lass|[Oo]bject", Rd_value)
             if (!chk)
                 warning ("Function [", this_fn, "] does not specify class of return value, ",
                          "yet returns a value of class [", attr (retval, "class"), "]",

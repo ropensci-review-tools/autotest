@@ -93,7 +93,7 @@ get_Rd_value <- function (package, fn_name) {
     tags <- vapply (xfn, function (i) attr (i, "Rd_tag"), character (1))
     val <- NULL
     if ("\\value" %in% tags) {
-        val <- unlist (x1 [[which (tags == "\\value")]])
+        val <- unlist (xfn [[which (tags == "\\value")]])
         val <- gsub ("\n", "", paste0 (val, collapse = " "))
         val <- gsub ("\\s+", " ", gsub ("^\\s", "", val))
     }
