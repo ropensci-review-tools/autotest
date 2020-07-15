@@ -4,10 +4,10 @@
 \name{autotest-package}
 \alias{autotest-package}
 \alias{_PACKAGE}
-\title{autotest: Automatic Stress Testing}
+\title{autotest: Automatic Package Testing}
 \description{
-Automatic stress testing of R packages via a simple
-    YAML schema.
+Automatic testing of R packages via a simple YAML
+    schema.
 }
 \seealso{
 Useful links:
