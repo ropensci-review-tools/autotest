@@ -27,10 +27,11 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
 
         chk1 <- autotest_rectangular (params, this_fn, classes, quiet)
         chk2 <- autotest_vector (params, this_fn, classes, quiet)
+        chk3 <- autotest_single (res$package, params, this_fn, quiet)
 
-        chk3 <- autotest_return (res$package, params, this_fn)
+        chk4 <- autotest_return (res$package, params, this_fn)
 
-        if (chk1 && chk2 && chk3)
+        if (chk1 && chk2 && chk4)
             message (cli::col_green (cli::symbol$tick, " ", this_fn))
         else
             message (cli::col_red (cli::symbol$cross), " ", cli::col_yellow (this_fn))
@@ -164,10 +165,7 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
     return (chk)
 }
 
-# Check (1) whether return values are documented at all; and (2) If so, whether
-# they describe the class or type of return object. The latter is currently only
-# crudely tested with a simple `grep([[Cc]lass|[Oo]bject)`.
-autotest_return <- function (pkg, params, this_fn) {
+autotest_single <- function (pkg, params, this_fn, quiet) {
 
     chk <- TRUE
 
@@ -177,30 +175,53 @@ autotest_return <- function (pkg, params, this_fn) {
         params <- params [params != "NULL"]
     }
 
-    retval <- tryCatch (
-                        do.call (this_fn, params),
-                        warning = function (w) w)
-    if (methods::is (retval, "warning")) {
-        cli::cli_text (cli::col_yellow ("Function [", this_fn,
-                                        "] issued a Warning: ",
-                                        retval$message))
-        retval <- suppressWarnings (do.call (this_fn, params))
-    }
+    index <- which (vapply (params, function (j)
+                            is.null (dim (j)) && length (j) == 1, logical (1)))
+    for (i in index) {
+            params_i <- params
 
-    if (!is.null (attr (retval, "class"))) {
-        Rd_value <- get_Rd_value (package = pkg, fn_name = this_fn)
-        if (is.null (Rd_value)) {
-            chk <- FALSE
-            warning ("Function [", this_fn, "] does not specify a return value, ",
-                     "yet returns a value of class [", attr (retval, "class"), "]",
-                     call. = FALSE, immediate. = TRUE)
-        } else {
-            chk <- grepl ("[Cc]lass|[Oo]bject", Rd_value)
-            if (!chk)
-                warning ("Function [", this_fn, "] does not specify class of return value, ",
-                         "yet returns a value of class [", attr (retval, "class"), "]",
-                         call. = FALSE, immediate. = TRUE)
-        }
+            res1 <- tryCatch (do.call (this_fn, params_i),
+                              warning = function (w) w)
+            warn <- FALSE
+            if (methods::is (res1, "warning")) {
+                cli::cli_text (cli::col_yellow ("function [", this_fn,
+                                                "] issued a Warning: ",
+                                                res1$message))
+                warn <- TRUE
+                res1 <- suppressWarnings (do.call (this_fn, params_i))
+            }
+
+            p_i <- params_i [[i]]
+            is_int <- FALSE
+            if (is.numeric (p_i))
+                if (p_i == round (p_i))
+                    is_int <- TRUE
+            if (!is_int)
+                is_int <- is.integer (p_i)
+
+            if (is_int) {
+                int_range <- get_int_range (this_fn, params, i)
+
+                if (!is.null (int_range)) {
+                    cli::cli_text (cli::col_yellow ("Parameter [",
+                                    names (params_i) [i],
+                                    "] responds to integer values in [",
+                                    paste0 (int_range, collapse = ", "), "]"))
+                    rd <- get_Rd_param (package = pkg,
+                                        fn_name = this_fn,
+                                        param_name = names (params_i) [i])
+                    range_in_rd <- vapply (int_range, function (j)
+                                           grepl (j, rd), logical (1))
+                    chk <- all (range_in_rd)
+                    if (chk) 
+                        message (cli::col_green (cli::symbol$tick),
+                                 cli::col_yellow (" That parameter range is documented"))
+                    else
+                        warning (cli::col_red (cli::symbol$cross),
+                                 cli::col_yellow (" That parameter range is NOT documented"))
+                } else
+                    chk <- FALSE
+            }
     }
 
     return (chk)
