@@ -120,16 +120,22 @@ autotest (yaml = yaml)
 #> ● ISLR
 #> ● SmartEDA
 #> ★ Testing functions:
+#> 
+#> ── Testing ExpData ─────────────────────────────────────────────────────────────
 #> Parameter [type] responds to integer values in [1, 2]
 #> ✔ That parameter range is documented
 #> Warning: Function [ExpData] does not specify a return value, yet returns a value
 #> of class [data.frame]
 #> ✖ ExpData
+#> 
+#> ── Testing ExpData ─────────────────────────────────────────────────────────────
 #> Parameter [type] responds to integer values in [1, 2]
 #> ✔ That parameter range is documented
 #> Warning: Function [ExpData] does not specify a return value, yet returns a value
 #> of class [data.frame]
 #> ✖ ExpData
+#> 
+#> ── Testing ExpStat ─────────────────────────────────────────────────────────────
 #> function [ExpStat] issued a Warning: Chi-squared approximation may be incorrect
 #> Warning: Function [ExpStat] errors on list-columns when submitted as X
 #>   Error message: unimplemented type 'list' in 'orderVector1'

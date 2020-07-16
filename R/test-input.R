@@ -21,6 +21,8 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
 
     for (i in seq (res$parameters)) {
         this_fn <- names (res$parameters) [i]
+        message ("\n", cli::rule (cli::col_green (paste0 ("Testing ", this_fn)),
+                                  line_col = "green"))
 
         params <- get_params (res, i, this_fn)
         classes <- res$classes [[i]]
