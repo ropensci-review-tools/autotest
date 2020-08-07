@@ -12,12 +12,13 @@ get_int_range <- function (this_fn, params, i) {
                         warning = function (w) "warning")
         if (is.null (val))
             val <- 0
-        else if (!(length (val) == 1 && (val == "error" | val == "warning")))
+        else if (is.character (val) & length (val) == 1) {
+            if (val == "error")
+                val <- 1
+            else if (val == "warning")
+                val <- 2
+        } else
             val <- 3
-        else if (val == "error")
-            val <- 1
-        else if (val == "warning")
-            val <- 2
         return (val)
     }
 
