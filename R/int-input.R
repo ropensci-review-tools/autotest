@@ -41,30 +41,38 @@ get_int_range <- function (this_fn, params, i) {
 
     params [[i]] <- .Machine$integer.max
     maxval <- get_fn_response (this_fn, params)
-    p_i <- stepdown (this_fn, params, i, maxval, step_factor = 10)
-    # then step back up factor and 10 and zoom in
-    params [[i]] <- floor (p_i * 10)
-    maxval <- get_fn_response (this_fn, params)
-    p_i_max <- stepdown (this_fn, params, i, maxval, step_factor = 2)
+    if (maxval == 3) {
+        p_i_max <- params [[i]]
+    } else {
+        p_i <- stepdown (this_fn, params, i, maxval, step_factor = 10)
+        # then step back up factor and 10 and zoom in
+        params [[i]] <- floor (p_i * 10)
+        maxval <- get_fn_response (this_fn, params)
+        p_i_max <- stepdown (this_fn, params, i, maxval, step_factor = 2)
+    }
 
     params [[i]] <- -.Machine$integer.max
     maxval <- get_fn_response (this_fn, params)
-    p_i <- stepdown (this_fn, params, i, maxval, step_factor = 10)
+    if (maxval == 3) {
+        p_i <- params [[i]]
+    } else {
+        p_i <- stepdown (this_fn, params, i, maxval, step_factor = 10)
 
-    fn_resp_is_3 <- function (this_fn, params, i, val) {
-        params [[i]] <- val
-        return (get_fn_response (this_fn, params) == 3)
-    }
+        fn_resp_is_3 <- function (this_fn, params, i, val) {
+            params [[i]] <- val
+            return (get_fn_response (this_fn, params) == 3)
+        }
 
-    if (p_i == 0) {
-        if (fn_resp_is_3 (this_fn, params, i, 0))
-            p_i <- 0
-        else if (fn_resp_is_3 (this_fn, params, i, 1))
-            p_i <- 1
-    } else { # p_i must be < 0
-        params [[i]] <- -floor (p_i * 10)
-        maxval <- get_fn_response (this_fn, params)
-        p_i <- stepdown (this_fn, params, i, maxval, step_factor = 2)
+        if (p_i == 0) {
+            if (fn_resp_is_3 (this_fn, params, i, 0))
+                p_i <- 0
+            else if (fn_resp_is_3 (this_fn, params, i, 1))
+                p_i <- 1
+        } else { # p_i must be < 0
+            params [[i]] <- -floor (p_i * 10)
+            maxval <- get_fn_response (this_fn, params)
+            p_i <- stepdown (this_fn, params, i, maxval, step_factor = 2)
+        }
     }
 
     return (c (p_i, p_i_max))
