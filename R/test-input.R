@@ -217,10 +217,14 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
                     chk <- all (range_in_rd)
                     if (chk) 
                         message (cli::col_green (cli::symbol$tick),
-                                 cli::col_yellow (" That parameter range is documented"))
+                                 cli::col_yellow (" Parameter range for ",
+                                                  names (params) [i], 
+                                                  " is documented"))
                     else
                         warning (cli::col_red (cli::symbol$cross),
-                                 cli::col_yellow (" That parameter range is NOT documented"))
+                                 cli::col_yellow (" Parameter range for ",
+                                                  names (params) [i],
+                                                  " is NOT documented"))
                 } else
                     chk <- FALSE
             }
