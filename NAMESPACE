@@ -2,4 +2,5 @@
 
 export(at_yaml_template)
 export(autotest)
+export(examples_to_yaml)
 importFrom(magrittr,"%>%")
