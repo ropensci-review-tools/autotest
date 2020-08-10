@@ -31,10 +31,10 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE) {
     # rm extraneous lines
     ret <- lapply (exs, function (i) {
                        i <- i [which (!i == "")]
-                       i [!grepl ("^#|^plot|^summary", i)] })
+                       i [!grepl ("^\\#|^plot|^summary", i)] })
     
     if (rm_seed) {
-        ret <- lapply (exs, function (i) {
+        ret <- lapply (ret, function (i) {
                            i [!grepl ("^set.seed", i)]  })
     }
 
