@@ -42,7 +42,7 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE) {
 }
 
 # convert one example from get_fn_exs to yaml output
-one_ex_to_yaml <- function (pkg, fn, x) {
+one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
 
     i1 <- paste0 (rep (" ", 4), collapse = "")
     i2 <- paste0 (rep (" ", 8), collapse = "")
@@ -82,6 +82,36 @@ one_ex_to_yaml <- function (pkg, fn, x) {
                           strsplit (i, "=") [[1]]   })
     ex <- do.call (rbind, ex)
 
+    # check whether any objects have been constructed in previous examples =
+    # previous pre-processing steps:
+    pp <- prev_preprocess (prev_fns, fn)
+    po <- prev_objects (pp)
+    if (any (po %in% ex [, 2])) {
+        # add those pre-processing steps
+        iend <- grep ("parameters:$", yaml) - 1
+        if (any (grepl ("preprocess:$", yaml))) {
+            istart <- grep ("preprocess:$", yaml)
+            prepro <- yaml [istart:iend]
+            yaml_top <- yaml [1:(istart - 1)]
+        } else {
+            prepro <- paste0 (i2, "- preprocess:")
+            yaml_top <- yaml [1:iend]
+        }
+        yaml_bot <- yaml [(iend + 1):length (yaml)]
+
+        # TODO: The following is not correct because it only grabs one line, but
+        # there may be cases with multiple lines
+        this_pp <- vapply (pp [[which (po %in% ex [, 2])]], function (i)
+                           paste0 (i3, "- '", i, "'"), character (1),
+                           USE.NAMES = FALSE)
+        this_prepro <- c (prepro [1], this_pp)
+        if (length (prepro) > 1)
+            this_prepro <- c (this_prepro, prepro [2:length (prepro)])
+
+        # stick those preprocessing lines in the yaml
+        yaml <- c (yaml_top, this_prepro, yaml_bot)
+    }
+
     # assign names to any unnamed parameters:
     if (any (is.na (ex [, 1]))) {
         other_nms <- nms [which (!nms %in% ex [, 1])]
@@ -96,4 +126,29 @@ one_ex_to_yaml <- function (pkg, fn, x) {
     }
 
     return (yaml)
+}
+
+# Get preprocessing steps from previously constructed yaml representations of
+# examples
+prev_preprocess <- function (prev_fns, fn) {
+    lapply (prev_fns, function (i)
+            yaml::yaml.load (i)$functions [[1]] [[fn]] [[1]]$preprocess)
+}
+
+get_assign_position <- function (x) {
+    index1 <- regexpr ("<-", x)
+    index2 <- regexpr ("=", x)
+    if (index1 < 0)
+        index1 <- Inf
+    if (index2 < 0)
+        index2 <- Inf
+   min (c (index1, index2))
+}
+
+# Get names of previous objects assigned by prev_preprocess steps
+prev_objects <- function (prev_preprocesses) {
+    vapply (prev_preprocesses, function (i) {
+                ap <- get_assign_position (i)
+                substring (i, 1, ap - 1)
+            }, character (1))
 }
