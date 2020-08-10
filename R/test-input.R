@@ -30,7 +30,6 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
         chk1 <- autotest_rectangular (params, this_fn, classes, quiet)
         chk2 <- autotest_vector (params, this_fn, classes, quiet)
         chk3 <- autotest_single (res$package, params, this_fn, quiet)
-
         chk4 <- autotest_return (res$package, params, this_fn)
 
         if (chk1 && chk2 && chk4)
