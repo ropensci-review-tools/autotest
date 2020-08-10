@@ -14,7 +14,8 @@ autotest_return <- function (pkg, params, this_fn) {
 
     retval <- tryCatch (
                         do.call (this_fn, params),
-                        warning = function (w) w)
+                        warning = function (w) w,
+                        error = function (e) e)
     if (methods::is (retval, "warning")) {
         cli::cli_text (cli::col_yellow ("Function [", this_fn,
                                         "] issued a Warning: ",

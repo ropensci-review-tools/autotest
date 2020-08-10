@@ -97,7 +97,8 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
         params_v <- params
 
         res1 <- tryCatch (do.call (this_fn, params_v),
-                          warning = function (w) w)
+                          warning = function (w) w,
+                          error = function (e) e)
         warn <- FALSE
         if (methods::is (res1, "warning")) {
             cli::cli_text (cli::col_yellow ("function [", this_fn,
@@ -182,7 +183,8 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
             params_i <- params
 
             res1 <- tryCatch (do.call (this_fn, params_i),
-                              warning = function (w) w)
+                              warning = function (w) w,
+                              error = function (e) e)
             warn <- FALSE
             if (methods::is (res1, "warning")) {
                 cli::cli_text (cli::col_yellow ("function [", this_fn,
