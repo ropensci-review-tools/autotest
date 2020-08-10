@@ -203,8 +203,11 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
 
             if (is_int) {
                 int_range <- get_int_range (this_fn, params, i)
-
-                if (!is.null (int_range)) {
+                if (!any (is.finite (int_range))) {
+                    cli::cli_text (cli::col_yellow ("Parameter [",
+                                    names (params_i) [i],
+                                    "] permits unrestricted integer inputs"))
+                } else if (!is.null (int_range)) {
                     cli::cli_text (cli::col_yellow ("Parameter [",
                                     names (params_i) [i],
                                     "] responds to integer values in [",

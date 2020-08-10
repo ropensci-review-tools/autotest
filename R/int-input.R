@@ -75,5 +75,10 @@ get_int_range <- function (this_fn, params, i) {
         }
     }
 
+    if (p_i == -.Machine$integer.max)
+        p_i <- -Inf
+    if (p_i_max == .Machine$integer.max)
+        p_i_max <- Inf
+
     return (c (p_i, p_i_max))
 }
