@@ -197,7 +197,7 @@ prev_objects <- function (prev_preprocesses) {
 match_brackets <- function (x) {
     br_open <- lapply (gregexpr ("\\(", x), function (i) as.integer (i))
     br_closed <- lapply (gregexpr ("\\)", x), function (i) as.integer (i))
-    br_both <- lapply (gregexpr ("\\(.+?\\)", x), function (i) as.integer (i))
+    br_both <- lapply (gregexpr ("\\((.+)?\\)", x), function (i) as.integer (i))
     for (i in seq (x)) {
         if (any (br_both [[i]] > 0)) {
             index <- which (br_open [[i]] == br_both [[i]])
@@ -227,5 +227,5 @@ match_brackets <- function (x) {
                 x [(br_closed [i] + 1):length (x)])
     }
     
-    x <- gsub ("\\s+", " ", x)
+    gsub ("\\s+", " ", x)
 }
