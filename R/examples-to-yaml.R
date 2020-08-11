@@ -51,7 +51,9 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
     fn_calls <- do.call (c, lapply (fns, function (i) grep (i, ex)))
     fn_calls <- sort (unique (fn_calls))
     # reduce to only final calls in a sequence
-    fn_calls <- fn_calls [-(which (c (2, diff (fn_calls)) == 1) - 1)]
+    index <- which (c (2, diff (fn_calls)) == 1)
+    if (length (index) > 0)
+        fn_calls <- fn_calls [-(index - 1)]
     # remove any plot or summary calls
     index <- grepl ("^plot|^summary", ex [fn_calls])
     if (any (index))
