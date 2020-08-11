@@ -1,9 +1,10 @@
 
 # extracts the i-th list of complete parameters from the result of a parsed yaml
 get_params <- function (res, i, this_fn) {
-    p <- unlist (res$parameters [[i]])
-    p_keys <- names (p)
-    p_vals <- unname (p)
+    p <- res$parameters [[i]]
+    p_keys <- vapply (p, function (i) names (i), character (1))
+    # vals as list to allow different types of data
+    p_vals <- lapply (p, function (i) i [[1]])
 
     . <- NULL # suppress no visible binding note
     pre <- res$preprocess [[i]]
@@ -16,9 +17,9 @@ get_params <- function (res, i, this_fn) {
 
     params <- list ()
     for (p in seq (p_keys)) {
-        this_val <- p_vals [p]
+        this_val <- p_vals [[p]]
         if (grepl ("::", this_val)) {
-            this_pkg <- strsplit (p_vals [p], "::") [[1]] [1]
+            this_pkg <- strsplit (p_vals [[p]], "::") [[1]] [1]
             if (!this_pkg %in% search ())
                 suppressMessages (
                     library (this_pkg, character.only = TRUE)
