@@ -11,6 +11,8 @@ examples_to_yaml <- function (package = NULL) {
 get_fn_exs <- function (pkg, fn, rm_seed = TRUE) {
     ex <- example (eval (substitute (fn)), package = pkg,
                    character.only = TRUE, give.lines = TRUE)
+    if (length (ex) == 0)
+        return (NULL)
 
     ex <- ex [-(1:grep ("^### \\*\\* Examples", ex))]
     if (ex [1] == "")
