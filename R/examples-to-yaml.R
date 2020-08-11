@@ -10,6 +10,12 @@ examples_to_yaml <- function (package = NULL) {
         suppressMessages (
                           library (package, character.only = TRUE)
         )
+
+    exs <- get_all_examples (package)
+}
+
+get_all_examples <- function (package) {
+
     h <- utils::help (package = eval (substitute (package)), help_type = "text")
     # first info is description stuff;
     # second info is help files;
@@ -19,10 +25,17 @@ examples_to_yaml <- function (package = NULL) {
 
     exs <- list ()
     for (i in seq (fns)) {
-        exs [[length (exs) + 1]] <- get_fn_exs (package, fn = fns [i])
+        fn <- fns [i]
+        exi <- get_fn_exs (package, fn)
+        if (!is.null (exi)) {
+            exs [[length (exs) + 1]] <- exi
+            names (exs) [length (exs)] <- fns [i]
+        }
     }
+
     not_null <- vapply (exs, function (i) length (i) > 0, logical (1))
-    exs <- exs [not_null]
+
+    return (exs [not_null])
 }
 
 get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
@@ -202,11 +215,15 @@ match_brackets <- function (x) {
     br_closed <- lapply (gregexpr ("\\)", x), function (i) as.integer (i))
     br_both <- lapply (gregexpr ("\\((.+)?\\)", x), function (i) as.integer (i))
     for (i in seq (x)) {
-        if (any (br_both [[i]] > 0)) {
+        while (any (br_both [[i]] > 0)) {
             index <- which (br_open [[i]] == br_both [[i]])
             index2 <- which (br_closed [[i]] > br_open [[i]] [index]) [1]
             br_closed [[i]] <- br_closed [[i]] [-index2]
             br_open [[i]] <- br_open [[i]] [-index]
+            br_both [[i]] <- br_both [[i]] [-1]
+
+            if (length (br_open [[i]]) > 0 & length (br_closed [[i]]) > 0)
+                br_both [[i]] <- br_open [[i]] [1]
         }
     }
     br_open <- which (vapply (br_open, function (i) {
