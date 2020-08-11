@@ -6,9 +6,26 @@
 #' @param package Name of package for which 'yaml' is to be generated.
 #' @export
 examples_to_yaml <- function (package = NULL) {
+    if (!package %in% search ())
+        suppressMessages (
+                          library (package, character.only = TRUE)
+        )
+    h <- help (package = eval (substitute (package)), help_type = "text")
+    # first info is description stuff;
+    # second info is help files;
+    # third info is vignettes
+    fns <- h$info [[2]]
+    fns <- gsub ("\\s.*", "", fns [which (!grepl ("^\\s", fns))])
+
+    exs <- list ()
+    for (i in seq (fns)) {
+        exs [[length (exs) + 1]] <- get_fn_exs (package, fn = fns [i])
+    }
+    not_null <- vapply (exs, function (i) length (i) > 0, logical (1))
+    exs <- exs [not_null]
 }
 
-get_fn_exs <- function (pkg, fn, rm_seed = TRUE) {
+get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
     ex <- example (eval (substitute (fn)), package = pkg,
                    character.only = TRUE, give.lines = TRUE)
     if (length (ex) == 0)
@@ -18,6 +35,17 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE) {
     if (ex [1] == "")
         ex <- ex [-1]
 
+    if (exclude_not_run) {
+        nr <- grep ("^## Not run:", ex)
+        if (length (nr) > 0) {
+            nr_end <- grep ("^## End\\(Not run\\)", ex)
+            ex <- ex [-(nr:nr_end)]
+        }
+    }
+
+    ex <- ex [!grepl ("^\\#", ex)]
+    ex <- ex [ex != ""]
+
     # find all points of function calls:
     fns <- ls (paste0 ("package:", pkg))
     fn_calls <- do.call (c, lapply (fns, function (i) grep (i, ex)))
@@ -25,7 +53,9 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE) {
     # reduce to only final calls in a sequence
     fn_calls <- fn_calls [-(which (c (2, diff (fn_calls)) == 1) - 1)]
     # remove any plot or summary calls
-    fn_calls <- fn_calls [-grep ("^plot|^summary", ex [fn_calls])]
+    index <- grepl ("^plot|^summary", ex [fn_calls])
+    if (any (index))
+        fn_calls <- fn_calls [-(which (index))]
 
     if (length (fn_calls) == 0)
         return (NULL)
