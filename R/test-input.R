@@ -25,6 +25,7 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
                                   line_col = "green"))
 
         params <- get_params (res, i, this_fn)
+        params <- params [which (!params == "NULL")]
         classes <- res$classes [[i]]
 
         chk1 <- autotest_rectangular (params, this_fn, classes, quiet)
