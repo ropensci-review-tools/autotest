@@ -46,6 +46,8 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
     ex <- ex [!grepl ("^\\#", ex)]
     ex <- ex [ex != ""]
 
+    ex <- match_brackets (ex)
+
     # find all points of function calls:
     fns <- ls (paste0 ("package:", pkg))
     fn_calls <- do.call (c, lapply (fns, function (i) grep (i, ex)))
@@ -188,4 +190,41 @@ prev_objects <- function (prev_preprocesses) {
                 ap <- get_assign_position (i)
                 substring (i, 1, ap - 1)
             }, character (1))
+}
+
+# merge multi-line expressions to single line:
+match_brackets <- function (x) {
+    br_open <- lapply (gregexpr ("\\(", x), function (i) as.integer (i))
+    br_closed <- lapply (gregexpr ("\\)", x), function (i) as.integer (i))
+    br_both <- lapply (gregexpr ("\\(.+?\\)", x), function (i) as.integer (i))
+    for (i in seq (x)) {
+        if (any (br_both [[i]] > 0)) {
+            index <- which (br_open [[i]] == br_both [[i]])
+            index2 <- which (br_closed [[i]] > br_open [[i]] [index]) [1]
+            br_closed [[i]] <- br_closed [[i]] [-index2]
+            br_open [[i]] <- br_open [[i]] [-index]
+        }
+    }
+    br_open <- which (vapply (br_open, function (i) {
+                           if (length (i) == 0)
+                               return (FALSE)
+                           else
+                               return (i > 0) },
+                           logical (1)))
+    br_closed <- which (vapply (br_closed, function (i) {
+                           if (length (i) == 0)
+                               return (FALSE)
+                           else
+                               return (i > 0) },
+                           logical (1)))
+
+    br_open <- rev (br_open)
+    br_closed <- rev (br_closed)
+    for (i in seq (br_open)) {
+        x <- c (x [seq (br_open [i] - 1)],
+                paste0 (x [br_open [i]:br_closed [i]], collapse = " "),
+                x [(br_closed [i] + 1):length (x)])
+    }
+    
+    x <- gsub ("\\s+", " ", x)
 }
