@@ -25,6 +25,9 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE) {
     # remove any plot or summary calls
     fn_calls <- fn_calls [-grep ("^plot|^summary", ex [fn_calls])]
 
+    if (length (fn_calls) == 0)
+        return (NULL)
+
     index <- rep (seq (length (fn_calls)),
                   times = c (fn_calls [1], diff (fn_calls)))
     exs <- split (ex [seq (length (index))], f = as.factor (index))
