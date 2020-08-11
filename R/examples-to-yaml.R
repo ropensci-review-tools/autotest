@@ -89,13 +89,12 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     i2 <- paste0 (rep (" ", 8), collapse = "")
     i3 <- paste0 (rep (" ", 12), collapse = "")
 
-    fns <- ls (paste0 ("package:", pkg))
-    fn_calls <- do.call (c, lapply (fns, function (i) grep (i, x)))
-    fn_calls <- sort (unique (fn_calls))
 
     yaml <- c (paste0 ("package: ", pkg),
                "functions:",
                paste0 (i1, "- ", fn, ":"))
+
+    fn_calls <- grep (fn, x)
 
     if (fn_calls [1] > 1) {
         yaml <- c (yaml,
