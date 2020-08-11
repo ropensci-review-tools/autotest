@@ -79,7 +79,10 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
                            i [!grepl ("^set.seed", i)]  })
     }
 
-    return (ret)
+    # rm any example items which do not call the actual function
+    index <- vapply (ret, function (i) any (grepl (fn, i)), logical (1))
+
+    return (ret [index])
 }
 
 # convert one example from get_fn_exs to yaml output
