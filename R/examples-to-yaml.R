@@ -111,6 +111,8 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
                paste0 (i1, "- ", fn, ":"))
 
     fn_calls <- grep (fn, x)
+    # rm all lines after final fn_calls
+    x <- x [1:max (fn_calls)]
 
     if (fn_calls [1] > 1) {
         yaml <- c (yaml,
@@ -119,8 +121,6 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
             yaml <- c (yaml,
                        paste0 (i3, "- '", i, "'"))
     }
-    yaml <- c (yaml,
-               paste0 (i2, "- parameters:"))
 
     # get fn formals:
     pkg_env <- as.environment (paste0 ("package:", pkg))
@@ -129,56 +129,68 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
 
     # capture content between parentheses:
     x <- x [fn_calls [1]:length (x)]
-    ex <- regmatches (x, gregexpr("(?=\\().*?(?<=\\))", x, perl=T)) [[1]]
-    ex <- strsplit (substr (ex, 2, nchar (ex) - 1), ",") [[1]]
+    # remove comments at end of lines:
+    x <- gsub ("\\s$", "", gsub ("\\#.*", "", x))
+
+    ex <- regmatches (x, gregexpr("(?=\\().*?(?<=\\))$", x, perl=T))
+    ex <- lapply (ex, function (i) strsplit (substr (i, 2, nchar (i) - 1), ",") [[1]])
     ex <- lapply (ex, function (i) {
-                      if (!grepl ("=", i))
-                          c (NA_character_, i)
-                      else
-                          strsplit (i, "=") [[1]]   })
-    ex <- do.call (rbind, ex)
+                      res <- lapply (i, function (j) {
+                                         if (!grepl ("=", j))
+                                             c (NA_character_, j)
+                                         else
+                                             strsplit (j, "=") [[1]]   })
+                      do.call (rbind, res)  })
 
     # check whether any objects have been constructed in previous examples =
     # previous pre-processing steps:
     pp <- prev_preprocess (prev_fns, fn)
     po <- prev_objects (pp)
-    if (any (po %in% ex [, 2])) {
-        # add those pre-processing steps
-        iend <- grep ("parameters:$", yaml) - 1
-        if (any (grepl ("preprocess:$", yaml))) {
-            istart <- grep ("preprocess:$", yaml)
-            prepro <- yaml [istart:iend]
-            yaml_top <- yaml [1:(istart - 1)]
-        } else {
-            prepro <- paste0 (i2, "- preprocess:")
-            yaml_top <- yaml [1:iend]
+    for (i in seq (ex)) {
+        if (any (po %in% ex [[i]] [, 2])) {
+            # add those pre-processing steps
+            #iend <- grep ("parameters:$", yaml) - 1
+            iend <- length (yaml)
+            if (any (grepl ("preprocess:$", yaml))) {
+                istart <- grep ("preprocess:$", yaml)
+                prepro <- yaml [istart:iend]
+                yaml_top <- yaml [1:(istart - 1)]
+            } else {
+                prepro <- paste0 (i2, "- preprocess:")
+                yaml_top <- yaml [1:iend]
+            }
+
+            # TODO: The following is not correct because it only grabs one line, but
+            # there may be cases with multiple lines
+            this_pp <- vapply (pp [[which (po %in% ex [, 2])]], function (i)
+                               paste0 (i3, "- '", i, "'"), character (1),
+                               USE.NAMES = FALSE)
+            this_prepro <- c (prepro [1], this_pp)
+            if (length (prepro) > 1)
+                this_prepro <- c (this_prepro, prepro [2:length (prepro)])
+
+            # stick those preprocessing lines in the yaml
+            yaml <- c (yaml_top, this_prepro)
         }
-        yaml_bot <- yaml [(iend + 1):length (yaml)]
-
-        # TODO: The following is not correct because it only grabs one line, but
-        # there may be cases with multiple lines
-        this_pp <- vapply (pp [[which (po %in% ex [, 2])]], function (i)
-                           paste0 (i3, "- '", i, "'"), character (1),
-                           USE.NAMES = FALSE)
-        this_prepro <- c (prepro [1], this_pp)
-        if (length (prepro) > 1)
-            this_prepro <- c (this_prepro, prepro [2:length (prepro)])
-
-        # stick those preprocessing lines in the yaml
-        yaml <- c (yaml_top, this_prepro, yaml_bot)
     }
 
     # assign names to any unnamed parameters:
-    if (any (is.na (ex [, 1]))) {
-        other_nms <- nms [which (!nms %in% ex [, 1])]
-        index <- which (is.na (ex [, 1]))
-        ex [index, 1] <- other_nms [seq (index)]
+    for (i in seq (ex)) {
+        if (any (is.na (ex [[i]] [, 1]))) {
+            other_nms <- nms [which (!nms %in% ex [[i]] [, 1])]
+            index <- which (is.na (ex [[i]] [, 1]))
+            ex [[i]] [index, 1] <- other_nms [seq (index)]
+        }
     }
 
     # add to parameters list of yaml:
-    for (i in seq (nrow (ex))) {
+    for (i in seq (ex)) {
         yaml <- c (yaml,
-                   paste0 (i3, "- ", ex [i, 1], ": ", ex [i, 2]))
+                   paste0 (i2, "- parameters:"))
+        for (j in seq (nrow (ex [[i]]))) {
+            yaml <- c (yaml,
+                       paste0 (i3, "- ", ex [[i]] [j, 1], ": ", ex [[i]] [j, 2]))
+        }
     }
 
     return (yaml)

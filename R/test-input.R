@@ -14,7 +14,17 @@
 #' @export
 autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
 
-    res <- parse_yaml_template (yaml = yaml, filename = filename)
+    nfns <- length (grep ("- parameters:$", yaml))
+    for (n in seq (nfns))
+        test_one_params (yaml = yaml, filename = filename, fn_num = n,
+                         quiet = quiet)
+
+}
+
+# a yaml may have multiple function calls, each delineated as a new set of
+# `parameters`. This function calls one of those:
+test_one_params <- function (yaml, filename, fn_num = 1, quiet = FALSE) {
+    res <- parse_yaml_template (yaml = yaml, filename = filename, fn_num = fn_num)
 
     if (!quiet)
         message (cli::col_green (cli::symbol$star, " Testing functions:"))

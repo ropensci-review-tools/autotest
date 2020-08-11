@@ -1,5 +1,6 @@
 
-parse_yaml_template <- function (yaml = NULL, filename = NULL) {
+parse_yaml_template <- function (yaml = NULL, filename = NULL,
+                                 fn_num = 1) {
     if (is.null (yaml) & is.null (filename)) {
         stop ("either yaml or filename must be given")
     } else if (!is.null (filename))
@@ -33,7 +34,7 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
         nms <- vapply (i, function (i) names (i), character (1))
 
         parameters [[length (parameters) + 1]] <-
-            i [[which (nms == "parameters")]]$parameters
+            i [[which (nms == "parameters") [fn_num] ]]$parameters
 
         if ("preprocess" %in% nms)
             preprocess [[length (preprocess) + 1]] <-
