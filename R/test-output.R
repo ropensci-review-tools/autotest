@@ -28,13 +28,15 @@ autotest_return <- function (pkg, params, this_fn) {
         if (is.null (Rd_value)) {
             chk <- FALSE
             warning ("Function [", this_fn, "] does not specify a return value, ",
-                     "yet returns a value of class [", attr (retval, "class"), "]",
+                     "yet returns a value of class [",
+                     paste0 (attr (retval, "class"), collapse = ", "), "]",
                      call. = FALSE, immediate. = TRUE)
         } else {
             chk <- grepl ("[Cc]lass|[Oo]bject", Rd_value)
             if (!chk)
                 warning ("Function [", this_fn, "] does not specify class of return value, ",
-                         "yet returns a value of class [", attr (retval, "class"), "]",
+                         "yet returns a value of class [",
+                         paste0 (attr (retval, "class"), collapse = ", "), "]",
                          call. = FALSE, immediate. = TRUE)
         }
     }
