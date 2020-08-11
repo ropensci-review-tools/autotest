@@ -48,6 +48,7 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
     ex <- ex [ex != ""]
 
     ex <- match_brackets (ex)
+    ex <- merge_piped_lines (ex)
 
     # find all points of function calls:
     fns <- ls (paste0 ("package:", pkg))
@@ -228,4 +229,14 @@ match_brackets <- function (x) {
     }
     
     gsub ("\\s+", " ", x)
+}
+
+merge_piped_lines <- function (x) {
+    x <- gsub ("\\s$", "", x)
+    index <- rev (grep ("%>%$", x))
+    for (i in index) {
+        x [i] <- gsub ("\\s+", " ", paste0 (x [i:(i+1)], collapse = " "))
+        x <- x [-(i + 1)]
+    }
+    return (x)
 }
