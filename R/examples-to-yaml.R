@@ -10,7 +10,7 @@ examples_to_yaml <- function (package = NULL) {
         suppressMessages (
                           library (package, character.only = TRUE)
         )
-    h <- help (package = eval (substitute (package)), help_type = "text")
+    h <- utils::help (package = eval (substitute (package)), help_type = "text")
     # first info is description stuff;
     # second info is help files;
     # third info is vignettes
@@ -26,8 +26,8 @@ examples_to_yaml <- function (package = NULL) {
 }
 
 get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
-    ex <- example (eval (substitute (fn)), package = pkg,
-                   character.only = TRUE, give.lines = TRUE)
+    ex <- utils::example (eval (substitute (fn)), package = pkg,
+                          character.only = TRUE, give.lines = TRUE)
     if (length (ex) == 0)
         return (NULL)
 

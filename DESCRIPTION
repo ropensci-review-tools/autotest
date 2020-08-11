@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.0.1.079
+Version: 0.0.1.080
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -17,14 +17,14 @@ Imports:
     here,
     magrittr,
     methods,
-    testthat,
     tibble,
     yaml
 Suggests: 
     ISLR,
     knitr,
     rmarkdown,
-    SmartEDA
+    SmartEDA,
+    testthat
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
