@@ -34,7 +34,7 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL,
         nms <- vapply (i, function (i) names (i), character (1))
 
         parameters [[length (parameters) + 1]] <-
-            i [[which (nms == "parameters") [fn_num] ]]$parameters
+            i [[which (nms == "parameters") [1] ]]$parameters
 
         if ("preprocess" %in% nms)
             preprocess [[length (preprocess) + 1]] <-
