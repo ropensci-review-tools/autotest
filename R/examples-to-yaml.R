@@ -31,7 +31,6 @@ get_all_examples <- function (package) {
     exs <- list ()
     for (i in seq (fns)) {
         fn <- fns [i]
-        message ("fn[", i, "] = ", fn)
         exi <- get_fn_exs (package, fn)
         if (!is.null (exi)) {
             exs [[length (exs) + 1]] <- exi
@@ -253,13 +252,13 @@ match_brackets <- function (x) {
                            if (length (i) == 0)
                                return (FALSE)
                            else
-                               return (i > 0) },
+                               return (all (i > 0)) },
                            logical (1)))
     br_closed <- which (vapply (br_closed, function (i) {
                            if (length (i) == 0)
                                return (FALSE)
                            else
-                               return (i > 0) },
+                               return (all (i > 0)) },
                            logical (1)))
 
     br_open <- rev (br_open)
