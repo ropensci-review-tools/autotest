@@ -1,6 +1,6 @@
 
-parse_yaml_template <- function (yaml = NULL, filename = NULL,
-                                 fn_num = 1) {
+parse_yaml_template <- function (yaml = NULL, filename = NULL) {
+
     if (is.null (yaml) & is.null (filename)) {
         stop ("either yaml or filename must be given")
     } else if (!is.null (filename))
