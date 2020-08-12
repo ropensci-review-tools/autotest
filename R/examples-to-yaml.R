@@ -22,10 +22,16 @@ get_all_examples <- function (package) {
     # third info is vignettes
     fns <- h$info [[2]]
     fns <- gsub ("\\s.*", "", fns [which (!grepl ("^\\s", fns))])
+    # reduce only to exported functions, methods, or data sets
+    fns <- fns [fns %in% ls (paste0 ("package:", package))]
+    # Then reduce only to functions:
+    fn_classes <- vapply (fns, function (i) class (get (i)), character (1))
+    fns <- fns [which (fn_classes == "function")]
 
     exs <- list ()
     for (i in seq (fns)) {
         fn <- fns [i]
+        message ("fn[", i, "] = ", fn)
         exi <- get_fn_exs (package, fn)
         if (!is.null (exi)) {
             exs [[length (exs) + 1]] <- exi
@@ -183,9 +189,14 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
         }
     }
 
-    # add to parameters list of yaml:
+    # add to parameters list of yaml, duplicating fn name and preprocessing
+    # stages each time:
+    fn_start <- grep (fn, yaml)
+    pre <- yaml [fn_start:length (yaml)]
+    yaml <- yaml [1:(fn_start - 1)]
     for (i in seq (ex)) {
         yaml <- c (yaml,
+                   pre,
                    paste0 (i2, "- parameters:"))
         for (j in seq (nrow (ex [[i]]))) {
             yaml <- c (yaml,
@@ -253,7 +264,7 @@ match_brackets <- function (x) {
 
     br_open <- rev (br_open)
     br_closed <- rev (br_closed)
-    for (i in seq (br_open)) {
+    for (i in seq_along (br_open)) {
         x <- c (x [seq (br_open [i] - 1)],
                 paste0 (x [br_open [i]:br_closed [i]], collapse = " "),
                 x [(br_closed [i] + 1):length (x)])
