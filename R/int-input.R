@@ -7,7 +7,9 @@ get_int_range <- function (this_fn, params, i) {
     #        3 if fn call silently returns
     get_fn_response <- function (this_fn, params) {
         val <- tryCatch (
-                        do.call (this_fn, params),
+                         capture.output (
+                                         do.call (this_fn, params)
+                                         ),
                         error = function (e) "error",
                         warning = function (w) "warning")
         if (is.null (val))
