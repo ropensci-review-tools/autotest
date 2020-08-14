@@ -61,12 +61,13 @@ get_params <- function (res, i, this_fn) {
                 else
                     return (i)
             })
-    pars <- pars [which (!names (pars) %in% names (params))]
+    pars <- pars [which (!nms %in% names (params))]
+    nms <- nms [which (!nms %in% names (params))]
     # That can then be used to check that any with non-default values have been
     # provided:
     if (any (pars == "MISSING")) {
         no_defaults <- nms [which (pars == "MISSING")]
-        no_defaults <- no_defaults [which (!no_defaults %in% names (params))]
+        no_defaults <- no_defaults [which (no_defaults %in% names (params))]
         if (length (no_defaults) > 0)
             stop ("function includes the following parameters which require ",
                   "non-default values:\n   [", paste0 (no_defaults, collapse = ", "),
