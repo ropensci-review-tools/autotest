@@ -25,7 +25,7 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
                                   line_col = "green"))
 
         params <- get_params (res, i, this_fn)
-        params <- params [which (!params == "NULL")]
+        params <- params [which (params != "NULL")]
         classes <- res$classes [[i]]
 
         chk1 <- autotest_rectangular (params, this_fn, classes, quiet)
@@ -227,7 +227,7 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
         params <- params [params != "NULL"]
     }
 
-    res1 <- tryCatch (do.call (this_fn, params_i),
+    res1 <- tryCatch (do.call (this_fn, params),
                       warning = function (w) w,
                       error = function (e) e)
     warn <- FALSE
@@ -236,7 +236,7 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
                                         "] issued a Warning: ",
                                         res1$message))
         warn <- TRUE
-        res1 <- suppressWarnings (do.call (this_fn, params_i))
+        res1 <- suppressWarnings (do.call (this_fn, params))
     }
 
     index <- which (vapply (params, function (j)
