@@ -227,22 +227,22 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
         params <- params [params != "NULL"]
     }
 
+    res1 <- tryCatch (do.call (this_fn, params_i),
+                      warning = function (w) w,
+                      error = function (e) e)
+    warn <- FALSE
+    if (methods::is (res1, "warning")) {
+        cli::cli_text (cli::col_yellow ("function [", this_fn,
+                                        "] issued a Warning: ",
+                                        res1$message))
+        warn <- TRUE
+        res1 <- suppressWarnings (do.call (this_fn, params_i))
+    }
+
     index <- which (vapply (params, function (j)
                             is.null (dim (j)) && length (j) == 1, logical (1)))
     for (i in index) {
             params_i <- params
-
-            res1 <- tryCatch (do.call (this_fn, params_i),
-                              warning = function (w) w,
-                              error = function (e) e)
-            warn <- FALSE
-            if (methods::is (res1, "warning")) {
-                cli::cli_text (cli::col_yellow ("function [", this_fn,
-                                                "] issued a Warning: ",
-                                                res1$message))
-                warn <- TRUE
-                res1 <- suppressWarnings (do.call (this_fn, params_i))
-            }
 
             p_i <- params_i [[i]]
             is_int <- FALSE
