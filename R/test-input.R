@@ -245,19 +245,25 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
             params_i <- params
 
             p_i <- params_i [[i]]
-            is_int <- FALSE
-            if (is.numeric (p_i))
-                if (p_i == round (p_i))
-                    is_int <- TRUE
-            if (!is_int)
-                is_int <- is.integer (p_i)
-
-            if (is_int) {
+            if (is_int (p_i)) {
                 chk <- test_single_int (pkg, this_fn, params_i, i)
             }
     }
 
     return (chk)
+}
+
+is_int <- function (p) {
+
+    p_is_int <- FALSE
+
+    if (is.numeric (p))
+        if (p == round (p))
+            p_is_int <- TRUE
+    if (!p_is_int)
+        p_is_int <- is.integer (p)
+
+    return (p_is_int)
 }
 
 test_single_int <- function (pkg, this_fn, params, i) {
