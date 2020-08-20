@@ -247,58 +247,10 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
             p_i <- params_i [[i]]
             if (is_int (p_i)) {
                 chk <- test_single_int (pkg, this_fn, params_i, i)
+            } else if (is.character (p_i)) {
+                #chk <- test_single_char (pkg, this_fn, params_i, i)
             }
     }
-
-    return (chk)
-}
-
-is_int <- function (p) {
-
-    p_is_int <- FALSE
-
-    if (is.numeric (p))
-        if (p == round (p))
-            p_is_int <- TRUE
-    if (!p_is_int)
-        p_is_int <- is.integer (p)
-
-    return (p_is_int)
-}
-
-test_single_int <- function (pkg, this_fn, params, i) {
-
-    chk <- TRUE
-
-    int_range <- get_int_range (this_fn, params, i)
-
-    if (!any (is.finite (int_range))) {
-        cli::cli_text (cli::col_yellow ("Parameter [",
-                                        names (params) [i],
-                                        "] permits unrestricted integer inputs"))
-    } else if (!is.null (int_range)) {
-        cli::cli_text (cli::col_yellow ("Parameter [",
-                                        names (params) [i],
-                                        "] responds to integer values in [",
-                                        paste0 (int_range, collapse = ", "), "]"))
-        rd <- get_Rd_param (package = pkg,
-                            fn_name = this_fn,
-                            param_name = names (params) [i])
-        range_in_rd <- vapply (int_range, function (j)
-                               grepl (j, rd), logical (1))
-        chk <- all (range_in_rd)
-        if (chk) 
-            message (cli::col_green (cli::symbol$tick),
-                     cli::col_yellow (" Parameter range for ",
-                                      names (params) [i], 
-                                      " is documented"))
-        else
-            warning (cli::col_red (cli::symbol$cross),
-                     cli::col_yellow (" Parameter range for ",
-                                      names (params) [i],
-                                      " is NOT documented"))
-    } else
-        chk <- FALSE
 
     return (chk)
 }
