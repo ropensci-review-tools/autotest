@@ -1,4 +1,6 @@
 
+get_Rd_metadata <- utils::getFromNamespace (".Rd_get_metadata", "tools")
+
 test_single_char <- function (pkg, this_fn, params, i) {
 
     h <- tools::Rd_db (package = pkg)
@@ -13,7 +15,8 @@ test_single_char <- function (pkg, this_fn, params, i) {
     # descriptions, because `parse_exprs` converts all quoted items into list
     # items, leaving no direct way of identifying which items may have been
     # quoted.
-    a <- rlang::parse_exprs (tools:::.Rd_get_metadata (h, "arguments"))
+    #a <- rlang::parse_exprs (tools:::.Rd_get_metadata (h, "arguments"))
+    a <- rlang::parse_exprs (get_Rd_metadata (h, "arguments"))
     ## also .Rd_get_metadata ("title", "name", "description", "value", ...)
     arg_names <- unlist (lapply (a, function (i) eval (i) [[1]] [[1]]))
     arg_descs <- lapply (a, function (i) unlist (eval (i) [[2]]))
