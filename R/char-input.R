@@ -8,13 +8,19 @@ test_single_char <- function (pkg, this_fn, params, i) {
     }
     h <- h [[1]]
 
-    # this does not work, because `parse_exprs` converts all quoted items into
-    # list items, leaving no direct way of identifying which items may have been
+    # The following lines are used just to test whether params[[i]] corresponds
+    # to a formula input. They can't be used to parse general parameter
+    # descriptions, because `parse_exprs` converts all quoted items into list
+    # items, leaving no direct way of identifying which items may have been
     # quoted.
-    #a <- rlang::parse_exprs (tools:::.Rd_get_metadata (h, "arguments"))
+    a <- rlang::parse_exprs (tools:::.Rd_get_metadata (h, "arguments"))
     ## also .Rd_get_metadata ("title", "name", "description", "value", ...)
-    #arg_names <- unlist (lapply (a, function (i) eval (i) [[1]] [[1]]))
-    #arg_descs <- lapply (a, function (i) unlist (eval (i) [[2]]))
+    arg_names <- unlist (lapply (a, function (i) eval (i) [[1]] [[1]]))
+    arg_descs <- lapply (a, function (i) unlist (eval (i) [[2]]))
+    arg_name <- arg_names [i]
+    arg_desc <- arg_descs [i]
+    if (grepl ("~", params [[i]]) | any (grepl ("formula", arg_desc)))
+        return (TRUE) # do not test formulas
 
     # regex the actual string to extract all item descriptions. These are formatted
     # "\\item { <name> } { <description> }
