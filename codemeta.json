@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/mpadge/autotest",
   "issueTracker": "https://github.com/mpadge/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.1.097",
+  "version": "0.0.1.98",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -40,100 +40,49 @@
     {
       "@type": "SoftwareApplication",
       "identifier": "ISLR",
-      "name": "ISLR",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=ISLR"
+      "name": "ISLR"
     },
     {
       "@type": "SoftwareApplication",
       "identifier": "knitr",
-      "name": "knitr",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=knitr"
+      "name": "knitr"
     },
     {
       "@type": "SoftwareApplication",
       "identifier": "rmarkdown",
-      "name": "rmarkdown",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=rmarkdown"
+      "name": "rmarkdown"
     },
     {
       "@type": "SoftwareApplication",
       "identifier": "SmartEDA",
-      "name": "SmartEDA",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=SmartEDA"
+      "name": "SmartEDA"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "testthat",
+      "name": "testthat"
     }
   ],
   "softwareRequirements": [
     {
       "@type": "SoftwareApplication",
       "identifier": "cli",
-      "name": "cli",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=cli"
+      "name": "cli"
     },
     {
       "@type": "SoftwareApplication",
       "identifier": "data.table",
-      "name": "data.table",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=data.table"
+      "name": "data.table"
     },
     {
       "@type": "SoftwareApplication",
       "identifier": "here",
-      "name": "here",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=here"
+      "name": "here"
     },
     {
       "@type": "SoftwareApplication",
       "identifier": "magrittr",
-      "name": "magrittr",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=magrittr"
+      "name": "magrittr"
     },
     {
       "@type": "SoftwareApplication",
@@ -142,43 +91,21 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "testthat",
-      "name": "testthat",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=testthat"
+      "identifier": "rlang",
+      "name": "rlang"
     },
     {
       "@type": "SoftwareApplication",
       "identifier": "tibble",
-      "name": "tibble",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=tibble"
+      "name": "tibble"
     },
     {
       "@type": "SoftwareApplication",
       "identifier": "yaml",
-      "name": "yaml",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=yaml"
+      "name": "yaml"
     }
   ],
-  "fileSize": "54.816KB",
+  "fileSize": "72.11KB",
   "contIntegration": "https://codecov.io/gh/mpadge/autotest",
-  "developmentStatus": "https://www.repostatus.org/#concept",
-  "readme": "https://github.com/mpadge/autotest/blob/master/README.md"
+  "developmentStatus": "https://www.repostatus.org/#concept"
 }
