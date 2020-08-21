@@ -249,6 +249,8 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
                 chk <- test_single_int (pkg, this_fn, params_i, i)
             } else if (is.character (p_i)) {
                 chk <- test_single_char (pkg, this_fn, params_i, i)
+            } else if (is.logical (p_i)) {
+                chk <- test_single_logical (pkg, this_fn, params_i, i)
             }
     }
 
