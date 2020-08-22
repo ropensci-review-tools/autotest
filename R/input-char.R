@@ -3,12 +3,30 @@ get_Rd_metadata <- utils::getFromNamespace (".Rd_get_metadata", "tools")
 
 test_single_char <- function (pkg, this_fn, params, i) {
 
+    chk <- TRUE
+
     h <- tools::Rd_db (package = pkg)
     h <- h [grep (paste0 ("^", this_fn, "\\.Rd$"), names (h))]
     if (length (h) != 1) {
         stop ("No single help topic for [", this_fn, "] found")
     }
     h <- h [[1]]
+
+    get1 <- function (val) {
+        params [[i]] <- val
+        tryCatch (
+                  utils::capture.output (do.call (this_fn, params)),
+                  error = function (e) e,
+                  warning = function (w) w)
+    }
+    val0 <- get1 (params [[i]])
+    val1 <- get1 (rep (params [[i]], 2))
+    if (!(any (methods::is (val1, "error")) | methods::is (val1, "warning"))) {
+        message ("Parameter ", names (params) [i], " of function [",
+                 this_fn, "] is assumed to a formula, ",
+                 "but responds to vectors of length > 1")
+        chk <- FALSE
+    }
 
     # The following lines are used just to test whether params[[i]] corresponds
     # to a formula input. They can't be used to parse general parameter
@@ -74,4 +92,6 @@ test_single_char <- function (pkg, this_fn, params, i) {
     }
     for (k in seq (res))
         res [k] <- match_res_k (res, hc, i, j, k)
+
+    return (chk)
 }
