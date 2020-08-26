@@ -245,13 +245,30 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
             params_i <- params
 
             p_i <- params_i [[i]]
+            val_type <- NULL
             if (is_int (p_i)) {
+                val_type <- "integer"
                 chk <- test_single_int (pkg, this_fn, params_i, i)
             } else if (is.character (p_i)) {
+                val_type <- "character"
                 chk <- test_single_char (pkg, this_fn, params_i, i)
             } else if (is.logical (p_i)) {
+                val_type <- "logical"
                 chk <- test_single_logical (pkg, this_fn, params_i, i)
             }
+
+            # check response to vector input:
+            params_i [[i]] <- rep (params_i [[i]], 2)
+            res1 <- tryCatch (do.call (this_fn, params_i),
+                              warning = function (w) w,
+                              error = function (e) e)
+            if (!(methods::is (res1, "warning") | methods::is (res1, "error"))) {
+                warning ("parameter [", names (params) [i], "] is assumed to be ",
+                         "a single value of ", val_type, " type, ",
+                         "yet admits vectors of length > 1")
+                chk <- FALSE
+            }
+
     }
 
     return (chk)
