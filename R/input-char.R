@@ -19,12 +19,34 @@ test_single_char <- function (pkg, this_fn, params, i) {
                   error = function (e) e,
                   warning = function (w) w)
     }
+
+    # check whether vectors of 2 characters error or warn:
     val0 <- get1 (params [[i]])
     val1 <- get1 (rep (params [[i]], 2))
     if (!(any (methods::is (val1, "error")) | methods::is (val1, "warning"))) {
         message ("Parameter ", names (params) [i], " of function [",
-                 this_fn, "] is assumed to a formula, ",
+                 this_fn, "] is assumed to a single character, ",
                  "but responds to vectors of length > 1")
+        chk <- FALSE
+    }
+
+    # check case sensitivity:
+    val1 <- get1 (tolower (params [[i]]))
+    val2 <- get1 (toupper (params [[i]]))
+    if (any (methods::is (val1, "error")) | methods::is (val1, "warning") |
+        methods::is (val2, "error") | methods::is (val2, "warning")) {
+        message ("Parameter ", names (params) [i], " of function [",
+                 this_fn, "] is assumed to a single character, ",
+                 "but is case dependent")
+        chk <- FALSE
+    }
+
+    # check whether match.arg is used
+    val1 <- get1 (paste0 (sample (c (letters, LETTERS), size = 10), collapse = ""))
+    if (!methods::is (val1, "error")) {
+        message ("Parameter ", names (params) [i], " of function [",
+                 this_fn, "] is assumed to a single character, ",
+                 "but does not match arguments to expected values")
         chk <- FALSE
     }
 
