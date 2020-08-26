@@ -265,7 +265,8 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
             if (!(methods::is (res1, "warning") | methods::is (res1, "error"))) {
                 warning ("parameter [", names (params) [i], "] is assumed to be ",
                          "a single value of ", val_type, " type, ",
-                         "yet admits vectors of length > 1")
+                         "yet admits vectors of length > 1",
+                         call. = FALSE, immediate. = TRUE)
                 chk <- FALSE
             }
 

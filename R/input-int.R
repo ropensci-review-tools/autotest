@@ -41,7 +41,8 @@ test_single_int <- function (pkg, this_fn, params, i) {
             warning (cli::col_red (cli::symbol$cross),
                      cli::col_yellow (" Parameter range for ",
                                       names (params) [i],
-                                      " is NOT documented"))
+                                      " is NOT documented"),
+                     call. = FALSE, immediate. = TRUE)
     } else
         chk <- FALSE
 
@@ -79,7 +80,8 @@ get_int_range <- function (this_fn, params, i) {
     if (get_fn_response (this_fn, params) != 3)
     {
         warning ("Function [", this_fn, "] does not respond appropriately for ",
-              "specified/default input [", names (params) [i], " = ", params [[i]], "]")
+              "specified/default input [", names (params) [i], " = ", params [[i]], "]",
+              call. = FALSE, immediate. = TRUE)
         return (NULL)
     }
 

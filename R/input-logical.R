@@ -35,7 +35,7 @@ test_single_logical <- function (pkg, this_fn, params, i) {
                        this_val, "] generates ", this_type, "\n ",
                        msg_out)
 
-        warning (msg)
+        warning (msg, call. = FALSE, immediate. = TRUE)
 
         return (FALSE)
     }
