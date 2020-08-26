@@ -15,9 +15,28 @@ test_single_logical <- function (pkg, this_fn, params, i) {
 
     if (any (methods::is (val0, "error")) | methods::is (val0, "warning") |
         any (methods::is (val1, "error")) | methods::is (val1, "warning")) {
-        warning ("Function [", this_fn, "] does not respond appropriately for ",
-                 "specified/default input [", names (params) [i], " = ",
-                 params [[i]], "]")
+
+        msg <- paste0 ("Function [", this_fn, "] does not respond appropriately ",
+                       "for specified/default input [", names (params) [i],
+                       " = ", params [[i]], "]\n")
+
+        this_val <- params [[i]]
+        msg_out <- val0
+        if (any (methods::is (val1, "error")) | any (methods::is (val1, "warning"))) {
+            this_val <- !params [[i]]
+            msg_out <- val1
+        }
+
+        this_type <- "an error"
+        if (any (methods::is (val0, "warning")) | any (methods::is (val1, "warning")))
+            this_type <- "a warning"
+
+        msg <- paste0 (msg, "  value of [", names (params) [i], " = ",
+                       this_val, "] generates ", this_type, "\n ",
+                       msg_out)
+
+        warning (msg)
+
         return (FALSE)
     }
 
