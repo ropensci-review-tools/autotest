@@ -4,24 +4,29 @@
 #' automatically test package
 #'
 #' @param package Name of package for which 'yaml' is to be generated.
+#' @param exclude Names of functions to exlucde from 'yaml' template
 #' @export
-examples_to_yaml <- function (package = NULL) {
+examples_to_yaml <- function (package = NULL, exclude = NULL) {
     if (!package %in% search ())
         suppressMessages (
                           library (package, character.only = TRUE)
         )
 
     exs <- get_all_examples (package)
+    exs <- exs [which (!names (exs) %in% exclude)]
+
+    ret <- list ()
     for (i in seq (exs)) {
         this_fn <- names (exs) [i]
         prev_fns <- list ()
-        message ("[", i, "]: ", this_fn)
         for (xj in exs [[i]]) {
             y <- one_ex_to_yaml (pkg = package, fn = this_fn, x = xj, prev_fns = prev_fns)
-            prev_fns [[length (prev_fns) + 1]] <- y
-            #autotest (yaml = y, filename = NULL)
+            ret [[length (ret) + 1]] <- prev_fns [[length (prev_fns) + 1]] <- y
+            names (ret ) [length (ret)] <- this_fn
         }
     }
+
+    return (ret)
 }
 
 get_all_examples <- function (package) {
