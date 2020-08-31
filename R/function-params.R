@@ -6,6 +6,11 @@ get_params <- function (res, i, this_fn) {
     # vals as list to allow different types of data
     p_vals <- lapply (p, function (i) i [[1]])
 
+    # remove any with NULL values
+    #index <- which (vapply (p_vals, function (i) !is.null (i), logical (1)))
+    #p_keys <- p_keys [index]
+    #p_vals <- p_vals [index]
+
     . <- NULL # suppress no visible binding note
     pre <- res$preprocess [[i]]
     e <- new.env ()
@@ -16,8 +21,11 @@ get_params <- function (res, i, this_fn) {
     }
 
     params <- list ()
-    for (p in seq (p_keys)) {
+    for (p in seq_along (p_keys)) {
         this_val <- p_vals [[p]]
+        if (is.null (this_val))
+            next
+
         if (grepl ("::", this_val)) {
             this_pkg <- strsplit (p_vals [[p]], "::") [[1]] [1]
             if (!this_pkg %in% search ())
@@ -26,12 +34,13 @@ get_params <- function (res, i, this_fn) {
                     )
             this_val <- parse (text = this_val) %>%
                 eval (envir = as.environment (paste0 ("package:", this_pkg)))
-        } else if (this_val %in% names (e))
+        } else if (this_val %in% names (e)) {
             this_val <- parse (text = this_val) %>%
                 eval (envir = e)
+        }
 
-            params [[length (params) + 1]] <- this_val
-            names (params) [length (params)] <- p_keys [p]
+        params [[length (params) + 1]] <- this_val
+        names (params) [length (params)] <- p_keys [p]
     }
 
     # Parse fn definition to get list of all parameters:
