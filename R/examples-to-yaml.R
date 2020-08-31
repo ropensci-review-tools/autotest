@@ -42,8 +42,16 @@ get_all_examples <- function (package) {
     ret <- exs [not_null]
 
     # remove any enclosing brackets from any example lines
-    ret <- lapply (ret, function (i)
-                   gsub ("\\)$", "", gsub ("^\\(", "", i)))
+    ret <- lapply (ret, function (i) {
+                       lapply (i, function (j) {
+                                   index <- grep ("^\\(", j)
+                                   if (length (index) > 0) {
+                                       j [index] <-
+                                           gsub ("\\)$", "",
+                                                 gsub ("^\\(", "", j [index]))
+                                   }
+                                   return (j)   })
+        })
 
     return (ret)
 }
@@ -72,6 +80,7 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
 
     ex <- match_brackets (ex)
     ex <- merge_piped_lines (ex)
+    ex <- merge_fn_defs (ex)
 
     # find all points of function calls:
     fns <- ls (paste0 ("package:", pkg))
@@ -148,8 +157,16 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
                       res <- lapply (i, function (j) {
                                          if (!grepl ("=", j))
                                              c (NA_character_, j)
-                                         else
-                                             strsplit (j, "=") [[1]]   })
+                                         else {
+                                             #strsplit (j, "=") [[1]]   })
+                                             # split at first "=", presume all
+                                             # others to be internal list items
+                                             # or the like
+                                             indx <- regexpr ("=", j)
+                                             c (substring (j, 1, indx - 1),
+                                                substring (j, indx + 1, nchar (j)))
+                                         }
+                                   })
                       do.call (rbind, res)  })
 
     # check whether any objects have been constructed in previous examples =
@@ -243,12 +260,14 @@ match_brackets <- function (x) {
                  character (1),
                  USE.NAMES = FALSE)
 
-    br_open <- lapply (gregexpr ("\\(", x), function (i) as.integer (i))
-    br_closed <- lapply (gregexpr ("\\)", x), function (i) as.integer (i))
-    br_both <- lapply (gregexpr ("\\((.+)?\\)", x), function (i) as.integer (i))
+    # `gregexpr` return -1 for no match; these are removed here
+    br_open <- lapply (gregexpr ("\\(", x), function (i)
+                       as.integer (i [i >= 0]))
+    br_closed <- lapply (gregexpr ("\\)", x), function (i)
+                       as.integer (i [i >= 0]))
+    br_both <- lapply (gregexpr ("\\((.+)?\\)", x), function (i)
+                       as.integer (i [i >= 0]))
     for (i in seq (x)) {
-        # the above `gregexpr` return -1 for no match, and these need to be
-        # removed
         br_open [[i]] <- br_open [[i]] [which (!br_open [[i]] <= 0)]
         br_closed [[i]] <- br_closed [[i]] [which (!br_closed [[i]] <= 0)]
         br_both [[i]] <- br_both [[i]] [which (!br_both [[i]] <= 0)]
@@ -277,9 +296,14 @@ match_brackets <- function (x) {
     br_open <- rev (br_open2)
     br_closed <- rev (br_closed2)
     for (i in seq_along (br_open)) {
-        x <- c (x [seq (br_open [i] - 1)],
+        x1 <- x2 <- NULL
+        if (br_open [i] > 1)
+            x1 <- x [seq (br_open [i] - 1)]
+        if (br_closed [i] < length (x))
+            x2 <- x [(br_closed [i] + 1):length (x)]
+        x <- c (x1,
                 paste0 (x [br_open [i]:br_closed [i]], collapse = " "),
-                x [(br_closed [i] + 1):length (x)])
+                x2)
     }
     
     gsub ("\\s+", " ", x)
@@ -291,6 +315,33 @@ merge_piped_lines <- function (x) {
     for (i in index) {
         x [i] <- gsub ("\\s+", " ", paste0 (x [i:(i+1)], collapse = " "))
         x <- x [-(i + 1)]
+    }
+    return (x)
+}
+
+merge_fn_defs <- function (x) {
+    if (any (grepl ("function(\\s?)\\(", x))) {
+        br_open <- lapply (gregexpr ("\\{", x), function (i) as.integer (i [i >= 0]))
+        br_closed <- lapply (gregexpr ("\\}", x), function (i) as.integer (i [i >= 0]))
+
+        br_open2 <- br_closed2 <- NULL
+        for (i in seq (br_open))
+            br_open2 <- c (br_open2, rep (i, length (br_open [[i]])))
+        for (i in seq (br_closed))
+            br_closed2 <- c (br_closed2, rep (i, length (br_closed [[i]])))
+
+        br_open <- rev (br_open2)
+        br_closed <- rev (br_closed2)
+        for (i in seq_along (br_open)) {
+            x1 <- x2 <- NULL
+            if (br_open [i] > 1)
+                x1 <- x [seq (br_open [i] - 1)]
+            if (br_closed [i] < length (x))
+                x2 <- x [(br_closed [i] + 1):length (x)]
+            x <- c (x1,
+                    paste0 (x [br_open [i]:br_closed [i]], collapse = " "),
+                    x2)
+        }
     }
     return (x)
 }
