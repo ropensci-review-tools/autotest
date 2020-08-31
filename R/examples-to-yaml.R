@@ -361,6 +361,20 @@ match_brackets <- function (x) {
 
     br_open <- rev (br_open2)
     br_closed <- rev (br_closed2)
+    index <- which (!duplicated (cbind (br_open, br_closed)))
+    br_open <- br_open [index]
+    br_closed <- br_closed [index]
+    # remove any potentially nested values:
+    nested <- rep (FALSE, length (br_open))
+    for (i in seq_along (br_closed)) {
+        if (any (br_closed == br_closed [i] &
+                 br_open < br_open [i]))
+            nested [i] <- TRUE
+
+    }
+    br_open <- br_open [which (!nested)]
+    br_closed <- br_closed [which (!nested)]
+
     for (i in seq_along (br_open)) {
         x1 <- x2 <- NULL
         if (br_open [i] > 1)
