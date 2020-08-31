@@ -237,6 +237,12 @@ match_brackets <- function (x) {
     br_closed <- lapply (gregexpr ("\\)", x), function (i) as.integer (i))
     br_both <- lapply (gregexpr ("\\((.+)?\\)", x), function (i) as.integer (i))
     for (i in seq (x)) {
+        # the above `gregexpr` return -1 for no match, and these need to be
+        # removed
+        br_open [[i]] <- br_open [[i]] [which (!br_open [[i]] <= 0)]
+        br_closed [[i]] <- br_closed [[i]] [which (!br_closed [[i]] <= 0)]
+        br_both [[i]] <- br_both [[i]] [which (!br_both [[i]] <= 0)]
+        # Then remove all instances of matched brackets on one line
         while (any (br_both [[i]] > 0)) {
             index <- which (br_open [[i]] == br_both [[i]])
             index2 <- which (br_closed [[i]] > br_open [[i]] [index]) [1]
@@ -248,21 +254,18 @@ match_brackets <- function (x) {
                 br_both [[i]] <- br_open [[i]] [1]
         }
     }
-    br_open <- which (vapply (br_open, function (i) {
-                           if (length (i) == 0)
-                               return (FALSE)
-                           else
-                               return (all (i > 0)) },
-                           logical (1)))
-    br_closed <- which (vapply (br_closed, function (i) {
-                           if (length (i) == 0)
-                               return (FALSE)
-                           else
-                               return (all (i > 0)) },
-                           logical (1)))
+    # convert to sequences of line numbers where brackets close, noting that
+    # there may be multiple matched closing brackets on one line, hence the
+    # `length` function here. There may also be values of -1 from the initial
+    # `gregexpr` above; these need to be ignored here
+    br_open2 <- br_closed2 <- NULL
+    for (i in seq (br_open))
+        br_open2 <- c (br_open2, rep (i, length (br_open [[i]])))
+    for (i in seq (br_closed))
+        br_closed2 <- c (br_closed2, rep (i, length (br_closed [[i]])))
 
-    br_open <- rev (br_open)
-    br_closed <- rev (br_closed)
+    br_open <- rev (br_open2)
+    br_closed <- rev (br_closed2)
     for (i in seq_along (br_open)) {
         x <- c (x [seq (br_open [i] - 1)],
                 paste0 (x [br_open [i]:br_closed [i]], collapse = " "),
