@@ -12,6 +12,19 @@ examples_to_yaml <- function (package = NULL) {
         )
 
     exs <- get_all_examples (package)
+    for (i in seq (exs)) {
+        this_fn <- names (exs) [i]
+        prev_fns <- NULL
+        message ("[", i, "]: ", this_fn)
+        for (xj in exs [[i]]) {
+            y <- one_ex_to_yaml (pkg = package, fn = this_fn, x = xj, prev_fns = prev_fns)
+            if (is.null (prev_fns))
+                prev_fns <- list (y)
+            else
+                prev_fns <- c (prev_fns, y)
+            #autotest (yaml = y, filename = NULL)
+        }
+    }
 }
 
 get_all_examples <- function (package) {
@@ -124,7 +137,6 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     i2 <- paste0 (rep (" ", 8), collapse = "")
     i3 <- paste0 (rep (" ", 12), collapse = "")
 
-
     yaml <- c (paste0 ("package: ", pkg),
                "functions:",
                paste0 (i1, "- ", fn, ":"))
@@ -136,6 +148,10 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     if (fn_calls [1] > 1) {
         yaml <- c (yaml,
                    paste0 (i2, "- preprocess:"))
+        # add any pre-processing lines from prev_fns
+        yaml <- c (yaml,
+                   get_preprocess_lines (prev_fns))
+        # Then new pre-processing lines:
         for (i in x [seq (fn_calls [1]) - 1])
             yaml <- c (yaml,
                        paste0 (i3, "- '", i, "'"))
@@ -151,8 +167,41 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     # remove comments at end of lines:
     x <- gsub ("\\s$", "", gsub ("\\#.*", "", x))
 
+    # x then only has calls to the focal function. Any of these which also
+    # assign to named variables are also included in pre-processing, in case
+    # subsequent calls refer to those objects
+    for (xi in x) {
+        p <- utils::getParseData (parse (text = xi))
+        if (any (p$token == "LEFT_ASSIGN")) {
+            if (which (p$token == "LEFT_ASSIGN") [1] <
+                which (p$token == "SYMBOL_FUNCTION_CALL") [1]) {
+                yaml <- c (yaml,
+                           paste0 (i3, "- '", xi, "'"))
+            }
+        }
+    }
+
     ex <- regmatches (x, gregexpr("(?=\\().*?(?<=\\))$", x, perl=T))
-    ex <- lapply (ex, function (i) strsplit (substr (i, 2, nchar (i) - 1), ",") [[1]])
+    # split at commas, but only those within primary enclosing parentheses:
+    ex <- lapply (ex, function (i) {
+                      i <- gsub ("^\\(", "", gsub ("\\)$", "", i))
+                      index1 <- gregexpr ("\\(", i) [[1]]
+                      index2 <- gregexpr ("\\)", i) [[1]]
+                      commas <- gregexpr (",", i) [[1]]
+                      if (length (index1) > 0) {
+                         for (j in seq_along (index1)) {
+                             index <- which (commas > index1 [j] &
+                                             commas < index2 [j])
+                             commas <- commas [which (!seq_along (commas) %in% index)]
+                          }
+                      }
+                      commas <- cbind (c (1, commas + 1),
+                                       c (commas - 1, nchar (i)))
+
+                      apply (commas, 1, function (j)
+                             substring (i, j [1], j [2]))
+                       })
+
     ex <- lapply (ex, function (i) {
                       res <- lapply (i, function (j) {
                                          if (!grepl ("=", j))
@@ -169,8 +218,8 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
                                    })
                       do.call (rbind, res)  })
 
-    # check whether any objects have been constructed in previous examples =
-    # previous pre-processing steps:
+    # check whether any other objects have been constructed in previous examples
+    # = previous pre-processing steps:
     pp <- prev_preprocess (prev_fns, fn)
     po <- prev_objects (pp)
     for (i in seq (ex)) {
@@ -212,7 +261,7 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
 
     # add to parameters list of yaml, duplicating fn name and preprocessing
     # stages each time:
-    fn_start <- grep (fn, yaml)
+    fn_start <- grep (paste0 ("- ", fn, ":"), yaml)
     pre <- yaml [fn_start:length (yaml)]
     yaml <- yaml [1:(fn_start - 1)]
     for (i in seq (ex)) {
@@ -236,21 +285,38 @@ prev_preprocess <- function (prev_fns, fn) {
 }
 
 get_assign_position <- function (x) {
-    index1 <- regexpr ("<-", x)
-    index2 <- regexpr ("=", x)
-    if (index1 < 0)
-        index1 <- Inf
-    if (index2 < 0)
-        index2 <- Inf
-   min (c (index1, index2))
+    vapply (x, function (i) {
+        index1 <- regexpr ("<-", i)
+        index2 <- regexpr ("=", i)
+        index1 <- ifelse (index1 > 0, index1, .Machine$integer.max)
+        index2 <- ifelse (index2 > 0, index2, .Machine$integer.max)
+        min (c (index1, index2))    },
+        integer (1),
+        USE.NAMES = FALSE)
 }
 
 # Get names of previous objects assigned by prev_preprocess steps
 prev_objects <- function (prev_preprocesses) {
-    vapply (prev_preprocesses, function (i) {
-                ap <- get_assign_position (i)
-                substring (i, 1, ap - 1)
-            }, character (1))
+    res <- lapply (prev_preprocesses, function (i) {
+                       ap <- get_assign_position (i)
+                       vapply (seq_along (i), function (j)
+                               substring (i [j], 1, ap [j] - 1),
+                               character (1))
+        })
+    unique (unlist (res))
+}
+
+get_preprocess_lines <- function (x) {
+    ret <- lapply (x, function (i) {
+                       pre_index <- grep ("preprocess:", i)
+                       par_index <- grep ("parameters:", i)
+                       res <- NULL
+                       for (j in seq_along (pre_index))
+                           res <- c (res, i [(pre_index [j] + 1):(par_index [j] - 1)])
+                       return (res [which (!duplicated (res))])
+        })
+    ret <- unlist (ret)
+    ret [which (!duplicated (ret))]
 }
 
 # merge multi-line expressions to single line:
