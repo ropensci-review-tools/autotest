@@ -233,6 +233,11 @@ prev_objects <- function (prev_preprocesses) {
 
 # merge multi-line expressions to single line:
 match_brackets <- function (x) {
+    # get rid of any comments:
+    x <- vapply (x, function (i) gsub ("\\#.*", "", i),
+                 character (1),
+                 USE.NAMES = FALSE)
+
     br_open <- lapply (gregexpr ("\\(", x), function (i) as.integer (i))
     br_closed <- lapply (gregexpr ("\\)", x), function (i) as.integer (i))
     br_both <- lapply (gregexpr ("\\((.+)?\\)", x), function (i) as.integer (i))
