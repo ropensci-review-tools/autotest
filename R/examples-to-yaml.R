@@ -51,7 +51,9 @@ get_all_examples <- function (package) {
     not_null <- vapply (exs, function (i) length (i) > 0, logical (1))
     ret <- exs [not_null]
 
-    # remove any enclosing brackets from any example lines
+    # remove any enclosing brackets from any example lines, and also replace any
+    # single quotes with esacped double versions (because yaml::yaml.load fails
+    # on the former)
     ret <- lapply (ret, function (i) {
                        lapply (i, function (j) {
                                    index <- grep ("^\\(", j)
@@ -60,8 +62,10 @@ get_all_examples <- function (package) {
                                            gsub ("\\)$", "",
                                                  gsub ("^\\(", "", j [index]))
                                    }
+                                   j <- gsub ("'", "\"", j, fixed = TRUE)
                                    return (j)   })
         })
+
 
     return (ret)
 }
@@ -177,6 +181,7 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
                 if (!has_prepro) {
                     yaml <- c (yaml,
                                paste0 (i2, "- preprocess:"))
+                    has_prepro <- TRUE
                 }
                 yaml <- c (yaml,
                            paste0 (i3, "- '", xi, "'"))
@@ -185,6 +190,7 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     }
 
     ex <- regmatches (x, gregexpr("(?=\\().*?(?<=\\))$", x, perl=T))
+    ex <- ex [which (vapply (ex, length, integer (1), USE.NAMES = FALSE) > 0)]
     # split at commas, but only those within primary enclosing parentheses:
     ex <- lapply (ex, function (i) {
                       i <- gsub ("^\\(", "", gsub ("\\)$", "", i))
@@ -283,8 +289,11 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
 # Get preprocessing steps from previously constructed yaml representations of
 # examples
 prev_preprocess <- function (prev_fns, fn) {
-    lapply (prev_fns, function (i)
-            yaml::yaml.load (i)$functions [[1]] [[fn]] [[1]]$preprocess)
+    lapply (prev_fns, function (i) {
+                out <- yaml::yaml.load (i)$functions
+                out <- unlist (lapply (out, function (j) j [[fn]] [[1]]$preprocess))
+                return (out [which (!duplicated (out))])
+                       })
 }
 
 get_assign_position <- function (x) {
@@ -310,6 +319,9 @@ prev_objects <- function (prev_preprocesses) {
 }
 
 get_preprocess_lines <- function (x) {
+    if (length (x) == 0)
+        return (NULL)
+
     ret <- lapply (x, function (i) {
                        pre_index <- grep ("preprocess:", i)
                        par_index <- grep ("parameters:", i)
