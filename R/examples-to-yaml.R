@@ -338,8 +338,21 @@ merge_fn_defs <- function (x) {
                 x1 <- x [seq (br_open [i] - 1)]
             if (br_closed [i] < length (x))
                 x2 <- x [(br_closed [i] + 1):length (x)]
+            # NOTE: The following presumes that any functions defined in
+            # examples and which span multiple lines are defined such that
+            # fn <- function () { # line ends here
+            # <some stuff>
+            # } # function def ends here
+            # This parsing will likely fail on cases like:
+            # fn <- function () { a = 1,
+            # b = 2
+            # }
+            # in which the lines between the braces aren't cleanly separated
             x <- c (x1,
-                    paste0 (x [br_open [i]:br_closed [i]], collapse = " "),
+                    paste0 (x [br_open [i]],
+                            paste0 (x [(br_open [i] + 1):(br_closed [i] - 1)],
+                                    collapse = ";"),
+                            x [br_closed [i]]),
                     x2)
         }
     }
