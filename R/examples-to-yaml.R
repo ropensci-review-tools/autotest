@@ -14,14 +14,11 @@ examples_to_yaml <- function (package = NULL) {
     exs <- get_all_examples (package)
     for (i in seq (exs)) {
         this_fn <- names (exs) [i]
-        prev_fns <- NULL
+        prev_fns <- list ()
         message ("[", i, "]: ", this_fn)
         for (xj in exs [[i]]) {
             y <- one_ex_to_yaml (pkg = package, fn = this_fn, x = xj, prev_fns = prev_fns)
-            if (is.null (prev_fns))
-                prev_fns <- list (y)
-            else
-                prev_fns <- c (prev_fns, y)
+            prev_fns [[length (prev_fns) + 1]] <- y
             #autotest (yaml = y, filename = NULL)
         }
     }
@@ -145,7 +142,9 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     # rm all lines after final fn_calls
     x <- x [1:max (fn_calls)]
 
+    has_prepro <- FALSE
     if (fn_calls [1] > 1) {
+        has_prepro <- TRUE
         yaml <- c (yaml,
                    paste0 (i2, "- preprocess:"))
         # add any pre-processing lines from prev_fns
@@ -175,6 +174,10 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
         if (any (p$token == "LEFT_ASSIGN")) {
             if (which (p$token == "LEFT_ASSIGN") [1] <
                 which (p$token == "SYMBOL_FUNCTION_CALL") [1]) {
+                if (!has_prepro) {
+                    yaml <- c (yaml,
+                               paste0 (i2, "- preprocess:"))
+                }
                 yaml <- c (yaml,
                            paste0 (i3, "- '", xi, "'"))
             }
