@@ -175,7 +175,8 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     # subsequent calls refer to those objects
     for (xi in x) {
         p <- utils::getParseData (parse (text = xi))
-        if (any (p$token == "LEFT_ASSIGN")) {
+        if (any (p$token == "LEFT_ASSIGN") &
+            any (p$token == "SYMBOL_FUNCTION_CALL")) {
             if (which (p$token == "LEFT_ASSIGN") [1] <
                 which (p$token == "SYMBOL_FUNCTION_CALL") [1]) {
                 if (!has_prepro) {
