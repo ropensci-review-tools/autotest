@@ -39,8 +39,13 @@ get_all_examples <- function (package) {
     }
 
     not_null <- vapply (exs, function (i) length (i) > 0, logical (1))
+    ret <- exs [not_null]
 
-    return (exs [not_null])
+    # remove any enclosing brackets from any example lines
+    ret <- lapply (ret, function (i)
+                   gsub ("\\)$", "", gsub ("^\\(", "", i)))
+
+    return (ret)
 }
 
 get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
