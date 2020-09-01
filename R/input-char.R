@@ -35,7 +35,7 @@ test_single_char <- function (pkg, this_fn, params, i) {
     val2 <- get1 (toupper (params [[i]]))
     if (any (methods::is (val1, "error")) | methods::is (val1, "warning") |
         methods::is (val2, "error") | methods::is (val2, "warning")) {
-        message ("Parameter ", names (params) [i], " of function [",
+        message ("Parameter [", names (params) [i], "] of function [",
                  this_fn, "] is assumed to a single character, ",
                  "but is case dependent")
         chk <- FALSE
