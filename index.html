@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.119</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.123</span>
       </span>
     </div>
 
@@ -98,12 +98,10 @@
 <span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_git.html">install_git</a></span>(<span class="st">"https://git.sr.ht/~mpadge/autotest"</span>)
 <span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_bitbucket.html">install_bitbucket</a></span>(<span class="st">"mpadge/autotest"</span>)
 <span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_gitlab.html">install_gitlab</a></span>(<span class="st">"mpadge/autotest"</span>)
-<span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"mpadge/autotest"</span>)
-</pre></div>
+<span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"mpadge/autotest"</span>)</pre></div>
 <p>The package can then be loaded the usual way:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span> (<span class="kw"><a href="https://github.com/mpadge/autotest">autotest</a></span>)
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span> (<span class="kw"><a href="https://github.com/mpadge/autotest">autotest</a></span>)</pre></div>
 </div>
 <div id="what-gets-tested" class="section level2">
 <h2 class="hasAnchor">
@@ -134,8 +132,7 @@
 <span class="st">"       - parameters:"</span>,
 <span class="st">"           - X: ISLR::Carseats$Sales"</span>,
 <span class="st">"           - Y: ISLR::Carseats$Urban"</span>,
-<span class="st">"           - valueOfGood: 'Yes'"</span>)
-</pre></div>
+<span class="st">"           - valueOfGood: 'Yes'"</span>)</pre></div>
 <p>Note that the second function definition is for the same function as the first (namely, <code>ExpData</code>), but specifies alternative input data, and also includes the restriction that input data to the function should be of class <code>data.frame</code> only. Submitting this <code>yaml</code> to the <code>autotest</code> function gives the following results:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="fu"><a href="reference/autotest.html">autotest</a></span> (yaml = <span class="kw">yaml</span>)
@@ -167,8 +164,7 @@
 <span class="co">#&gt;   Error message: unimplemented type 'list' in 'orderVector1'</span>
 <span class="co">#&gt; function [ExpStat] issued a Warning: Chi-squared approximation may be incorrect</span>
 <span class="co">#&gt; Function [ExpStat] issued a Warning: Chi-squared approximation may be incorrect</span>
-<span class="co">#&gt; ✖ ExpStat</span>
-</pre></div>
+<span class="co">#&gt; ✖ ExpStat</span></pre></div>
 <p>And neither the <code>ExpData</code> nor the <code>ExpStat</code> function pass <code>autotest</code> conditions, with <code>ExpData</code> failing to specify the class of return value, and <code>ExpData</code> failing to appropriately <code>unlist</code> or <code>unnest</code> list-columns.</p>
 </div>
 <div id="prior-work" class="section level2">
