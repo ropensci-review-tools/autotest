@@ -46,7 +46,8 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
     chk <- TRUE # Not implemented; TODO: Implement
     
     rect_index <- which (vapply (params, function (i)
-                                 length (dim (i)) == 2, logical (1)))
+                                 length (dim (i)) == 2 &
+                                     !inherits (i, "Matrix"), logical (1)))
     for (r in rect_index) {
         x <- params [[r]]
         params_r <- params
