@@ -4,7 +4,7 @@
 #' automatically test package
 #'
 #' @param package Name of package for which 'yaml' is to be generated.
-#' @param exclude Names of functions to exlucde from 'yaml' template
+#' @param exclude Names of functions to exclude from 'yaml' template
 #' @export
 examples_to_yaml <- function (package = NULL, exclude = NULL) {
     if (!package %in% search ())

@@ -4,10 +4,12 @@
 \alias{examples_to_yaml}
 \title{examples_to_yaml}
 \usage{
-examples_to_yaml(package = NULL)
+examples_to_yaml(package = NULL, exclude = NULL)
 }
 \arguments{
 \item{package}{Name of package for which 'yaml' is to be generated.}
+
+\item{exclude}{Names of functions to exclude from 'yaml' template}
 }
 \description{
 Convert examples for a specified package to an 'autotest' 'yaml' to use to
