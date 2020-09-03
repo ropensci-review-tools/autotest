@@ -175,25 +175,35 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     # remove comments at end of lines:
     x <- gsub ("\\s$", "", gsub ("\\#.*", "", x))
 
-    # x then only has calls to the focal function. Any of these which also
-    # assign to named variables are also included in pre-processing, in case
-    # subsequent calls refer to those objects
+    # Parse the function calls, and only retain those for which the first
+    # enclosing functions are the primary function, which notably excludes
+    # 'stopifnot' statements and similar. Any of these which also assign to
+    # named variables are also included in pre-processing, in case subsequent
+    # calls refer to those objects
+    rm_lines <- NULL
+    rm_fns <- c ("stopifnot")
     for (xi in x) {
         p <- utils::getParseData (parse (text = xi))
-        if (any (p$token == "LEFT_ASSIGN") &
-            any (p$token == "SYMBOL_FUNCTION_CALL")) {
-            if (which (p$token == "LEFT_ASSIGN") [1] <
-                which (p$token == "SYMBOL_FUNCTION_CALL") [1]) {
-                if (!has_prepro) {
+        syms <- which (p$token == "SYMBOL_FUNCTION_CALL")
+        if (any (syms)) {
+            if (p$text [syms [1]] != fn & p$text [syms [1]] %in% rm_fns) {
+                rm_lines <- c (rm_lines, xi)
+            } else if (any (p$token == "LEFT_ASSIGN")) {
+                if (which (p$token == "LEFT_ASSIGN") [1] <
+                    which (p$token == "SYMBOL_FUNCTION_CALL") [1]) {
+                    if (!has_prepro) {
+                        yaml <- c (yaml,
+                                   paste0 (i2, "- preprocess:"))
+                        has_prepro <- TRUE
+                    }
                     yaml <- c (yaml,
-                               paste0 (i2, "- preprocess:"))
-                    has_prepro <- TRUE
+                               paste0 (i3, "- '", xi, "'"))
                 }
-                yaml <- c (yaml,
-                           paste0 (i3, "- '", xi, "'"))
             }
         }
     }
+    # then remove any lines which aren't primary function calls
+    x <- x [which (!x %in% rm_lines)]
 
     ex <- regmatches (x, gregexpr("(?=\\().*?(?<=\\))$", x, perl=T))
     ex <- ex [which (vapply (ex, length, integer (1), USE.NAMES = FALSE) > 0)]
