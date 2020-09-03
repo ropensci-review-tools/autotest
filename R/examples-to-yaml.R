@@ -189,13 +189,14 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
             if (p$text [syms [1]] != fn & p$text [syms [1]] %in% rm_fns) {
                 rm_lines <- c (rm_lines, xi)
             } else if (any (p$token == "LEFT_ASSIGN")) {
-                if (which (p$token == "LEFT_ASSIGN") [1] <
-                    which (p$token == "SYMBOL_FUNCTION_CALL") [1]) {
+                if (which (p$token == "LEFT_ASSIGN") [1] < syms [1]) {
                     if (!has_prepro) {
                         yaml <- c (yaml,
                                    paste0 (i2, "- preprocess:"))
                         has_prepro <- TRUE
                     }
+                    if (p$text [syms [1]] != fn)
+                        rm_lines <- c (rm_lines, xi)
                     yaml <- c (yaml,
                                paste0 (i3, "- '", xi, "'"))
                 }
