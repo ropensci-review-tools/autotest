@@ -74,6 +74,21 @@ test_single_char <- function (pkg, this_fn, params, i) {
     i <- as.integer (index)
     j <- i + attr (index, "match.length")
     rms <- gsub ("}", "\\}", gsub ("\\item\\s+", "", substring (hc, i, j)), fixed = TRUE)
+
+    # these don't necessary match the end brackets, so need extension where not
+    n_open <- vapply (gregexpr ("\\{", rms), length, integer (1))
+    n_closed <- vapply (gregexpr ("\\}", rms), length, integer (1))
+    index <- which (n_closed < n_open)
+    for (k in index) {
+        pos <- gregexpr ("\\}", substring (hc, j [k], nchar (hc))) [[1]]
+        #j [k] <- j [k] + pos [n_open [k] - n_closed [k]]
+        add <- substring (hc, j [k] + 1, j [k] + pos [n_open [k] - n_closed [k]])
+        add <- gsub ("}", "\\}", add, fixed = TRUE)
+        add <- gsub (":", "\\:", add, fixed = TRUE)
+        rms [k] <- paste0 (rms [k], add)
+        rms [k] <- gsub (" {", " \\{", rms [k], fixed = TRUE)
+    }
+
     for (i in rms)
         hc <- gsub (i, "", hc)
 
