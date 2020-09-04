@@ -123,17 +123,33 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
     # rm extraneous lines
     ret <- lapply (exs, function (i) {
                        i <- i [which (!i == "")]
-                       i [!grepl ("^\\#|^plot|^summary", i)] })
+                       i [!grepl ("^\\#|^plot|^summary|^print", i)] })
     
     if (rm_seed) {
         ret <- lapply (ret, function (i) {
                            i [!grepl ("^set.seed", i)]  })
     }
 
-    # rm any example items which do not call the actual function
+    # concatenate any example lines which do not call the actual function into
+    # effective preprocessing lines for subsequent function calls.
     index <- vapply (ret, function (i) any (grepl (fn, i)), logical (1))
+    # can do the following via split, but it's a lot more convoluted than this
+    # loop. Start by removing any trailing FALSE values
+    if (!any (index))
+        return (NULL) # There are no calls to fn
 
-    return (ret [index])
+    ret <- ret [1:max (which (index))]
+    index <- index [1:max (which (index))]
+    for (i in rev (seq_along (index))) {
+        if (index [i])
+            here <- i
+        else {
+            ret [[here]] <- c (ret [[i]], ret [[here]])
+        }
+    }
+    ret <- ret [which (index)]
+
+    return (ret)
 }
 
 # convert one example from get_fn_exs to yaml output
