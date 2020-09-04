@@ -98,6 +98,8 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
     ex <- ex [ex != ""]
 
     ex <- match_brackets (ex)
+    if (any (grepl ("\\{", ex)))
+        ex <- match_brackets (ex, curly = TRUE)
     ex <- merge_piped_lines (ex)
     ex <- merge_fn_defs (ex)
 
@@ -368,18 +370,30 @@ get_preprocess_lines <- function (x) {
 }
 
 # merge multi-line expressions to single line:
-match_brackets <- function (x) {
+match_brackets <- function (x, curly = FALSE) {
+
+    open_sym <- "\\("
+    close_sym <- "\\)"
+    both_sym <- "\\((.+)?\\)"
+    collapse_sym <- " "
+    if (curly) {
+        open_sym <- "\\{"
+        close_sym <- "\\}"
+        both_sym <- "\\{(.+)?\\}"
+        collapse_sym <- "; "
+    }
+
     # get rid of any comments:
     x <- vapply (x, function (i) gsub ("\\#.*", "", i),
                  character (1),
                  USE.NAMES = FALSE)
 
     # `gregexpr` return -1 for no match; these are removed here
-    br_open <- lapply (gregexpr ("\\(", x), function (i)
+    br_open <- lapply (gregexpr (open_sym, x), function (i)
                        as.integer (i [i >= 0]))
-    br_closed <- lapply (gregexpr ("\\)", x), function (i)
+    br_closed <- lapply (gregexpr (close_sym, x), function (i)
                        as.integer (i [i >= 0]))
-    br_both <- lapply (gregexpr ("\\((.+)?\\)", x), function (i)
+    br_both <- lapply (gregexpr (both_sym, x), function (i)
                        as.integer (i [i >= 0]))
     for (i in seq (x)) {
         br_open [[i]] <- br_open [[i]] [which (!br_open [[i]] <= 0)]
@@ -430,7 +444,7 @@ match_brackets <- function (x) {
         if (br_closed [i] < length (x))
             x2 <- x [(br_closed [i] + 1):length (x)]
         x <- c (x1,
-                paste0 (x [br_open [i]:br_closed [i]], collapse = " "),
+                paste0 (x [br_open [i]:br_closed [i]], collapse = collapse_sym),
                 x2)
     }
     
@@ -460,6 +474,9 @@ merge_fn_defs <- function (x) {
 
         br_open <- rev (br_open2)
         br_closed <- rev (br_closed2)
+        index <- which (br_open != br_closed)
+        br_open <- br_open [index]
+        br_closed <- br_closed [index]
         for (i in seq_along (br_open)) {
             x1 <- x2 <- NULL
             if (br_open [i] > 1)
