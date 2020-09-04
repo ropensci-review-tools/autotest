@@ -94,7 +94,7 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
         }
     }
 
-    ex <- ex [!grepl ("^\\s+?\\#", ex)]
+    ex <- ex [!grepl ("^\\s?\\#", ex)]
     ex <- ex [ex != ""]
 
     ex <- match_brackets (ex)
