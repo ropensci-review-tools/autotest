@@ -223,6 +223,29 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     }
     # then remove any lines which aren't primary function calls
     x <- x [which (!x %in% rm_lines)]
+    # also check whether any assign return values, and copy these to
+    # pre-processing:
+    prepro <- vapply (x, function (i) {
+                          p <- getParseData (parse (text = i))
+                          ret <- FALSE
+                          if (any (p$token == "SYMBOL_FUNCTION_CALL")) {
+                              here <- which (p$token == "SYMBOL_FUNCTION_CALL" &
+                                             p$text == fn)
+                              if (any (p$token [seq (here - 1)] == "LEFT_ASSIGN"))
+                                  ret <- TRUE
+                          }
+                          return (ret)  }, logical (1))
+    if (any (prepro)) {
+        if (!has_prepro) {
+            yaml <- c (yaml,
+                       paste0 (i2, "- preprocess:"))
+            has_prepro <- TRUE
+        }
+        for (i in which (prepro)) {
+            yaml <- c (yaml,
+                       paste0 (i3, "- '", x [i], "'"))
+        }
+    }
 
     ex <- regmatches (x, gregexpr("(?=\\().*?(?<=\\))$", x, perl=T))
     ex <- ex [which (vapply (ex, length, integer (1), USE.NAMES = FALSE) > 0)]
@@ -232,6 +255,9 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
                       index1 <- gregexpr ("\\(", i) [[1]]
                       index2 <- gregexpr ("\\)", i) [[1]]
                       commas <- gregexpr (",", i) [[1]]
+                      index1 <- index1 [index1 > 0]
+                      index2 <- index2 [index2 > 0]
+                      commas <- commas [commas > 0]
                       if (length (index1) > 0) {
                          for (j in seq_along (index1)) {
                              index <- which (commas > index1 [j] &
