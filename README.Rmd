@@ -35,14 +35,17 @@ Concept](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repo
 # autotest
 
 
-Automatic testing of R packages via a simple YAML schema specifying one
-or more example workflows for each function of a package. The simplest
-workflows involve nominating data sets which may be submitted to a function,
-while more complicated workflows may involve multiple data sets, intermediate
-pre-processing stages, and other transformations prior to submission to
-a nominated function. The following illustrates a typical `yaml` schema, where
-items in angle-brackets (`<`, `>`) indicate placeholders be completed for
-a specific package and functions. 
+Automatic mutation testing of R packages. Tests are controlled via a simple
+YAML schema specifying one or more example workflows for each function of
+a package, with workflows able to be automatically generated from documented
+examples, and `autotest` tests able to be used to generate package tests.
+
+The simplest workflows involve nominating data sets which may be submitted to
+a function, while more complicated workflows may involve multiple data sets,
+intermediate pre-processing stages, and other transformations prior to
+submission to a nominated function. The following illustrates a typical `yaml`
+schema, where items in angle-brackets (`<`, `>`) indicate placeholders be
+completed for a specific package and functions. 
 
 ```
 package: <package_name>

@@ -11,14 +11,19 @@ Concept](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repo
 
 # autotest
 
-Automatic testing of R packages via a simple YAML schema specifying one
-or more example workflows for each function of a package. The simplest
-workflows involve nominating data sets which may be submitted to a
-function, while more complicated workflows may involve multiple data
-sets, intermediate pre-processing stages, and other transformations
-prior to submission to a nominated function. The following illustrates a
-typical `yaml` schema, where items in angle-brackets (`<`, `>`) indicate
-placeholders be completed for a specific package and functions.
+Automatic mutation testing of R packages. Tests are controlled via a
+simple YAML schema specifying one or more example workflows for each
+function of a package, with workflows able to be automatically generated
+from documented examples, and `autotest` tests able to be used to
+generate package tests.
+
+The simplest workflows involve nominating data sets which may be
+submitted to a function, while more complicated workflows may involve
+multiple data sets, intermediate pre-processing stages, and other
+transformations prior to submission to a nominated function. The
+following illustrates a typical `yaml` schema, where items in
+angle-brackets (`<`, `>`) indicate placeholders be completed for a
+specific package and functions.
 
     package: <package_name>
     functions:
@@ -122,15 +127,13 @@ autotest (yaml = yaml)
 #> ★ Testing functions:
 #> 
 #> ── Testing ExpData ─────────────────────────────────────────────────────────────
-#> Parameter [type] responds to integer values in [1, 2]
-#> ✔ That parameter range is documented
+#> Parameter [type] permits unrestricted integer inputs
 #> Warning: Function [ExpData] does not specify a return value, yet returns a value
 #> of class [data.frame]
 #> ✖ ExpData
 #> 
 #> ── Testing ExpData ─────────────────────────────────────────────────────────────
-#> Parameter [type] responds to integer values in [1, 2]
-#> ✔ That parameter range is documented
+#> Parameter [type] permits unrestricted integer inputs
 #> Warning: Function [ExpData] does not specify a return value, yet returns a value
 #> of class [data.frame]
 #> ✖ ExpData
@@ -140,9 +143,13 @@ autotest (yaml = yaml)
 #> Warning: Function [ExpStat] errors on list-columns when submitted as X
 #>   Error message: unimplemented type 'list' in 'orderVector1'
 #> function [ExpStat] issued a Warning: Chi-squared approximation may be incorrect
+#> Warning: Function [ExpStat] returns different values when assumed int-valued parameter [Y] is submitted as double.
+#>  Error message: different classes when submitted as YChi-squared approximation may be incorrect
 #> Warning: Function [ExpStat] errors on list-columns when submitted as Y
 #>   Error message: unimplemented type 'list' in 'orderVector1'
 #> function [ExpStat] issued a Warning: Chi-squared approximation may be incorrect
+#> Parameter [valueOfGood] of function [ExpStat] is assumed to a single character, but is case dependent
+#> Parameter valueOfGood of function [ExpStat] is assumed to a single character, but does not match arguments to expected values
 #> Function [ExpStat] issued a Warning: Chi-squared approximation may be incorrect
 #> ✖ ExpStat
 ```
