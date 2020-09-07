@@ -240,7 +240,11 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     } else {
         fn_calls <- grep (fn, x)
     }
-    # rm all lines after final fn_calls
+    # rm all lines after final fn_calls, but keep to add as terminal
+    # pre-processing lines
+    xpre <- NULL
+    if (max (fn_calls) < length (x))
+        xpre <- x [(max (fn_calls) + 1):length (x)]
     x <- x [1:max (fn_calls)]
 
     has_prepro <- FALSE
@@ -335,6 +339,11 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
                 yaml <- c (yaml, newpre)
         }
     }
+
+    # add any terminal pre-processing lines from above
+    if (!is.null (xpre))
+        for (i in xpre)
+            yaml <- c (yaml, paste0 (i3, "- '", i, "'"))
 
     x <- unlist (lapply (x, function (i) strip_if_cond (i)))
     # only proceed if primary function calls in all lines of x are for the focal
