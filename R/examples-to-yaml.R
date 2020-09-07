@@ -231,6 +231,7 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
                paste0 (i1, "- ", fn, ":"))
 
     is_dispatch <- attr (x, "is_dispatch")
+    # find which lines call `fn`:
     fn_short <- fn
     if (is_dispatch &
         any (grepl ("[[:alpha:]]\\.[[:alpha:]]", fn))) {
@@ -250,10 +251,12 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
         # add any pre-processing lines from prev_fns
         yaml <- c (yaml,
                    get_preprocess_lines (prev_fns))
-        # Then new pre-processing lines:
-        for (i in x [seq (fn_calls [1]) - 1])
-            yaml <- c (yaml,
-                       paste0 (i3, "- '", i, "'"))
+        # Then new pre-processing lines, adding all pre-processing lines for all
+        # functions
+        for (i in seq_along (fn_calls))
+            for (j in x [seq (fn_calls [i]) - 1])
+                yaml <- c (yaml,
+                           paste0 (i3, "- '", j, "'"))
     }
 
     # get fn formals:
@@ -343,6 +346,13 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
                        if (length (index) > 0) {
                            ret <- (p$text [index [1]] == fn |
                                    p$text [index [1]] == fn_short)
+                           # can also be part of *apply or *map functions, yet
+                           # `getParseData` only parses these as SYMBOL
+                           if (any (grepl ("apply|map", p$text [index]))) {
+                               index2 <- index [1]:nrow (p)
+                               syms <- unique (p$text [index2] [which (p$token [index2] == "SYMBOL")])
+                               ret <- ret | (fn %in% syms | fn_short %in% syms)
+                           }
                        }
                        return (ret) }, logical (1), USE.NAMES = FALSE)
     if (any (!chk))
@@ -443,6 +453,14 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
             ex [[i]] [index, 1] <- other_nms [seq (index)]
         }
     }
+
+    # this may sometimes fail with non-trival calls, such as starting an example
+    # line which calls the primary function with `lapply`, `map`, or something
+    # like that. These are virtually impossible to parse, so are caught and
+    # removed here
+    chk <- vapply (ex, function (i) all (i [, 1] %in% nms), logical (1))
+    if (any (!chk))
+        ex <- ex [-which (!chk)]
 
     # add to parameters list of yaml, duplicating fn name and preprocessing
     # stages each time:
