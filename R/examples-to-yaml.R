@@ -19,10 +19,12 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
     for (i in seq (exs)) {
         this_fn <- names (exs) [i]
         prev_fns <- list ()
+        message ("[", i, "]: ", this_fn)
         for (xj in exs [[i]]) {
             y <- one_ex_to_yaml (pkg = package, fn = this_fn, x = xj, prev_fns = prev_fns)
             ret [[length (ret) + 1]] <- prev_fns [[length (prev_fns) + 1]] <- y
             names (ret ) [length (ret)] <- this_fn
+            prev_fns [[length (prev_fns) + 1]] <- y
         }
     }
 
@@ -102,9 +104,32 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
         ex <- match_brackets (ex, curly = TRUE)
     ex <- merge_piped_lines (ex)
     ex <- merge_fn_defs (ex)
+    ex <- single_clause (ex)
+
+    # find and remove any lines for which first function call is some kind of
+    # "plot" or "summary"
+    plotlines <- vapply (ex, function (i) {
+                             p <- utils::getParseData (parse (text = i))
+                             s <- which (p$token == "SYMBOL_FUNCTION_CALL")
+                             ret <- FALSE
+                             if (length (s) > 0)
+                                 ret <- grepl ("plot|summary", p$text [s [1]])
+                             return (ret)   }, logical (1), USE.NAMES = FALSE)
+    if (any (plotlines))
+        ex <- ex [-which (plotlines)]
 
     # find all points of function calls:
     fns <- ls (paste0 ("package:", pkg))
+    dispatches <- dispatched_fns (pkg)
+    is_dispatch <- FALSE
+    if (!is.null (dispatches)) {
+        fns <- c (fns, gsub ("\\..*$", "", dispatches))
+        if (fn %in% dispatches) {
+            fn <- c (fn, gsub ("\\..*$", "", dispatches))
+            is_dispatch <- TRUE
+        }
+    }
+
     fn_calls <- do.call (c, lapply (fns, function (i) grep (i, ex)))
     fn_calls <- sort (unique (fn_calls))
     # reduce to only final calls in a sequence
@@ -112,9 +137,10 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
     if (length (index) > 0)
         fn_calls <- fn_calls [-(index - 1)]
     # remove any plot or summary calls
-    index <- grepl ("^plot|^summary", ex [fn_calls])
-    if (any (index))
-        fn_calls <- fn_calls [-(which (index))]
+    #index <- grepl ("^plot|^summary", ex [fn_calls])
+    #index <- grepl ("plot|^summary", ex [fn_calls])
+    #if (any (index))
+    #    fn_calls <- fn_calls [-(which (index))]
 
     if (length (fn_calls) == 0)
         return (NULL)
@@ -134,7 +160,12 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
 
     # concatenate any example lines which do not call the actual function into
     # effective preprocessing lines for subsequent function calls.
-    index <- vapply (ret, function (i) any (grepl (fn, i)), logical (1))
+    index <- vapply (ret, function (i) any (grepl (fn [1], i)), logical (1))
+    if (length (fn) == 2) { # when it's a dispatch method
+        index2 <- vapply (ret, function (i) any (grepl (fn [2], i)), logical (1))
+        index <- index | index2
+    }
+
     # can do the following via split, but it's a lot more convoluted than this
     # loop. Start by removing any trailing FALSE values
     if (!any (index))
@@ -151,7 +182,41 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
     }
     ret <- ret [which (index)]
 
+    ret <- lapply (ret, function (i) {
+                       attr (i, "is_dispatch") <- is_dispatch
+                       return (i)   })
+
     return (ret)
+}
+
+# find which functions are method dispatches, so grep can be done on the method
+# and not the class
+dispatched_fns <- function (pkg) {
+    h <- utils::help (package = eval (substitute (pkg)), help_type = "text")
+    fns <- h$info [[2]]
+    fns <- gsub ("\\s.*", "", fns [which (!grepl ("^\\s", fns))])
+    # reduce only to exported functions, methods, or data sets
+    fns <- fns [fns %in% ls (paste0 ("package:", pkg))]
+    # Then reduce only to functions:
+    fn_classes <- vapply (fns, function (i) class (get (i)), character (1))
+    fns <- fns [which (fn_classes == "function")]
+
+    index <- grep ("\\.", fns)
+    classes <- gsub (".*\\.", "", fns [index])
+    dispatch <- rep (FALSE, length (classes))
+    for (i in seq_along (index)) {
+        h <- utils::help (topic = classes [i],
+                          package = eval (substitute (pkg)),
+                          help_type = "text")
+        if (length (nchar (h)) > 0)
+            dispatch [i] <- TRUE
+    }
+
+    res <- NULL
+    if (any (dispatch))
+        res <- fns [index] [which (dispatch)]
+
+    return (res)
 }
 
 # convert one example from get_fn_exs to yaml output
@@ -165,7 +230,15 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
                "functions:",
                paste0 (i1, "- ", fn, ":"))
 
-    fn_calls <- grep (fn, x)
+    is_dispatch <- attr (x, "is_dispatch")
+    fn_short <- fn
+    if (is_dispatch &
+        any (grepl ("[[:alpha:]]\\.[[:alpha:]]", fn))) {
+            fn_short <- gsub ("\\..*$", "", fn)
+            fn_calls <- grep (paste0 (fn, "|", fn_short), x)
+    } else {
+        fn_calls <- grep (fn, x)
+    }
     # rm all lines after final fn_calls
     x <- x [1:max (fn_calls)]
 
@@ -192,6 +265,10 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     x <- x [fn_calls [1]:length (x)]
     # remove comments at end of lines:
     x <- gsub ("\\s$", "", gsub ("\\#.*", "", x))
+    # remove terminal bounding brackets if any:
+    index <- grep ("^\\(", x) # only lines which start with a bracket
+    if (length (index) > 0)
+        x [index] <- gsub ("^\\(|\\)$", "", x [index])
 
     # Parse the function calls, and only retain those for which the first
     # enclosing functions are the primary function, which notably excludes
@@ -213,8 +290,8 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
                                    paste0 (i2, "- preprocess:"))
                         has_prepro <- TRUE
                     }
-                    if (p$text [syms [1]] != fn)
-                        rm_lines <- c (rm_lines, xi)
+                    #if (p$text [syms [1]] != fn)
+                    #    rm_lines <- c (rm_lines, xi)
                     yaml <- c (yaml,
                                paste0 (i3, "- '", xi, "'"))
                 }
@@ -226,15 +303,23 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     # also check whether any assign return values, and copy these to
     # pre-processing:
     prepro <- vapply (x, function (i) {
-                          p <- getParseData (parse (text = i))
+                          p <- utils::getParseData (parse (text = i))
                           ret <- FALSE
                           if (any (p$token == "SYMBOL_FUNCTION_CALL")) {
                               here <- which (p$token == "SYMBOL_FUNCTION_CALL" &
                                              p$text == fn)
                               if (any (p$token [seq (here - 1)] == "LEFT_ASSIGN"))
                                   ret <- TRUE
+                          } else { # values assigned with no function call
+                              syms <- which (p$token == "SYMBOL")
+                              assigns <- which (p$token == "LEFT_ASSIGN")
+                              if (length (syms) > 0 & length (assigns) > 0) {
+                                  if (syms [1] < assigns [1]) {
+                                      ret <- TRUE
+                                  }
+                              }
                           }
-                          return (ret)  }, logical (1))
+                          return (ret)  }, logical (1), USE.NAMES = FALSE)
     if (any (prepro)) {
         if (!has_prepro) {
             yaml <- c (yaml,
@@ -242,10 +327,28 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
             has_prepro <- TRUE
         }
         for (i in which (prepro)) {
-            yaml <- c (yaml,
-                       paste0 (i3, "- '", x [i], "'"))
+            newpre <- paste0 (i3, "- '", x [i], "'")
+            if (!newpre %in% yaml)
+                yaml <- c (yaml, newpre)
         }
     }
+
+    x <- unlist (lapply (x, function (i) strip_if_cond (i)))
+    # only proceed if primary function calls in all lines of x are for the focal
+    # function
+    chk <- vapply (x, function (i) {
+                       p <- utils::getParseData (parse (text = i))
+                       ret <- FALSE
+                       index <- which (p$token == "SYMBOL_FUNCTION_CALL")
+                       if (length (index) > 0) {
+                           ret <- (p$text [index [1]] == fn |
+                                   p$text [index [1]] == fn_short)
+                       }
+                       return (ret) }, logical (1), USE.NAMES = FALSE)
+    if (any (!chk))
+        x <- x [-which (!chk)]
+    if (length (x) == 0)
+        return (NULL)
 
     ex <- regmatches (x, gregexpr("(?=\\().*?(?<=\\))$", x, perl=T))
     ex <- ex [which (vapply (ex, length, integer (1), USE.NAMES = FALSE) > 0)]
@@ -271,6 +374,18 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
                       apply (commas, 1, function (j)
                              substring (i, j [1], j [2]))
                        })
+
+    # remove any assignment operators, to reduce to bare function calls
+    for (i in seq_along (ex)) {
+        p <- utils::getParseData (parse (text = ex [[i]]))
+        j <- which (p$token == "SYMBOL_FUNCTION_CALL" & p$text == fn)
+        k <- which (p$token == "LEFT_ASSIGN")
+        if (length (j) == 0 | length (k) == 0)
+            next
+
+        if (k [1] < j [1])
+            ex [[i]] <- substring (ex [[i]], p$col1 [j], nchar (ex [[i]]))
+    }
 
     ex <- lapply (ex, function (i) {
                       res <- lapply (i, function (j) {
@@ -413,6 +528,8 @@ match_brackets <- function (x, curly = FALSE) {
     x <- vapply (x, function (i) gsub ("\\#.*", "", i),
                  character (1),
                  USE.NAMES = FALSE)
+    # remove empty lines
+    x <- x [which (!grepl ("^\\s?$", x))]
 
     # `gregexpr` return -1 for no match; these are removed here
     br_open <- lapply (gregexpr (open_sym, x), function (i)
@@ -447,34 +564,62 @@ match_brackets <- function (x, curly = FALSE) {
     for (i in seq (br_closed))
         br_closed2 <- c (br_closed2, rep (i, length (br_closed [[i]])))
 
-    br_open <- rev (br_open2)
-    br_closed <- rev (br_closed2)
+    # no matching brackets just gives empty lines for all that follows:
+    nested <- nested_sequences (br_open2, br_closed2)
+    br_open <- rev (nested$br_open) # rev to ensure lines are sequentially joined
+    br_closed <- rev (nested$br_closed)
     index <- which (!duplicated (cbind (br_open, br_closed)))
     br_open <- br_open [index]
     br_closed <- br_closed [index]
-    # remove any potentially nested values:
-    nested <- rep (FALSE, length (br_open))
-    for (i in seq_along (br_closed)) {
-        if (any (br_closed == br_closed [i] &
-                 br_open < br_open [i]))
-            nested [i] <- TRUE
-
-    }
-    br_open <- br_open [which (!nested)]
-    br_closed <- br_closed [which (!nested)]
 
     for (i in seq_along (br_open)) {
-        x1 <- x2 <- NULL
-        if (br_open [i] > 1)
-            x1 <- x [seq (br_open [i] - 1)]
-        if (br_closed [i] < length (x))
-            x2 <- x [(br_closed [i] + 1):length (x)]
-        x <- c (x1,
-                paste0 (x [br_open [i]:br_closed [i]], collapse = collapse_sym),
-                x2)
+
+        xmid <- x [br_open [i]:br_closed [i]]
+        if (grepl ("\\{\\s?$", xmid [1])) # join line after opening curly bracket
+            xmid <- c (paste0 (xmid [1:2], collapse = " "), xmid [3:length (xmid)])
+        if (grepl ("^\\s?\\}", xmid [length (xmid)])) # join line before closing curly 
+        {
+            if (length (xmid) > 2)
+                xmid <- c (xmid [1:(length (xmid) - 2)],
+                           paste0 (xmid [(length (xmid) - 1):length (xmid)], collapse = " "))
+            else
+                xmid <- paste0 (xmid, collapse = " ")
+        }
+        # plus any ggplot-type lines with terminal "+". Formulae can also end
+        # with "+", so presume only "ggplot" commands will have this, and grep
+        # for that also
+        index <- grep ("\\+\\s?$", xmid)
+        if (length (index) > 0 & any (grepl ("gg", xmid))) {
+            for (j in index) {
+                xmid [j + 1] <- paste0 (xmid [j], xmid [j + 1], collapse = " ")
+            }
+            xmid <- xmid [-index]
+        }
+
+        x [br_closed [i]] <- paste0 (xmid, collapse = collapse_sym)
+    }
+    # then remove all of the intervening lines:
+    if (length (br_open) > 0) {
+        index <- unlist (lapply (seq_along (br_open), function (i)
+                                 br_open [i]:(br_closed [i] - 1)))
+        x <- x [-index]
     }
     
-    gsub ("\\s+", " ", x)
+    x <- gsub ("\\s+", " ", x)
+
+    # catch instances where curly brackets are only used on first condition,
+    # with second condition being a single line
+    if (curly) {
+        index <- rev (grep ("else\\s?$", x))
+        if (length (index) > 0) {
+            for (i in index) {
+                x [i] <- paste0 (x [i], " ", x [i + 1])
+                x <- x [-(i + 1)]
+            }
+        }
+    }
+
+    return (x)
 }
 
 merge_piped_lines <- function (x) {
@@ -525,6 +670,77 @@ merge_fn_defs <- function (x) {
                                     collapse = ";"),
                             x [br_closed [i]]),
                     x2)
+        }
+    }
+    return (x)
+}
+
+single_clause <- function (x) {
+    # match (if|for) with anything after and NOT (if|for) with "{"
+    index <- which (grepl ("^(if|for)\\s?\\(.*\\)\\s?", x) &
+                    !grepl ("^(if|for)\\s?\\(.*\\)\\s?\\{", x))
+    if (length (index) > 0) {
+        for (i in index)
+            x [i] <- paste0 (x [i], x [i + 1], collapse = " ")
+        x <- x [-(index + 1)]
+    }
+    return (x)
+}
+
+
+# check for nesting where another bracket opens before current one has
+# been closed.
+# open:     x       x + 1
+# closed:   x + 2   x + 3
+# the actual grouping should be (x, x + 3). The following moves the x to 2nd
+# position and deletes the first.
+nested_sequences <- function (br_open, br_closed) {
+    i2 <- seq_along (br_open) [-1]
+    i1 <- i2 - 1
+    index <- which (br_open [i2] < br_closed [i1])
+    if (length (index) > 0) {
+        for (i in index)
+            br_open [i + 1] <- br_open [i]
+        br_open <- br_open [-index]
+        br_closed <- br_closed [-index]
+    }
+    list (br_open = br_open,
+          br_closed = br_closed)
+}
+
+# strip any if conditionals from any example lines which include the focal
+# function, returning the functional lines alone from all (if + else) conditions
+# x here is a single line only
+strip_if_cond <- function (x) {
+    if (grepl ("^\\s?if", x)) {
+        br_open <- gregexpr ("\\(", x) [[1]]
+        br_closed <- gregexpr ("\\)", x) [[1]]
+        ns <- nested_sequences (br_open, br_closed)
+        br_open <- ns$br_open
+        br_closed <- ns$br_closed
+
+        # strip first conditional:
+        xi <- substring (x, br_closed [1] + 1, nchar (x))
+        if (grepl ("^\\s?\\{", xi)) {
+            br_open <- gregexpr ("\\{", xi) [[1]]
+            br_closed <- gregexpr ("\\}", xi) [[1]]
+            ns <- nested_sequences (br_open, br_closed)
+            br_open <- ns$br_open
+            br_closed <- ns$br_closed
+            x1 <- substring (xi, br_open [1] + 1, br_closed [1] - 1)
+            x2 <- substring (xi, br_closed [1] + 1, nchar (x))
+            if (grepl ("else", x2)) {
+                x2 <- gsub ("\\s?else\\s?", "", x2)
+                br_open <- gregexpr ("\\{", x2) [[1]]
+                if (br_open [1] > 0) {
+                    br_closed <- gregexpr ("\\}", x2) [[1]]
+                    ns <- nested_sequences (br_open, br_closed)
+                    br_open <- ns$br_open
+                    br_closed <- ns$br_closed
+                    x2 <- substring (x2, br_closed [1] + 1, nchar (x2))
+                }
+            }
+            x <- c (x1, x2)
         }
     }
     return (x)
