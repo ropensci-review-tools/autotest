@@ -19,7 +19,6 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
     for (i in seq (exs)) {
         this_fn <- names (exs) [i]
         prev_fns <- list ()
-        message ("[", i, "]: ", this_fn)
         for (xj in exs [[i]]) {
             y <- one_ex_to_yaml (pkg = package, fn = this_fn, x = xj, prev_fns = prev_fns)
             ret [[length (ret) + 1]] <- prev_fns [[length (prev_fns) + 1]] <- y
@@ -463,13 +462,17 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
         }
     }
 
+    # remove any extraneous white space
+    ex <- lapply (ex, function (i) {
+                      i [, 1] <- gsub ("^\\s?|\\s?$", "", i [, 1])
+                      i [, 2] <- gsub ("^\\s?|\\s?$", "", i [, 2])
+                      return (i)    })
+
     # this may sometimes fail with non-trival calls, such as starting an example
     # line which calls the primary function with `lapply`, `map`, or something
     # like that. These are virtually impossible to parse, so are caught and
-    # removed here
-    chk <- vapply (ex, function (i) all (i [, 1] %in% nms), logical (1))
-    if (any (!chk))
-        ex <- ex [-which (!chk)]
+    # removed here.
+    ex <- lapply (ex, function (i) i [which (i [, 1] %in% nms), , drop = FALSE])
 
     # add to parameters list of yaml, duplicating fn name and preprocessing
     # stages each time:
