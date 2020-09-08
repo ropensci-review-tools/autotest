@@ -95,8 +95,19 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
         }
     }
 
+    # Examples may also have "No test" and these have to be removed
+    nt <- grep ("^## No test:", ex)
+    while (length (nt) > 0) {
+            nt_end <- grep ("^## End\\(No test\\)", ex)
+            ex <- ex [-(nt [1]:nt_end [1])]
+            nt <- grep ("^## Not run:", ex)
+    }
+
     ex <- ex [!grepl ("^\\s?\\#", ex)]
     ex <- ex [ex != ""]
+
+    if (length (ex) == 0)
+        return (NULL)
 
     ex <- match_brackets (ex)
     if (any (grepl ("\\{", ex)))
@@ -405,9 +416,10 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
             ex [[i]] <- substring (ex [[i]], p$col1 [j], nchar (ex [[i]]))
     }
 
+    # split all example lines around "=", but only if they're not quoted
     ex <- lapply (ex, function (i) {
                       res <- lapply (i, function (j) {
-                                         if (!grepl ("=", j))
+                                         if (!grepl ("=", j) | grepl ("^\"", j))
                                              c (NA_character_, j)
                                          else {
                                              #strsplit (j, "=") [[1]]   })
