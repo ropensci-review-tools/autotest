@@ -8,7 +8,8 @@ test_single_char <- function (pkg, this_fn, params, i) {
     h <- tools::Rd_db (package = pkg)
     h <- h [grep (paste0 ("^", this_fn, "\\.Rd$"), names (h))]
     if (length (h) != 1) {
-        stop ("No single help topic for [", this_fn, "] found")
+        message ("No single help topic for [", this_fn, "] found")
+        return (FALSE)
     }
     h <- h [[1]]
 
