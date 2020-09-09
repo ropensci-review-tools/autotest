@@ -300,8 +300,8 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
         if (any (syms)) {
             if (p$text [syms [1]] != fn & p$text [syms [1]] %in% rm_fns) {
                 rm_lines <- c (rm_lines, xi)
-            } else if (any (p$token == "LEFT_ASSIGN")) {
-                if (which (p$token == "LEFT_ASSIGN") [1] < syms [1]) {
+            } else if (any (p$token %in% c ("LEFT_ASSIGN", "EQ_ASSIGN"))) {
+                if (which (p$token %in% c ("LEFT_ASSIGN", "EQ_ASSIGN")) [1] < syms [1]) {
                     if (!has_prepro) {
                         yaml <- c (yaml,
                                    paste0 (i2, "- preprocess:"))
@@ -325,11 +325,11 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
                           if (any (p$token == "SYMBOL_FUNCTION_CALL")) {
                               here <- which (p$token == "SYMBOL_FUNCTION_CALL" &
                                              p$text == fn)
-                              if (any (p$token [seq (here - 1)] == "LEFT_ASSIGN"))
+                              if (any (p$token [seq (here - 1)] %in% c ("LEFT_ASSIGN", "EQ_ASSIGN")))
                                   ret <- TRUE
                           } else { # values assigned with no function call
                               syms <- which (p$token == "SYMBOL")
-                              assigns <- which (p$token == "LEFT_ASSIGN")
+                              assigns <- which (p$token %in% c ("LEFT_ASSIGN", "EQ_ASSIGN"))
                               if (length (syms) > 0 & length (assigns) > 0) {
                                   if (syms [1] < assigns [1]) {
                                       ret <- TRUE
@@ -447,7 +447,7 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     # = previous pre-processing steps:
     pp <- prev_preprocess (prev_fns, fn)
     po <- prev_objects (pp)
-    for (i in seq (ex)) {
+    for (i in seq_along (ex)) {
         if (any (po %in% ex [[i]] [, 2])) {
             # add those pre-processing steps
             #iend <- grep ("parameters:$", yaml) - 1
@@ -463,7 +463,7 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
 
             # TODO: The following is not correct because it only grabs one line, but
             # there may be cases with multiple lines
-            this_pp <- vapply (pp [[which (po %in% ex [, 2])]], function (i)
+            this_pp <- vapply (pp [[which (po %in% ex [[i]] [, 2])]], function (i)
                                paste0 (i3, "- '", i, "'"), character (1),
                                USE.NAMES = FALSE)
             this_prepro <- c (prepro [1], this_pp)
@@ -474,6 +474,12 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
             yaml <- c (yaml_top, this_prepro)
         }
     }
+
+    # Remove any duplicated lines. This works because duplicated always flags
+    # the 2nd instances which are by definition redundant
+    d <- duplicated (yaml)
+    if (any (d))
+        yaml <- yaml [-which (d)]
 
     # assign names to any unnamed parameters:
     for (i in seq (ex)) {
@@ -533,8 +539,9 @@ get_assign_position <- function (x) {
     vapply (x, function (i) {
         index1 <- regexpr ("<-", i)
         index2 <- regexpr ("=", i)
-        index1 <- ifelse (index1 > 0, index1, .Machine$integer.max)
-        index2 <- ifelse (index2 > 0, index2, .Machine$integer.max)
+        br <- regexpr ("\\(", i)
+        index1 [index1 < 0 | index1 > br] <- .Machine$integer.max
+        index2 [index2 < 0 | index2 > br] <- .Machine$integer.max
         min (c (index1, index2))    },
         integer (1),
         USE.NAMES = FALSE)
