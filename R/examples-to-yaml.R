@@ -351,9 +351,15 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     }
 
     # add any terminal pre-processing lines from above
-    if (!is.null (xpre))
+    if (!is.null (xpre)) {
+        if (!has_prepro) {
+            yaml <- c (yaml,
+                       paste0 (i2, "- preprocess:"))
+            has_prepro <- TRUE
+        }
         for (i in xpre)
             yaml <- c (yaml, paste0 (i3, "- '", i, "'"))
+    }
 
     x <- unlist (lapply (x, function (i) strip_if_cond (i)))
     # only proceed if primary function calls in all lines of x are for the focal
@@ -485,6 +491,11 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     # like that. These are virtually impossible to parse, so are caught and
     # removed here.
     ex <- lapply (ex, function (i) i [which (i [, 1] %in% nms), , drop = FALSE])
+    # Default values of double quotes must also be replaced with escape
+    # characters
+    ex <- lapply (ex, function (i) {
+                      i [which (i [, 2] == ""), 2] <- "\"\""
+                      return (i)    })
 
     # add to parameters list of yaml, duplicating fn name and preprocessing
     # stages each time:
