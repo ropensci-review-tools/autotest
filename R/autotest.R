@@ -39,3 +39,20 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
             message (cli::col_red (cli::symbol$cross), " ", cli::col_yellow (this_fn))
     }
 }
+
+#' autotest_package
+#'
+#' Automatically test an entire package by converting examples to `yaml` format
+#' and submitting each to the \link{autotest} function.
+#'
+#' @param package Name of package to be 'autotested'
+#' @param exclude Character vector containing names of any functions to be
+#' excluded from 'autotesting'
+#' @export
+autotest_package <- function (package, exclude = NULL) {
+    exs <- examples_to_yaml (package, exclude = exclude)
+    for (i in seq_along (exs)) {
+        message ("*****[", i, "]: ", names (exs) [i], "*****")
+        autotest (yaml = exs [[i]])
+    }
+}
