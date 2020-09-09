@@ -502,9 +502,12 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     # removed here.
     ex <- lapply (ex, function (i) i [which (i [, 1] %in% nms), , drop = FALSE])
     # Default values of double quotes must also be replaced with escape
-    # characters
+    # characters. Parameters may also be called "null" (like
+    # changepoint::decision), yet this is a reserved yaml word, so must be
+    # quoted.
     ex <- lapply (ex, function (i) {
                       i [which (i [, 2] == ""), 2] <- "\"\""
+                      i [which (i [, 1] == "null"), 1] <- "\"null\""
                       return (i)    })
 
     # add to parameters list of yaml, duplicating fn name and preprocessing
