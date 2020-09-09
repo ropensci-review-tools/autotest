@@ -403,8 +403,12 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
                              commas <- commas [which (!seq_along (commas) %in% index)]
                           }
                       }
-                      commas <- cbind (c (1, commas + 1),
-                                       c (commas - 1, nchar (i)))
+                      # do not split if the value is in double quotes
+                      if (grepl ("^\"", i) & grepl ("\"$", i))
+                          commas <- cbind (1, nchar (i))
+                      else
+                          commas <- cbind (c (1, commas + 1),
+                                           c (commas - 1, nchar (i)))
 
                       apply (commas, 1, function (j)
                              substring (i, j [1], j [2]))
