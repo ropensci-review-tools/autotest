@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/mpadge/autotest",
   "issueTracker": "https://github.com/mpadge/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.1.146",
+  "version": "0.0.1.147",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -189,7 +189,7 @@
       "sameAs": "https://CRAN.R-project.org/package=yaml"
     }
   ],
-  "fileSize": "97.944KB",
+  "fileSize": "100.76KB",
   "contIntegration": "https://codecov.io/gh/mpadge/autotest",
   "developmentStatus": "https://www.repostatus.org/#concept",
   "readme": "https://github.com/mpadge/autotest/blob/master/README.md"
