@@ -6,7 +6,7 @@
 # and the parses the result with a separate function. See also the `tryCatchLog`
 # package for further inspiration.
 
-catch_all_msgs <- function (f, this_fn) {
+log_all_msgs <- function (f, this_fn) {
     con <- file (f, "wt")
     sink (file = con, type = "message")
 
@@ -17,11 +17,16 @@ catch_all_msgs <- function (f, this_fn) {
                                            message (paste0 (w))
                                            invokeRestart("muffleWarning")
                                        }))
-    sink (file = NULL, type = "message")
+    sink (type = "message")
+    sink ()
     close (con, type = "wt")
+    closeAllConnections ()
 }
 
 parse_all_msgs <- function (f) {
+    if (!file.exists (f))
+        stop ("File [", f, "] does not exist")
+
     x <- readLines (f)
     x <- x [which (!(x == "" | duplicated (x)))]
 
@@ -57,4 +62,11 @@ parse_all_msgs <- function (f) {
     }
 
     return (ret)
+}
+
+catch_all_msgs <- function (f, this_fn) {
+    log_all_msgs (f, this_fn)
+    out <- parse_all_msgs (f)
+    message ("out has ", nrow (out), " rows")
+    return (out)
 }
