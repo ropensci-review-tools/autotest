@@ -42,6 +42,9 @@ parse_all_msgs <- function (f) {
             colon1 <- regexpr ("\\:", x [i])
             content <- gsub ("^\\s?", "",
                              substring (x [i], colon1 + 1, nchar (x [i])))
+            loc <- utils::tail (strsplit (substring (x [i], 1, colon1 - 1), " ") [[1]], 1)
+            if (!grepl ("\\(\\)", loc))
+                loc <- NA_character_
             types <- c ("message", "error", "warning")
             type <- NA_character_
             for (ti in types)
@@ -51,6 +54,7 @@ parse_all_msgs <- function (f) {
             ret <- rbind (ret,
                           data.frame (type = type,
                                       content = content,
+                                      location = loc,
                                       stringsAsFactors = FALSE)
                           )
         }
