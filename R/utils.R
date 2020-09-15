@@ -6,10 +6,13 @@
 # and then parses the result with a separate function. See also the
 # `tryCatchLog` package for further inspiration.
 
-log_all_msgs <- function (con, this_fn) {
+log_all_msgs <- function (con, this_fn, params = NULL) {
 
     x <- tryCatch (withCallingHandlers (
-                                       eval (call (this_fn)),
+                                        if (is.null (params))
+                                           eval (call (this_fn))
+                                        else
+                                            do.call (this_fn, params),
                                        error = function(e) {
                                            write (toString (e), con, append = TRUE)
                                        },
@@ -42,8 +45,12 @@ parse_all_msgs <- function (f) {
             colon1 <- regexpr ("\\:", x [i])
             content <- gsub ("^\\s?", "",
                              substring (x [i], colon1 + 1, nchar (x [i])))
-            loc <- utils::tail (strsplit (substring (x [i], 1, colon1 - 1), " ") [[1]], 1)
-            if (!grepl ("\\(\\)", loc))
+            loc <- substring (x [i], 1, colon1 - 1)
+            if (grepl ("\\(.*\\)", loc)) {
+                ws <- gregexpr ("\\s+", loc) [[1]]
+                br <- gregexpr ("\\(.*\\)", loc) [[1]]
+                loc <- substring (loc, max (ws [ws < br]) + 1, nchar (loc))
+            } else
                 loc <- NA_character_
             types <- c ("message", "error", "warning")
             type <- NA_character_
@@ -73,10 +80,10 @@ parse_all_msgs <- function (f) {
     return (ret)
 }
 
-catch_all_msgs <- function (f, this_fn) {
+catch_all_msgs <- function (f, this_fn, params = NULL) {
     con <- file (f, "wt")
     suppressMessages (
-        log_all_msgs (con, this_fn)
+        log_all_msgs (con, this_fn, params)
         )
     close (con)
     out <- parse_all_msgs (f)
