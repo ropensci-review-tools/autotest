@@ -87,5 +87,7 @@ catch_all_msgs <- function (f, this_fn, params = NULL) {
         )
     close (con)
     out <- parse_all_msgs (f)
+    if (!is.null (out))
+        out$location [which (is.na (out$location))] <- this_fn
     return (out)
 }
