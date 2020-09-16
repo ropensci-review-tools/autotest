@@ -29,6 +29,7 @@ autotest_return <- function (pkg, params, this_fn) {
     }
 
     retval <- tryCatch (do.call (this_fn, params),
+                        warning = function (w) w,
                         error = function (e) e)
     if (is (retval, "error")) {
         ret <- rbind (ret,
