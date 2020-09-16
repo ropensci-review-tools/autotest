@@ -14,6 +14,14 @@ null_or_not <- function (x, not_this) {
     return (any (res))
 }
 
+not_null_and_is <- function (x, is_this) {
+    res <- FALSE
+    if (!is.null (x))
+        if (is_this %in% x$type)
+            res <- TRUE
+    return (res)
+}
+
 report_object <- function (type = "diagnostic",
                            fn_name = NA_character_,
                            parameter = NA_character_,

@@ -15,20 +15,18 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
         params_v <- params
         msgs <- catch_all_msgs (f, this_fn, params_v)
         warn <- FALSE
-        if (!is.null (msgs)) {
-            if ("warning" %in% msgs$type) {
-                warn <- TRUE
-                index <- which (msgs$type == "warning")
-                for (w in index) {
-                    ret <- rbind (ret,
-                                  report_object (type = "diagnostic",
-                                                 fn_name = this_fn,
-                                                 parameter = names (params) [v],
-                                                 content = paste0 ("Function [",
-                                                                   this_fn,
-                                                                   "] issued a Warning: ",
-                                                                   msgs$content [w])))
-                }
+        if (not_null_and_is (msgs, "warning")) {
+            warn <- TRUE
+            index <- which (msgs$type == "warning")
+            for (w in index) {
+                ret <- rbind (ret,
+                              report_object (type = "diagnostic",
+                                             fn_name = this_fn,
+                                             parameter = names (params) [v],
+                                             content = paste0 ("Function [",
+                                                               this_fn,
+                                                               "] issued a Warning: ",
+                                                               msgs$content [w])))
             }
         }
 
@@ -63,23 +61,21 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
             class (x) <- "different"
             params_v [[v]] <- x
             msgs <- catch_all_msgs (f, this_fn, params_v)
-            if (!is.null (msgs)) {
-                if ("error" %in% msgs$type) {
-                    index <- which (msgs$type == "error")
-                    for (e in index) {
-                        ret <- rbind (ret,
-                                      report_object (type = "diagnostic",
-                                                     fn_name = this_fn,
-                                                     parameter = names (params_v) [v],
-                                                     content = paste0 ("Function [",
-                                                                       this_fn,
-                                                                       "] errors on vector columns with ",
-                                                                       "different classes when ",
-                                                                       "submitted as ",
-                                                                       names (params_v) [v],
-                                                                       " Error message: ",
-                                                                      msgs$content [e])))
-                    }
+            if (not_null_and_is (msgs, "error")) {
+                index <- which (msgs$type == "error")
+                for (e in index) {
+                    ret <- rbind (ret,
+                                  report_object (type = "diagnostic",
+                                                 fn_name = this_fn,
+                                                 parameter = names (params_v) [v],
+                                                 content = paste0 ("Function [",
+                                                                   this_fn,
+                                                                   "] errors on vector columns with ",
+                                                                   "different classes when ",
+                                                                   "submitted as ",
+                                                                   names (params_v) [v],
+                                                                   " Error message: ",
+                                                                   msgs$content [e])))
                 }
             } else {
                 # TODO: Expectation - they need not be identical, because class
@@ -96,23 +92,22 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
         x <- I (as.list (x))
         params_v [[v]] <- x
         msgs <- catch_all_msgs (f, this_fn, params_v)
-        if (!is.null (msgs))
-            if ("error" %in% msgs$type) {
-                index <- which (msgs$type == "error")
-                for (e in index) {
-                    ret <- rbind (ret,
-                                  report_object (type = "diagnostic",
-                                                 fn_name = this_fn,
-                                                 parameter = names (params_v) [v],
-                                                 content = paste0 ("Function [",
-                                                                   this_fn,
-                                                                   "] errors on list-columns ",
-                                                                   "when submitted as ",
-                                                                   names (params) [v],
-                                                                   " Error message: ",
-                                                                   msgs$content [e])))
-                }
+        if (not_null_and_is (msgs, "error")) {
+            index <- which (msgs$type == "error")
+            for (e in index) {
+                ret <- rbind (ret,
+                              report_object (type = "diagnostic",
+                                             fn_name = this_fn,
+                                             parameter = names (params_v) [v],
+                                             content = paste0 ("Function [",
+                                                               this_fn,
+                                                               "] errors on list-columns ",
+                                                               "when submitted as ",
+                                                               names (params) [v],
+                                                               " Error message: ",
+                                                               msgs$content [e])))
             }
+        }
     }
 
     return (ret)
