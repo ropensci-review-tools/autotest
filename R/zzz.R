@@ -13,3 +13,14 @@ null_or_not <- function (x, not_this) {
 
     return (any (res))
 }
+
+report_object <- function (type = "diagnostic",
+                           fn_name = NA_character_,
+                           parameter = NA_character_,
+                           content = NA_character_) {
+    data.frame (type = type,
+                fn_name = fn_name,
+                parameter = parameter,
+                content = content,
+                stringsAsFactors = FALSE)
+}

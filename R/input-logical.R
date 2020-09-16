@@ -17,32 +17,32 @@ test_single_logical <- function (pkg, this_fn, params, i) {
     }
     if (is.null (res_ints)) {
         res <- rbind (res,
-                      data.frame (type = "diagnostic",
-                                  content = paste0 ("Parameter ",
-                                                     names (params) [i],
-                                                     " of function [",
-                                                     this_fn,
-                                                     "] is assumed to be logical, ",
-                                                     "but responds to ",
-                                                     "general integer values."),
-                                  location = this_fn,
-                                  stringsAsFactors = FALSE))
+                      report_object (type = "diagnostic",
+                                     fn_name = this_fn,
+                                     parameter = names (params) [i],
+                                     content = paste0 ("Parameter ",
+                                                       names (params) [i],
+                                                       " of function [",
+                                                       this_fn,
+                                                       "] is assumed to be logical, ",
+                                                       "but responds to ",
+                                                       "general integer values.")))
     }
 
     p [[i]] <- "a"
     res_char <- catch_all_msgs (f, this_fn, p)
     if (null_or_not (res_char, "error")) {
         res <- rbind (res,
-                      data.frame (type = "diagnostic",
-                                  content = paste0 ("Parameter ",
-                                                    names (params) [i],
-                                                    " of function [",
-                                                    this_fn,
-                                                    "] is assumed to be logical, ",
-                                                    "but responds to ",
-                                                    "character input"),
-                                  location = this_fn,
-                                  stringsAsFactors = FALSE))
+                      report_object (type = "diagnostic",
+                                     fn_name = this_fn,
+                                     parameter = names (params) [i],
+                                     content = paste0 ("Parameter ",
+                                                       names (params) [i],
+                                                       " of function [",
+                                                       this_fn,
+                                                       "] is assumed to be logical, ",
+                                                       "but responds to ",
+                                                       "character input")))
     }
 
     p <- params
@@ -50,16 +50,16 @@ test_single_logical <- function (pkg, this_fn, params, i) {
     res_len2 <- catch_all_msgs (f, this_fn, p)
     if (is.null (res_len2)) {
         res <- rbind (res,
-                      data.frame (type = "diagnostic",
-                                  content = paste0 ("Parameter ",
-                                                    names (params) [i],
-                                                    " of function [",
-                                                    this_fn,
-                                                    "] is assumed to be logical ",
-                                                    "of length 1, but responds to ",
-                                                    "vectors of length > 1"),
-                                  location = this_fn,
-                                  stringsAsFactors = FALSE))
+                      report_object (type = "diagnostic",
+                                     fn_name = this_fn,
+                                     parameter = names (params) [i],
+                                     content = paste0 ("Parameter ",
+                                                       names (params) [i],
+                                                       " of function [",
+                                                       this_fn,
+                                                       "] is assumed to be logical ",
+                                                       "of length 1, but responds to ",
+                                                       "vectors of length > 1")))
     }
 
     return (res)

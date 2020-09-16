@@ -39,19 +39,19 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
                 msgs <- catch_all_msgs (f, this_fn, params_i)
                 if (null_or_not (msgs, c ("warning", "error"))) {
                     res <- rbind (res,
-                                  data.frame (type = "diagnostic",
-                                              content = paste0 ("parameter [",
-                                                                names (params) [i],
-                                                                "] is assumed to be ",
-                                                                "a single value of ",
-                                                                val_type,
-                                                                " type, yet admits vectors ",
-                                                                "of length > 1"),
-                                              location = this_fn,
-                                              stringsAsFactors = FALSE))
+                                  report_object (type = "diagnostic",
+                                                 fn_name = this_fn,
+                                                 parameter = names (params) [i],
+                                                 content = paste0 ("parameter [",
+                                                                   names (params) [i],
+                                                                   "] is assumed to be ",
+                                                                   "a single value of ",
+                                                                   val_type,
+                                                                   " type, yet admits vectors ",
+                                                                   "of length > 1")))
                 }
             }
     }
 
-    return (res)
+    return (res [which (!duplicated (res)), ])
 }

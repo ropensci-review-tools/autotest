@@ -21,21 +21,21 @@ test_single_int <- function (pkg, this_fn, params, i) {
 
     if (!any (is.finite (int_range))) {
         res <- rbind (res,
-                      data.frame (type = "diagnostic",
-                                  content = paste0 ("Parameter [",
-                                                    names (params) [i],
-                                                    "] permits unrestricted integer inputs"),
-                                  location = this_fn,
-                                  stringsAsFactors = FALSE))
+                      report_object (type = "diagnostic",
+                                     fn_name = this_fn,
+                                     parameter = names (params) [i],
+                                     content = paste0 ("Parameter [",
+                                                       names (params) [i],
+                                                       "] permits unrestricted integer inputs")))
     } else if (!is.null (int_range)) {
         res <- rbind (res,
-                      data.frame (type = "diagnostic",
-                                  content = paste0 ("Parameter [",
-                                                    names (params) [i],
-                                                    "] responds to integer values in [",
-                                                    paste0 (int_range, collapse = ", "), "]"),
-                                  location = this_fn,
-                                  stringsAsFactors = FALSE))
+                      report_object (type = "diagnostic",
+                                     fn_name = this_fn,
+                                     parameter = names (params) [i],
+                                     content = paste0 ("Parameter [",
+                                                       names (params) [i],
+                                                       "] responds to integer values in [",
+                                                       paste0 (int_range, collapse = ", "), "]")))
 
         rd <- get_Rd_param (package = pkg,
                             fn_name = this_fn,
@@ -44,12 +44,12 @@ test_single_int <- function (pkg, this_fn, params, i) {
                                grepl (j, rd), logical (1))
         if (!all (range_in_rd))
             res <- rbind (res,
-                          data.frame (type = "diagnostic",
-                                      content = paste0 (" Parameter range for ",
-                                                        names (params) [i],
-                                                        " is NOT documented"),
-                                      location = this_fn,
-                                      stringsAsFactors = FALSE))
+                          report_object (type = "diagnostic",
+                                         fn_name = this_fn,
+                                         parameter = names (params) [i],
+                                         content = paste0 (" Parameter range for ",
+                                                           names (params) [i],
+                                                           " is NOT documented")))
     }
 
     return (res)
@@ -78,14 +78,14 @@ get_int_range <- function (this_fn, params, i) {
     # the actual int range.
     if (get_fn_response (this_fn, params) == 1) # allow warnings
     {
-        ret <- data.frame (type = "diagnostic",
-                           content = paste0 ("Function [", this_fn,
-                                             "] does not respond appropriately for ",
-                                             "specified/default input [",
-                                             names (params) [i], " = ",
-                                             params [[i]], "]"),
-                           location = this_fn,
-                           stringsAsFactors = FALSE)
+        ret <- report_object (type = "diagnostic",
+                              fn_name = this_fn,
+                              parameter = names (params) [i],
+                              content = paste0 ("Function [", this_fn,
+                                                "] does not respond appropriately for ",
+                                                "specified/default input [",
+                                                names (params) [i], " = ",
+                                                params [[i]], "]"))
         return (ret)
     }
 
