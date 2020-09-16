@@ -45,7 +45,7 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
             msgs <- catch_all_msgs (f, this_fn, params_r)
             if (!null_or_not (msgs, "error")) {
                 ret <- rbind (ret,
-                              return_object (type = "diagnostic",
+                              report_object (type = "diagnostic",
                                              fn_name = this_fn,
                                              parameter = names (params) [r],
                                              content = paste0 ("Function [",

@@ -1,6 +1,7 @@
 autotest_vector <- function (params, this_fn, classes, quiet) {
 
-    chk <- TRUE
+    ret <- NULL
+    f <- file.path (tempdir (), "junk.txt")
 
     null_params <- NULL
     if (any (params == "NULL")) {
@@ -12,32 +13,46 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
                                 length (i) > 1 && is.null (dim (i)), logical (1)))
     for (v in vec_index) {
         params_v <- params
-
-        res1 <- tryCatch (do.call (this_fn, params_v),
-                          warning = function (w) w,
-                          error = function (e) e)
+        msgs <- catch_all_msgs (f, this_fn, params_v)
         warn <- FALSE
-        if (methods::is (res1, "warning")) {
-            cli::cli_text (cli::col_yellow ("function [", this_fn,
-                                            "] issued a Warning: ",
-                                            res1$message))
-            warn <- TRUE
-            res1 <- suppressWarnings (do.call (this_fn, params_v))
+        if (!is.null (msgs)) {
+            if ("warning" %in% msgs$type) {
+                warn <- TRUE
+                index <- which (msgs$type == "warning")
+                for (w in index) {
+                    ret <- rbind (ret,
+                                  report_object (type = "diagnostic",
+                                                 fn_name = this_fn,
+                                                 parameter = names (params) [v],
+                                                 content = paste0 ("Function [",
+                                                                   this_fn,
+                                                                   "] issued a Warning: ",
+                                                                   msgs$content [w])))
+                }
+            }
         }
+
 
         # int columns submitted as double should return different result:
         if (typeof (params_v [[v]]) == "integer") {
+            res1 <- suppressWarnings (do.call (this_fn, params_v))
             params_v [[v]] <- as.numeric (params_v [[v]])
-            if (warn)
-                res2 <- suppressWarnings (do.call (this_fn, params_v))
-            else
-                res2 <- do.call (this_fn, params_v)
+            res2 <- suppressWarnings (do.call (this_fn, params_v))
             if (!identical (res1, res2)) {
-                warning ("Function [", this_fn, "] returns different values when ",
-                         "assumed int-valued parameter [", names (params) [v],
-                         "] is submitted as double.\n Error message: ",
-                         "different classes when submitted as ", names (params) [v],
-                         res3$message, call. = FALSE, immediate. = TRUE)
+                ret <- rbind (ret,
+                              report_object (type = "diagnostic",
+                                             fn_name = fn_name,
+                                             parameter = names (params_v) [v],
+                                             content = paste0 ("Function [",
+                                                               this_fn,
+                                                               "] returns different values when ",
+                                                               "assumed int-valued parameter [",
+                                                               names (params) [v],
+                                                               "] is submitted as double. ",
+                                                               "Error message: ",
+                                                               "different classes when ",
+                                                               "submitted as ",
+                                                               names (params) [v])))
             }
             params_v <- params
         }
@@ -47,16 +62,25 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
             x <- params_v [[v]]
             class (x) <- "different"
             params_v [[v]] <- x
-            res3 <- tryCatch (
-                              do.call (this_fn, params_v),
-                              warning = function (w) w,
-                              error = function (e) e)
-            if (methods::is (res3, "error")) {
-                chk <- FALSE
-                warning ("Function [", this_fn, "] errors on vector columns with ",
-                         "different classes when submitted as ", names (params) [v],
-                         "\n  Error message: ", res3$message,
-                         call. = FALSE, immediate. = TRUE)
+            msgs <- catch_all_msgs (f, this_fn, params_v)
+            if (!is.null (msgs)) {
+                if ("error" %in% msgs$type) {
+                    index <- which (msgs$type == "error")
+                    for (e in index) {
+                        ret <- rbind (ret,
+                                      report_object (type = "diagnostic",
+                                                     fn_name = this_fn,
+                                                     parameter = names (params_v) [v],
+                                                     content = paste0 ("Function [",
+                                                                       this_fn,
+                                                                       "] errors on vector columns with ",
+                                                                       "different classes when ",
+                                                                       "submitted as ",
+                                                                       names (params_v) [v],
+                                                                       " Error message: ",
+                                                                      msgs$content [e])))
+                    }
+                }
             } else {
                 # TODO: Expectation - they need not be identical, because class
                 # def may be carried over to result
@@ -71,21 +95,25 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
         x <- params_v [[v]]
         x <- I (as.list (x))
         params_v [[v]] <- x
-        res4 <- tryCatch (
-                          do.call (this_fn, params_v),
-                          warning = function (w) w,
-                          error = function (e) e)
-        if (methods::is (res4, "error")) {
-            chk <- FALSE
-            warning ("Function [", this_fn, "] errors on list-columns ",
-                     "when submitted as ", names (params) [v],
-                     "\n  Error message: ", res4$message,
-                     call. = FALSE, immediate. = TRUE)
-        } else {
-            # TODO: Expectation here too
-            #expect_identical (res1, res4)
-        }
+        msgs <- catch_all_msgs (f, this_fn, params_v)
+        if (!is.null (msgs))
+            if ("error" %in% msgs$type) {
+                index <- which (msgs$type == "error")
+                for (e in index) {
+                    ret <- rbind (ret,
+                                  report_object (type = "diagnostic",
+                                                 fn_name = this_fn,
+                                                 parameter = names (params_v) [v],
+                                                 content = paste0 ("Function [",
+                                                                   this_fn,
+                                                                   "] errors on list-columns ",
+                                                                   "when submitted as ",
+                                                                   names (params) [v],
+                                                                   " Error message: ",
+                                                                   msgs$content [e])))
+                }
+            }
     }
 
-    return (chk)
+    return (ret)
 }
