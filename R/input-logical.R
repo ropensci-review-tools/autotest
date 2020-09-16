@@ -1,70 +1,66 @@
 
 test_single_logical <- function (pkg, this_fn, params, i) {
 
-    chk <- TRUE
+    res <- NULL
 
-    get1 <- function (val) {
-        params [[i]] <- val
-        tryCatch (
-                  utils::capture.output (do.call (this_fn, params)),
-                  error = function (e) e,
-                  warning = function (w) w)
+    f <- file.path (tempdir (), "junk.txt")
+    res <- rbind (res,
+                  catch_all_msgs (f, this_fn, params))
+    p <- params
+    p [[i]] <- !p [[i]]
+    res <- rbind (res,
+                  catch_all_msgs (f, this_fn, p))
+
+    for (j in 0L:2L) {
+        p [[i]] <- j
+        res_ints <- catch_all_msgs (f, this_fn, params)
     }
-    val0 <- get1 (params [[i]])
-    val1 <- get1 (!params [[i]])
-
-    if (any (methods::is (val0, "error")) | methods::is (val0, "warning") |
-        any (methods::is (val1, "error")) | methods::is (val1, "warning")) {
-
-        msg <- paste0 ("Function [", this_fn, "] does not respond appropriately ",
-                       "for specified/default input [", names (params) [i],
-                       " = ", params [[i]], "]\n")
-
-        this_val <- params [[i]]
-        msg_out <- val0
-        if (any (methods::is (val1, "error")) | any (methods::is (val1, "warning"))) {
-            this_val <- !params [[i]]
-            msg_out <- val1
-        }
-
-        this_type <- "an error"
-        if (any (methods::is (val0, "warning")) | any (methods::is (val1, "warning")))
-            this_type <- "a warning"
-
-        msg <- paste0 (msg, "  value of [", names (params) [i], " = ",
-                       this_val, "] generates ", this_type, "\n ",
-                       msg_out)
-
-        warning (msg, call. = FALSE, immediate. = TRUE)
-
-        return (FALSE)
+    if (is.null (res_ints)) {
+        res <- rbind (res,
+                      data.frame (type = "diagnostic",
+                                  content = paste0 ("Parameter ",
+                                                     names (params) [i],
+                                                     " of function [",
+                                                     this_fn,
+                                                     "] is assumed to be logical, ",
+                                                     "but responds to ",
+                                                     "general integer values."),
+                                  location = this_fn,
+                                  stringsAsFactors = FALSE))
     }
 
-    val0 <- get1 (0L)
-    val1 <- get1 (1L)
-    val2 <- get1 (2L)
-    if (!(any (methods::is (val2, "error")) | methods::is (val2, "warning"))) {
-        message ("Parameter ", names (params) [i], " of function [",
-                 this_fn, "] is assumed to be logical, but responds to ",
-                 "general integer values.")
-        # chk remains TRUE
+    p [[i]] <- "a"
+    res_char <- catch_all_msgs (f, this_fn, p)
+    if (null_or_not (res_char, "error")) {
+        res <- rbind (res,
+                      data.frame (type = "diagnostic",
+                                  content = paste0 ("Parameter ",
+                                                    names (params) [i],
+                                                    " of function [",
+                                                    this_fn,
+                                                    "] is assumed to be logical, ",
+                                                    "but responds to ",
+                                                    "character input"),
+                                  location = this_fn,
+                                  stringsAsFactors = FALSE))
     }
 
-    vala <- get1 ("a")
-    if (!(any (methods::is (vala, "error")) | methods::is (vala, "warning"))) {
-        message ("Parameter ", names (params) [i], " of function [",
-                 this_fn, "] is assumed to be logical, but responds to ",
-                 "character input")
-        chk <- FALSE
+    p <- params
+    p [[i]] <- c (p [[i]], !p [[i]])
+    res_len2 <- catch_all_msgs (f, this_fn, p)
+    if (is.null (res_len2)) {
+        res <- rbind (res,
+                      data.frame (type = "diagnostic",
+                                  content = paste0 ("Parameter ",
+                                                    names (params) [i],
+                                                    " of function [",
+                                                    this_fn,
+                                                    "] is assumed to be logical ",
+                                                    "of length 1, but responds to ",
+                                                    "vectors of length > 1"),
+                                  location = this_fn,
+                                  stringsAsFactors = FALSE))
     }
 
-    val_len <- get1 (c (TRUE, FALSE))
-    if (!(any (methods::is (val_len, "error")) | methods::is (val_len, "warning"))) {
-        message ("Parameter ", names (params) [i], " of function [",
-                 this_fn, "] is assumed to be logical of length 1, ",
-                 "but responds to vectors of length > 1")
-        chk <- FALSE
-    }
-
-    return (chk)
+    return (res)
 }

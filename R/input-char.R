@@ -3,52 +3,78 @@ get_Rd_metadata <- utils::getFromNamespace (".Rd_get_metadata", "tools")
 
 test_single_char <- function (pkg, this_fn, params, i) {
 
-    chk <- TRUE
-
     h <- tools::Rd_db (package = pkg)
     h <- h [grep (paste0 ("^", this_fn, "\\.Rd$"), names (h))]
     if (length (h) != 1) {
         message ("No single help topic for [", this_fn, "] found")
-        return (FALSE)
-    }
-    h <- h [[1]]
-
-    get1 <- function (val) {
-        params [[i]] <- val
-        tryCatch (
-                  utils::capture.output (do.call (this_fn, params)),
-                  error = function (e) e,
-                  warning = function (w) w)
+        return (NULL)
     }
 
     # check whether vectors of 2 characters error or warn:
-    val0 <- get1 (params [[i]])
-    val1 <- get1 (rep (params [[i]], 2))
-    if (!(any (methods::is (val1, "error")) | methods::is (val1, "warning"))) {
-        message ("Parameter ", names (params) [i], " of function [",
-                 this_fn, "] is assumed to a single character, ",
-                 "but responds to vectors of length > 1")
-        chk <- FALSE
-    }
+    p <- params
+    p [[i]] <- rep (p [[i]], 2)
+    f <- file.path (tempdir (), "junk.txt")
+    msgs <- catch_all_msgs (f, this_fn, p)
+
+    if (is.null (msgs)) {
+        msgs <- data.frame (type = "diagnostic",
+                            content = paste0 ("Parameter ",
+                                              names (params) [i],
+                                              " of function [", this_fn,
+                                              "] is assumed to a single ",
+                                              "character, but responds to ",
+                                              "vectors of length > 1"),
+                            location = this_fn,
+                            stringsAsFactors = FALSE)
+    } else
+        msgs <- NULL
 
     # check case sensitivity:
-    val1 <- get1 (tolower (params [[i]]))
-    val2 <- get1 (toupper (params [[i]]))
-    if (any (methods::is (val1, "error")) | methods::is (val1, "warning") |
-        methods::is (val2, "error") | methods::is (val2, "warning")) {
-        message ("Parameter [", names (params) [i], "] of function [",
-                 this_fn, "] is assumed to a single character, ",
-                 "but is case dependent")
-        chk <- FALSE
+    p <- params
+    p [[i]] <- tolower (p [[i]])
+    these_msgs <- catch_all_msgs (f, this_fn, p)
+    if (!is.null (these_msgs)) {
+        msgs <- rbind (msgs,
+                       data.frame (type = "diagnostic",
+                                   content = paste0 ("Parameter ",
+                                                     names (params) [i],
+                                                     " of function [", this_fn,
+                                                     "] is assumed to a single ",
+                                                     "character, but is ",
+                                                     "case dependent"),
+                                   location = this_fn,
+                                   stringsAsFactors = FALSE))
+    }
+    p [[i]] <- toupper (p [[i]])
+    these_msgs <- catch_all_msgs (f, this_fn, p)
+    if (!is.null (these_msgs)) {
+        msgs <- rbind (msgs,
+                       data.frame (type = "diagnostic",
+                                   content = paste0 ("Parameter ",
+                                                     names (params) [i],
+                                                     " of function [", this_fn,
+                                                     "] is assumed to a single ",
+                                                     "character, but is ",
+                                                     "case dependent"),
+                                   location = this_fn,
+                                   stringsAsFactors = FALSE))
     }
 
     # check whether match.arg is used
-    val1 <- get1 (paste0 (sample (c (letters, LETTERS), size = 10), collapse = ""))
-    if (!methods::is (val1, "error")) {
-        message ("Parameter ", names (params) [i], " of function [",
-                 this_fn, "] is assumed to a single character, ",
-                 "but does not match arguments to expected values")
-        chk <- FALSE
+    p [[i]] <- paste0 (sample (c (letters, LETTERS), size = 10), collapse = "")
+    these_msgs <- catch_all_msgs (f, this_fn, p)
+    if (!"error" %in% these_msgs$type) {
+        msgs <- rbind (msgs,
+                       data.frame (type = "diagnostic",
+                                   content = paste0 ("Parameter ",
+                                                     names (params) [i],
+                                                     " of function [", this_fn,
+                                                     "] is assumed to a single ",
+                                                     "character, but does not ",
+                                                     "match arguments to ",
+                                                     "expected values"),
+                                   location = this_fn,
+                                   stringsAsFactors = FALSE))
     }
 
     # The following lines are used just to test whether params[[i]] corresponds
@@ -64,7 +90,7 @@ test_single_char <- function (pkg, this_fn, params, i) {
     arg_name <- arg_names [i]
     arg_desc <- arg_descs [i]
     if (grepl ("~", params [[i]]) | any (grepl ("formula", arg_desc)))
-        return (TRUE) # do not test formulas
+        return (msgs) # do not test formulas
 
     # regex the actual string to extract all item descriptions. These are formatted
     # "\\item { <name> } { <description> }
@@ -131,5 +157,5 @@ test_single_char <- function (pkg, this_fn, params, i) {
     for (k in seq (res))
         res [k] <- match_res_k (res, hc, i, j, k)
 
-    return (chk)
+    return (msgs)
 }
