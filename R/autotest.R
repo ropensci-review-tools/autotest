@@ -16,6 +16,8 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
 
     res <- parse_yaml_template (yaml = yaml, filename = filename)
 
+    reports <- NULL
+
     if (!quiet)
         message (cli::col_green (cli::symbol$star, " Testing functions:"))
 
@@ -28,16 +30,22 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
         params <- params [which (params != "NULL")]
         classes <- res$classes [[i]]
 
-        chk1 <- autotest_rectangular (params, this_fn, classes, quiet)
-        chk2 <- autotest_vector (params, this_fn, classes, quiet)
-        chk3 <- autotest_single (res$package, params, this_fn, quiet)
-        chk4 <- autotest_return (res$package, params, this_fn)
+        reports <- rbind (reports,
+                          autotest_rectangular (params, this_fn, classes, quiet))
+        reports <- rbind (reports,
+                          autotest_vector (params, this_fn, classes, quiet))
+        reports <- rbind (reports,
+                          autotest_single (res$package, params, this_fn, quiet))
+        reports <- rbind (reports,
+                          autotest_return (res$package, params, this_fn))
 
-        if (chk1 && chk2 && chk4)
-            message (cli::col_green (cli::symbol$tick, " ", this_fn))
-        else
-            message (cli::col_red (cli::symbol$cross), " ", cli::col_yellow (this_fn))
+        message (cli::col_green (cli::symbol$tick, " ", this_fn))
+        #message (cli::col_red (cli::symbol$cross), " ", cli::col_yellow (this_fn))
     }
+
+    reports <- reports [which (!duplicated (reports)), ]
+    rownames (reports) <- NULL
+    return (reports)
 }
 
 #' autotest_package

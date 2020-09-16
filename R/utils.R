@@ -59,11 +59,10 @@ parse_all_msgs <- function (f) {
                     type <- ti
 
             ret <- rbind (ret,
-                          data.frame (type = type,
-                                      content = content,
-                                      location = loc,
-                                      stringsAsFactors = FALSE)
-                          )
+                          report_object (type = type,
+                                         fn_name = loc,
+                                         parameter = NA_character_,
+                                         content = content))
         }
         x <- x [-index]
     }
@@ -71,10 +70,10 @@ parse_all_msgs <- function (f) {
     # anything left must be messages
     if (length (x) > 0) {
         ret <- rbind (ret,
-                      data.frame (type = rep ("message", length (x)),
-                                  content = x,
-                                  stringsAsFactors = FALSE)
-                      )
+                      report_object (type = rep ("message", length (x)),
+                                     fn_name = rep (NA_character_, length (x)),
+                                     parameter = rep (NA_character_, length (x)),
+                                     content = x))
     }
 
     return (ret)
@@ -88,6 +87,6 @@ catch_all_msgs <- function (f, this_fn, params = NULL) {
     close (con)
     out <- parse_all_msgs (f)
     if (!is.null (out))
-        out$location [which (is.na (out$location))] <- this_fn
+        out$fn_name [which (is.na (out$fn_name))] <- this_fn
     return (out)
 }

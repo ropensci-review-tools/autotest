@@ -7,9 +7,7 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
     }
 
     f <- file.path (tempdir (), "junk.txt")
-    msgs <- catch_all_msgs (f, this_fn, params)
-
-    res <- NULL
+    res <- catch_all_msgs (f, this_fn, params)
 
     index <- which (vapply (params, function (j)
                             is.null (dim (j)) && length (j) == 1, logical (1)))

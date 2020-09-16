@@ -28,7 +28,16 @@ autotest_return <- function (pkg, params, this_fn) {
         }
     }
 
-    retval <- suppressWarnings (do.call (this_fn, params))
+    retval <- tryCatch (do.call (this_fn, params),
+                        error = function (e) e)
+    if (is (retval, "error")) {
+        ret <- rbind (ret,
+                      report_object (type = "error",
+                                     fn_name = this_fn,
+                                     parameter = NA_character_,
+                                     content = retval$message))
+        return (ret)
+    }
 
     if (!is.null (attr (retval, "class"))) {
         Rd_value <- get_Rd_value (package = pkg, fn_name = this_fn)
