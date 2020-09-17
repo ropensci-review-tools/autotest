@@ -4,13 +4,15 @@
 \alias{autotest_package}
 \title{autotest_package}
 \usage{
-autotest_package(package, exclude = NULL)
+autotest_package(package, exclude = NULL, quiet = FALSE)
 }
 \arguments{
 \item{package}{Name of package to be 'autotested'}
 
 \item{exclude}{Character vector containing names of any functions to be
 excluded from 'autotesting'}
+
+\item{quiet}{If 'FALSE', provide printed output on screen.}
 }
 \description{
 Automatically test an entire package by converting examples to \code{yaml} format
