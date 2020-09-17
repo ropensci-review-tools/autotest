@@ -40,6 +40,11 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
         #message (cli::col_red (cli::symbol$cross), " ", cli::col_yellow (this_fn))
     }
 
+    # add hash to reports
+    if (is.null (yaml) & !is.null (filename))
+        yaml <- readLines (filename)
+    reports$yaml_hash <- digest::digest (yaml)
+
     reports <- reports [which (!duplicated (reports)), ]
     rownames (reports) <- NULL
     return (reports)

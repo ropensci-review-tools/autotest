@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/mpadge/autotest",
   "issueTracker": "https://github.com/mpadge/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.1.165",
+  "version": "0.0.1.166",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -125,6 +125,18 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "digest",
+      "name": "digest",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=digest"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "here",
       "name": "here",
       "provider": {
@@ -189,7 +201,7 @@
       "sameAs": "https://CRAN.R-project.org/package=yaml"
     }
   ],
-  "fileSize": "100.541KB",
+  "fileSize": "112.198KB",
   "contIntegration": "https://codecov.io/gh/mpadge/autotest",
   "developmentStatus": "https://www.repostatus.org/#concept",
   "readme": "https://github.com/mpadge/autotest/blob/master/README.md"
