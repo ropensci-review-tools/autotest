@@ -16,7 +16,7 @@ get_params <- function (res, i, this_fn) {
     e <- new.env ()
     for (p in pre) {
         expr <- parse (text = gsub ("`", "", p))
-        tmp <- capture.output (eval (expr, envir = e))
+        tmp <- utils::capture.output (eval (expr, envir = e))
     }
 
     params <- list ()

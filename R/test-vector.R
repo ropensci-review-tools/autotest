@@ -32,14 +32,14 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
 
 
         # int columns submitted as double should return different result:
-        if (typeof (params_v [[v]]) == "integer") {
+        if (typeof (params_v [[v]]) == "integer" & !is.factor (params_v [[v]])) {
             res1 <- suppressWarnings (do.call (this_fn, params_v))
             params_v [[v]] <- as.numeric (params_v [[v]])
             res2 <- suppressWarnings (do.call (this_fn, params_v))
             if (!identical (res1, res2)) {
                 ret <- rbind (ret,
                               report_object (type = "diagnostic",
-                                             fn_name = fn_name,
+                                             fn_name = this_fn,
                                              parameter = names (params_v) [v],
                                              content = paste0 ("Function [",
                                                                this_fn,

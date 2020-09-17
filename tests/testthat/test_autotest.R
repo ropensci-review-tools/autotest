@@ -23,9 +23,15 @@ yaml <- c ("package: SmartEDA",
 
 test_that("autotest", {
 
-    expect_warning (
-        autotest (yaml)
-    )
+    expect_message (
+        x <- autotest (yaml)
+        )
+    expect_is (x, "data.frame")
+    expect_equal (ncol (x), 4)
+    expect_identical (names (x), c ("type",
+                                    "fn_name",
+                                    "parameter",
+                                    "content"))
 
     f <- file.path (tempdir (), "junk2.yaml")
     con <- file (f)
@@ -33,7 +39,8 @@ test_that("autotest", {
     close (con)
     expect_true (file.exists (f))
 
-    expect_warning (
-        autotest (filename = f)
-    )
+    expect_silent (
+        x2 <- autotest (filename = f, quiet = TRUE)
+        )
+    expect_identical (x, x2)
              })
