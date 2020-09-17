@@ -72,7 +72,12 @@ autotest_package <- function (package, exclude = NULL, quiet = FALSE) {
                                      i, " / ", length (exs),
                                      "]: ", fn_name))
     }
-    return (res [which (!duplicated (res)), ])
+    res <- res [which (!duplicated (res)), ]
+
+    attr (res, "package") <- package
+    attr (res, "packageVersion") <- packageVersion (package)
+
+    return (tibble::tibble (res))
 }
 
 # Extract function name from yaml; used only to screen dump in autootest_package
