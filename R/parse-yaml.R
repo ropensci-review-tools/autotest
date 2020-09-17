@@ -66,14 +66,15 @@ load_libraries <- function (x, quiet = FALSE) {
     # then main package
     this_lib <- gsub ("package:\\s", "", x [grep ("package:", x)])
     libraries <- unique (c (libraries, this_lib))
-    if (!quiet) {
+    libraries <- libraries [which (!libraries %in% loadedNamespaces ())]
+    if (!quiet & length (libraries) > 0) {
         message (cli::col_green (cli::symbol$star, " Loading the following libraries:"))
         cli::cli_ul (libraries)
-    }
-    suppressMessages (
-        chk <- lapply (libraries, function (i)
-                       do.call (library, as.list (i)))
+        suppressMessages (
+                          chk <- lapply (libraries, function (i)
+                                         do.call (library, as.list (i)))
         )
+    }
 }
 
 #' at_yaml_template

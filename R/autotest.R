@@ -18,13 +18,9 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
 
     reports <- NULL
 
-    if (!quiet)
-        message (cli::col_green (cli::symbol$star, " Testing functions:"))
-
+    count <- 1
     for (i in seq (res$parameters)) {
         this_fn <- names (res$parameters) [i]
-        message ("\n", cli::rule (cli::col_green (paste0 ("Testing ", this_fn)),
-                                  line_col = "green"))
 
         params <- get_params (res, i, this_fn)
         params <- params [which (params != "NULL")]
@@ -39,7 +35,8 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
         reports <- rbind (reports,
                           autotest_return (res$package, params, this_fn))
 
-        message (cli::col_green (cli::symbol$tick, " ", this_fn))
+        if (!quiet)
+            message (cli::col_green (cli::symbol$tick, " ", this_fn))
         #message (cli::col_red (cli::symbol$cross), " ", cli::col_yellow (this_fn))
     }
 
@@ -56,11 +53,26 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
 #' @param package Name of package to be 'autotested'
 #' @param exclude Character vector containing names of any functions to be
 #' excluded from 'autotesting'
+#' @param quiet If 'FALSE', provide printed output on screen.
 #' @export
-autotest_package <- function (package, exclude = NULL) {
+autotest_package <- function (package, exclude = NULL, quiet = FALSE) {
     exs <- examples_to_yaml (package, exclude = exclude)
+    res <- NULL
     for (i in seq_along (exs)) {
-        message ("*****[", i, "]: ", names (exs) [i], "*****")
-        autotest (yaml = exs [[i]])
+        yaml <- exs [[i]]
+        fn_name <- fn_from_yaml (yaml)
+        res <- rbind (res, autotest (yaml = yaml, quiet = TRUE))
+        if (!quiet)
+            message (cli::col_green (cli::symbol$tick, " [",
+                                     i, " / ", length (exs),
+                                     "]: ", fn_name))
     }
+    return (res [which (!duplicated (res)), ])
+}
+
+# Extract function name from yaml; used only to screen dump in autootest_package
+fn_from_yaml <- function (yaml) {
+    x <- yaml::yaml.load (yaml)
+    nms <- vapply (x$functions, names, character (1))
+    return (unique (nms))
 }
