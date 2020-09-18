@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.0.1.168
+Version: 0.0.1.170
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -19,9 +19,11 @@ Imports:
     magrittr,
     methods,
     rlang,
+    rprojroot,
     tibble,
     yaml
 Suggests: 
+    devtools,
     ISLR,
     knitr,
     rmarkdown,

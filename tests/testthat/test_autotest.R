@@ -27,11 +27,12 @@ test_that("autotest", {
         x <- autotest (yaml)
         )
     expect_is (x, "data.frame")
-    expect_equal (ncol (x), 4)
+    expect_equal (ncol (x), 5)
     expect_identical (names (x), c ("type",
                                     "fn_name",
                                     "parameter",
-                                    "content"))
+                                    "content",
+                                    "yaml_hash"))
 
     f <- file.path (tempdir (), "junk2.yaml")
     con <- file (f)
