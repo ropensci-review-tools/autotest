@@ -75,7 +75,7 @@ autotest_package <- function (package, exclude = NULL, quiet = FALSE) {
     res <- res [which (!duplicated (res)), ]
 
     attr (res, "package") <- package
-    attr (res, "packageVersion") <- packageVersion (package)
+    attr (res, "packageVersion") <- utils::packageVersion (package)
 
     return (tibble::tibble (res))
 }

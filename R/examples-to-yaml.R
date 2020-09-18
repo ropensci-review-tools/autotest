@@ -7,12 +7,30 @@
 #' @param exclude Names of functions to exclude from 'yaml' template
 #' @export
 examples_to_yaml <- function (package = NULL, exclude = NULL) {
-    if (!package %in% search ())
-        suppressMessages (
-                          library (package, character.only = TRUE)
-        )
 
-    exs <- get_all_examples (package)
+    pkg_is_source <- FALSE
+
+    if (!package %in% search ()) {
+        if (file.exists (package)) {
+            package_dir <- package
+            # rprojroot errors if these fail:
+            d <- rprojroot::find_root (rprojroot::is_r_package, path = package_dir)
+            g <- rprojroot::find_root (rprojroot::is_git_root, path = package_dir)
+            devtools::load_all (g, export_all = FALSE)
+            desc <- rprojroot::find_package_root_file ("DESCRIPTION", path = package_dir)
+            package <- gsub ("Package:\\s?", "", readLines (desc) [1])
+
+            pkg_is_source <- TRUE
+        } else if (package %in% utils::installed.packages ()) {
+            suppressMessages (
+                              library (package, character.only = TRUE)
+                              )
+        } else {
+            stop ("package is neither installed nor a file path")
+        }
+    }
+
+    exs <- get_all_examples (package, pkg_is_source)
     exs <- exs [which (!names (exs) %in% exclude)]
 
     ret <- list ()

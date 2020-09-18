@@ -1,23 +1,21 @@
 # no export fns here
 
-get_all_examples <- function (package) {
+get_all_examples <- function (package, pkg_is_source) {
 
-    h <- utils::help (package = eval (substitute (package)), help_type = "text")
-    # first info is description stuff;
-    # second info is help files;
-    # third info is vignettes
-    fns <- h$info [[2]]
-    fns <- gsub ("\\s.*", "", fns [which (!grepl ("^\\s", fns))])
-    # reduce only to exported functions, methods, or data sets
-    fns <- fns [fns %in% ls (paste0 ("package:", package))]
-    # Then reduce only to functions:
-    fn_classes <- vapply (fns, function (i) class (get (i)), character (1))
-    fns <- fns [which (fn_classes == "function")]
+    if (!pkg_is_source) {
+        fns <- ls (paste0 ("package:", package))
+        fn_classes <- vapply (fns, function (i) class (get (i)), character (1))
+        fns <- fns [grep ("[Ff]unction|standardGeneric", fn_classes)]
+    } else {
+        requireNamespace ("devtools")
+        fns <- gsub (".Rd$", "",
+                     list.files (file.path (package, "man")))
+    }
 
     exs <- list ()
     for (i in seq (fns)) {
         fn <- fns [i]
-        exi <- get_fn_exs (package, fn)
+        exi <- get_fn_exs (package, fn, pkg_is_source = pkg_is_source)
         if (!is.null (exi)) {
             exs [[length (exs) + 1]] <- exi
             names (exs) [length (exs)] <- fns [i]
@@ -46,13 +44,67 @@ get_all_examples <- function (package) {
     return (ret)
 }
 
-get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
-    ex <- utils::example (eval (substitute (fn)), package = pkg,
-                          character.only = TRUE, give.lines = TRUE)
+get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
+                        pkg_is_source = FALSE) {
+    if (!pkg_is_source) {
+        # example called for function which have no help file trigger warnings
+        ex <- tryCatch (utils::example (eval (substitute (fn)),
+                                        package = pkg,
+                                        character.only = TRUE,
+                                        give.lines = TRUE,
+                                        lib.loc = .libPaths ()),
+                        warning = function (w) NULL)
+
+        pkg_name <- pkg
+    } else {
+        f <- file.path (pkg, "man", paste0 (fn, ".Rd"))
+        ex <- readLines (f, warn = FALSE)
+        ex_start <- grep ("^\\\\examples\\{", ex)
+        if (length (ex_start) > 0) {
+            ex <- ex [ex_start:length (ex)]
+
+            # Then find matching closing bracket
+            opens <- vapply (gregexpr ("\\{", ex), function (i) {
+                        if (all (i <= 0))
+                            return (0L)
+                        else
+                            return <- length (i)
+                                   }, integer (1))
+            closes <- vapply (gregexpr ("\\}", ex), function (i) {
+                        if (all (i <= 0))
+                            return (0L)
+                        else
+                            return <- length (i)
+                                   }, integer (1))
+            oc <- cumsum (opens) - cumsum (closes)
+            ex_end <- which (oc == 0) [1] - 1
+            ex <- ex [2:ex_end]
+        } else {
+            ex <- NULL
+        }
+
+        desc <- rprojroot::find_package_root_file ("DESCRIPTION", path = pkg)
+        pkg_name <- gsub ("Package:\\s?", "", readLines (desc) [1])
+
+        doload <- FALSE
+        if (!paste0 ("package:", pkg_name) %in% search ()) {
+            doload <- TRUE
+        } else {
+            v0 <- utils::packageVersion (pkg_name)
+            d <-readLines (desc)
+            v <- gsub ("^Version:\\s+", "", d [grep ("^Version:", d)])
+            if (v > v0)
+                doload <- TRUE
+        }
+        if (doload)
+            devtools::load_all (pkg, export_all = FALSE)
+    }
+
     if (length (ex) == 0)
         return (NULL)
 
-    ex <- ex [-(1:grep ("^### \\*\\* Examples", ex))]
+    if (any (grepl ("^### \\*\\* Examples", ex)))
+        ex <- ex [-(1:grep ("^### \\*\\* Examples", ex))]
     if (ex [1] == "")
         ex <- ex [-1]
 
@@ -99,8 +151,8 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
         ex <- ex [-which (plotlines)]
 
     # find all points of function calls:
-    fns <- ls (paste0 ("package:", pkg))
-    dispatches <- dispatched_fns (pkg)
+    fns <- ls (paste0 ("package:", pkg_name))
+    dispatches <- dispatched_fns (pkg_name)
     is_dispatch <- FALSE
     if (!is.null (dispatches)) {
         fns <- c (fns, gsub ("\\..*$", "", dispatches))
@@ -171,12 +223,12 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE) {
 
 # find which functions are method dispatches, so grep can be done on the method
 # and not the class
-dispatched_fns <- function (pkg) {
-    h <- utils::help (package = eval (substitute (pkg)), help_type = "text")
+dispatched_fns <- function (pkg_name) {
+    h <- utils::help (package = eval (substitute (pkg_name)), help_type = "text")
     fns <- h$info [[2]]
     fns <- gsub ("\\s.*", "", fns [which (!grepl ("^\\s", fns))])
     # reduce only to exported functions, methods, or data sets
-    fns <- fns [fns %in% ls (paste0 ("package:", pkg))]
+    fns <- fns [fns %in% ls (paste0 ("package:", pkg_name))]
     # Then reduce only to functions:
     fn_classes <- vapply (fns, function (i) class (get (i)), character (1))
     fns <- fns [which (fn_classes == "function")]
@@ -186,7 +238,7 @@ dispatched_fns <- function (pkg) {
     dispatch <- rep (FALSE, length (classes))
     for (i in seq_along (index)) {
         h <- utils::help (topic = classes [i],
-                          package = eval (substitute (pkg)),
+                          package = eval (substitute (pkg_name)),
                           help_type = "text")
         if (length (nchar (h)) > 0)
             dispatch [i] <- TRUE
