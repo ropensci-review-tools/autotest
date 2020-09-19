@@ -8,27 +8,15 @@
 #' @export
 examples_to_yaml <- function (package = NULL, exclude = NULL) {
 
-    pkg_is_source <- FALSE
+    if (pkg_is_source (package)) {
 
-    if (file.exists (package)) {
-        d <- tryCatch (
-                       rprojroot::find_root (rprojroot::is_r_package,
-                                             path = package),
-                       error = function (e) NULL)
-        if (!is.null (d)) {
-            desc <- rprojroot::find_package_root_file ("DESCRIPTION", path = package)
-            pkg_name <- gsub ("Package:\\s?", "", readLines (desc) [1])
-            package <- d
-            pkg_is_source <- TRUE
-            if (!pkg_name %in% search ())
-                devtools::load_all (d, export_all = FALSE)
+        desc <- file.path (package, "DESCRIPTION")
+        pkg_name <- gsub ("Package:\\s?", "", readLines (desc) [1])
+        devtools::load_all (package, export_all = FALSE)
 
-            # TODO: Use g to get hash of HEAD
-            #g <- rprojroot::find_root (rprojroot::is_git_root, path = package)
-        }
-    }
-
-    if (!pkg_is_source) {
+        # TODO: Use g to get hash of HEAD
+        #g <- rprojroot::find_root (rprojroot::is_git_root, path = package)
+    } else {
         if (!package %in% utils::installed.packages)
             stop ("package [", package, "] does not appear to be installed.")
         suppressMessages (
@@ -37,7 +25,7 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
         pkg_name <- package
     }
 
-    exs <- get_all_examples (package, pkg_is_source)
+    exs <- get_all_examples (package, pkg_is_source (package))
     exs <- exs [which (!names (exs) %in% exclude)]
 
     ret <- list ()

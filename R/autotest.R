@@ -40,13 +40,16 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
         #message (cli::col_red (cli::symbol$cross), " ", cli::col_yellow (this_fn))
     }
 
-    # add hash to reports
-    if (is.null (yaml) & !is.null (filename))
-        yaml <- readLines (filename)
-    reports$yaml_hash <- digest::digest (yaml)
+    if (!is.null (reports)) {
+        # add hash to reports
+        if (is.null (yaml) & !is.null (filename))
+            yaml <- readLines (filename)
+        reports$yaml_hash <- digest::digest (yaml)
 
-    reports <- reports [which (!duplicated (reports)), ]
-    rownames (reports) <- NULL
+        reports <- reports [which (!duplicated (reports)), ]
+        rownames (reports) <- NULL
+    }
+
     return (reports)
 }
 
@@ -75,7 +78,13 @@ autotest_package <- function (package, exclude = NULL, quiet = FALSE) {
     res <- res [which (!duplicated (res)), ]
 
     attr (res, "package") <- package
-    attr (res, "packageVersion") <- utils::packageVersion (package)
+    if (pkg_is_source (package)) {
+        desc <- readLines (file.path (package, "DESCRIPTION"))
+        attr (res, "packageVersion") <-
+            gsub ("^Version:\\s+", "", desc [grep ("Version:", desc)])
+    } else {
+        attr (res, "packageVersion") <- utils::packageVersion (package)
+    }
 
     return (tibble::tibble (res))
 }

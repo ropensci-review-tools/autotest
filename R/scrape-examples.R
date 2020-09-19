@@ -1,8 +1,8 @@
 # no export fns here
 
-get_all_examples <- function (package, pkg_is_source) {
+get_all_examples <- function (package, is_source) {
 
-    if (!pkg_is_source) {
+    if (!is_source) {
         fns <- ls (paste0 ("package:", package))
         fn_classes <- vapply (fns, function (i) class (get (i)), character (1))
         fns <- fns [grep ("[Ff]unction|standardGeneric", fn_classes)]
@@ -15,7 +15,7 @@ get_all_examples <- function (package, pkg_is_source) {
     exs <- list ()
     for (i in seq (fns)) {
         fn <- fns [i]
-        exi <- get_fn_exs (package, fn, pkg_is_source = pkg_is_source)
+        exi <- get_fn_exs (package, fn, is_source = is_source)
         if (!is.null (exi)) {
             exs [[length (exs) + 1]] <- exi
             names (exs) [length (exs)] <- fns [i]
@@ -45,8 +45,8 @@ get_all_examples <- function (package, pkg_is_source) {
 }
 
 get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
-                        pkg_is_source = FALSE) {
-    if (!pkg_is_source) {
+                        is_source = FALSE) {
+    if (!is_source) {
         # example called for function which have no help file trigger warnings
         ex <- tryCatch (utils::example (eval (substitute (fn)),
                                         package = pkg,
@@ -83,7 +83,7 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
             ex <- NULL
         }
 
-        desc <- rprojroot::find_package_root_file ("DESCRIPTION", path = pkg)
+        desc <- file.path (pkg, "DESCRIPTION")
         pkg_name <- gsub ("Package:\\s?", "", readLines (desc) [1])
 
         doload <- FALSE

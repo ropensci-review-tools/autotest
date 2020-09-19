@@ -4,10 +4,15 @@ get_Rd_metadata <- utils::getFromNamespace (".Rd_get_metadata", "tools")
 test_single_char <- function (pkg, this_fn, params, i) {
 
     h <- tools::Rd_db (package = pkg)
-    h <- h [grep (paste0 ("^", this_fn, "\\.Rd$"), names (h))]
-    if (length (h) != 1) {
-        message ("No single help topic for [", this_fn, "] found")
-        return (NULL)
+    is_source <- FALSE
+    if (length (h) == 0) {
+        is_source <- TRUE
+    } else {
+        h <- h [grep (paste0 ("^", this_fn, "\\.Rd$"), names (h))]
+        if (length (h) != 1) {
+            message ("No single help topic for [", this_fn, "] found")
+            return (NULL)
+        }
     }
 
     # check whether vectors of 2 characters error or warn:
@@ -76,6 +81,9 @@ test_single_char <- function (pkg, this_fn, params, i) {
                                                         "match arguments to ",
                                                         "expected values")))
     }
+
+    if (is_source)
+        return (msgs) # TODO: Remove that and process the remainder for src pkgs
 
     # The following lines are used just to test whether params[[i]] corresponds
     # to a formula input. They can't be used to parse general parameter

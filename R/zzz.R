@@ -32,3 +32,16 @@ report_object <- function (type = "diagnostic",
                 content = content,
                 stringsAsFactors = FALSE)
 }
+
+# same criteria as rprojroot::is_r_package, but without extra dependency.
+pkg_is_source <- function (package) {
+    is_source <- FALSE
+    if (file.exists (package)) {
+        if (file.exists (file.path (package, "DESCRIPTION"))) {
+            desc <- readLines (file.path (package, "DESCRIPTION"))
+            if (grepl ("Package", desc [1]))
+                is_source <- TRUE
+        }
+    }
+    return (is_source)
+}
