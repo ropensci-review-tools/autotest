@@ -9,7 +9,7 @@ get_all_examples <- function (package, is_source) {
     } else {
         requireNamespace ("devtools")
         fns <- gsub (".Rd$", "",
-                     list.files (file.path (package, "man")))
+                     list.files (file.path (package, "man"), pattern = ".Rd$"))
     }
 
     exs <- list ()
