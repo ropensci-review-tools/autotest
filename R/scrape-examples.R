@@ -68,23 +68,25 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
 
             ex_end <- match_curlies (ex)
             ex <- ex [2:ex_end]
-        }
 
-        desc <- file.path (pkg, "DESCRIPTION")
-        pkg_name <- gsub ("Package:\\s?", "", readLines (desc) [1])
+            desc <- file.path (pkg, "DESCRIPTION")
+            pkg_name <- gsub ("Package:\\s?", "", readLines (desc) [1])
 
-        doload <- FALSE
-        if (!paste0 ("package:", pkg_name) %in% search ()) {
-            doload <- TRUE
-        } else {
-            v0 <- utils::packageVersion (pkg_name)
-            d <-readLines (desc)
-            v <- gsub ("^Version:\\s+", "", d [grep ("^Version:", d)])
-            if (v > v0)
+            doload <- FALSE
+            if (!paste0 ("package:", pkg_name) %in% search ()) {
                 doload <- TRUE
+            } else {
+                v0 <- utils::packageVersion (pkg_name)
+                d <-readLines (desc)
+                v <- gsub ("^Version:\\s+", "", d [grep ("^Version:", d)])
+                if (v > v0)
+                    doload <- TRUE
+            }
+            if (doload)
+                devtools::load_all (pkg, export_all = FALSE)
+        } else {
+            ex <- NULL
         }
-        if (doload)
-            devtools::load_all (pkg, export_all = FALSE)
     }
 
     if (length (ex) == 0)
@@ -96,20 +98,40 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
         ex <- ex [-1]
 
     if (exclude_not_run) {
-        nr <- grep ("^## Not run:", ex)
-        while (length (nr) > 0) {
-            nr_end <- grep ("^## End\\(Not run\\)", ex)
-            ex <- ex [-(nr [1]:nr_end [1])]
+        if (!is_source) {
             nr <- grep ("^## Not run:", ex)
+            while (length (nr) > 0) {
+                nr_end <- grep ("^## End\\(Not run\\)", ex)
+                ex <- ex [-(nr [1]:nr_end [1])]
+                nr <- grep ("^## Not run:", ex)
+            }
+            # Examples may also have "No test" and these have to be removed
+            nt <- grep ("^## No test:", ex)
+            while (length (nt) > 0) {
+                    nt_end <- grep ("^## End\\(No test\\)", ex)
+                    ex <- ex [-(nt [1]:nt_end [1])]
+                    nt <- grep ("^## No test:", ex)
+            }
+        } else {
+            nr <- grep ("^\\\\dontrun\\{", ex)
+            while (length (nr) > 0) {
+                nr_end <- match_curlies (ex [nr:length (ex)])
+                ex <- ex [-(nr [1] + 0:nr_end)]
+                nr <- grep ("^\\\\dontrun\\{", ex)
+            }
+            nt <- grep ("^\\\\donttest\\{", ex)
+            while (length (nt) > 0) {
+                nt_end <- match_curlies (ex [nt:length (ex)])
+                ex <- ex [-(nt [1] + 0:nt_end)]
+                nt <- grep ("^\\\\donttest\\{", ex)
+            }
         }
     }
 
-    # Examples may also have "No test" and these have to be removed
-    nt <- grep ("^## No test:", ex)
-    while (length (nt) > 0) {
-            nt_end <- grep ("^## End\\(No test\\)", ex)
-            ex <- ex [-(nt [1]:nt_end [1])]
-            nt <- grep ("^## Not run:", ex)
+    if (is_source) { # rm any roxygen2 auto-generated lines
+        index <- grep ("^%", ex)
+        if (length (index) > 0)
+            ex <- ex [-index]
     }
 
     ex <- ex [!grepl ("^\\s?\\#", ex)]
