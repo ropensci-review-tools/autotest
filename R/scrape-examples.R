@@ -150,6 +150,7 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
     # find and remove any lines for which first function call is some kind of
     # "plot" or "summary"
     plotlines <- vapply (ex, function (i) {
+                             i <- gsub ("\\%", "%", i, fixed = TRUE)
                              p <- utils::getParseData (parse (text = i))
                              s <- which (p$token == "SYMBOL_FUNCTION_CALL")
                              ret <- FALSE
