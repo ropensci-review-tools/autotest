@@ -46,6 +46,9 @@ get_all_examples <- function (package, is_source) {
 
 get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
                         is_source = FALSE) {
+    
+    ex <- NULL
+
     if (!is_source) {
         # example called for function which have no help file trigger warnings
         ex <- tryCatch (utils::example (eval (substitute (fn)),
@@ -63,24 +66,8 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
         if (length (ex_start) > 0) {
             ex <- ex [ex_start:length (ex)]
 
-            # Then find matching closing bracket
-            opens <- vapply (gregexpr ("\\{", ex), function (i) {
-                        if (all (i <= 0))
-                            return (0L)
-                        else
-                            return <- length (i)
-                                   }, integer (1))
-            closes <- vapply (gregexpr ("\\}", ex), function (i) {
-                        if (all (i <= 0))
-                            return (0L)
-                        else
-                            return <- length (i)
-                                   }, integer (1))
-            oc <- cumsum (opens) - cumsum (closes)
-            ex_end <- which (oc == 0) [1] - 1
+            ex_end <- match_curlies (ex)
             ex <- ex [2:ex_end]
-        } else {
-            ex <- NULL
         }
 
         desc <- file.path (pkg, "DESCRIPTION")

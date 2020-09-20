@@ -45,3 +45,22 @@ pkg_is_source <- function (package) {
     }
     return (is_source)
 }
+
+# match opening and corresponding closing curly brackets in terms of line
+# numbers of input character vector, `x`.
+match_curlies <- function (x) {
+    opens <- vapply (gregexpr ("\\{", x), function (i) {
+                if (all (i <= 0))
+                    return (0L)
+                else
+                    return <- length (i)
+                           }, integer (1))
+    closes <- vapply (gregexpr ("\\}", x), function (i) {
+                if (all (i <= 0))
+                    return (0L)
+                else
+                    return <- length (i)
+                           }, integer (1))
+    oc <- cumsum (opens) - cumsum (closes)
+    return (which (oc == 0) [1] - 1)
+}
