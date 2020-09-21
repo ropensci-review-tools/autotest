@@ -102,10 +102,10 @@ add_msg_output <- function (res, msgs, types = c ("warning", "error")) {
                 txt <- "a Warning"
             res <- rbind (res,
                           report_object (type = msgs$type [i],
-                                         fn_name = this_fn,
+                                         fn_name = msgs$fn_name [i],
                                          parameter = NA_character_,
                                          content = paste0 ("Function [",
-                                                           this_fn,
+                                                           msgs$fn_name [i],
                                                            "] issued ",
                                                            txt,
                                                            ": ",
