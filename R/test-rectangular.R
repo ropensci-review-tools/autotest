@@ -1,6 +1,8 @@
 autotest_rectangular <- function (params, this_fn, classes, quiet) {
 
     ret <- NULL
+
+    f <- file.path (tempdir (), "junk.txt")
     
     rect_index <- which (vapply (params, function (i)
                                  length (dim (i)) == 2 &
@@ -10,14 +12,28 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
         x <- params [[r]]
         params_r <- params
 
+        res1 <- res2 <- res3 <- res4 <- NULL
+
         params_r [[r]] <- data.frame (x)
-        res1 <- do.call (this_fn, params_r)
+        msgs <- catch_all_msgs (f, this_fn, params_r)
+        ret <- add_msg_output (ret, msgs, types = c ("warning", "error"))
+        if (!"error" %in% msgs$type) {
+            res1 <- suppressWarnings (do.call (this_fn, params_r))
+        }
 
         params_r [[r]] <- tibble::tibble (data.frame (x))
-        res2 <- do.call (this_fn, params_r)
+        msgs <- catch_all_msgs (f, this_fn, params_r)
+        ret <- add_msg_output (ret, msgs, types = c ("warning", "error"))
+        if (!"error" %in% msgs$type) {
+            res2 <- suppressWarnings (do.call (this_fn, params_r))
+        }
 
         params_r [[r]] <- data.table::data.table (x)
-        res3 <- do.call (this_fn, params_r)
+        msgs <- catch_all_msgs (f, this_fn, params_r)
+        ret <- add_msg_output (ret, msgs, types = c ("warning", "error"))
+        if (!"error" %in% msgs$type) {
+            res3 <- suppressWarnings (do.call (this_fn, params_r))
+        }
 
         ret <- rbind (ret, chk_dims (this_fn, params, r, res1, res2))
         ret <- rbind (ret, chk_names (this_fn, params, r, res1, res2))
@@ -32,7 +48,11 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
         if (!names (params_r) [r] %in% names (classes)) {
             # extended class structure should still work:
             params_r [[r]] <- structure (x, class = c ("newclass", class (x)))
-            res4 <- do.call (this_fn, params_r)
+            msgs <- catch_all_msgs (f, this_fn, params_r)
+            ret <- add_msg_output (ret, msgs, types = c ("warning", "error"))
+            if (!"error" %in% msgs$type) {
+                res4 <- suppressWarnings (do.call (this_fn, params_r))
+            }
 
             ret <- rbind (ret, chk_dims (this_fn, params, r, res1, res4))
             ret <- rbind (ret, chk_names (this_fn, params, r, res1, res4))

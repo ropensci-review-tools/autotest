@@ -14,19 +14,7 @@ autotest_return <- function (pkg, params, this_fn) {
     }
 
     msgs <- catch_all_msgs (f, this_fn, params)
-    if (not_null_and_is (msgs, "warning")) {
-        index <- which (msgs$type == "warning")
-        for (w in index) {
-            ret <- rbind (ret,
-                          report_object (type = "warning",
-                                         fn_name = this_fn,
-                                         parameter = NA_character_,
-                                         content = paste0 ("Function [",
-                                                           this_fn,
-                                                           "] issued a Warning: ",
-                                                           msgs$content [w])))
-        }
-    }
+    ret <- add_msg_output (ret, msgs, types = "warning")
 
     retval <- tryCatch (do.call (this_fn, params),
                         warning = function (w) w,

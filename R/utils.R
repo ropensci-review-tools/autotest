@@ -90,3 +90,27 @@ catch_all_msgs <- function (f, this_fn, params = NULL) {
         out$fn_name [which (is.na (out$fn_name))] <- this_fn
     return (out)
 }
+
+add_msg_output <- function (res, msgs, types = c ("warning", "error")) {
+    if (any (vapply (types, function (i)
+                     not_null_and_is (msgs, i), logical (1)))) {
+        index <- which (msgs$type %in% types)
+        for (i in index) {
+            if (msgs$type [i] == "error")
+                txt <- "an Error"
+            else
+                txt <- "a Warning"
+            res <- rbind (res,
+                          report_object (type = msgs$type [i],
+                                         fn_name = this_fn,
+                                         parameter = NA_character_,
+                                         content = paste0 ("Function [",
+                                                           this_fn,
+                                                           "] issued ",
+                                                           txt,
+                                                           ": ",
+                                                           msgs$content [i])))
+        }
+    }
+    return (res)
+}
