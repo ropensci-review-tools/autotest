@@ -10,7 +10,10 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
     res <- catch_all_msgs (f, this_fn, params)
 
     index <- which (vapply (params, function (j)
-                            is.null (dim (j)) && length (j) == 1, logical (1)))
+                            (is.null (dim (j)) &&
+                                length (j) == 1) ||
+                            methods::is (j, "formula"),
+                        logical (1)))
     for (i in index) {
             params_i <- params
 
@@ -28,6 +31,10 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
                 val_type <- "logical"
                 res <- rbind (res,
                               test_single_logical (pkg, this_fn, params_i, i))
+            } else if (methods::is (p_i, "name")) {
+                val_type <- "name"
+                res <- rbind (res,
+                              test_single_name (pkg, this_fn, params_i, i))
             }
 
             # check response to vector input:
