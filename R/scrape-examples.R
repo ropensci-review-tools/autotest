@@ -263,10 +263,13 @@ dispatched_fns <- function (pkg_name) {
 
 merge_piped_lines <- function (x) {
     x <- gsub ("\\s$", "", x)
-    index <- rev (grep ("%>%$", x))
+    index <- rev (grep ("%>%\\s?$|\\\\%>\\\\%\\s?$", x))
     for (i in index) {
         x [i] <- gsub ("\\s+", " ", paste0 (x [i:(i+1)], collapse = " "))
         x <- x [-(i + 1)]
+        if (any (grepl ("\\\\%", x))) {
+            x <- gsub ("\\\\%", "%", x)
+        }
     }
     return (x)
 }

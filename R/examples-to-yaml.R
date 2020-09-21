@@ -455,6 +455,7 @@ match_brackets <- function (x, curly = FALSE) {
     br_open <- br_open [index]
     br_closed <- br_closed [index]
 
+    has_gg_pluses <- FALSE
     for (i in seq_along (br_open)) {
 
         xmid <- x [br_open [i]:br_closed [i]]
@@ -473,10 +474,16 @@ match_brackets <- function (x, curly = FALSE) {
         # for that also
         index <- grep ("\\+\\s?$", xmid)
         if (length (index) > 0 & any (grepl ("gg", xmid))) {
+            has_gg_pluses <- TRUE
+            rms <- NULL
             for (j in index) {
-                xmid [j + 1] <- paste0 (xmid [j], xmid [j + 1], collapse = " ")
+                if (j < length (xmid)) {
+                        xmid [j + 1] <- paste0 (xmid [j], xmid [j + 1], collapse = " ")
+                        rms <- c (rms, j)
+                }
             }
-            xmid <- xmid [-index]
+            if (!is.null (rms))
+                xmid <- xmid [-rms]
         }
 
         x [br_closed [i]] <- paste0 (xmid, collapse = collapse_sym)
@@ -489,6 +496,18 @@ match_brackets <- function (x, curly = FALSE) {
     }
     
     x <- gsub ("\\s+", " ", x)
+
+    if (has_gg_pluses) {
+        index <- grep ("\\+\\s?$", x)
+        index2 <- cumsum (c (FALSE, diff (index) > 1))
+        index <- lapply (split (index, f = as.factor (index2)), function (i)
+                         c (i, max (i) + 1))
+
+        for (i in index) {
+            x [i [1] ] <- paste0 (x [i], collapse = " ")
+        }
+        x <- x [-unlist (lapply (index, function (i) i [-1]))]
+    }
 
     # catch instances where curly brackets are only used on first condition,
     # with second condition being a single line
