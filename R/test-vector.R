@@ -10,7 +10,10 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
     }
 
     vec_index <- which (vapply (params, function (i)
-                                length (i) > 1 && is.null (dim (i)), logical (1)))
+                                length (i) > 1 &&
+                                    is.null (dim (i)) &&
+                                    !class (i) %in% c ("call", "formula"),
+                                logical (1)))
     for (v in vec_index) {
         params_v <- params
         msgs <- catch_all_msgs (f, this_fn, params_v)
