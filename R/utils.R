@@ -92,7 +92,7 @@ catch_all_msgs <- function (f, this_fn, params = NULL) {
 }
 
 add_msg_output <- function (res, msgs, types = c ("warning", "error"),
-                            operation = NULL) {
+                            operation = NULL, addcall = FALSE) {
     if (any (vapply (types, function (i)
                      not_null_and_is (msgs, i), logical (1)))) {
 
@@ -101,20 +101,22 @@ add_msg_output <- function (res, msgs, types = c ("warning", "error"),
 
         index <- which (msgs$type %in% types)
         for (i in index) {
-            if (msgs$type [i] == "error")
-                txt <- "an Error"
-            else
-                txt <- "a Warning"
+            txt <- NULL
+            if (addcall) {
+                txt <- paste0 ("Function [",
+                               msgs$fn_name [i],
+                               "] issued ")
+                if (msgs$type [i] == "error")
+                    txt <- paste0 (txt, "an Error: ")
+                else
+                    txt <- paste0 (txt, "a Warning: ")
+            }
             res <- rbind (res,
                           report_object (type = msgs$type [i],
                                          fn_name = msgs$fn_name [i],
                                          parameter = NA_character_,
                                          operation = operation,
-                                         content = paste0 ("Function [",
-                                                           msgs$fn_name [i],
-                                                           "] issued ",
-                                                           txt,
-                                                           ": ",
+                                         content = paste0 (txt,
                                                            msgs$content [i])))
         }
     }
