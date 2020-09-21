@@ -27,16 +27,16 @@ get_params <- function (res, i, this_fn) {
 
         if (!methods::is (this_val, "formula")) {
             if (is.name (this_val)) {
-                this_val <- paste0 (this_val)
-                if (this_val %in% ls (envir = e)) {
-                    this_val <- get (this_val, envir = e)
-                } else if (grepl ("::", this_val)) {
-                    this_pkg <- strsplit (this_val, "::") [[1]] [1]
+                temp_val <- paste0 (this_val)
+                if (temp_val %in% ls (envir = e)) {
+                    this_val <- get (temp_val, envir = e)
+                } else if (grepl ("::", temp_val)) {
+                    this_pkg <- strsplit (temp_val, "::") [[1]] [1]
                     if (!this_pkg %in% search ())
                         suppressMessages (
                                           library (this_pkg, character.only = TRUE)
                         )
-                    this_val <- parse (text = this_val) %>%
+                    this_val <- parse (text = temp_val) %>%
                         eval (envir = as.environment (paste0 ("package:", this_pkg)))
                 }
             } else if (is.character (this_val)) {
