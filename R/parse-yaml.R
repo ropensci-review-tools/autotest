@@ -27,24 +27,31 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
     parameters <- preprocess <- classes <- list ()
     fn_names <- NULL
 
-    for (f in x$functions) {
-        fn_names <- c (fn_names, names (f))
+    for (f in seq (x$functions)) {
+        fn_names <- c (fn_names, names (x$functions [[f]]))
 
-        i <- f [[1]]
+        i <- x$functions [[f]] [[1]]
         nms <- vapply (i, function (i) names (i), character (1))
 
         # check whether character variables are quoted:
         pars <- i [[which (nms == "parameters") [1] ]]$parameters
         is_char <- which (vapply (pars, function (i) is.character (i [[1]]), logical (1)))
         # then check whether yaml vals are quoted:
-        yaml2 <- yaml [grep ("- parameters:$", yaml):length (yaml)]
+        index <- grep ("- parameters:$", yaml)
+        if (f < length (x$functions)) {
+            index <- index [f]:(index [f + 1] - 2)
+        } else {
+            index <- index [f]:length (yaml)
+        }
+
+        yaml2 <- yaml [index]
         for (p in is_char) {
             ystr <- paste0 ("- ", names (pars [[p]]), ":")
             yaml_version <- gsub ("^\\s+", "",
                                   strsplit (yaml2 [grep (ystr, yaml2)], ystr) [[1]] [2])
-            if (!grepl ("\"", yaml_version)) {
+            if (!grepl ("\"|\'", yaml_version)) {
                 if (grepl ("formula", names (pars [[p]]), ignore.case = TRUE)) {
-                    pars [[p]] [[1]] <- formula (pars [[p]] [[1]])
+                    pars [[p]] [[1]] <- stats::formula (pars [[p]] [[1]])
                     attr (pars [[p]] [[1]], ".Environment") <- NULL
                 } else
                     pars [[p]] [[1]] <- as.name (pars [[p]] [[1]])
