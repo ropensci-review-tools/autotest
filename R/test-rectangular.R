@@ -16,21 +16,24 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
 
         params_r [[r]] <- data.frame (x)
         msgs <- catch_all_msgs (f, this_fn, params_r)
-        ret <- add_msg_output (ret, msgs, types = c ("warning", "error"))
+        ret <- add_msg_output (ret, msgs, types = c ("warning", "error"),
+                               operation = "rectangular as data.frame")
         if (!"error" %in% msgs$type) {
             res1 <- suppressWarnings (do.call (this_fn, params_r))
         }
 
         params_r [[r]] <- tibble::tibble (data.frame (x))
         msgs <- catch_all_msgs (f, this_fn, params_r)
-        ret <- add_msg_output (ret, msgs, types = c ("warning", "error"))
+        ret <- add_msg_output (ret, msgs, types = c ("warning", "error"),
+                               operation = "rectangular as tibble")
         if (!"error" %in% msgs$type) {
             res2 <- suppressWarnings (do.call (this_fn, params_r))
         }
 
         params_r [[r]] <- data.table::data.table (x)
         msgs <- catch_all_msgs (f, this_fn, params_r)
-        ret <- add_msg_output (ret, msgs, types = c ("warning", "error"))
+        ret <- add_msg_output (ret, msgs, types = c ("warning", "error"),
+                               operation = "rectangular as data.table")
         if (!"error" %in% msgs$type) {
             res3 <- suppressWarnings (do.call (this_fn, params_r))
         }
@@ -49,7 +52,8 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
             # extended class structure should still work:
             params_r [[r]] <- structure (x, class = c ("newclass", class (x)))
             msgs <- catch_all_msgs (f, this_fn, params_r)
-            ret <- add_msg_output (ret, msgs, types = c ("warning", "error"))
+            ret <- add_msg_output (ret, msgs, types = c ("warning", "error"),
+                                   operation = "rectangular parameter with extended class structure")
             if (!"error" %in% msgs$type) {
                 res4 <- suppressWarnings (do.call (this_fn, params_r))
             }
@@ -68,6 +72,7 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
                               report_object (type = "diagnostic",
                                              fn_name = this_fn,
                                              parameter = names (params) [r],
+                                             operation = "rectangular structure with new class structure",
                                              content = paste0 ("Function [",
                                                                this_fn,
                                                                "] should error when ",
@@ -87,6 +92,7 @@ chk_dims <- function (this_fn, params, r, res1, res2) {
         ret <- report_object (type = "diagnostic",
                               fn_name = this_fn,
                               parameter = names (params) [r],
+                              operation = "compare output dimensions for different rectangular inputs",
                               content = paste0 ("Function [",
                                                 this_fn,
                                                 "] errors on rectangular input for [",
@@ -105,6 +111,7 @@ chk_names <- function (this_fn, params, r, res1, res2) {
         ret <- report_object (type = "diagnostic",
                               fn_name = this_fn,
                               parameter = names (params) [r],
+                              operation = "compare output names for different rectangular inputs",
                               content = paste0 ("Function [",
                                                 this_fn,
                                                 "] errors on rectangular input for [",
@@ -126,6 +133,7 @@ chk_columns <- function (this_fn, params, r, res1, res2) {
                           report_object (type = "diagnostic",
                                          fn_name = this_fn,
                                          parameter = names (params) [r],
+                                         operation = "compare output columns for different rectangular inputs",
                                          content = paste0 ("Function [",
                                                            this_fn,
                                                            "] errors on rectangular ",

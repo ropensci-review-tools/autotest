@@ -14,7 +14,8 @@ autotest_return <- function (pkg, params, this_fn) {
     }
 
     msgs <- catch_all_msgs (f, this_fn, params)
-    ret <- add_msg_output (ret, msgs, types = "warning")
+    ret <- add_msg_output (ret, msgs, types = "warning",
+                           operation = "normal function call")
 
     retval <- tryCatch (do.call (this_fn, params),
                         warning = function (w) w,
@@ -24,6 +25,7 @@ autotest_return <- function (pkg, params, this_fn) {
                       report_object (type = "error",
                                      fn_name = this_fn,
                                      parameter = NA_character_,
+                                     operation = "error from normal operation",
                                      content = retval$message))
         return (ret)
     }
@@ -35,6 +37,7 @@ autotest_return <- function (pkg, params, this_fn) {
                           report_object (type = "diagnostic",
                                          fn_name = this_fn,
                                          parameter = NA_character_,
+                                         operation = "check that description has return value",
                                          content = paste0 ("Function [",
                                                            this_fn,
                                                            "] does not specify a return value, ",
@@ -48,6 +51,7 @@ autotest_return <- function (pkg, params, this_fn) {
                               report_object (type = "diagnostic",
                                              fn_name = this_fn,
                                              parameter = NA_character_,
+                                             operation = "compare class of return value with description",
                                              content = paste0 ("Function [",
                                                                this_fn,
                                                                "] does not specify class of ",

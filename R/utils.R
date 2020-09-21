@@ -91,9 +91,14 @@ catch_all_msgs <- function (f, this_fn, params = NULL) {
     return (out)
 }
 
-add_msg_output <- function (res, msgs, types = c ("warning", "error")) {
+add_msg_output <- function (res, msgs, types = c ("warning", "error"),
+                            operation = NULL) {
     if (any (vapply (types, function (i)
                      not_null_and_is (msgs, i), logical (1)))) {
+
+        if (is.null (operation))
+            operation <- NA_character_
+
         index <- which (msgs$type %in% types)
         for (i in index) {
             if (msgs$type [i] == "error")
@@ -104,6 +109,7 @@ add_msg_output <- function (res, msgs, types = c ("warning", "error")) {
                           report_object (type = msgs$type [i],
                                          fn_name = msgs$fn_name [i],
                                          parameter = NA_character_,
+                                         operation = operation,
                                          content = paste0 ("Function [",
                                                            msgs$fn_name [i],
                                                            "] issued ",

@@ -27,10 +27,11 @@ test_that("autotest", {
         x <- autotest (yaml)
         )
     expect_is (x, "data.frame")
-    expect_equal (ncol (x), 5)
+    expect_equal (ncol (x), 6)
     expect_identical (names (x), c ("type",
                                     "fn_name",
                                     "parameter",
+                                    "operation",
                                     "content",
                                     "yaml_hash"))
 

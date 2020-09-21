@@ -24,6 +24,7 @@ test_single_int <- function (pkg, this_fn, params, i) {
                       report_object (type = "diagnostic",
                                      fn_name = this_fn,
                                      parameter = names (params) [i],
+                                     operation = "ascertain integer range",
                                      content = paste0 ("Parameter [",
                                                        names (params) [i],
                                                        "] permits unrestricted integer inputs")))
@@ -32,6 +33,7 @@ test_single_int <- function (pkg, this_fn, params, i) {
                       report_object (type = "diagnostic",
                                      fn_name = this_fn,
                                      parameter = names (params) [i],
+                                     operation = "ascertain integer range",
                                      content = paste0 ("Parameter [",
                                                        names (params) [i],
                                                        "] responds to integer values in [",
@@ -47,6 +49,7 @@ test_single_int <- function (pkg, this_fn, params, i) {
                           report_object (type = "diagnostic",
                                          fn_name = this_fn,
                                          parameter = names (params) [i],
+                                         operation = "match integer range to documentation",
                                          content = paste0 (" Parameter range for ",
                                                            names (params) [i],
                                                            " is NOT documented")))

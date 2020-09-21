@@ -17,7 +17,8 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
     for (v in vec_index) {
         params_v <- params
         msgs <- catch_all_msgs (f, this_fn, params_v)
-        ret <- add_msg_output (ret, msgs, types = "warning")
+        ret <- add_msg_output (ret, msgs, types = "warning",
+                               operation = "normal function call")
         warn <- not_null_and_is (msgs, "warning")
 
         # int columns submitted as double should return different result:
@@ -30,6 +31,7 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
                               report_object (type = "diagnostic",
                                              fn_name = this_fn,
                                              parameter = names (params_v) [v],
+                                             operation = "integer vector converted to numeric",
                                              content = paste0 ("Function [",
                                                                this_fn,
                                                                "] returns different values when ",
@@ -57,6 +59,7 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
                                   report_object (type = "diagnostic",
                                                  fn_name = this_fn,
                                                  parameter = names (params_v) [v],
+                                                 operation = "custom class definitions for vector input",
                                                  content = paste0 ("Function [",
                                                                    this_fn,
                                                                    "] errors on vector columns with ",
@@ -88,6 +91,7 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
                               report_object (type = "diagnostic",
                                              fn_name = this_fn,
                                              parameter = names (params_v) [v],
+                                             operation = "convert vector input to list-columns",
                                              content = paste0 ("Function [",
                                                                this_fn,
                                                                "] errors on list-columns ",

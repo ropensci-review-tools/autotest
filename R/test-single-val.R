@@ -8,6 +8,8 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
 
     f <- file.path (tempdir (), "junk.txt")
     res <- catch_all_msgs (f, this_fn, params)
+    if (!is.null (res))
+        res$operation <- "normal function call"
 
     index <- which (vapply (params, function (j)
                             (is.null (dim (j)) &&
@@ -47,6 +49,7 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
                                   report_object (type = "diagnostic",
                                                  fn_name = this_fn,
                                                  parameter = names (params) [i],
+                                                 operation = "length 2 vector for single-length parameter",
                                                  content = paste0 ("parameter [",
                                                                    names (params) [i],
                                                                    "] is assumed to be ",
