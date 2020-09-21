@@ -14,22 +14,8 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
     for (v in vec_index) {
         params_v <- params
         msgs <- catch_all_msgs (f, this_fn, params_v)
-        warn <- FALSE
-        if (not_null_and_is (msgs, "warning")) {
-            warn <- TRUE
-            index <- which (msgs$type == "warning")
-            for (w in index) {
-                ret <- rbind (ret,
-                              report_object (type = "diagnostic",
-                                             fn_name = this_fn,
-                                             parameter = names (params) [v],
-                                             content = paste0 ("Function [",
-                                                               this_fn,
-                                                               "] issued a Warning: ",
-                                                               msgs$content [w])))
-            }
-        }
-
+        ret <- add_msg_output (ret, msgs, types = "warning")
+        warn <- not_null_and_is (msgs, "warning")
 
         # int columns submitted as double should return different result:
         if (typeof (params_v [[v]]) == "integer" & !is.factor (params_v [[v]])) {
