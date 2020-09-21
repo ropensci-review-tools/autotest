@@ -5,6 +5,7 @@ test_single_name <- function (pkg, this_fn, params, i) {
     f <- file.path (tempdir (), "junk.txt")
 
     params_i <- params
+    this_class <- class (params [[i]]) [1]
     params_i [[i]] <- as.character (params_i [[i]])
     msgs <- catch_all_msgs (f, this_fn, params_i)
     if (!is.null (msgs)) {
@@ -12,7 +13,7 @@ test_single_name <- function (pkg, this_fn, params, i) {
                       report_object (type = msgs$type,
                                      fn_name = msgs$fn_name,
                                      parameter = names (params) [i],
-                                     operation = "name param as character",
+                                     operation = paste0 (this_class, " param as character"),
                                      content = msgs$content))
     }
 

@@ -33,8 +33,8 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
                 val_type <- "logical"
                 res <- rbind (res,
                               test_single_logical (pkg, this_fn, params_i, i))
-            } else if (methods::is (p_i, "name")) {
-                val_type <- "name"
+            } else if (methods::is (p_i, "name") | methods::is (p_i, "formula")) {
+                val_type <- class (p_i) [1]
                 res <- rbind (res,
                               test_single_name (pkg, this_fn, params_i, i))
             }
