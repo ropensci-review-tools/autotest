@@ -82,6 +82,7 @@ autotest_package <- function (package, exclude = NULL, quiet = FALSE) {
         desc <- readLines (file.path (package, "DESCRIPTION"))
         attr (res, "packageVersion") <-
             gsub ("^Version:\\s+", "", desc [grep ("Version:", desc)])
+        attr (res, "githash") <- get_git_hash (package)
     } else {
         attr (res, "packageVersion") <- utils::packageVersion (package)
     }

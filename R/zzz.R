@@ -64,3 +64,10 @@ match_curlies <- function (x) {
     oc <- cumsum (opens) - cumsum (closes)
     return (which (oc == 0) [1] - 1)
 }
+
+get_git_hash <- function (package) {
+    wd <- setwd (package)
+    x <- system2 ("git", c ("log", "-1"), stdout = TRUE) [1]
+    setwd (wd)
+    return (gsub ("commit\\s+", "", x))
+}
