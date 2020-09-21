@@ -47,6 +47,8 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
         yaml2 <- yaml [index]
         for (p in is_char) {
             ystr <- paste0 ("- ", names (pars [[p]]), ":")
+            if (ystr == "- null:") # specific processing because yaml itself reserves that
+                ystr <- "- \"null\":"
             yaml_version <- gsub ("^\\s+", "",
                                   strsplit (yaml2 [grep (ystr, yaml2)], ystr) [[1]] [2])
             if (!grepl ("\"|\'", yaml_version)) {
