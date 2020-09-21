@@ -32,18 +32,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.193</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.194</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
@@ -96,13 +90,13 @@
 <p>Not yet on CRAN, so must be installed from remote repository host systems using any one of the following options:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="co"># install.packages("remotes")</span>
-<span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_git.html">install_git</a></span>(<span class="st">"https://git.sr.ht/~mpadge/autotest"</span>)
-<span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_bitbucket.html">install_bitbucket</a></span>(<span class="st">"mpadge/autotest"</span>)
-<span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_gitlab.html">install_gitlab</a></span>(<span class="st">"mpadge/autotest"</span>)
-<span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"mpadge/autotest"</span>)</pre></div>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_git.html">install_git</a></span><span class="op">(</span><span class="st">"https://git.sr.ht/~mpadge/autotest"</span><span class="op">)</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_bitbucket.html">install_bitbucket</a></span><span class="op">(</span><span class="st">"mpadge/autotest"</span><span class="op">)</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_gitlab.html">install_gitlab</a></span><span class="op">(</span><span class="st">"mpadge/autotest"</span><span class="op">)</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"mpadge/autotest"</span><span class="op">)</span></pre></div>
 <p>The package can then be loaded the usual way:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span> (<span class="kw"><a href="https://github.com/mpadge/autotest">autotest</a></span>)</pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span> <span class="op">(</span><span class="va"><a href="https://github.com/mpadge/autotest">autotest</a></span><span class="op">)</span></pre></div>
 </div>
 <div id="what-gets-tested" class="section level2">
 <h2 class="hasAnchor">
@@ -114,7 +108,7 @@
 <a href="#example" class="anchor"></a>Example</h2>
 <p>Current functionality applied to test two functions from the <a href="https://github.com/daya6489/SmartEDA"><code>SmartEDA</code> package</a> as specified in the following <code>yaml</code>. This also illustrates the use of data transformation steps, in this case implementing a couple of simple transformations on columns of the external data set, <a href="https://cran.r-project.org/package=ISLR"><code>ISLR::Carseats</code></a>, including introducing some missing data through replacing values with <code>NA</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="kw">yaml</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span> (<span class="st">"package: SmartEDA"</span>,
+<span class="va">yaml</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span> <span class="op">(</span><span class="st">"package: SmartEDA"</span>,
 <span class="st">"functions:"</span>,
 <span class="st">"   - ExpData:"</span>,
 <span class="st">"       - preprocess:"</span>,
@@ -133,10 +127,10 @@
 <span class="st">"       - parameters:"</span>,
 <span class="st">"           - X: ISLR::Carseats$Sales"</span>,
 <span class="st">"           - Y: ISLR::Carseats$Urban"</span>,
-<span class="st">"           - valueOfGood: 'Yes'"</span>)</pre></div>
+<span class="st">"           - valueOfGood: 'Yes'"</span><span class="op">)</span></pre></div>
 <p>Note that the second function definition is for the same function as the first (namely, <code>ExpData</code>), but specifies alternative input data, and also includes the restriction that input data to the function should be of class <code>data.frame</code> only. Submitting this <code>yaml</code> to the <code>autotest</code> function gives the following results:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="fu"><a href="reference/autotest.html">autotest</a></span> (yaml = <span class="kw">yaml</span>)
+<span class="fu"><a href="reference/autotest.html">autotest</a></span> <span class="op">(</span>yaml <span class="op">=</span> <span class="va">yaml</span><span class="op">)</span>
 <span class="co">#&gt; ★ Loading the following libraries:</span>
 <span class="co">#&gt; ● ISLR</span>
 <span class="co">#&gt; ● SmartEDA</span>
