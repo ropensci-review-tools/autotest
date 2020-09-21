@@ -17,8 +17,10 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
         # TODO: Use g to get hash of HEAD
         #g <- rprojroot::find_root (rprojroot::is_git_root, path = package)
     } else {
-        if (!package %in% utils::installed.packages)
+        ip <- data.frame (utils::installed.packages ())
+        if (!package %in% ip$Package) {
             stop ("package [", package, "] does not appear to be installed.")
+        }
         suppressMessages (
                           library (package, character.only = TRUE)
                           )
