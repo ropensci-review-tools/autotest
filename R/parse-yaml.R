@@ -33,8 +33,25 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
         i <- f [[1]]
         nms <- vapply (i, function (i) names (i), character (1))
 
-        parameters [[length (parameters) + 1]] <-
-            i [[which (nms == "parameters") [1] ]]$parameters
+        # check whether character variables are quoted:
+        pars <- i [[which (nms == "parameters") [1] ]]$parameters
+        is_char <- which (vapply (pars, function (i) is.character (i [[1]]), logical (1)))
+        # then check whether yaml vals are quoted:
+        yaml2 <- yaml [grep ("- parameters:$", yaml):length (yaml)]
+        for (p in is_char) {
+            ystr <- paste0 ("- ", names (pars [[p]]), ":")
+            yaml_version <- gsub ("^\\s+", "",
+                                  strsplit (yaml2 [grep (ystr, yaml2)], ystr) [[1]] [2])
+            if (!grepl ("\"", yaml_version)) {
+                if (grepl ("formula", names (pars [[p]]), ignore.case = TRUE)) {
+                    pars [[p]] [[1]] <- formula (pars [[p]] [[1]])
+                    attr (pars [[p]] [[1]], ".Environment") <- NULL
+                } else
+                    pars [[p]] [[1]] <- as.name (pars [[p]] [[1]])
+            }
+        }
+
+        parameters [[length (parameters) + 1]] <- pars
 
         if ("preprocess" %in% nms)
             preprocess [[length (preprocess) + 1]] <-

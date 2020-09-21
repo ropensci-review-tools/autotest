@@ -25,17 +25,23 @@ get_params <- function (res, i, this_fn) {
         if (is.null (this_val))
             next
 
-        if (grepl ("::", this_val)) {
-            this_pkg <- strsplit (p_vals [[p]], "::") [[1]] [1]
-            if (!this_pkg %in% search ())
-                suppressMessages (
-                    library (this_pkg, character.only = TRUE)
-                    )
-            this_val <- parse (text = this_val) %>%
-                eval (envir = as.environment (paste0 ("package:", this_pkg)))
-        } else if (this_val %in% names (e)) {
-            this_val <- parse (text = this_val) %>%
-                eval (envir = e)
+        if (!methods::is (this_val, "formula")) {
+            if (grepl ("::", this_val)) {
+                this_pkg <- strsplit (p_vals [[p]], "::") [[1]] [1]
+                if (!this_pkg %in% search ())
+                    suppressMessages (
+                        library (this_pkg, character.only = TRUE)
+                        )
+                this_val <- parse (text = this_val) %>%
+                    eval (envir = as.environment (paste0 ("package:", this_pkg)))
+            } else if (is.character (this_val)) {
+                if (this_val %in% names (e)) {
+                    this_val <- parse (text = this_val) %>%
+                        eval (envir = e)
+                }
+            } else if (is.name (this_val) & paste0 (this_val) %in% ls (envir = e)) {
+                this_val <- get (paste0 (this_val), envir = e)
+            }
         }
 
         params [[length (params) + 1]] <- this_val
