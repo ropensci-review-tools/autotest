@@ -22,6 +22,11 @@ get_all_examples <- function (package, is_source) {
         }
     }
 
+    # reduce only to examples from functions, not from data sets
+    ex_classes <- vapply (names (exs), function (i)
+                          class (get (i)) [1], character (1))
+    exs <- exs [which (ex_classes == "function")]
+
     not_null <- vapply (exs, function (i) length (i) > 0, logical (1))
     ret <- exs [not_null]
 
