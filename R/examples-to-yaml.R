@@ -83,10 +83,11 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
                    get_preprocess_lines (prev_fns))
         # Then new pre-processing lines, adding all pre-processing lines for all
         # functions
-        for (i in seq_along (fn_calls))
-            for (j in x [seq (fn_calls [i]) - 1])
+        if (fn_calls [1] > 1) {
+            for (i in x [seq (fn_calls [1]) - 1])
                 yaml <- c (yaml,
-                           paste0 (i3, "- '", j, "'"))
+                           paste0 (i3, "- '", i, "'"))
+        }
     }
 
     # get fn formals:
@@ -214,10 +215,10 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     # through splitting piped lines
     x <- x [seq (max (grep (fn, x)))]
 
-    # (?=\\()   -- match opening parenthesis
-    # .*?       -- non-greedy match all content
-    # (?<=\\))  -- positive lookahead to matching closing parenthesis
-    ex <- regmatches (x, gregexpr ("(?=\\().*?(?<=\\))", x, perl = TRUE))
+    # grab content inside primary parentheses:
+    br1 <- vapply (gregexpr ("\\(", x), function (i) i [1], integer (1))
+    br2 <- vapply (gregexpr ("\\)", x), function (i) i [length (i)], integer (1))
+    ex <- substring (x, br1, br2)
     ex <- ex [which (vapply (ex, length, integer (1), USE.NAMES = FALSE) > 0)]
     # split at commas, but only those within primary enclosing parentheses:
     ex <- lapply (ex, function (i) {
@@ -607,8 +608,8 @@ unpipe <- function (x) {
     for (i in seq_along (x)) {
         x [i] <- paste0 ("var", i, " <- ", x [i])
         if (i > 1) {
-            br1 <- gregexpr ("\\(", x [i]) [[1]]
-            br2 <- gregexpr ("\\)", x [i]) [[1]]
+            br1 <- gregexpr ("\\(", x [i]) [[1]] [1]
+            br2 <- max (gregexpr ("\\)", x [i]) [[1]])
             not_empty <- grepl ("[A-Za-z0-9]", substring (x [i], br1, br2))
             comma <- ""
             if (not_empty)
