@@ -201,11 +201,27 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     if (length (x) == 0)
         return (NULL)
 
-    ex <- regmatches (x, gregexpr("(?=\\().*?(?<=\\))$", x, perl=T))
+    x <- split_piped_lines (x)
+    # Then add any lines prior to main function call to pre-processing:
+    fn_calls <- grep (fn, x) [1]
+    if (fn_calls > 1) {
+        for (i in seq (fn_calls - 1)) {
+            yaml <- c (yaml, paste0 (i3, "- '", x [i], "'"))
+        }
+        x <- x [-seq (fn_calls - 1)]
+    }
+    # And remove any lines after final function call which may have arisen
+    # through splitting piped lines
+    x <- x [seq (max (grep (fn, x)))]
+
+    # (?=\\()   -- match opening parenthesis
+    # .*?       -- non-greedy match all content
+    # (?<=\\))  -- positive lookahead to matching closing parenthesis
+    ex <- regmatches (x, gregexpr ("(?=\\().*?(?<=\\))", x, perl = TRUE))
     ex <- ex [which (vapply (ex, length, integer (1), USE.NAMES = FALSE) > 0)]
     # split at commas, but only those within primary enclosing parentheses:
     ex <- lapply (ex, function (i) {
-                      i <- gsub ("^\\(", "", gsub ("\\)$", "", i))
+                      i <- gsub ("^\\(|\\)$", "", i)
                       index1 <- gregexpr ("\\(", i) [[1]]
                       index2 <- gregexpr ("\\)", i) [[1]]
                       commas <- gregexpr (",", i) [[1]]
@@ -577,6 +593,52 @@ strip_if_cond <- function (x) {
                 }
             }
             x <- c (x1, x2)
+        }
+    }
+    return (x)
+}
+
+# crude un-piping operation to split marittr-piped expressions into multiple,
+# distinct base-R lines. Note that the matching of brackets is currently
+# inadequate, and will only work if each expression contains only one primary
+# parenthesised expression.
+unpipe <- function (x) {
+    x <- strsplit (x, "%>%") [[1]]
+    for (i in seq_along (x)) {
+        x [i] <- paste0 ("var", i, " <- ", x [i])
+        if (i > 1) {
+            br1 <- gregexpr ("\\(", x [i]) [[1]]
+            br2 <- gregexpr ("\\)", x [i]) [[1]]
+            not_empty <- grepl ("[A-Za-z0-9]", substring (x [i], br1, br2))
+            comma <- ""
+            if (not_empty)
+                comma <- ", "
+            x [i] <- paste0 (substring (x [i], 1, br1),
+                             "var", i - 1, comma,
+                             substring (x [i], br1 + 1, nchar (x [i])))
+        }
+    }
+    return (x)
+}
+
+split_piped_lines <- function (x) {
+    index <- rev (grep ("(.*)%>%(.*)", x))
+    for (i in index) {
+        xinsert <- unpipe (x [i])
+        if (i == 1) {
+            if (length (x) == 1) {
+                x <- xinsert
+            } else {
+                x <- c (xinsert, x [2:length (x)])
+            }
+        } else if (i == length (x)) {
+            if (length (x) == 1) {
+                x <- xinsert
+            } else {
+                x <- c (x [1:(i - 1)], xinsert)
+            }
+        } else {
+            x <- c (x [1:(i - 1)], xinsert, x [(i + 1):length (x)])
         }
     }
     return (x)
