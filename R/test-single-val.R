@@ -11,11 +11,23 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
     if (!is.null (res))
         res$operation <- "normal function call"
 
-    index <- which (vapply (params, function (j)
-                            (is.null (dim (j)) &&
-                                length (j) == 1) ||
-                            methods::is (j, "formula"),
-                        logical (1)))
+    is_single <- function (j) {
+        chk <- FALSE
+        if (is.null (dim (j)) && length (j) == 1) {
+            if (methods::is (j, "name")) {
+                val <- tryCatch (eval (parse (text = j)),
+                                 error = function (e) NULL)
+                if (!is.null (val))
+                    chk <- length (val) == 1
+            } else {
+                chk <- TRUE
+            }
+        } else if (methods::is (j, "formula")) {
+            chk <- TRUE
+        }
+        return (chk)
+    }
+    index <- which (vapply (params, function (j) is_single (j), logical (1)))
     for (i in index) {
             params_i <- params
 

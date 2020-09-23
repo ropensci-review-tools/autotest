@@ -9,6 +9,19 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
         params <- params [params != "NULL"]
     }
 
+    is_non_single <- function (j) {
+        chk <- FALSE
+        if (is.null (dim (j)) && length (j) > 1) {
+            if (!(methods::is (j, "call") | methods::is (j, "formula")))
+                chk <- TRUE
+        } else if (methods::is (j, "name")) {
+            val <- tryCatch (eval (parse (text = j)),
+                             error = function (e) NULL)
+            if (!is.null (val))
+                chk <- length (val) > 1
+        }
+        return (chk)
+    }
     vec_index <- which (vapply (params, function (i)
                                 length (i) > 1 &&
                                     is.null (dim (i)) &&
