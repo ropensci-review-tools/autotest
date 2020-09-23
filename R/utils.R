@@ -128,6 +128,11 @@ get_pkg_functions <- function (package) {
         requireNamespace ("devtools")
         fns <- gsub (".Rd$", "",
                      list.files (file.path (package, "man"), pattern = ".Rd$"))
+        fn_classes <- vapply (fns, function (i)
+                              tryCatch (class (get (i)) [1],
+                                        error = function (e) NA_character_),
+                              character (1))
+        fns <- fns [grep ("function", fn_classes)]
     } else {
         fns <- ls (paste0 ("package:", package))
         fn_classes <- vapply (fns, function (i) class (get (i)) [1], character (1))
