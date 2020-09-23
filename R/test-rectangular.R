@@ -16,6 +16,8 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
 
         params_r [[r]] <- data.frame (x)
         msgs <- catch_all_msgs (f, this_fn, params_r)
+        if (!is.null (msgs))
+            msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
         ret <- add_msg_output (ret, msgs, types = c ("warning", "error"),
                                operation = "rectangular as data.frame")
         if (!"error" %in% msgs$type) {
@@ -24,6 +26,8 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
 
         params_r [[r]] <- tibble::tibble (data.frame (x))
         msgs <- catch_all_msgs (f, this_fn, params_r)
+        if (!is.null (msgs))
+            msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
         ret <- add_msg_output (ret, msgs, types = c ("warning", "error"),
                                operation = "rectangular as tibble")
         if (!"error" %in% msgs$type) {
@@ -32,6 +36,8 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
 
         params_r [[r]] <- data.table::data.table (x)
         msgs <- catch_all_msgs (f, this_fn, params_r)
+        if (!is.null (msgs))
+            msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
         ret <- add_msg_output (ret, msgs, types = c ("warning", "error"),
                                operation = "rectangular as data.table")
         if (!"error" %in% msgs$type) {
@@ -52,6 +58,8 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
             # extended class structure should still work:
             params_r [[r]] <- structure (x, class = c ("newclass", class (x)))
             msgs <- catch_all_msgs (f, this_fn, params_r)
+            if (!is.null (msgs))
+                msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
             ret <- add_msg_output (ret, msgs, types = c ("warning", "error"),
                                    operation = "rectangular parameter with extended class structure")
             if (!"error" %in% msgs$type) {
@@ -68,6 +76,7 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
             f <- file.path (tempdir (), "junk.txt")
             msgs <- catch_all_msgs (f, this_fn, params_r)
             if (!null_or_not (msgs, "error")) {
+                msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
                 ret <- rbind (ret,
                               report_object (type = "diagnostic",
                                              fn_name = this_fn,
