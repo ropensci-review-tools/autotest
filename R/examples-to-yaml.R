@@ -12,7 +12,8 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
 
         desc <- file.path (package, "DESCRIPTION")
         pkg_name <- gsub ("Package:\\s?", "", readLines (desc) [1])
-        devtools::load_all (package, export_all = FALSE)
+        if (!package %in% search ())
+            devtools::load_all (package, export_all = FALSE)
 
         # TODO: Use g to get hash of HEAD
         #g <- rprojroot::find_root (rprojroot::is_git_root, path = package)
