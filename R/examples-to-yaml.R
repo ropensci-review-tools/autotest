@@ -12,7 +12,7 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
 
         desc <- file.path (package, "DESCRIPTION")
         pkg_name <- gsub ("Package:\\s?", "", readLines (desc) [1])
-        if (!package %in% search ())
+        if (!paste0 ("package:", pkg_name) %in% search ())
             devtools::load_all (package, export_all = FALSE)
 
         # TODO: Use g to get hash of HEAD
