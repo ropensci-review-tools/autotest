@@ -2,15 +2,7 @@
 
 get_all_examples <- function (package, is_source) {
 
-    if (!is_source) {
-        fns <- ls (paste0 ("package:", package))
-        fn_classes <- vapply (fns, function (i) class (get (i)) [1], character (1))
-        fns <- fns [grep ("[Ff]unction|standardGeneric", fn_classes)]
-    } else {
-        requireNamespace ("devtools")
-        fns <- gsub (".Rd$", "",
-                     list.files (file.path (package, "man"), pattern = ".Rd$"))
-    }
+    fns <- get_pkg_functions (package)
 
     exs <- list ()
     for (i in seq (fns)) {

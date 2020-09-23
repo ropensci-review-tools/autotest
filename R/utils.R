@@ -122,3 +122,17 @@ add_msg_output <- function (res, msgs, types = c ("warning", "error"),
     }
     return (res)
 }
+
+get_pkg_functions <- function (package) {
+    if (pkg_is_source (package)) {
+        requireNamespace ("devtools")
+        fns <- gsub (".Rd$", "",
+                     list.files (file.path (package, "man"), pattern = ".Rd$"))
+    } else {
+        fns <- ls (paste0 ("package:", package))
+        fn_classes <- vapply (fns, function (i) class (get (i)) [1], character (1))
+        fns <- fns [grep ("[Ff]unction|standardGeneric", fn_classes)]
+    }
+
+    return (fns)
+}
