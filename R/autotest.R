@@ -100,7 +100,10 @@ autotest_package <- function (package, exclude = NULL, quiet = FALSE) {
         attr (res, "packageVersion") <- utils::packageVersion (package)
     }
 
-    return (tibble::tibble (res))
+    res <- tibble::tibble (res)
+    class (res) <- c ("autotest_pkg", class (res))
+
+    return (res)
 }
 
 # Extract function name from yaml; used only to screen dump in autootest_package
