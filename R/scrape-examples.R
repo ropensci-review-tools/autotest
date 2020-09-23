@@ -245,7 +245,7 @@ dispatched_fns <- function (pkg_name) {
     # reduce only to exported functions, methods, or data sets
     fns <- fns [fns %in% ls (paste0 ("package:", pkg_name))]
     # Then reduce only to functions:
-    fn_classes <- vapply (fns, function (i) class (get (i)), character (1))
+    fn_classes <- vapply (fns, function (i) class (get (i)) [1], character (1))
     fns <- fns [which (fn_classes == "function")]
 
     index <- grep ("\\.", fns)
