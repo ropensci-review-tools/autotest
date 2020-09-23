@@ -34,8 +34,13 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
     for (i in seq (exs)) {
         this_fn <- names (exs) [i]
         prev_fns <- list ()
+        aliases <- get_fn_aliases (package, this_fn)
         for (xj in exs [[i]]) {
-            y <- one_ex_to_yaml (pkg = pkg_name, fn = this_fn, x = xj, prev_fns = prev_fns)
+            y <- one_ex_to_yaml (pkg = pkg_name,
+                                 fn = this_fn,
+                                 aliases = aliases,
+                                 x = xj,
+                                 prev_fns = prev_fns)
             if (!is.null (y)) {
                 ret [[length (ret) + 1]] <- prev_fns [[length (prev_fns) + 1]] <- y
                 names (ret ) [length (ret)] <- this_fn
@@ -47,7 +52,7 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
 }
 
 # convert one example from get_fn_exs to yaml output
-one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
+one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
 
     i1 <- paste0 (rep (" ", 4), collapse = "")
     i2 <- paste0 (rep (" ", 8), collapse = "")
@@ -65,7 +70,10 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
             fn_short <- gsub ("\\..*$", "", fn)
             fn_calls <- grep (paste0 (fn, "|", fn_short), x)
     } else {
-        fn_calls <- grep (fn, x)
+        fn_here <- fn
+        if (!is.null (aliases))
+            fn_here <- paste0 (fn, "|", paste0 (aliases, collapse = "|"))
+        fn_calls <- grep (fn_here, x)
     }
     # rm all lines after final fn_calls, but keep to add as terminal
     # pre-processing lines
@@ -105,6 +113,25 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
     if (length (index) > 0)
         x [index] <- gsub ("^\\(|\\)$", "", x [index])
 
+    # move any library calls from x to yaml preprocessing
+    if (any (grepl ("^library\\s?\\(", x))) {
+        index <- grep ("^library\\s?\\(", x)
+        libs <- unlist (lapply (x [index], function (i) strsplit (i, "\\)\\s?;") [[1]] [1]))
+        if (!has_prepro) {
+            yaml <- c (yaml,
+                       paste0 (i2, "- preprocess:"))
+            has_prepro <- TRUE
+        }
+        for (l in libs)
+            yaml <- c (yaml,
+                       paste0 (i3, "- '", l, "'"))
+
+
+        # rm those lines from x if they are not compound expressions
+        index2 <- !grepl ("\\)\\s?;", x [index])
+        x <- x [-index [index2] ]
+    }
+
     # Parse the function calls, and only retain those for which the first
     # enclosing functions are the primary function, which notably excludes
     # 'stopifnot' statements and similar. Any of these which also assign to
@@ -116,7 +143,7 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
         p <- utils::getParseData (parse (text = xi))
         syms <- which (p$token == "SYMBOL_FUNCTION_CALL")
         if (any (syms)) {
-            if (p$text [syms [1]] != fn & p$text [syms [1]] %in% rm_fns) {
+            if (!p$text [syms [1]] %in% aliases & p$text [syms [1]] %in% rm_fns) {
                 rm_lines <- c (rm_lines, xi)
             } else if (any (p$token %in% c ("LEFT_ASSIGN", "EQ_ASSIGN"))) {
                 if (which (p$token %in% c ("LEFT_ASSIGN", "EQ_ASSIGN")) [1] < syms [1]) {
@@ -142,7 +169,7 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
                           ret <- FALSE
                           if (any (p$token == "SYMBOL_FUNCTION_CALL")) {
                               here <- which (p$token == "SYMBOL_FUNCTION_CALL" &
-                                             p$text == fn)
+                                             p$text %in% aliases)
                               if (any (p$token [seq (here - 1)] %in% c ("LEFT_ASSIGN", "EQ_ASSIGN")))
                                   ret <- TRUE
                           } else { # values assigned with no function call
@@ -187,7 +214,7 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
                        ret <- FALSE
                        index <- which (p$token == "SYMBOL_FUNCTION_CALL")
                        if (length (index) > 0) {
-                           ret <- (p$text [index [1]] == fn |
+                           ret <- (p$text [index [1]] %in% aliases |
                                    p$text [index [1]] == fn_short)
                            # can also be part of *apply or *map functions, yet
                            # `getParseData` only parses these as SYMBOL
@@ -205,16 +232,17 @@ one_ex_to_yaml <- function (pkg, fn, x, prev_fns = NULL) {
 
     x <- split_piped_lines (x)
     # Then add any lines prior to main function call to pre-processing:
-    fn_calls <- grep (fn, x) [1]
-    if (fn_calls > 1) {
-        for (i in seq (fn_calls - 1)) {
+    fn_calls <- grep (paste0 (paste0 (aliases, "\\s?\\("), collapse = "|"), x)
+    if (fn_calls [1] > 1) {
+        for (i in seq (fn_calls [1] - 1)) {
             yaml <- c (yaml, paste0 (i3, "- '", x [i], "'"))
         }
-        x <- x [-seq (fn_calls - 1)]
+        x <- x [-seq (fn_calls [1] - 1)]
     }
     # And remove any lines after final function call which may have arisen
     # through splitting piped lines
-    x <- x [seq (max (grep (fn, x)))]
+    fn_calls <- grep (paste0 (paste0 (aliases, "\\s?\\("), collapse = "|"), x)
+    x <- x [seq (max (fn_calls))]
 
     # grab content inside primary parentheses:
     br1 <- vapply (gregexpr ("\\(", x), function (i) i [1], integer (1))
@@ -644,4 +672,38 @@ split_piped_lines <- function (x) {
         }
     }
     return (x)
+}
+
+get_fn_aliases <- function (pkg, fn_name) {
+    if (pkg_is_source (pkg))
+        return (get_aliases_source (pkg, fn_name))
+    else
+        return (get_aliases_non_source (pkg, fn_name))
+}
+
+get_aliases_non_source <- function (pkg, fn_name) {
+    loc <- file.path (R.home (), "library", pkg, "help", pkg)
+    e <- new.env ()
+    chk <- lazyLoad (loc, envir = e)
+    x <- get (fn_name, envir = e)
+
+    is_alias <- vapply (x, function (i)
+                        attr (i, "Rd_tag") == "\\alias",
+                        logical (1))
+    aliases <- vapply (x [which (is_alias)], function (i) i [[1]], character (1))
+    return (aliases)
+}
+
+
+get_aliases_source <- function (pkg, fn_name) {
+    f <- file.path (pkg, "man", paste0 (fn_name, ".Rd"))
+    x <- readLines (f, warn = FALSE)
+
+    aliases <- NULL
+
+    index <- grep ("^\\\\alias\\{", x)
+    if (length (index) > 0) {
+        aliases <- gsub ("^\\\\alias\\{|\\}$", "", x [index])
+    }
+    return (aliases)
 }
