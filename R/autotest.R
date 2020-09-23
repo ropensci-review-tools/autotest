@@ -77,6 +77,19 @@ autotest_package <- function (package, exclude = NULL, quiet = FALSE) {
     }
     res <- res [which (!duplicated (res)), ]
 
+    no_examples <- fns_without_examples (package)
+    if (length (no_examples) > 0) {
+        for (i in no_examples) {
+            rtemp <- report_object (type = "error",
+                                    fn_name = i,
+                                    operation = "<see content>",
+                                    content = "This function has no documented example")
+            rtemp$yaml_hash <- NA_character_
+            res <- rbind (res, rtemp)
+
+        }
+    }
+
     attr (res, "package") <- package
     if (pkg_is_source (package)) {
         desc <- readLines (file.path (package, "DESCRIPTION"))

@@ -141,3 +141,23 @@ get_pkg_functions <- function (package) {
 
     return (fns)
 }
+
+fns_without_examples <- function (package) {
+    exs <- examples_to_yaml (package, exclude = NULL)
+    fns_with_exs <- unique (names (exs))
+    aliases <- unlist (lapply (fns_with_exs, function (i)
+                               get_fn_aliases (pkg = package,
+                                               fn_name = i)))
+    fns_with_exs <- unique (aliases)
+
+    fns <- get_pkg_functions (package)
+
+    fns <- fns [which (!fns %in% fns_with_exs)]
+
+    pkg_name <- package
+    if (pkg_is_source (package)) {
+        desc <- file.path (package, "DESCRIPTION")
+        pkg_name <- gsub ("Package:\\s?", "", readLines (desc) [1])
+    }
+    return (fns [which (fns %in% ls (paste0 ("package:", pkg_name)))])
+}
