@@ -17,5 +17,19 @@ summary.autotest_pkg <- function (x) {
                        num_diagnostics = diagnostics,
                        stringsAsFactors = FALSE)
     res [res == 0] <- NA_integer_
+
+    message ("autotesting package [", attr (x, "packageName"),
+             "] generated ", nrow (x), " rows of output ",
+             "of the following types:")
+    err_txt <- ifelse (sum (errors) == 1, "", "s")
+    message ("     ", sum (errors), " error", err_txt)
+    warn_txt <- ifelse (sum (warns) == 1, "", "s")
+    message ("     ", sum (warns), " warning", warn_txt)
+    msg_txt <- ifelse (sum (messages) == 1, "", "s")
+    message ("     ", sum (messages), " message", msg_txt)
+    diag_txt <- ifelse (sum (diagnostics) == 1, "", "s")
+    message ("     ", sum (diagnostics), " other diagnostics", diag_txt)
+    message ("")
+
     print (res)
 }
