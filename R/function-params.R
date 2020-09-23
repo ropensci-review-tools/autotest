@@ -30,6 +30,9 @@ get_params <- function (res, i, this_fn) {
                 temp_val <- paste0 (this_val)
                 if (temp_val %in% ls (envir = e)) {
                     this_val <- get (temp_val, envir = e)
+                } else if (temp_val %in% ls (paste0 ("package:", res$package))) {
+                    this_val <- get (temp_val,
+                                     envir = as.environment (paste0 ("package:", res$package)))
                 } else if (grepl ("::", temp_val)) {
                     this_pkg <- strsplit (temp_val, "::") [[1]] [1]
                     if (!this_pkg %in% search ())
