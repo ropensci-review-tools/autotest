@@ -19,7 +19,7 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
         if (!is.null (msgs))
             msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
         ret <- add_msg_output (ret, msgs, types = c ("warning", "error"),
-                               operation = "rectangular as data.frame")
+                               operation = "tabular as data.frame")
         if (!"error" %in% msgs$type) {
             res1 <- suppressWarnings (do.call (this_fn, params_r))
         }
@@ -29,7 +29,7 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
         if (!is.null (msgs))
             msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
         ret <- add_msg_output (ret, msgs, types = c ("warning", "error"),
-                               operation = "rectangular as tibble")
+                               operation = "tabular as tibble")
         if (!"error" %in% msgs$type) {
             res2 <- suppressWarnings (do.call (this_fn, params_r))
         }
@@ -39,18 +39,22 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
         if (!is.null (msgs))
             msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
         ret <- add_msg_output (ret, msgs, types = c ("warning", "error"),
-                               operation = "rectangular as data.table")
+                               operation = "tabular as data.table")
         if (!"error" %in% msgs$type) {
             res3 <- suppressWarnings (do.call (this_fn, params_r))
         }
 
-        ret <- rbind (ret, chk_dims (this_fn, params, r, res1, res2))
-        ret <- rbind (ret, chk_names (this_fn, params, r, res1, res2))
-        ret <- rbind (ret, chk_columns (this_fn, params, r, res1, res2))
+        if (!(is.null (res1) | is.null (res2))) {
+            ret <- rbind (ret, chk_dims (this_fn, params, r, res1, res2))
+            ret <- rbind (ret, chk_names (this_fn, params, r, res1, res2))
+            ret <- rbind (ret, chk_columns (this_fn, params, r, res1, res2))
+        }
 
-        ret <- rbind (ret, chk_dims (this_fn, params, r, res1, res3))
-        ret <- rbind (ret, chk_names (this_fn, params, r, res1, res3))
-        ret <- rbind (ret, chk_columns (this_fn, params, r, res1, res3))
+        if (!(is.null (res1) | is.null (res3))) {
+            ret <- rbind (ret, chk_dims (this_fn, params, r, res1, res3))
+            ret <- rbind (ret, chk_names (this_fn, params, r, res1, res3))
+            ret <- rbind (ret, chk_columns (this_fn, params, r, res1, res3))
+        }
 
         # Modify class definitions for rectangular inputs if not excluded by
         # yaml class definitions
@@ -66,9 +70,11 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
                 res4 <- suppressWarnings (do.call (this_fn, params_r))
             }
 
-            ret <- rbind (ret, chk_dims (this_fn, params, r, res1, res4))
-            ret <- rbind (ret, chk_names (this_fn, params, r, res1, res4))
-            ret <- rbind (ret, chk_columns (this_fn, params, r, res1, res4))
+            if (!(is.null (res1) | is.null (res4))) {
+                ret <- rbind (ret, chk_dims (this_fn, params, r, res1, res4))
+                ret <- rbind (ret, chk_names (this_fn, params, r, res1, res4))
+                ret <- rbind (ret, chk_columns (this_fn, params, r, res1, res4))
+            }
 
             # new class structure which exposes 'List` structure of `data.frame`
             # and should generally fail:
@@ -81,7 +87,7 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
                               report_object (type = "diagnostic",
                                              fn_name = this_fn,
                                              parameter = names (params) [r],
-                                             operation = "rectangular structure with new class structure",
+                                             operation = "tabular structure with new class structure",
                                              content = paste0 ("Function [",
                                                                this_fn,
                                                                "] should error when ",
