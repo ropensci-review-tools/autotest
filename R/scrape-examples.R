@@ -1,8 +1,10 @@
 # no export fns here
 
-get_all_examples <- function (package, is_source) {
+get_all_examples <- function (package, is_source, exclude = NULL) {
 
     fns <- get_pkg_functions (package)
+    if (!is.null (exclude))
+        fns <- fns [which (!fns %in% exclude)]
 
     exs <- list ()
     for (i in seq (fns)) {

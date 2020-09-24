@@ -28,8 +28,7 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
         pkg_name <- package
     }
 
-    exs <- get_all_examples (package, pkg_is_source (package))
-    exs <- exs [which (!names (exs) %in% exclude)]
+    exs <- get_all_examples (package, pkg_is_source (package), exclude)
 
     ret <- list ()
     for (i in seq (exs)) {
