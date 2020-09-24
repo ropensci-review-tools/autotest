@@ -687,10 +687,27 @@ get_aliases_non_source <- function (pkg, fn_name) {
     chk <- lazyLoad (loc, envir = e)
     x <- get (fn_name, envir = e)
 
-    is_alias <- vapply (x, function (i)
-                        attr (i, "Rd_tag") == "\\alias",
-                        logical (1))
-    aliases <- vapply (x [which (is_alias)], function (i) i [[1]], character (1))
+    # first get all aliases for all functions in package:
+    loc <- file.path (R.home (), "library", pkg, "help", pkg)
+    e <- new.env ()
+    chk <- lazyLoad (loc, envir = e)
+    fns <- ls (envir = e)
+    all_aliases <- lapply (fns, function (i) {
+                           rd <- get (i, envir = e)
+                           is_alias <- vapply (rd, function (j)
+                                attr (j, "Rd_tag") == "\\alias",
+                                logical (1))
+                        vapply (rd [which (is_alias)], function (j) j [[1]], character (1))
+        })
+    names (all_aliases) <- fns
+
+    has_fn_name <- which (vapply (all_aliases, function (i) fn_name %in% i, logical (1)))
+    if (length (has_fn_name) > 0) {
+        aliases <- unname (unlist (all_aliases [has_fn_name]))
+        classes <- vapply (aliases, function (i) class (get (i, envir = e)) [1], character (1))
+        aliases <- aliases [which (classes == "function")]
+    }
+
     return (aliases)
 }
 
