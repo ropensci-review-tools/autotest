@@ -66,12 +66,13 @@ get_int_range <- function (this_fn, params, i) {
     get_fn_response <- function (this_fn, params) {
         f <- file.path (tempdir (), "junk.txt")
         msgs <- catch_all_msgs (f, this_fn, params)
-        if (is.null (msgs))
-            val <- 3
-        else if (any (msgs$type == "error"))
-            val <- 1
-        else if (any (msgs$type == "warning"))
-            val <- 2
+        val <- 3
+        if (!is.null (msgs)) {
+            if (any (msgs$type == "error"))
+                val <- 1
+            else if (any (msgs$type == "warning"))
+                val <- 2
+        }
 
         return (val)
     }
@@ -107,11 +108,18 @@ get_int_range <- function (this_fn, params, i) {
     if (maxval > 1) {
         p_i_max <- params [[i]]
     } else {
-        p_i <- stepdown (this_fn, params, i, maxval, step_factor = 10)
-        # then step back up factor and 10 and zoom in
-        params [[i]] <- floor (p_i * 10)
-        maxval <- get_fn_response (this_fn, params)
-        p_i_max <- stepdown (this_fn, params, i, maxval, step_factor = 2)
+        st <- system.time (
+            p_i <- stepdown (this_fn, params, i, maxval, step_factor = 10)
+            ) [3]
+        # then step back up factor and 10 and zoom in, but only for function
+        # calls which are relatively quick, arbitrarily deemed here to mean < 10
+        # seconds for coarse stepdown
+        p_i_max <- p_i
+        if (st < 10) {
+            params [[i]] <- floor (p_i * 10)
+            maxval <- get_fn_response (this_fn, params)
+            p_i_max <- stepdown (this_fn, params, i, maxval, step_factor = 2)
+        }
     }
 
     params [[i]] <- -.Machine$integer.max
