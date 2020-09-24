@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/mpadge/autotest",
   "issueTracker": "https://github.com/mpadge/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.1.222",
+  "version": "0.0.1.223",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -190,18 +190,6 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "rprojroot",
-      "name": "rprojroot",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=rprojroot"
-    },
-    {
-      "@type": "SoftwareApplication",
       "identifier": "tibble",
       "name": "tibble",
       "provider": {
@@ -225,7 +213,7 @@
       "sameAs": "https://CRAN.R-project.org/package=yaml"
     }
   ],
-  "fileSize": "117.768KB",
+  "fileSize": "144.335KB",
   "contIntegration": "https://codecov.io/gh/mpadge/autotest",
   "developmentStatus": "https://www.repostatus.org/#concept",
   "readme": "https://github.com/mpadge/autotest/blob/master/README.md"
