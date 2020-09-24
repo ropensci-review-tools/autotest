@@ -33,6 +33,7 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
 
             p_i <- params_i [[i]]
             val_type <- NULL
+            check_vec <- TRUE
             if (is_int (p_i)) {
                 val_type <- "integer"
                 res <- rbind (res,
@@ -49,10 +50,12 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
                 val_type <- class (p_i) [1]
                 res <- rbind (res,
                               test_single_name (pkg, this_fn, params_i, i))
+            } else {
+                check_vec <- FALSE
             }
 
             # check response to vector input:
-            if (is_int (p_i) | is.character (p_i) | is.logical (p_i)) {
+            if (check_vec) {
                 params_i [[i]] <- rep (p_i, 2)
                 f <- file.path (tempdir (), "junk.txt")
                 msgs <- catch_all_msgs (f, this_fn, params_i)
