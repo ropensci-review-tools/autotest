@@ -28,7 +28,15 @@ get_params <- function (res, i, this_fn) {
         if (!methods::is (this_val, "formula")) {
             if (is.name (this_val)) {
                 temp_val <- paste0 (this_val)
-                if (temp_val %in% ls (envir = e)) {
+                can_get <- !is.null (tryCatch (get (temp_val),
+                                                  error = function (e) NULL))
+                can_eval <- !is.null (tryCatch (eval (parse (text = this_val)),
+                                                error = function (e) NULL))
+                if (can_get) {
+                    this_val <- get (temp_val)
+                } else if (can_eval) {
+                    this_val <- eval (parse (text = this_val))
+                } else if (temp_val %in% ls (envir = e)) {
                     this_val <- get (temp_val, envir = e)
                 } else if (temp_val %in% ls (paste0 ("package:", res$package))) {
                     this_val <- get (temp_val,
