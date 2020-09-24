@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.220</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.223</span>
       </span>
     </div>
 
@@ -66,7 +66,8 @@
 <div id="autotest" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#autotest" class="anchor"></a>autotest</h1></div>
-<p>Automatic mutation testing of R packages. Tests are controlled via a simple YAML schema specifying one or more example workflows for each function of a package, with workflows able to be automatically generated from documented examples, and <code>autotest</code> tests able to be used to generate package tests.</p>
+<p>Automatic mutation testing of R packages. Mutation in the sense of mutating inputs (parameters) to function calls, rather than mutation of underlying code (see, for example, <a href="https://github.com/ropensci/mutant"><code>mutant</code></a> for that). <code>autotest</code> primarily works by scraping documented examples for all functions, and mutating the parameters input to those functions.</p>
+<p>Tests are controlled via a simple YAML schema specifying one or more example workflows for each function of a package, with workflows able to be automatically generated from documented examples, and <code>autotest</code> tests able to be used to generate package tests.</p>
 <p>The simplest workflows involve nominating data sets which may be submitted to a function, while more complicated workflows may involve multiple data sets, intermediate pre-processing stages, and other transformations prior to submission to a nominated function. The following illustrates a typical <code>yaml</code> schema, where items in angle-brackets (<code><a href="https://rdrr.io/r/base/Comparison.html">&lt;</a></code>, <code><a href="https://rdrr.io/r/base/Comparison.html">&gt;</a></code>) indicate placeholders be completed for a specific package and functions.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>package<span class="op">:</span><span class="st"> </span><span class="er">&lt;</span>package_name<span class="op">&gt;</span></span>
 <span id="cb1-2"><a href="#cb1-2"></a>functions<span class="op">:</span></span>
@@ -88,15 +89,13 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>Not yet on CRAN, so must be installed from remote repository host systems using any one of the following options:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="co"># install.packages("remotes")</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_git.html">install_git</a></span><span class="op">(</span><span class="st">"https://git.sr.ht/~mpadge/autotest"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_bitbucket.html">install_bitbucket</a></span><span class="op">(</span><span class="st">"mpadge/autotest"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_gitlab.html">install_gitlab</a></span><span class="op">(</span><span class="st">"mpadge/autotest"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"mpadge/autotest"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># install.packages("remotes")</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>remotes<span class="op">::</span><span class="kw">install_git</span>(<span class="st">"https://git.sr.ht/~mpadge/autotest"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3"></a>remotes<span class="op">::</span><span class="kw">install_bitbucket</span>(<span class="st">"mpadge/autotest"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4"></a>remotes<span class="op">::</span><span class="kw">install_gitlab</span>(<span class="st">"mpadge/autotest"</span>)</span>
+<span id="cb2-5"><a href="#cb2-5"></a>remotes<span class="op">::</span><span class="kw">install_github</span>(<span class="st">"mpadge/autotest"</span>)</span></code></pre></div>
 <p>The package can then be loaded the usual way:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span> <span class="op">(</span><span class="va"><a href="https://github.com/mpadge/autotest">autotest</a></span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">library</span> (autotest)</span></code></pre></div>
 </div>
 <div id="what-gets-tested" class="section level2">
 <h2 class="hasAnchor">
@@ -107,61 +106,157 @@
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
 <p>Current functionality applied to test two functions from the <a href="https://github.com/daya6489/SmartEDA"><code>SmartEDA</code> package</a> as specified in the following <code>yaml</code>. This also illustrates the use of data transformation steps, in this case implementing a couple of simple transformations on columns of the external data set, <a href="https://cran.r-project.org/package=ISLR"><code>ISLR::Carseats</code></a>, including introducing some missing data through replacing values with <code>NA</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="va">yaml</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span> <span class="op">(</span><span class="st">"package: SmartEDA"</span>,
-<span class="st">"functions:"</span>,
-<span class="st">"   - ExpData:"</span>,
-<span class="st">"       - preprocess:"</span>,
-<span class="st">"           - 'x &lt;- ISLR::Carseats'"</span>,
-<span class="st">"           - 'x$Sales &lt;- sqrt (x$Sales)'"</span>,
-<span class="st">"           - 'x$CompPrice &lt;- as.integer (x$CompPrice)'"</span>,
-<span class="st">"           - 'x$Sales [ceiling (runif (10) * nrow (x))] &lt;- NA'"</span>,
-<span class="st">"       - parameters:"</span>,
-<span class="st">"           - data: x"</span>,
-<span class="st">"   - ExpData:"</span>,
-<span class="st">"       - class:"</span>,
-<span class="st">"           - data: data.frame"</span>,
-<span class="st">"       - parameters:"</span>,
-<span class="st">"           - data: ISLR::College"</span>,
-<span class="st">"   - ExpStat:"</span>,
-<span class="st">"       - parameters:"</span>,
-<span class="st">"           - X: ISLR::Carseats$Sales"</span>,
-<span class="st">"           - Y: ISLR::Carseats$Urban"</span>,
-<span class="st">"           - valueOfGood: 'Yes'"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>yaml &lt;-<span class="st"> </span><span class="kw">c</span> (<span class="st">"package: SmartEDA"</span>,</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="st">"functions:"</span>,</span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="st">"   - ExpData:"</span>,</span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="st">"       - preprocess:"</span>,</span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="st">"           - 'x &lt;- ISLR::Carseats'"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="st">"           - 'x$Sales &lt;- sqrt (x$Sales)'"</span>,</span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="st">"           - 'x$CompPrice &lt;- as.integer (x$CompPrice)'"</span>,</span>
+<span id="cb4-8"><a href="#cb4-8"></a><span class="st">"           - 'x$Sales [ceiling (runif (10) * nrow (x))] &lt;- NA'"</span>,</span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="st">"       - parameters:"</span>,</span>
+<span id="cb4-10"><a href="#cb4-10"></a><span class="st">"           - data: x"</span>,</span>
+<span id="cb4-11"><a href="#cb4-11"></a><span class="st">"   - ExpData:"</span>,</span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="st">"       - class:"</span>,</span>
+<span id="cb4-13"><a href="#cb4-13"></a><span class="st">"           - data: data.frame"</span>,</span>
+<span id="cb4-14"><a href="#cb4-14"></a><span class="st">"       - parameters:"</span>,</span>
+<span id="cb4-15"><a href="#cb4-15"></a><span class="st">"           - data: ISLR::College"</span>,</span>
+<span id="cb4-16"><a href="#cb4-16"></a><span class="st">"   - ExpStat:"</span>,</span>
+<span id="cb4-17"><a href="#cb4-17"></a><span class="st">"       - parameters:"</span>,</span>
+<span id="cb4-18"><a href="#cb4-18"></a><span class="st">"           - X: ISLR::Carseats$Sales"</span>,</span>
+<span id="cb4-19"><a href="#cb4-19"></a><span class="st">"           - Y: ISLR::Carseats$Urban"</span>,</span>
+<span id="cb4-20"><a href="#cb4-20"></a><span class="st">"           - valueOfGood: 'Yes'"</span>)</span></code></pre></div>
 <p>Note that the second function definition is for the same function as the first (namely, <code>ExpData</code>), but specifies alternative input data, and also includes the restriction that input data to the function should be of class <code>data.frame</code> only. Submitting this <code>yaml</code> to the <code>autotest</code> function gives the following results:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="fu"><a href="reference/autotest.html">autotest</a></span> <span class="op">(</span>yaml <span class="op">=</span> <span class="va">yaml</span><span class="op">)</span>
-<span class="co">#&gt; ★ Loading the following libraries:</span>
-<span class="co">#&gt; ● ISLR</span>
-<span class="co">#&gt; ● SmartEDA</span>
-<span class="co">#&gt; ★ Testing functions:</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; ── Testing ExpData ─────────────────────────────────────────────────────────────</span>
-<span class="co">#&gt; Parameter [type] permits unrestricted integer inputs</span>
-<span class="co">#&gt; Warning: Function [ExpData] does not specify a return value, yet returns a value</span>
-<span class="co">#&gt; of class [data.frame]</span>
-<span class="co">#&gt; ✖ ExpData</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; ── Testing ExpData ─────────────────────────────────────────────────────────────</span>
-<span class="co">#&gt; Parameter [type] permits unrestricted integer inputs</span>
-<span class="co">#&gt; Warning: Function [ExpData] does not specify a return value, yet returns a value</span>
-<span class="co">#&gt; of class [data.frame]</span>
-<span class="co">#&gt; ✖ ExpData</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; ── Testing ExpStat ─────────────────────────────────────────────────────────────</span>
-<span class="co">#&gt; function [ExpStat] issued a Warning: Chi-squared approximation may be incorrect</span>
-<span class="co">#&gt; Warning: Function [ExpStat] errors on list-columns when submitted as X</span>
-<span class="co">#&gt;   Error message: unimplemented type 'list' in 'orderVector1'</span>
-<span class="co">#&gt; function [ExpStat] issued a Warning: Chi-squared approximation may be incorrect</span>
-<span class="co">#&gt; Warning: Function [ExpStat] returns different values when assumed int-valued parameter [Y] is submitted as double.</span>
-<span class="co">#&gt;  Error message: different classes when submitted as YChi-squared approximation may be incorrect</span>
-<span class="co">#&gt; Warning: Function [ExpStat] errors on list-columns when submitted as Y</span>
-<span class="co">#&gt;   Error message: unimplemented type 'list' in 'orderVector1'</span>
-<span class="co">#&gt; function [ExpStat] issued a Warning: Chi-squared approximation may be incorrect</span>
-<span class="co">#&gt; Parameter [valueOfGood] of function [ExpStat] is assumed to a single character, but is case dependent</span>
-<span class="co">#&gt; Parameter valueOfGood of function [ExpStat] is assumed to a single character, but does not match arguments to expected values</span>
-<span class="co">#&gt; Function [ExpStat] issued a Warning: Chi-squared approximation may be incorrect</span>
-<span class="co">#&gt; ✖ ExpStat</span></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">autotest</span> (<span class="dt">yaml =</span> yaml)</span>
+<span id="cb5-2"><a href="#cb5-2"></a></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co">#&gt; ★ Loading the following libraries:</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co">#&gt; ● ISLR</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="co">#&gt; ● SmartEDA</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="co">#&gt; ✔ ExpData</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="co">#&gt; ✔ ExpData</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="co">#&gt; ✔ ExpStat</span></span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="2%">
+<col width="5%">
+<col width="6%">
+<col width="5%">
+<col width="19%">
+<col width="55%">
+<col width="5%">
+</colgroup>
+<thead><tr class="header">
+<th align="left"></th>
+<th align="left">type</th>
+<th align="left">fn_name</th>
+<th align="left">parameter</th>
+<th align="left">operation</th>
+<th align="left">content</th>
+<th align="left">yaml_hash</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">diagnostic</td>
+<td align="left">ExpData</td>
+<td align="left">data</td>
+<td align="left">tabular structure with new class structure</td>
+<td align="left">Function <br><span class="math display"><em>E</em><em>x</em><em>p</em><em>D</em><em>a</em><em>t</em><em>a</em></span><br> should error when class structure of <code>data.frame</code> input is removed.</td>
+<td align="left">1f3d15</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="left">diagnostic</td>
+<td align="left">ExpData</td>
+<td align="left">type</td>
+<td align="left">ascertain integer range</td>
+<td align="left">Parameter <br><span class="math display"><em>t</em><em>y</em><em>p</em><em>e</em></span><br> permits unrestricted integer inputs</td>
+<td align="left">1f3d15</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">diagnostic</td>
+<td align="left">ExpData</td>
+<td align="left">type</td>
+<td align="left">length 2 vector for single-length parameter</td>
+<td align="left">parameter <br><span class="math display"><em>t</em><em>y</em><em>p</em><em>e</em></span><br> is assumed to be a single value of integer type, yet admits vectors of length &gt; 1</td>
+<td align="left">1f3d15</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">diagnostic</td>
+<td align="left">ExpData</td>
+<td align="left">NA</td>
+<td align="left">check that description has return value</td>
+<td align="left">Function <br><span class="math display"><em>E</em><em>x</em><em>p</em><em>D</em><em>a</em><em>t</em><em>a</em></span><br> does not specify a return value, yet returns a value of class <br><span class="math display"><em>d</em><em>a</em><em>t</em><em>a</em>.<em>f</em><em>r</em><em>a</em><em>m</em><em>e</em></span><br>
+</td>
+<td align="left">1f3d15</td>
+</tr>
+<tr class="odd">
+<td align="left">5</td>
+<td align="left">warning</td>
+<td align="left">chisq.test(tb)</td>
+<td align="left">NA</td>
+<td align="left">normal function call</td>
+<td align="left">Chi-squared approximation may be incorrect</td>
+<td align="left">1f3d15</td>
+</tr>
+<tr class="even">
+<td align="left">6</td>
+<td align="left">diagnostic</td>
+<td align="left">ExpStat</td>
+<td align="left">X</td>
+<td align="left">convert vector input to list-columns</td>
+<td align="left">Function <br><span class="math display"><em>E</em><em>x</em><em>p</em><em>S</em><em>t</em><em>a</em><em>t</em></span><br> errors on list-columns when submitted as X Error message: unimplemented type ‘list’ in ‘orderVector1’</td>
+<td align="left">1f3d15</td>
+</tr>
+<tr class="odd">
+<td align="left">7</td>
+<td align="left">diagnostic</td>
+<td align="left">ExpStat</td>
+<td align="left">Y</td>
+<td align="left">convert vector input to list-columns</td>
+<td align="left">Function <br><span class="math display"><em>E</em><em>x</em><em>p</em><em>S</em><em>t</em><em>a</em><em>t</em></span><br> errors on list-columns when submitted as Y Error message: unimplemented type ‘list’ in ‘orderVector1’</td>
+<td align="left">1f3d15</td>
+</tr>
+<tr class="even">
+<td align="left">8</td>
+<td align="left">diagnostic</td>
+<td align="left">ExpStat</td>
+<td align="left">valueOfGood</td>
+<td align="left">lower case character parameter</td>
+<td align="left">Parameter valueOfGood of function <br><span class="math display"><em>E</em><em>x</em><em>p</em><em>S</em><em>t</em><em>a</em><em>t</em></span><br> is assumed to a single character, but is case dependent</td>
+<td align="left">1f3d15</td>
+</tr>
+<tr class="odd">
+<td align="left">9</td>
+<td align="left">diagnostic</td>
+<td align="left">ExpStat</td>
+<td align="left">valueOfGood</td>
+<td align="left">upper case character parameter</td>
+<td align="left">Parameter valueOfGood of function <br><span class="math display"><em>E</em><em>x</em><em>p</em><em>S</em><em>t</em><em>a</em><em>t</em></span><br> is assumed to a single character, but is case dependent</td>
+<td align="left">1f3d15</td>
+</tr>
+<tr class="even">
+<td align="left">10</td>
+<td align="left">diagnostic</td>
+<td align="left">ExpStat</td>
+<td align="left">valueOfGood</td>
+<td align="left">random character string as parameter</td>
+<td align="left">Parameter valueOfGood of function <br><span class="math display"><em>E</em><em>x</em><em>p</em><em>S</em><em>t</em><em>a</em><em>t</em></span><br> is assumed to a single character, but does not match arguments to expected values</td>
+<td align="left">1f3d15</td>
+</tr>
+<tr class="odd">
+<td align="left">11</td>
+<td align="left">diagnostic</td>
+<td align="left">ExpStat</td>
+<td align="left">valueOfGood</td>
+<td align="left">length 2 vector for single-length parameter</td>
+<td align="left">parameter <br><span class="math display"><em>v</em><em>a</em><em>l</em><em>u</em><em>e</em><em>O</em><em>f</em><em>G</em><em>o</em><em>o</em><em>d</em></span><br> is assumed to be a single value of character type, yet admits vectors of length &gt; 1</td>
+<td align="left">1f3d15</td>
+</tr>
+</tbody>
+</table>
 <p>And neither the <code>ExpData</code> nor the <code>ExpStat</code> function pass <code>autotest</code> conditions, with <code>ExpData</code> failing to specify the class of return value, and <code>ExpData</code> failing to appropriately <code>unlist</code> or <code>unnest</code> list-columns.</p>
 </div>
 <div id="prior-work" class="section level2">
