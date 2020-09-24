@@ -103,7 +103,7 @@ autotest_package <- function (package, exclude = NULL, quiet = FALSE) {
     }
 
     res <- tibble::tibble (res)
-    class (res) <- c ("autotest_pkg", class (res))
+    class (res) <- c ("autotest_package", class (res))
 
     return (res)
 }
