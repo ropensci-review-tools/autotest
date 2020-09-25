@@ -2,8 +2,8 @@
 <!-- badges: start -->
 
 [![R build
-status](https://github.com/mpadge/autotest/workflows/R-CMD-check/badge.svg)](https://github.com/mpadge/autotest/actions?query=workflow%3AR-CMD-check)
-[![codecov](https://codecov.io/gh/mpadge/autotest/branch/master/graph/badge.svg)](https://codecov.io/gh/mpadge/autotest)
+status](https://github.com/ropenscilabs/autotest/workflows/R-CMD-check/badge.svg)](https://github.com/ropenscilabs/autotest/actions?query=workflow%3AR-CMD-check)
+[![codecov](https://codecov.io/gh/ropenscilabs/autotest/branch/master/graph/badge.svg)](https://codecov.io/gh/ropenscilabs/autotest)
 [![Project Status:
 Concept](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
 <!-- badges: end -->
@@ -67,7 +67,7 @@ systems using any one of the following options:
     remotes::install_git("https://git.sr.ht/~mpadge/autotest")
     remotes::install_bitbucket("mpadge/autotest")
     remotes::install_gitlab("mpadge/autotest")
-    remotes::install_github("mpadge/autotest")
+    remotes::install_github("ropenscilabs/autotest")
 
 The package can then be loaded the usual way:
 
