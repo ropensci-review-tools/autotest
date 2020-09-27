@@ -157,7 +157,7 @@ fns_without_examples <- function (package) {
     count <- vapply (fns, function (i)
                          length (get_example_lines (package, fn = i)), integer (1))
     if (!any (count > 0))
-        return NULL
+        return (NULL)
 
     pkg_name <- package
     if (pkg_is_source (package)) {
