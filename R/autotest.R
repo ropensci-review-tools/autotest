@@ -33,7 +33,8 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
         reports <- rbind (reports,
                           autotest_single (res$package, params, this_fn, quiet))
         reports <- rbind (reports,
-                          autotest_return (res$package, params, this_fn))
+                          autotest_return (res$package, params, this_fn,
+                                           attr (yaml, "package")))
 
         if (!quiet)
             message (cli::col_green (cli::symbol$tick, " ", this_fn))
@@ -68,6 +69,7 @@ autotest_package <- function (package, exclude = NULL, quiet = FALSE) {
     res <- NULL
     for (i in seq_along (exs)) {
         yaml <- exs [[i]]
+        attr (yaml, "package") <- package
         fn_name <- fn_from_yaml (yaml)
         res <- rbind (res, autotest (yaml = yaml, quiet = TRUE))
         if (!quiet)

@@ -2,7 +2,12 @@
 # Check (1) whether return values are documented at all; and (2) If so, whether
 # they describe the class or type of return object. The latter is currently only
 # crudely tested with a simple `grep([[Cc]lass|[Oo]bject)`.
-autotest_return <- function (pkg, params, this_fn) {
+autotest_return <- function (pkg, params, this_fn, package = NULL) {
+
+    # package is !NULL when passed as installed package location from
+    # autotest_package. This is used in `get_Rd_value`
+    if (is.null (package))
+        package <- pkg
 
     ret <- NULL
     f <- file.path (tempdir (), "junk.txt")
@@ -31,7 +36,7 @@ autotest_return <- function (pkg, params, this_fn) {
     }
 
     if (!is.null (attr (retval, "class"))) {
-        Rd_value <- get_Rd_value (package = pkg, fn_name = this_fn)
+        Rd_value <- get_Rd_value (package = package, fn_name = this_fn)
         if (is.null (Rd_value)) {
             ret <- rbind (ret,
                           report_object (type = "diagnostic",
@@ -46,7 +51,11 @@ autotest_return <- function (pkg, params, this_fn) {
                                                                    collapse = ", "),
                                                            "]")))
         } else {
-            if (!grepl ("[Cc]lass|[Oo]bject", Rd_value))
+            chk <- any (grepl ("[Cc]lass|[Oo]bject", Rd_value))
+            if (!chk)
+                chk <- any (grepl ("vector|data(\\.?)frame", Rd_value),
+                            ignore.case = TRUE)
+            if (!chk)
                 ret <- rbind (ret,
                               report_object (type = "diagnostic",
                                              fn_name = this_fn,

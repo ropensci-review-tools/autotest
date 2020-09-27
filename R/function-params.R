@@ -125,15 +125,24 @@ get_params <- function (res, i, this_fn) {
 
 # Get the 'value' field from an Rd entry for a given package function:
 get_Rd_value <- function (package, fn_name) {
-    x <- tools::Rd_db (package = package)
-    xfn <- x [[paste0 (fn_name, ".Rd")]]
-
-    tags <- vapply (xfn, function (i) attr (i, "Rd_tag"), character (1))
     val <- NULL
-    if ("\\value" %in% tags) {
-        val <- unlist (xfn [[which (tags == "\\value")]])
-        val <- gsub ("\n", "", paste0 (val, collapse = " "))
-        val <- gsub ("\\s+", " ", gsub ("^\\s", "", val))
+
+    if (pkg_is_source (package)) {
+        f <- file.path (package, "man", paste0 (fn, ".Rd"))
+        x <- readLines (f, warn = FALSE)
+        val <- x [grep ("^\\\\value\\{", x):length (x)]
+        val <- val [2:(match_curlies (val) - 1)]
+        val <- val [val != ""]
+    } else {
+        x <- tools::Rd_db (package = package)
+        xfn <- x [[paste0 (fn_name, ".Rd")]]
+
+        tags <- vapply (xfn, function (i) attr (i, "Rd_tag"), character (1))
+        if ("\\value" %in% tags) {
+            val <- unlist (xfn [[which (tags == "\\value")]])
+            val <- gsub ("\n", "", paste0 (val, collapse = " "))
+            val <- gsub ("\\s+", " ", gsub ("^\\s", "", val))
+        }
     }
 
     return (val)
@@ -153,4 +162,31 @@ get_Rd_param <- function (package, fn_name, param_name) {
     if (param_name %in% params)
         ret <- as.character (xfn [[which (params == param_name)]] [[2]] [[1]])
     return (ret)
+}
+
+get_param_descs_source <- function (package, fn) {
+    f <- file.path (package, "man", paste0 (fn, ".Rd"))
+    x <- readLines (f, warn = FALSE)
+
+    # get the value descriptions
+    x <- x [grep ("^\\\\arguments\\{", x):length (x)]
+    x <- x [2:(match_curlies (x) - 1)]
+    x <- x [x != ""]
+
+    index <- grep ("^\\\\item\\{", x)
+    index <- rep (seq (index), times = c (diff (index), length (x) - max (index) + 1))
+    xs <- split (x, f = as.factor (index))
+
+    items <- vapply (xs, function (i) {
+                         i <- gsub ("^\\\\item\\{|\\}$", "", i)
+                         return (strsplit (i, "\\}") [[1]] [1]) },
+                         character (1), USE.NAMES = FALSE)
+    descs <- vapply (xs, function (i) {
+                         i <- paste0 (gsub ("^\\\\item\\{|\\}$", "", i), collapse = " ")
+                         return (substr (i, regexpr ("\\{", i) + 1, nchar (i))) },
+                         character (1), USE.NAMES = FALSE)
+
+    names (descs) <- items
+
+    return (descs)
 }
