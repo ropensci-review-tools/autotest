@@ -245,9 +245,38 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     x <- x [seq (max (fn_calls))]
 
     # grab content inside primary parentheses:
-    br1 <- vapply (gregexpr ("\\(", x), function (i) i [1], integer (1))
-    br2 <- vapply (gregexpr ("\\)", x), function (i) i [length (i)], integer (1))
-    ex <- substring (x, br1, br2)
+    br1 <- lapply (aliases, function (a) {
+                       x <- gsub (paste0 (a, "\\s?"), a, x)
+                       g <- paste0 (a, "\\(")
+                       n <- nchar (g)
+                       vapply (gregexpr (g, x), function (i) i [1], integer (1))
+                       })
+    nchars <- rep (NA, length (x))
+    for (i in seq (br1)) {
+        nchars [which (br1 [[i]] > 0)] <- i
+    }
+    nchars <- nchar (aliases) [nchars]
+
+    br1 <- apply (do.call (rbind, br1), 2, max) + nchars
+
+    ex <- substring (x, br1, nchar (x))
+    # That reduces expressions down to everything after opening parenthesis of
+    # first function call to one of the alias names. Now find the matching
+    # closing bracket for each line
+    br1 <- gregexpr ("\\(", ex)
+    br2 <- gregexpr ("\\)", ex)
+    for (i in seq_along (br1)) {
+        s1 <- rep (seq (length (br1 [[i]])),
+                   times = c (br1 [[i]] [1], diff (br1 [[i]])))
+        s1 <- c (s1, rep (max (s1) + 1, nchar (x [i]) - length (s1)))
+        s2 <- rep (seq (length (br2 [[i]])),
+                   times = c (br2 [[i]] [1], diff (br2 [[i]])))
+        s2 <- c (s2, rep (max (s2) + 1, nchar (x [i]) - length (s2)))
+        matched <- which (cumsum (diff (s2)) == cumsum (diff (s1))) [1]
+        ex [i] <- substring (ex [i], 1, matched)
+    }
+
+
 
     ex <- ex [which (vapply (ex, length, integer (1), USE.NAMES = FALSE) > 0)]
     # split at commas, but only those within primary enclosing parentheses:
@@ -683,11 +712,6 @@ get_fn_aliases <- function (pkg, fn_name) {
 }
 
 get_aliases_non_source <- function (pkg, fn_name) {
-    loc <- file.path (R.home (), "library", pkg, "help", pkg)
-    e <- new.env ()
-    chk <- lazyLoad (loc, envir = e)
-    x <- get (fn_name, envir = e)
-
     # first get all aliases for all functions in package:
     loc <- file.path (R.home (), "library", pkg, "help", pkg)
     e <- new.env ()
@@ -702,10 +726,19 @@ get_aliases_non_source <- function (pkg, fn_name) {
         })
     names (all_aliases) <- fns
 
+    #x <- get (fn_name, envir = e)
+
     has_fn_name <- which (vapply (all_aliases, function (i) fn_name %in% i, logical (1)))
     if (length (has_fn_name) > 0) {
         aliases <- unname (unlist (all_aliases [has_fn_name]))
-        classes <- vapply (aliases, function (i) class (get (i, envir = e)) [1], character (1))
+        classes <- vapply (aliases, function (i) {
+                               i_get <- tryCatch (get (i, envir = e),
+                                                  error = function (e) NULL)
+                               ret <- NA_character_
+                               if (!is.null (i_get))
+                                   ret <- class (i_get) [1]
+                               return (ret) },
+                               character (1))
         aliases <- aliases [which (classes == "function")]
     }
 
