@@ -154,10 +154,16 @@ fns_without_examples <- function (package) {
 
     fns <- fns [which (!fns %in% fns_with_exs)]
 
+    count <- vapply (fns, function (i)
+                         length (get_example_lines (package, fn = i)), integer (1))
+    if (!any (count > 0))
+        return NULL
+
     pkg_name <- package
     if (pkg_is_source (package)) {
         desc <- file.path (package, "DESCRIPTION")
         pkg_name <- gsub ("Package:\\s?", "", readLines (desc) [1])
     }
+
     return (fns [which (fns %in% ls (paste0 ("package:", pkg_name)))])
 }

@@ -248,6 +248,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     br1 <- vapply (gregexpr ("\\(", x), function (i) i [1], integer (1))
     br2 <- vapply (gregexpr ("\\)", x), function (i) i [length (i)], integer (1))
     ex <- substring (x, br1, br2)
+
     ex <- ex [which (vapply (ex, length, integer (1), USE.NAMES = FALSE) > 0)]
     # split at commas, but only those within primary enclosing parentheses:
     ex <- lapply (ex, function (i) {

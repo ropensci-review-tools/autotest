@@ -46,47 +46,8 @@ get_all_examples <- function (package, is_source, exclude = NULL) {
 get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
                         is_source = FALSE) {
     
-    ex <- NULL
 
-    if (!is_source) {
-        # example called for function which have no help file trigger warnings
-        ex <- tryCatch (utils::example (eval (substitute (fn)),
-                                        package = pkg,
-                                        character.only = TRUE,
-                                        give.lines = TRUE,
-                                        lib.loc = .libPaths ()),
-                        warning = function (w) NULL)
-
-        pkg_name <- pkg
-    } else {
-        f <- file.path (pkg, "man", paste0 (fn, ".Rd"))
-        ex <- readLines (f, warn = FALSE)
-        ex_start <- grep ("^\\\\examples\\{", ex)
-        if (length (ex_start) > 0) {
-            ex <- ex [ex_start:length (ex)]
-
-            ex_end <- match_curlies (ex)
-            ex <- ex [2:ex_end]
-
-            desc <- file.path (pkg, "DESCRIPTION")
-            pkg_name <- gsub ("Package:\\s?", "", readLines (desc) [1])
-
-            doload <- FALSE
-            if (!paste0 ("package:", pkg_name) %in% search ()) {
-                doload <- TRUE
-            } else {
-                v0 <- utils::packageVersion (pkg_name)
-                d <-readLines (desc)
-                v <- gsub ("^Version:\\s+", "", d [grep ("^Version:", d)])
-                if (v > v0)
-                    doload <- TRUE
-            }
-            if (doload)
-                devtools::load_all (pkg, export_all = FALSE)
-        } else {
-            ex <- NULL
-        }
-    }
+    ex <- get_example_lines (package, fn)
 
     if (length (ex) == 0)
         return (NULL)
@@ -160,6 +121,7 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
         ex <- ex [-which (plotlines)]
 
     # find all points of function calls:
+    pkg_name <- get_package_name (pkg)
     fns <- ls (paste0 ("package:", pkg_name))
     dispatches <- dispatched_fns (pkg_name)
     is_dispatch <- FALSE
@@ -199,19 +161,21 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
                            i [!grepl ("^set.seed", i)]  })
     }
 
-    # concatenate any example lines which do not call the actual function into
-    # effective preprocessing lines for subsequent function calls.
-    index <- vapply (ret, function (i) any (grepl (fn [1], i)), logical (1))
+    # concatenate any example lines which do not call the actual function or
+    # it's aliases into effective preprocessing lines for subsequent function
+    # calls.
+    aliases <- paste0 (get_fn_aliases (pkg, fn [1]), collapse = "|")
+    index <- vapply (ret, function (i) any (grepl (aliases, i)), logical (1))
     if (length (fn) == 2) { # when it's a dispatch method
         index2 <- vapply (ret, function (i) any (grepl (fn [2], i)), logical (1))
         index <- index | index2
     }
 
-    # can do the following via split, but it's a lot more convoluted than this
-    # loop. Start by removing any trailing FALSE values
     if (!any (index))
         return (NULL) # There are no calls to fn
 
+    # can do the following via split, but it's a lot more convoluted than this
+    # loop. Start by removing any trailing FALSE values
     ret <- ret [1:max (which (index))]
     index <- index [1:max (which (index))]
     for (i in rev (seq_along (index))) {
@@ -228,6 +192,65 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
                        return (i)   })
 
     return (ret)
+}
+
+
+get_example_lines <- function (package, fn) {
+    ex <- NULL
+
+    pkg_name <- get_package_name (package)
+
+    if (!pkg_is_source (package)) {
+        # example called for function which have no help file trigger warnings
+        ex <- tryCatch (utils::example (eval (substitute (fn)),
+                                        package = package,
+                                        character.only = TRUE,
+                                        give.lines = TRUE,
+                                        lib.loc = .libPaths ()),
+                        warning = function (w) NULL)
+
+    } else {
+        f <- file.path (package, "man", paste0 (fn, ".Rd"))
+        ex <- readLines (f, warn = FALSE)
+        ex_start <- grep ("^\\\\examples\\{", ex)
+        if (length (ex_start) > 0) {
+            ex <- ex [ex_start:length (ex)]
+
+            ex_end <- match_curlies (ex)
+            ex <- ex [2:ex_end]
+
+            doload <- FALSE
+            if (!paste0 ("package:", pkg_name) %in% search ()) {
+                doload <- TRUE
+            } else {
+                v0 <- utils::packageVersion (pkg_name)
+                desc <- file.path (package, "DESCRIPTION")
+                d <-readLines (desc)
+                v <- gsub ("^Version:\\s+", "", d [grep ("^Version:", d)])
+                if (v > v0)
+                    doload <- TRUE
+            }
+            if (doload)
+                devtools::load_all (package, export_all = FALSE)
+        } else {
+            ex <- NULL
+        }
+    }
+
+    return (ex)
+}
+
+get_package_name <- function (package) {
+    pkg_name <- NULL
+
+    if (!pkg_is_source (package)) {
+        pkg_name <- package
+    } else {
+        desc <- file.path (package, "DESCRIPTION")
+        pkg_name <- gsub ("Package:\\s?", "", readLines (desc) [1])
+    }
+
+    return (pkg_name)
 }
 
 # find which functions are method dispatches, so grep can be done on the method
