@@ -51,24 +51,63 @@ autotest_return <- function (pkg, params, this_fn, package = NULL) {
                                                                    collapse = ", "),
                                                            "]")))
         } else {
-            chk <- any (grepl ("[Cc]lass|[Oo]bject", Rd_value))
-            if (!chk)
-                chk <- any (grepl ("vector|data(\\.?)frame", Rd_value),
-                            ignore.case = TRUE)
-            if (!chk)
-                ret <- rbind (ret,
-                              report_object (type = "diagnostic",
-                                             fn_name = this_fn,
-                                             parameter = NA_character_,
-                                             operation = "compare class of return value with description",
-                                             content = paste0 ("Function [",
-                                                               this_fn,
-                                                               "] does not specify class of ",
-                                                               "return value, yet returns a ",
-                                                               "value of class [",
-                                                               paste0 (attr (retval, "class"),
-                                                                       collapse = ", "),
-                                                               "]")))
+            txt <- NULL
+            #chk <- any (grepl ("[Cc]lass|[Oo]bject", Rd_value))
+            # Get class of returned object, along with matched value from man
+            # entry
+            retclasses <- attr (retval, "class")
+            r <- gregexpr (paste0 (retclasses, collapse = "|"), Rd_value)
+            i <- vapply (r, function (i) i [1] > 0, logical (1))
+            if (any (i)) {
+                # can be multiple return classes, so match the first one from
+                # descr with the returned object
+                r_i <- r [[which (i)]]
+                desc_class <- substring (Rd_value [i], r_i, nchar (Rd_value [i]))
+                desc_class <- substring (desc_class, 1, regexpr ("\\s+", desc_class) - 1)
+                actual_class <- retclasses [which (retclasses == desc_class)]
+
+                if (actual_class != retclasses [1]) {
+                    txt <- paste0 ("Function returns an object of primary class [",
+                                   retclasses [1],
+                                   "] yet documentation says value is of class [",
+                                   desc_class,
+                                   "]")
+                }
+
+            } else {
+                retclasses_mod <- gsub ("\\_|\\.", "", retclasses)
+                r <- gregexpr (paste0 (retclasses_mod, collapse = "|"), Rd_value)
+                i <- vapply (r, function (i) i [1] > 0, logical (1))
+                if (any (i)) {
+                    r_i <- r [[which (i)]]
+                    desc_class <- substring (Rd_value [i], r_i, nchar (Rd_value [i]))
+                    desc_class <- substring (desc_class, 1, regexpr ("\\s+", desc_class) - 1)
+                    actual_class <- retclasses [which (retclasses_mod == desc_class)]
+
+                    txt <- paste0 ("Function returns an object of class [",
+                                   actual_class,
+                                   "] yet documentation describes class of value as [",
+                                   desc_class,
+                                   "]")
+
+                    if (actual_class != retclasses [1])
+                        txt <- c (txt, paste0 ("Function returns an object of primary class [",
+                                               retclasses [1],
+                                               "] yet documentation says value is of class [",
+                                               desc_class,
+                                               "]"))
+                }
+            }
+
+            if (!is.null (txt))
+                for (i in txt) {
+                    ret <- rbind (ret,
+                                  report_object (type = "diagnostic",
+                                                 fn_name = this_fn,
+                                                 parameter = NA_character_,
+                                                 operation = "compare class of return value with description",
+                                                 content = i))
+                }
         }
     }
 
