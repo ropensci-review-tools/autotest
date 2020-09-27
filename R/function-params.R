@@ -128,7 +128,7 @@ get_Rd_value <- function (package, fn_name) {
     val <- NULL
 
     if (pkg_is_source (package)) {
-        f <- file.path (package, "man", paste0 (fn, ".Rd"))
+        f <- file.path (package, "man", paste0 (fn_name, ".Rd"))
         x <- readLines (f, warn = FALSE)
         val <- x [grep ("^\\\\value\\{", x):length (x)]
         val <- val [2:(match_curlies (val) - 1)]

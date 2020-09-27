@@ -47,7 +47,7 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
                         is_source = FALSE) {
     
 
-    ex <- get_example_lines (package, fn)
+    ex <- get_example_lines (pkg, fn)
 
     if (length (ex) == 0)
         return (NULL)
