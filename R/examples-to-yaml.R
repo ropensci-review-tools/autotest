@@ -490,46 +490,9 @@ match_brackets <- function (x, curly = FALSE) {
     # remove empty lines
     x <- x [which (!grepl ("^\\s?$", x))]
 
-    # `gregexpr` return -1 for no match; these are removed here
-    br_open <- lapply (gregexpr (open_sym, x), function (i)
-                       as.integer (i [i >= 0]))
-    br_closed <- lapply (gregexpr (close_sym, x), function (i)
-                       as.integer (i [i >= 0]))
-    br_both <- lapply (gregexpr (both_sym, x), function (i)
-                       as.integer (i [i >= 0]))
-    for (i in seq (x)) {
-        br_open [[i]] <- br_open [[i]] [which (!br_open [[i]] <= 0)]
-        br_closed [[i]] <- br_closed [[i]] [which (!br_closed [[i]] <= 0)]
-        br_both [[i]] <- br_both [[i]] [which (!br_both [[i]] <= 0)]
-        # Then remove all instances of matched brackets on one line
-        while (any (br_both [[i]] > 0)) {
-            index <- which (br_open [[i]] == br_both [[i]])
-            index2 <- which (br_closed [[i]] > br_open [[i]] [index]) [1]
-            br_closed [[i]] <- br_closed [[i]] [-index2]
-            br_open [[i]] <- br_open [[i]] [-index]
-            br_both [[i]] <- br_both [[i]] [-1]
-
-            if (length (br_open [[i]]) > 0 & length (br_closed [[i]]) > 0)
-                br_both [[i]] <- br_open [[i]] [1]
-        }
-    }
-    # convert to sequences of line numbers where brackets close, noting that
-    # there may be multiple matched closing brackets on one line, hence the
-    # `length` function here. There may also be values of -1 from the initial
-    # `gregexpr` above; these need to be ignored here
-    br_open2 <- br_closed2 <- NULL
-    for (i in seq (br_open))
-        br_open2 <- c (br_open2, rep (i, length (br_open [[i]])))
-    for (i in seq (br_closed))
-        br_closed2 <- c (br_closed2, rep (i, length (br_closed [[i]])))
-
-    # no matching brackets just gives empty lines for all that follows:
-    nested <- nested_sequences (br_open2, br_closed2)
-    br_open <- rev (nested$br_open) # rev to ensure lines are sequentially joined
-    br_closed <- rev (nested$br_closed)
-    index <- which (!duplicated (cbind (br_open, br_closed)))
-    br_open <- br_open [index]
-    br_closed <- br_closed [index]
+    brseq <- bracket_sequences (x, open_sym, close_sym, both_sym)
+    br_open <- brseq$br_open
+    br_closed <- brseq$br_closed
 
     has_gg_pluses <- FALSE
     for (i in seq_along (br_open)) {
@@ -598,6 +561,53 @@ match_brackets <- function (x, curly = FALSE) {
     }
 
     return (x)
+}
+
+bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
+
+    # `gregexpr` return -1 for no match; these are removed here
+    br_open <- lapply (gregexpr (open_sym, x), function (i)
+                       as.integer (i [i >= 0]))
+    br_closed <- lapply (gregexpr (close_sym, x), function (i)
+                       as.integer (i [i >= 0]))
+    br_both <- lapply (gregexpr (both_sym, x), function (i)
+                       as.integer (i [i >= 0]))
+    for (i in seq (x)) {
+        br_open [[i]] <- br_open [[i]] [which (!br_open [[i]] <= 0)]
+        br_closed [[i]] <- br_closed [[i]] [which (!br_closed [[i]] <= 0)]
+        br_both [[i]] <- br_both [[i]] [which (!br_both [[i]] <= 0)]
+        # Then remove all instances of matched brackets on one line
+        while (any (br_both [[i]] > 0)) {
+            index <- which (br_open [[i]] == br_both [[i]])
+            index2 <- which (br_closed [[i]] > br_open [[i]] [index]) [1]
+            br_closed [[i]] <- br_closed [[i]] [-index2]
+            br_open [[i]] <- br_open [[i]] [-index]
+            br_both [[i]] <- br_both [[i]] [-1]
+
+            if (length (br_open [[i]]) > 0 & length (br_closed [[i]]) > 0)
+                br_both [[i]] <- br_open [[i]] [1]
+        }
+    }
+    # convert to sequences of line numbers where brackets close, noting that
+    # there may be multiple matched closing brackets on one line, hence the
+    # `length` function here. There may also be values of -1 from the initial
+    # `gregexpr` above; these need to be ignored here
+    br_open2 <- br_closed2 <- NULL
+    for (i in seq (br_open))
+        br_open2 <- c (br_open2, rep (i, length (br_open [[i]])))
+    for (i in seq (br_closed))
+        br_closed2 <- c (br_closed2, rep (i, length (br_closed [[i]])))
+
+    # no matching brackets just gives empty lines for all that follows:
+    nested <- nested_sequences (br_open2, br_closed2)
+    br_open <- rev (nested$br_open) # rev to ensure lines are sequentially joined
+    br_closed <- rev (nested$br_closed)
+    index <- which (!duplicated (cbind (br_open, br_closed)))
+    br_open <- br_open [index]
+    br_closed <- br_closed [index]
+
+    list (br_open = br_open,
+          br_closed = br_closed)
 }
 
 # check for nesting where another bracket opens before current one has
