@@ -682,7 +682,7 @@ parse_expressions <- function (x) {
 # without curly brackets.
 # example: stats::binomial
 join_function_lines <- function (x) {
-    fns <- rev (grep ("function\\s?\\(", x))
+    fns <- rev (grep ("\\sfunction\\s?\\(", x))
     if (length (fns) > 0) {
         fn_defs <- x [fns]
         # remove everything prior to "function(":
