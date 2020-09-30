@@ -52,10 +52,12 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
     if (length (ex) == 0)
         return (NULL)
 
+    # remove comments and empty lines
+    ex <- gsub ("\\#.*$", "", ex)
+    ex <- ex [which (!grepl ("^\\s?$", ex))]
+
     if (any (grepl ("^### \\*\\* Examples", ex)))
         ex <- ex [-(1:grep ("^### \\*\\* Examples", ex))]
-    if (ex [1] == "")
-        ex <- ex [-1]
 
     if (exclude_not_run) {
         if (!is_source) {
@@ -95,9 +97,6 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
         if (length (index) > 0)
             ex <- ex [-index]
     }
-
-    ex <- ex [!grepl ("^\\s?\\#", ex)]
-    ex <- ex [ex != ""]
 
     if (length (ex) == 0)
         return (NULL)
