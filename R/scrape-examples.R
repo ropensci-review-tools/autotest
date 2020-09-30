@@ -62,6 +62,8 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
             nr <- grep ("^## Not run:", ex)
             while (length (nr) > 0) {
                 nr_end <- grep ("^## End\\(Not run\\)", ex)
+                if (length (nr_end) == 0)
+                    nr_end <- nr
                 ex <- ex [-(nr [1]:nr_end [1])]
                 nr <- grep ("^## Not run:", ex)
             }
