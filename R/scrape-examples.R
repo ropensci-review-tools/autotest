@@ -101,6 +101,7 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
     if (length (ex) == 0)
         return (NULL)
 
+    ex <- join_at_operators (ex)
     ex <- parse_expressions (ex)
     ex <- match_brackets (ex)
     if (any (grepl ("\\{", ex)))
@@ -284,6 +285,23 @@ dispatched_fns <- function (pkg_name) {
         res <- fns [index] [which (dispatch)]
 
     return (res)
+}
+
+# join multiple lines connected by operators (*, /, -, +)
+join_at_operators <- function (x) {
+    operators <- c ("\\+", "\\-", "\\*", "\\/",
+                    "\\^", "\\*\\*",
+                    "%%", "%/%",
+                    "<", "<\\=", ">", ">\\=",
+                    "\\=\\=", "\\!\\=", "\\|", "&")
+    operators <- paste0 ("(", paste0 (operators, collapse = "|"), ")\\s*$")
+    index <- rev (grep (operators, x))
+    for (i in index) {
+        x [i] <- paste0 (x [i], x [i + 1], collapse = " ")
+        x <- x [-(i + 1)]
+    }
+
+    return (x)
 }
 
 merge_piped_lines <- function (x) {
