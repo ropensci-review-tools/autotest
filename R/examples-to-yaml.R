@@ -635,6 +635,7 @@ nested_sequences <- function (br_open, br_closed) {
 # concatenated to single lines, then the whole thing concatenated with each of
 # these single lines terminated with a semi-colon. This function must be run
 # prior to standard "match_brackets" calls.
+# example: stats::approx
 parse_expressions <- function (x) {
     brseq <- bracket_sequences (x, open_sym = "\\{", close_sym = "\\}", both_sym = "\\{(.+)?\\}")
     br_open <- brseq$br_open
@@ -672,6 +673,44 @@ parse_expressions <- function (x) {
             x <- c (xfirst, xmid, xlast)
         }
     }
+    return (x)
+}
+
+# Join function defititions within examples into single lines. This presumes
+# `match_brackets` has already been run, so merging is only ever between
+# isolation "f <- function (...)" lines and subsequent definitions with or
+# without curly brackets.
+# example: stats::binomial
+join_function_lines <- function (x) {
+    fns <- rev (grep ("function\\s?\\(", x))
+    if (length (fns) > 0) {
+        fn_defs <- x [fns]
+        # remove everything prior to "function(":
+        fn_start <- regexpr ("function\\s?\\(", fn_defs)
+        fn_defs <- substring (fn_defs, fn_start, nchar (fn_defs))
+        # Then everything up to closing bracket of fn def:
+        br_open <- gregexpr ("\\(", fn_defs)
+        br_closed <- gregexpr ("\\)", fn_defs)
+        for (i in seq_along (br_open)) {
+            temp <- nested_sequences (br_open [[i]], br_closed [[i]])
+            br_open [[i]] <- temp$br_open
+            br_closed [[i]] <- temp$br_closed
+        }
+        br_open <- vapply (br_open, function (i) i [1], integer (1))
+        br_closed <- vapply (br_closed, function (i) i [1], integer (1))
+
+        fn_defs <- substring (fn_defs, br_closed + 1, nchar (fn_defs))
+
+        defs_on_next_line <- rev (grep ("^\\s?$", fn_defs))
+        if (length (defs_on_next_line) > 0) {
+            index <- fns [defs_on_next_line]
+            for (i in index) {
+                x [i] <- paste0 (x [i], " ", x [i + 1])
+                x <- x [-(i + 1)]
+            }
+        }
+    }
+
     return (x)
 }
 

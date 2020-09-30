@@ -109,6 +109,7 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
     ex <- merge_piped_lines (ex)
     ex <- merge_fn_defs (ex)
     ex <- single_clause (ex)
+    ex <- join_function_lines (ex)
 
     # find and remove any lines for which first function call is some kind of
     # "plot" or "summary"
