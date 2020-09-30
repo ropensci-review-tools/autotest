@@ -100,6 +100,7 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
     if (length (ex) == 0)
         return (NULL)
 
+    ex <- parse_expressions (ex)
     ex <- match_brackets (ex)
     if (any (grepl ("\\{", ex)))
         ex <- match_brackets (ex, curly = TRUE)

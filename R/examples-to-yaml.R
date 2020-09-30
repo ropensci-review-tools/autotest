@@ -630,6 +630,51 @@ nested_sequences <- function (br_open, br_closed) {
           br_closed = br_closed)
 }
 
+# Expressions are multiple lines of code embedded within curly brackets. When
+# individual components of these span multiple lines, they must first be
+# concatenated to single lines, then the whole thing concatenated with each of
+# these single lines terminated with a semi-colon. This function must be run
+# prior to standard "match_brackets" calls.
+parse_expressions <- function (x) {
+    brseq <- bracket_sequences (x, open_sym = "\\{", close_sym = "\\}", both_sym = "\\{(.+)?\\}")
+    br_open <- brseq$br_open
+    br_closed <- brseq$br_closed
+    
+    for (i in seq_along (br_open)) {
+        xmid <- x [br_open [i]:br_closed [i]]
+        if (length (xmid) > 2) {
+            # rm content up to first curly
+            cstart <- which (vapply (gregexpr ("\\{", xmid), function (i)
+                                     any (i > 0), logical (1))) [1]
+            j <- regexpr ("\\{", xmid [cstart])
+            xstart <- substring (xmid [cstart], 1, j)
+            xmid [cstart] <- gsub (".*\\{", "", xmid [cstart])
+
+            # rm content after last curly
+            cend <- which (vapply (gregexpr ("\\}", xmid), function (i)
+                                   any (i > 0), logical (1)))
+            cend <- utils::tail (cend, 1)
+            j <- regexpr ("\\}", xmid [cend])
+            xend <- substring (xmid [cend], j, nchar (xmid [cend]))
+            xmid [cend] <- gsub ("\\}.*", "", xmid [cend])
+
+            # rm blank lines
+            xmid <- xmid [which (!grepl ("^\\s?$", xmid))]
+
+            xmid <- match_brackets (c (xstart, match_brackets (xmid), xend), curly = TRUE)
+
+            xfirst <- xlast <- NULL
+            if (br_open [i] > 1)
+                xfirst <- x [1:(br_open [i] - 1)]
+            if (br_closed [i] < length (x))
+                xlast <- x [(br_closed [i] + 1):length (x)]
+
+            x <- c (xfirst, xmid, xlast)
+        }
+    }
+    return (x)
+}
+
 # strip any if conditionals from any example lines which include the focal
 # function, returning the functional lines alone from all (if + else) conditions
 # x here is a single line only
