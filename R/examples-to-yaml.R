@@ -573,6 +573,13 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
                        as.integer (i [i >= 0]))
     br_closed <- lapply (gregexpr (close_sym, x), function (i)
                        as.integer (i [i >= 0]))
+
+    # examples may have rogue brackets, like in stats::spline, where it arises
+    # in a plot axis label (line#62)
+    if (length (unlist (br_open)) != length (unlist (br_closed)))
+        return (list (br_open = NULL,
+                      br_closed = NULL))
+
     br_both <- lapply (gregexpr (both_sym, x), function (i)
                        as.integer (i [i >= 0]))
     for (i in seq (x)) {
