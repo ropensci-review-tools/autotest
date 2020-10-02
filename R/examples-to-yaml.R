@@ -826,7 +826,8 @@ get_aliases_non_source <- function (pkg, fn_name) {
     if (length (has_fn_name) > 0) {
         aliases <- unname (unlist (all_aliases [has_fn_name]))
         classes <- vapply (aliases, function (i) {
-                               i_get <- tryCatch (get (i, envir = e),
+                               pkg_env <- as.environment (paste0 ("package:", pkg))
+                               i_get <- tryCatch (get (i, envir = pkg_env),
                                                   error = function (e) NULL)
                                ret <- NA_character_
                                if (!is.null (i_get))
