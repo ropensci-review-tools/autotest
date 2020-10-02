@@ -733,10 +733,8 @@ join_function_lines <- function (x) {
         defs_on_next_line <- rev (grep ("^\\s?$", fn_defs))
         if (length (defs_on_next_line) > 0) {
             index <- fns [defs_on_next_line]
-            for (i in index) {
-                x [i] <- paste0 (x [i], " ", x [i + 1])
-                x <- x [-(i + 1)]
-            }
+            x [index] <- paste0 (x [index], x [index + 1])
+            x <- x [-(index + 1)]
         }
     }
 
