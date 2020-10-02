@@ -365,9 +365,20 @@ single_clause <- function (x) {
     index <- which (grepl ("^(if|for)\\s?\\(.*\\)\\s?", x) &
                     !grepl ("^(if|for)\\s?\\(.*\\)\\s?\\{", x))
     if (length (index) > 0) {
-        for (i in index)
-            x [i] <- paste0 (x [i], x [i + 1], collapse = " ")
-        x <- x [-(index + 1)]
+        br1 <- gregexpr ("\\(", x [index])
+        br2 <- gregexpr ("\\)", x [index])
+        br_end <- grep (NA, length (index))
+        for (i in seq_along (br1)) {
+            brseq <- nested_sequences (br1 [[i]], br2 [[i]])
+            br_end [i] <- brseq$br_closed [1]
+        }
+        xcut <- substring (x [index], br_end + 1, nchar (x [index]))
+        index <- index [grep ("^\\s*$", xcut)]
+        if (length (index) > 0) {
+            x [index] <- paste0 (x [index], x [index + 1], collapse = " ")
+            x <- x [-(index + 1)]
+        }
     }
+
     return (x)
 }
