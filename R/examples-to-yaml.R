@@ -266,6 +266,9 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     br1 <- gregexpr ("\\(", ex)
     br2 <- gregexpr ("\\)", ex)
     for (i in seq_along (br1)) {
+        if (all (br1 [[i]] < 1) & all (br2 [[i]] < 1))
+            next
+
         s1 <- rep (seq (length (br1 [[i]])),
                    times = c (br1 [[i]] [1], diff (br1 [[i]])))
         s1 <- c (s1, rep (max (s1) + 1, nchar (x [i]) - length (s1)))
@@ -661,6 +664,32 @@ parse_expressions <- function (x) {
 
             # rm blank lines
             xmid <- xmid [which (!grepl ("^\\s?$", xmid))]
+
+            # join any `if ... else ...` lines
+            index <- rev (grep ("^\\s*else", xmid))
+            if (length (index) > 0) {
+                xmid [index - 1] <- paste0 (xmid [index - 1], xmid [index])
+                xmid <- xmid [-index]
+            }
+            index <- rev (grep ("^\\s*if\\s*\\(", xmid))
+            if (length (index) > 0) {
+                # check that if clauses do not continue to next line without
+                # "{", and concatenate any which do
+                br1 <- gregexpr ("\\(", xmid [index])
+                br2 <- gregexpr ("\\)", xmid [index])
+                br_end <- grep (NA, length (index))
+                for (j in seq_along (br1)) {
+                    brseq <- nested_sequences (br1 [[j]], br2 [[j]])
+                    br_end [j] <- brseq$br_closed [1]
+                }
+                xmid_after <- substring (xmid [index], br_end + 1, nchar (xmid [index]))
+                index2 <- grep ("^\\s*$", xmid_after)
+                if (length (index2) > 0) {
+                    xmid [index [index2]] <- paste0 (xmid [index [index2]],
+                                                     xmid [index [index2] + 1])
+                    xmid <- xmid [-(index [index2] + 1)]
+                }
+            }
 
             xmid <- match_brackets (c (xstart, match_brackets (xmid), xend), curly = TRUE)
 
