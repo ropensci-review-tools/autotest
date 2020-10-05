@@ -106,9 +106,9 @@ load_libraries <- function (x, quiet = FALSE) {
 #' at_yaml_template
 #'
 #' Generate a 'yaml' template for an 'autotest'.
-#' @param loc Location in this to generate template file. Append with filename
-#' and '.yaml' suffix to overwrite default name of 'autotest.yaml', otherwise
-#' this parameter will be used to specify directory only.
+#' @param loc Location to generate template file. Append with filename and
+#' '.yaml' suffix to overwrite default name of 'autotest.yaml', otherwise this
+#' parameter will be used to specify directory only.
 #' @export
 at_yaml_template <- function (loc = tempdir ()) {
 

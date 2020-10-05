@@ -7,9 +7,9 @@
 at_yaml_template(loc = tempdir())
 }
 \arguments{
-\item{loc}{Location in this to generate template file. Append with filename
-and '.yaml' suffix to overwrite default name of 'autotest.yaml', otherwise
-this parameter will be used to specify directory only.}
+\item{loc}{Location to generate template file. Append with filename and
+'.yaml' suffix to overwrite default name of 'autotest.yaml', otherwise this
+parameter will be used to specify directory only.}
 }
 \description{
 Generate a 'yaml' template for an 'autotest'.
