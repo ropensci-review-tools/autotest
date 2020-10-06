@@ -41,7 +41,7 @@ pkg_is_source <- function (package) {
     if (file.exists (package)) {
         if (file.exists (file.path (package, "DESCRIPTION"))) {
             desc <- readLines (file.path (package, "DESCRIPTION"))
-            if (grepl ("Package", desc [1]))
+            if (any (grepl ("^Package\\:", desc)))
                 is_source <- TRUE
         }
     }
