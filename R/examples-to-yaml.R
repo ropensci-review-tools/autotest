@@ -496,6 +496,10 @@ match_brackets <- function (x, curly = FALSE) {
     brseq <- bracket_sequences (x, open_sym, close_sym, both_sym)
     br_open <- brseq$br_open
     br_closed <- brseq$br_closed
+    if (length (br_open) == 0 & length (br_closed) == 0)
+        return (x)
+    else if (any (is.na (br_open)) & any (is.na (br_closed)))
+        return (NULL) # error in parsing brackets
 
     has_gg_pluses <- FALSE
     for (i in seq_along (br_open)) {
@@ -577,8 +581,8 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
     # examples may have rogue brackets, like in stats::spline, where it arises
     # in a plot axis label (line#62)
     if (length (unlist (br_open)) != length (unlist (br_closed)))
-        return (list (br_open = NULL,
-                      br_closed = NULL))
+        return (list (br_open = NA,
+                      br_closed = NA))
 
     br_both <- lapply (gregexpr (both_sym, x), function (i)
                        as.integer (i [i >= 0]))
