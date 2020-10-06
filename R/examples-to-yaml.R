@@ -578,6 +578,20 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
     br_closed <- lapply (gregexpr (close_sym, x), function (i)
                        as.integer (i [i >= 0]))
 
+    # remove any that are inside quotations, like L#44 in stats::spline
+    quotes <- gregexpr ("\"", x)
+    for (i in seq (x)) {
+        if (any (quotes [[i]] > 0)) {
+            index <- seq (length (quotes [[i]]) / 2) * 2
+            qstart <- quotes [[i]] [index - 1]
+            qend <- quotes [[i]] [index]
+            qindex <- unlist (lapply (seq_along (qstart), function (i)
+                                      qstart [i]:qend [i]))
+            br_open [[i]] <- br_open [[i]] [!br_open [[i]] %in% qindex]
+            br_closed [[i]] <- br_closed [[i]] [!br_closed [[i]] %in% qindex]
+        }
+    }
+
     # examples may have rogue brackets, like in stats::spline, where it arises
     # in a plot axis label (line#62)
     if (length (unlist (br_open)) != length (unlist (br_closed)))
