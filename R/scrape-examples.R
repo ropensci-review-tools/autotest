@@ -251,8 +251,7 @@ get_package_name <- function (package) {
         pkg_name <- package
     } else {
         desc <- readLines (file.path (package, "DESCRIPTION"))
-        p <- grep ("^Package\\:", desc)
-        pkg_name <- gsub ("Package:\\s?", "", desc [p])
+        pkg_name <- gsub ("Package:\\s?", "", desc [grep ("^Package\\:", desc)])
     }
 
     return (pkg_name)

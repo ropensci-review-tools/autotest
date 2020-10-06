@@ -11,8 +11,7 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
     if (pkg_is_source (package)) {
 
         desc <- readLines (file.path (package, "DESCRIPTION"))
-        p <- grep ("^Package\\:", desc)
-        pkg_name <- gsub ("Package:\\s?", "", desc [p])
+        pkg_name <- gsub ("Package:\\s?", "", desc [grep ("^Package\\:", desc)])
         if (!paste0 ("package:", pkg_name) %in% search ())
             devtools::load_all (package, export_all = FALSE)
 
