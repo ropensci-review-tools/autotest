@@ -82,19 +82,7 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
     ex <- merge_fn_defs (ex)
     ex <- single_clause (ex)
     ex <- join_function_lines (ex)
-
-    # find and remove any lines for which first function call is some kind of
-    # "plot" or "summary"
-    plotlines <- vapply (ex, function (i) {
-                             i <- gsub ("\\%", "%", i, fixed = TRUE)
-                             p <- utils::getParseData (parse (text = i))
-                             s <- which (p$token == "SYMBOL_FUNCTION_CALL")
-                             ret <- FALSE
-                             if (length (s) > 0)
-                                 ret <- grepl ("plot|summary", p$text [s [1]])
-                             return (ret)   }, logical (1), USE.NAMES = FALSE)
-    if (any (plotlines))
-        ex <- ex [-which (plotlines)]
+    ex <- rm_plot_lines (ex)
 
     # find all points of function calls:
     pkg_name <- get_package_name (pkg)
@@ -388,6 +376,26 @@ rm_dontrun_lines <- function (x, is_source = TRUE, dontrun = TRUE,
             n <- grep (txt_start, x)
         }
     }
+
+    return (x)
+}
+
+# find and remove any lines for which first function call is some kind of
+# "plot" or "summary"
+rm_plot_lines <- function (x) {
+    plotlines <- vapply (x, function (i) {
+                             i <- gsub ("\\%", "%", i, fixed = TRUE)
+                             p <- utils::getParseData (parse (text = i))
+                             s <- which (p$token == "SYMBOL_FUNCTION_CALL")
+                             ret <- FALSE
+                             if (length (s) > 0)
+                                 ret <- grepl ("plot|summary", p$text [s [1]])
+                             return (ret)   },
+
+                             logical (1),
+                             USE.NAMES = FALSE)
+    if (any (plotlines))
+        x <- x [-which (plotlines)]
 
     return (x)
 }
