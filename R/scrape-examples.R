@@ -59,38 +59,10 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
     if (any (grepl ("^### \\*\\* Examples", ex)))
         ex <- ex [-(1:grep ("^### \\*\\* Examples", ex))]
 
-    if (exclude_not_run) {
-        if (!is_source) {
-            nr <- grep ("^## Not run:", ex)
-            while (length (nr) > 0) {
-                nr_end <- grep ("^## End\\(Not run\\)", ex)
-                if (length (nr_end) == 0)
-                    nr_end <- nr
-                ex <- ex [-(nr [1]:nr_end [1])]
-                nr <- grep ("^## Not run:", ex)
-            }
-            # Examples may also have "No test" and these have to be removed
-            nt <- grep ("^## No test:", ex)
-            while (length (nt) > 0) {
-                    nt_end <- grep ("^## End\\(No test\\)", ex)
-                    ex <- ex [-(nt [1]:nt_end [1])]
-                    nt <- grep ("^## No test:", ex)
-            }
-        } else {
-            nr <- grep ("^\\\\dontrun\\{", ex)
-            while (length (nr) > 0) {
-                nr_end <- match_curlies (ex [nr:length (ex)])
-                ex <- ex [-(nr [1] + 0:nr_end)]
-                nr <- grep ("^\\\\dontrun\\{", ex)
-            }
-            nt <- grep ("^\\\\donttest\\{", ex)
-            while (length (nt) > 0) {
-                nt_end <- match_curlies (ex [nt:length (ex)])
-                ex <- ex [-(nt [1] + 0:nt_end)]
-                nt <- grep ("^\\\\donttest\\{", ex)
-            }
-        }
-    }
+    ex <- rm_dontrun_lines (ex, is_source = is_source, dontrun = TRUE,
+                            exclude_not_run = exclude_not_run)
+    ex <- rm_dontrun_lines (ex, is_source = is_source, dontrun = FALSE,
+                            exclude_not_run = exclude_not_run)
 
     if (is_source) { # rm any roxygen2 auto-generated lines
         index <- grep ("^%", ex)
@@ -377,6 +349,43 @@ single_clause <- function (x) {
         if (length (index) > 0) {
             x [index] <- paste0 (x [index], x [index + 1], collapse = " ")
             x <- x [-(index + 1)]
+        }
+    }
+
+    return (x)
+}
+
+# remove all code between `dontrun` and `donttest` clauses if `exclude_not_run`,
+# otherwise keep those lines but remove the `dontrun` and `donttest` statements.
+# `dontrun = FALSE` removes "donttest" lines.
+rm_dontrun_lines <- function (x, is_source = TRUE, dontrun = TRUE,
+                              exclude_not_run = TRUE) {
+    if (is_source) {
+        txt <- ifelse (dontrun, "\\\\dontrun\\s?\\{",
+                       "\\\\donttest\\s?\\{")
+        n <- grep (txt, x)
+        while (length (n) > 0) {
+            n_end <- n [1] + match_curlies (x [n [1]:length (x)])
+            if (exclude_not_run)
+                x <- x [-(n [1] + 0:n_end)]
+            else
+                x <- x [-c (n [1], n_end)]
+            n <- grep (txt, x)
+        }
+    } else {
+        txt_start <- ifelse (dontrun, "## Not run:", "## No test:")
+        txt_end <- ifelse (dontrun, "##\\s+End\\s+\\(Not\\s+run\\)",
+                           "##\\s+End\\s+\\(No\\s+test\\)")
+        n <- grep (txt_start, x)
+        while (length (n) > 0) {
+            n_end <- grep (txt_end, x)
+            if (length (n_end) == 0)
+                n_end <- n
+            if (exclude_not_run)
+                x <- x [-(n [1]:n_end [1])]
+            else
+                x <- x [-c (n [1], n_end)]
+            n <- grep (txt_start, x)
         }
     }
 
