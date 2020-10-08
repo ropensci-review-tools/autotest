@@ -41,7 +41,13 @@ parse_all_msgs <- function (f) {
 
     index <- grep ("Warning\\:|^simple|^Error|^simpleMessage", x)
     if (length (index) > 0) {
+        rm_lines <- NULL
         for (i in index) {
+            rm_lines <- c (rm_lines, i)
+            if (grepl ("\\:\\s?$", x [i])) {
+                x [i] <- paste0 (x [i], x [i + 1], collapse = " ")
+                rm_lines <- c (rm_lines, i + 1)
+            }
             colon1 <- regexpr ("\\:", x [i])
             content <- gsub ("^\\s?", "",
                              substring (x [i], colon1 + 1, nchar (x [i])))
@@ -64,7 +70,7 @@ parse_all_msgs <- function (f) {
                                          parameter = NA_character_,
                                          content = content))
         }
-        x <- x [-index]
+        x <- x [-rm_lines]
     }
 
     # anything left must be messages
