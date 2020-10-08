@@ -7,11 +7,11 @@ null_or_not <- function (x, not_this) {
     res <- is.null (x)
     if (!res) {
         for (i in not_this) {
-            res <- c (res, !i %in% x$type)
+            res <- c (res, i %in% x$type)
         }
     }
 
-    return (any (res))
+    return (!any (res))
 }
 
 not_null_and_is <- function (x, is_this) {
