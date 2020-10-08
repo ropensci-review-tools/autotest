@@ -19,8 +19,18 @@ summary.autotest_package <- function (object, ...) {
                        stringsAsFactors = FALSE)
     res [res == 0] <- NA_integer_
 
+    pkg_name <- attr (object, "package")
+    if (pkg_is_source (pkg_name)) {
+        desc <- readLines (file.path (pkg_name, "DESCRIPTION"))
+        pkg_name <- gsub ("Package:\\s?", "", desc [grep ("^Package\\:", desc)])
+        pkg_version <- gsub ("^\\s?Version:\\s+", "",
+                             desc [grep ("\\s?Version:", desc)])
+    } else {
+        pkg_version <- utils::packageVersion (pkg_name)
+    }
+
     message ("autotesting package [", attr (object, "packageName"),
-             ", v", utils::packageVersion (attr (object, "packageName")),
+             ", v", pkg_version,
              "] generated ", nrow (object), " rows of output ",
              "of the following types:")
     err_txt <- ifelse (sum (errors) == 1, "", "s")
