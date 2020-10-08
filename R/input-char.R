@@ -26,10 +26,10 @@ test_single_char <- function (pkg, this_fn, params, i) {
                                fn_name = this_fn,
                                parameter = names (params) [i],
                                operation = "length 2 vector for length 1 param",
-                               content = paste0 ("Parameter ",
+                               content = paste0 ("Parameter [",
                                                  names (params) [i],
-                                                 " of function [", this_fn,
-                                                 "] is assumed to a single ",
+                                                 "] of function [", this_fn,
+                                                 "] is assumed to be a single ",
                                                  "character, but responds to ",
                                                  "vectors of length > 1"))
     } else
@@ -45,10 +45,10 @@ test_single_char <- function (pkg, this_fn, params, i) {
                                       fn_name = this_fn,
                                       parameter = names (params) [i],
                                       operation = "lower case character parameter",
-                                      content = paste0 ("Parameter ",
+                                      content = paste0 ("Parameter [",
                                                         names (params) [i],
-                                                        " of function [", this_fn,
-                                                        "] is assumed to a single ",
+                                                        "] of function [", this_fn,
+                                                        "] is assumed to be a single ",
                                                         "character, but is ",
                                                         "case dependent")))
     }
@@ -60,10 +60,10 @@ test_single_char <- function (pkg, this_fn, params, i) {
                                       fn_name = this_fn,
                                       parameter = names (params) [i],
                                       operation = "upper case character parameter",
-                                      content = paste0 ("Parameter ",
+                                      content = paste0 ("Parameter [",
                                                         names (params) [i],
-                                                        " of function [", this_fn,
-                                                        "] is assumed to a single ",
+                                                        "] of function [", this_fn,
+                                                        "] is assumed to be a single ",
                                                         "character, but is ",
                                                         "case dependent")))
     }
@@ -77,10 +77,10 @@ test_single_char <- function (pkg, this_fn, params, i) {
                                       fn_name = this_fn,
                                       parameter = names (params) [i],
                                       operation = "random character string as parameter",
-                                      content = paste0 ("Parameter ",
+                                      content = paste0 ("Parameter [",
                                                         names (params) [i],
-                                                        " of function [", this_fn,
-                                                        "] is assumed to a single ",
+                                                        "] of function [", this_fn,
+                                                        "] is assumed to be a single ",
                                                         "character, but does not ",
                                                         "match arguments to ",
                                                         "expected values")))
