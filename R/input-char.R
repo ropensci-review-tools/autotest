@@ -22,16 +22,10 @@ test_single_char <- function (pkg, this_fn, params, i) {
     msgs <- catch_all_msgs (f, this_fn, p)
 
     if (is.null (msgs)) {
-        msgs <- report_object (type = "diagnostic",
-                               fn_name = this_fn,
-                               parameter = names (params) [i],
-                               operation = "length 2 vector for length 1 param",
-                               content = paste0 ("Parameter [",
-                                                 names (params) [i],
-                                                 "] of function [", this_fn,
-                                                 "] is assumed to be a single ",
-                                                 "character, but responds to ",
-                                                 "vectors of length > 1"))
+        msgs <- append_single_char_reports (msgs, msgs,
+                        operation = "length 2 vector for length 1 parameter",
+                        params, this_fn, i,
+                        content = "responds to vectors of length > 1")
     } else
         msgs <- NULL
 
@@ -40,50 +34,29 @@ test_single_char <- function (pkg, this_fn, params, i) {
     p [[i]] <- tolower (p [[i]])
     these_msgs <- catch_all_msgs (f, this_fn, p)
     if (!is.null (these_msgs)) {
-        msgs <- rbind (msgs,
-                       report_object (type = "diagnostic",
-                                      fn_name = this_fn,
-                                      parameter = names (params) [i],
-                                      operation = "lower case character parameter",
-                                      content = paste0 ("Parameter [",
-                                                        names (params) [i],
-                                                        "] of function [", this_fn,
-                                                        "] is assumed to be a single ",
-                                                        "character, but is ",
-                                                        "case dependent")))
+        msgs <- append_single_char_reports (msgs, these_msgs,
+                        operation = "lower-case character parameter",
+                        params, this_fn, i,
+                        content = "is case dependent")
     }
+
     p [[i]] <- toupper (p [[i]])
     these_msgs <- catch_all_msgs (f, this_fn, p)
     if (!is.null (these_msgs)) {
-        msgs <- rbind (msgs,
-                       report_object (type = "diagnostic",
-                                      fn_name = this_fn,
-                                      parameter = names (params) [i],
-                                      operation = "upper case character parameter",
-                                      content = paste0 ("Parameter [",
-                                                        names (params) [i],
-                                                        "] of function [", this_fn,
-                                                        "] is assumed to be a single ",
-                                                        "character, but is ",
-                                                        "case dependent")))
+        msgs <- append_single_char_reports (msgs, these_msgs,
+                        operation = "upper case character parameter",
+                        params, this_fn, i,
+                        content = "is case dependent")
     }
 
     # check whether match.arg is used
     p [[i]] <- paste0 (sample (c (letters, LETTERS), size = 10), collapse = "")
     these_msgs <- catch_all_msgs (f, this_fn, p)
     if (!"error" %in% these_msgs$type) {
-        msgs <- rbind (msgs,
-                       report_object (type = "diagnostic",
-                                      fn_name = this_fn,
-                                      parameter = names (params) [i],
-                                      operation = "random character string as parameter",
-                                      content = paste0 ("Parameter [",
-                                                        names (params) [i],
-                                                        "] of function [", this_fn,
-                                                        "] is assumed to be a single ",
-                                                        "character, but does not ",
-                                                        "match arguments to ",
-                                                        "expected values")))
+        msgs <- append_single_char_reports (msgs, these_msgs,
+                        operation = "random character string as parameter",
+                        params, this_fn, i,
+                        content = "does not match arguments to expected values")
     }
 
     if (is_source)
@@ -170,4 +143,23 @@ test_single_char <- function (pkg, this_fn, params, i) {
         res [k] <- match_res_k (res, hc, i, j, k)
 
     return (msgs)
+}
+
+append_single_char_reports <- function (res, msgs, operation, params, this_fn, i, content) {
+
+    if (is.null (msgs)) {
+        content <- paste0 ("Parameter [",
+                           names (params) [i],
+                           "] of function [",
+                           this_fn,
+                           "] is assumed to be a single character, but ",
+                           content)
+        res <- rbind (res,
+                      report_object (type = "diagnostic",
+                                     fn_name = this_fn,
+                                     parameter = names (params) [i],
+                                     operation = operation,
+                                     content = content))
+    }
+    return (res)
 }
