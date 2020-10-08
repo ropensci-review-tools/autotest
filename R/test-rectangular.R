@@ -14,34 +14,14 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
 
         res1 <- res2 <- res3 <- res4 <- NULL
 
-        params_r [[r]] <- data.frame (x)
-        msgs <- catch_all_msgs (f, this_fn, params_r)
-        if (!is.null (msgs))
-            msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
-        ret <- add_msg_output (ret, msgs, types = c ("warning", "error"),
-                               operation = "tabular as data.frame")
-        if (!"error" %in% msgs$type) {
-            res1 <- suppressWarnings (do.call (this_fn, params_r))
-        }
-
-        params_r [[r]] <- tibble::tibble (data.frame (x))
-        msgs <- catch_all_msgs (f, this_fn, params_r)
-        if (!is.null (msgs))
-            msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
-        ret <- add_msg_output (ret, msgs, types = c ("warning", "error"),
-                               operation = "tabular as tibble")
-        if (!"error" %in% msgs$type) {
-            res2 <- suppressWarnings (do.call (this_fn, params_r))
-        }
-
-        params_r [[r]] <- data.table::data.table (x)
-        msgs <- catch_all_msgs (f, this_fn, params_r)
-        if (!is.null (msgs))
-            msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
-        ret <- add_msg_output (ret, msgs, types = c ("warning", "error"),
-                               operation = "tabular as data.table")
-        if (!"error" %in% msgs$type) {
-            res3 <- suppressWarnings (do.call (this_fn, params_r))
+        other <- c ("data.frame", "tibble::tibble", "data.table::data.table")
+        for (o in seq_along (other)) {
+            this_ret <- test_rect_as_other (this_fn, params_r, r, other [o])
+            ret <- rbind (ret, this_ret)
+            if (docall (this_ret, fn, params)) {
+                res <- suppressWarnings (do.call (this_fn, params_r))
+                assign (paste0 ("res", o), res)
+            }
         }
 
         if (!(is.null (res1) | is.null (res2))) {
@@ -163,5 +143,35 @@ chk_columns <- function (this_fn, params, r, res1, res2) {
                                                            " inputs")))
         }
     }
+    return (ret)
+}
+
+docall <- function (ret, fn, params) {
+    docall <- FALSE
+    if (is.null (ret))
+        docall <- TRUE
+    else if (!"error" %in% ret$type)
+        docall <- TRUE
+
+    return (docall)
+}
+
+test_rect_as_other <- function (fn, params, i, other = "data.frame") {
+
+    f <- file.path (tempdir (), "junk.txt")
+    ret <- NULL
+
+    params [[i]] <- do.call (eval (parse (text = other)), params [[i]])
+    msgs <- catch_all_msgs (f, fn, params)
+
+    if (!is.null (msgs)) {
+        msgs$parameter <- rep (names (params) [i], nrow (msgs))
+
+        if (grepl ("::", other))
+            other <- strsplit (other, "::") [[1]] [2]
+        ret <- add_msg_output (NULL, msgs, types = c ("warning", "error"),
+                               operation = paste0 ("tabular as ", other))
+    }
+
     return (ret)
 }
