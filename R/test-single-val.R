@@ -38,6 +38,10 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
                 val_type <- "integer"
                 res <- rbind (res,
                               test_single_int (pkg, this_fn, params_i, i))
+            } else if (methods::is (p_i, "numeric")) {
+                val_type <- "numeric"
+                res <- rbind (res,
+                              test_single_double (pkg, this_fn, params_i, i))
             } else if (is.character (p_i)) {
                 val_type <- "character"
                 res <- rbind (res,
