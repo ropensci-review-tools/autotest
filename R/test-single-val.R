@@ -57,25 +57,31 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
 
             # check response to vector input:
             if (check_vec) {
-                params_i [[i]] <- rep (p_i, 2)
-                f <- file.path (tempdir (), "junk.txt")
-                msgs <- catch_all_msgs (f, this_fn, params_i)
-                if (null_or_not (msgs, c ("warning", "error"))) {
-                    res <- rbind (res,
-                                  report_object (type = "diagnostic",
-                                                 fn_name = this_fn,
-                                                 parameter = names (params) [i],
-                                                 operation = "length 2 vector for single-length parameter",
-                                                 content = paste0 ("parameter [",
-                                                                   names (params) [i],
-                                                                   "] is assumed to be ",
-                                                                   "a single value of ",
-                                                                   val_type,
-                                                                   " type, yet admits vectors ",
-                                                                   "of length > 1")))
-                }
+                res <- check_vec_length (this_fn, params_i, i, val_type, res)
             }
     }
 
     return (res [which (!duplicated (res)), ])
+}
+
+check_vec_length <- function (fn, params, i, val_type, res) {
+    params [[i]] <- rep (params [[i]], 2)
+    f <- file.path (tempdir (), "junk.txt")
+    msgs <- catch_all_msgs (f, fn, params)
+    if (null_or_not (msgs, c ("warning", "error"))) {
+        res <- rbind (res,
+                      report_object (type = "diagnostic",
+                                     fn_name = fn,
+                                     parameter = names (params) [i],
+                                     operation = "length 2 vector for single-length parameter",
+                                     content = paste0 ("parameter [",
+                                                       names (params) [i],
+                                                       "] is assumed to be ",
+                                                       "a single value of ",
+                                                       val_type,
+                                                       " type, yet admits vectors ",
+                                                       "of length > 1")))
+    }
+
+    return (res)
 }
