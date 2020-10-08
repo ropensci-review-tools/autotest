@@ -24,17 +24,9 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
             }
         }
 
-        if (!(is.null (res1) | is.null (res2))) {
-            ret <- rbind (ret, chk_dims (this_fn, params, r, res1, res2))
-            ret <- rbind (ret, chk_names (this_fn, params, r, res1, res2))
-            ret <- rbind (ret, chk_columns (this_fn, params, r, res1, res2))
-        }
-
-        if (!(is.null (res1) | is.null (res3))) {
-            ret <- rbind (ret, chk_dims (this_fn, params, r, res1, res3))
-            ret <- rbind (ret, chk_names (this_fn, params, r, res1, res3))
-            ret <- rbind (ret, chk_columns (this_fn, params, r, res1, res3))
-        }
+        ret <- compare_rect_outputs (ret, res1, res2, this_fn, params, r)
+        ret <- compare_rect_outputs (ret, res1, res3, this_fn, params, r)
+        ret <- compare_rect_outputs (ret, res2, res3, this_fn, params, r)
 
         # Modify class definitions for rectangular inputs if not excluded by
         # yaml class definitions
@@ -50,11 +42,9 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
                 res4 <- suppressWarnings (do.call (this_fn, params_r))
             }
 
-            if (!(is.null (res1) | is.null (res4))) {
-                ret <- rbind (ret, chk_dims (this_fn, params, r, res1, res4))
-                ret <- rbind (ret, chk_names (this_fn, params, r, res1, res4))
-                ret <- rbind (ret, chk_columns (this_fn, params, r, res1, res4))
-            }
+            ret <- compare_rect_outputs (ret, res1, res4, this_fn, params, r)
+            ret <- compare_rect_outputs (ret, res2, res4, this_fn, params, r)
+            ret <- compare_rect_outputs (ret, res3, res4, this_fn, params, r)
 
             # new class structure which exposes 'List` structure of `data.frame`
             # and should generally fail:
@@ -171,6 +161,16 @@ test_rect_as_other <- function (fn, params, i, other = "data.frame") {
             other <- strsplit (other, "::") [[1]] [2]
         ret <- add_msg_output (NULL, msgs, types = c ("warning", "error"),
                                operation = paste0 ("tabular as ", other))
+    }
+
+    return (ret)
+}
+
+compare_rect_outputs <- function (ret, res1, res2, fn, params, i) {
+    if (!(is.null (res1) | is.null (res2))) {
+        ret <- rbind (ret, chk_dims (fn, params, i, res1, res2))
+        ret <- rbind (ret, chk_names (fn, params, i, res1, res2))
+        ret <- rbind (ret, chk_columns (fn, params, i, res1, res2))
     }
 
     return (ret)
