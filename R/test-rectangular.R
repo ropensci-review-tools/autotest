@@ -18,7 +18,7 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
         for (o in seq_along (other)) {
             this_ret <- test_rect_as_other (this_fn, params_r, r, other [o])
             ret <- rbind (ret, this_ret)
-            if (docall (this_ret, fn, params)) {
+            if (docall (this_ret, this_fn, params)) {
                 res <- suppressWarnings (do.call (this_fn, params_r))
                 assign (paste0 ("res", o), res)
             }

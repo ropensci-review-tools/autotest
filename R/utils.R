@@ -149,8 +149,7 @@ get_pkg_functions <- function (package) {
     return (fns)
 }
 
-fns_without_examples <- function (package) {
-    exs <- examples_to_yaml (package, exclude = NULL)
+fns_without_examples <- function (package, exs) {
     fns_with_exs <- unique (names (exs))
     aliases <- unlist (lapply (fns_with_exs, function (i)
                                get_fn_aliases (pkg = package,
@@ -159,10 +158,14 @@ fns_without_examples <- function (package) {
 
     fns <- get_pkg_functions (package)
 
-    fns <- fns [which (!fns %in% fns_with_exs)]
+    fns <- fns [which (!fns %in% c ("%>%", fns_with_exs))]
 
-    count <- vapply (fns, function (i)
-                         length (get_example_lines (package, fn = i)), integer (1))
+    # Note that the vapply variable has to be "fn" for the `eval(substitute(.))`
+    # call in `get_example_lines` to grab the appropriate object.
+    count <- vapply (fns, function (fn)
+                         length (get_example_lines (package, fn = fn)),
+                     integer (1))
+
     fns <- fns [which (count == 0)]
     if (length (fns) == 0)
         return (NULL)
