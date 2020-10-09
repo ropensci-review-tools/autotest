@@ -248,7 +248,6 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     br1 <- lapply (aliases, function (a) {
                        x <- gsub (paste0 (a, "\\s?"), a, x)
                        g <- paste0 (a, "\\(")
-                       n <- nchar (g)
                        vapply (gregexpr (g, x), function (i) i [1], integer (1))
                        })
     nchars <- rep (NA, length (x))
@@ -257,26 +256,17 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     }
     nchars <- nchar (aliases) [nchars]
 
-    br1 <- apply (do.call (rbind, br1), 2, max) + nchars
+    br1 <- apply (do.call (rbind, br1), 2, function (i) min (i [i > 0])) + nchars
 
+    fn_calls <- substring (x, 1, br1 - 1)
     ex <- substring (x, br1, nchar (x))
     # That reduces expressions down to everything after opening parenthesis of
     # first function call to one of the alias names. Now find the matching
     # closing bracket for each line
-    br1 <- gregexpr ("\\(", ex)
-    br2 <- gregexpr ("\\)", ex)
-    for (i in seq_along (br1)) {
-        if (all (br1 [[i]] < 1) & all (br2 [[i]] < 1))
-            next
-
-        s1 <- rep (seq (length (br1 [[i]])),
-                   times = c (br1 [[i]] [1], diff (br1 [[i]])))
-        s1 <- c (s1, rep (max (s1) + 1, nchar (x [i]) - length (s1)))
-        s2 <- rep (seq (length (br2 [[i]])),
-                   times = c (br2 [[i]] [1], diff (br2 [[i]])))
-        s2 <- c (s2, rep (max (s2) + 1, nchar (x [i]) - length (s2)))
-        matched <- which (cumsum (diff (s2)) == cumsum (diff (s1))) [1]
-        ex [i] <- substring (ex [i], 1, matched)
+    brackets <- lapply (ex, bracket_sequences_one_line)
+    for (i in seq_along (brackets)) {
+        ex [i] <- substring (ex [i], brackets [[i]] [1] + 1,
+                             brackets [[i]] [2] - 1)
     }
 
 
@@ -308,10 +298,15 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
                       apply (commas, 1, function (j)
                              substring (i, j [1], j [2]))
                        })
+    names (ex) <- fn_calls
 
     # remove any assignment operators, to reduce to bare function calls
     for (i in seq_along (ex)) {
-        p <- utils::getParseData (parse (text = ex [[i]]))
+        p <- tryCatch (utils::getParseData (parse (text = ex [[i]])),
+                       error = function (e) NULL)
+        if (is.null (p))
+            next
+
         j <- which (p$token == "SYMBOL_FUNCTION_CALL" & p$text == fn)
         k <- which (p$token == "LEFT_ASSIGN")
         if (length (j) == 0 | length (k) == 0)
@@ -410,7 +405,8 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     fn_start <- grep (paste0 ("- ", fn, ":"), yaml)
     pre <- yaml [fn_start:length (yaml)]
     yaml <- yaml [1:(fn_start - 1)]
-    for (i in seq (ex)) {
+    for (i in seq_along (ex)) {
+        pre [1] <- paste0 (i1, "- ", names (ex) [i], ":")
         yaml <- c (yaml,
                    pre,
                    paste0 (i2, "- parameters:"))
@@ -634,6 +630,18 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
 
     list (br_open = br_open,
           br_closed = br_closed)
+}
+
+# return positions of first and last matching brackets on one line
+bracket_sequences_one_line <- function (x) {
+    open_sym <- "\\("
+    close_sym <- "\\)"
+    br_open <- lapply (gregexpr (open_sym, x), function (i)
+                       as.integer (i [i >= 0])) [[1]]
+    br_closed <- lapply (gregexpr (close_sym, x), function (i)
+                       as.integer (i [i >= 0])) [[1]]
+
+    return (c (br_open [1], br_closed [length (br_closed)]))
 }
 
 # check for nesting where another bracket opens before current one has
