@@ -61,17 +61,21 @@ autotest_return <- function (pkg, params, this_fn, package = NULL) {
             if (any (i)) {
                 # can be multiple return classes, so match the first one from
                 # descr with the returned object
-                r_i <- r [[which (i)]]
-                desc_class <- substring (Rd_value [i], r_i, nchar (Rd_value [i]))
-                desc_class <- substring (desc_class, 1, regexpr ("\\s+", desc_class) - 1)
-                desc_class <- gsub ("\\'|\\`|\\{|\\}", "", desc_class)
-                actual_class <- retclasses [which (retclasses == desc_class)]
+                r_i <- r [which (i)]
+                Rd_i <- Rd_value [which (i)]
+                desc_classes <- lapply (seq_along (which (i)), function (j) {
+                    pos1 <- as.integer (r_i [[j]])
+                    pos2 <- as.integer (r_i [[j]] + attr (r_i [[j]], "match.length") - 1)
+                    substring (Rd_i [j], pos1, pos2)     })
+                desc_classes <- unique (unlist (desc_classes))
 
-                if (actual_class != retclasses [1]) {
+                actual_class <- retclasses [which (retclasses %in% desc_classes)]
+
+                if (actual_class [1] != retclasses [1]) {
                     txt <- paste0 ("Function returns an object of primary class [",
                                    retclasses [1],
                                    "] yet documentation says value is of class [",
-                                   desc_class,
+                                   paste0 (desc_classes, collapse = ", "),
                                    "]")
                 }
 
