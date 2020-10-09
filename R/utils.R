@@ -146,7 +146,9 @@ get_pkg_functions <- function (package) {
         fns <- fns [grep ("[Ff]unction|standardGeneric", fn_classes)]
     }
 
-    return (fns)
+    other_fns <- fns_from_other_pkgs (package)
+
+    return (fns [which (!fns %in% other_fns)])
 }
 
 fns_without_examples <- function (package, exs) {
@@ -193,6 +195,12 @@ fns_from_other_pkgs <- function (package) {
     ns <- gsub ("importFrom\\(|\\)$", "", ns [grep ("^importFrom", ns)])
     fns <- vapply (ns, function (i) strsplit (i, split = ",") [[1]] [2],
                    character (1))
+
+    index <- grep ("\"", fns)
+    if (length (index) > 0) {
+        fns_sub <- gsub ("\"", "", fns [index])
+        fns <- c (fns, fns_sub)
+    }
 
     return (fns)
 }
