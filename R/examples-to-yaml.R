@@ -577,6 +577,8 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
                        as.integer (i [i >= 0]))
     br_closed <- lapply (gregexpr (close_sym, x), function (i)
                        as.integer (i [i >= 0]))
+    br_both <- lapply (gregexpr (both_sym, x), function (i)
+                       as.integer (i [i >= 0]))
 
     # remove any that are inside quotations, like L#44 in stats::spline
     quotes <- gregexpr ("\"", x)
@@ -589,6 +591,7 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
                                       qstart [i]:qend [i]))
             br_open [[i]] <- br_open [[i]] [!br_open [[i]] %in% qindex]
             br_closed [[i]] <- br_closed [[i]] [!br_closed [[i]] %in% qindex]
+            br_both [[i]] <- br_both [[i]] [!br_both [[i]] %in% qindex]
         }
     }
 
@@ -598,13 +601,8 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
         return (list (br_open = NA,
                       br_closed = NA))
 
-    br_both <- lapply (gregexpr (both_sym, x), function (i)
-                       as.integer (i [i >= 0]))
+    # Remove all instances of matched brackets on one line
     for (i in seq (x)) {
-        br_open [[i]] <- br_open [[i]] [which (!br_open [[i]] <= 0)]
-        br_closed [[i]] <- br_closed [[i]] [which (!br_closed [[i]] <= 0)]
-        br_both [[i]] <- br_both [[i]] [which (!br_both [[i]] <= 0)]
-        # Then remove all instances of matched brackets on one line
         while (any (br_both [[i]] > 0)) {
             index <- which (br_open [[i]] == br_both [[i]])
             index2 <- which (br_closed [[i]] > br_open [[i]] [index]) [1]
