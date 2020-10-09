@@ -63,6 +63,11 @@ get_params <- function (res, i, this_fn) {
                             )
                     this_val <- parse (text = this_val) %>%
                         eval (envir = as.environment (paste0 ("package:", this_pkg)))
+                } else {
+                    tryeval <- tryCatch (eval (parse (text = this_val)),
+                                         error = function (e) NULL)
+                    if (!is.null (tryeval))
+                        this_val <- tryeval
                 }
             }
         }
