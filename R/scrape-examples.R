@@ -80,6 +80,8 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
     ex <- merge_piped_lines (ex)
     ex <- merge_fn_defs (ex)
     ex <- single_clause (ex)
+    for (double_quote in c (TRUE, FALSE))
+        ex <- multi_line_quotes (ex, double_quote = double_quote)
     ex <- join_function_lines (ex)
     ex <- rm_plot_lines (ex)
 
@@ -319,8 +321,8 @@ merge_fn_defs <- function (x) {
     return (x)
 }
 
+# match (if|for) with anything after and NOT (if|for) with "{"
 single_clause <- function (x) {
-    # match (if|for) with anything after and NOT (if|for) with "{"
     index <- which (grepl ("^(if|for)\\s?\\(.*\\)\\s?", x) &
                     !grepl ("^(if|for)\\s?\\(.*\\)\\s?\\{", x))
     if (length (index) > 0) {
@@ -339,6 +341,32 @@ single_clause <- function (x) {
         }
     }
 
+    return (x)
+}
+
+# join lines which break within a single quotation
+# example: curl::send_mail
+multi_line_quotes <- function (x, double_quote = TRUE) {
+
+    if (double_quote)
+        q <- "\""
+    else
+        q <- "\'"
+
+    index <- vapply (gregexpr (q, x), function (i)
+                     length (which (i > 0)), integer (1))
+    index <- rev (which (index %% 2 != 0)) # unmatched quotes
+    if (length (index) > 0) {
+        index2 <- rep (seq (length (index) / 2), each = 2)
+        # un-reverse the individual entries so they are increasing pairs of
+        # [start, end] of quotes
+        index <- lapply (split (index, f = factor (index2)),
+                         function (i) rev (i))
+        for (i in index) {
+            x [i [1]] <- paste0 (x [i [1]:i [2]], collapse = " ")
+            x <- x [-((i [1] + 1):i [2])]
+        }
+    }
     return (x)
 }
 
