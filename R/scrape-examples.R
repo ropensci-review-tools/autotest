@@ -59,10 +59,9 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
     if (any (grepl ("^### \\*\\* Examples", ex)))
         ex <- ex [-(1:grep ("^### \\*\\* Examples", ex))]
 
-    ex <- rm_dontrun_lines (ex, is_source = is_source, dontrun = TRUE,
-                            exclude_not_run = exclude_not_run)
-    ex <- rm_dontrun_lines (ex, is_source = is_source, dontrun = FALSE,
-                            exclude_not_run = exclude_not_run)
+    for (dontrun in c (TRUE, FALSE))
+        ex <- rm_dontrun_lines (ex, is_source = is_source, dontrun = dontrun,
+                                exclude_not_run = exclude_not_run)
 
     if (is_source) { # rm any roxygen2 auto-generated lines
         index <- grep ("^%", ex)
