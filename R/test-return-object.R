@@ -64,6 +64,7 @@ autotest_return <- function (pkg, params, this_fn, package = NULL) {
                 r_i <- r [[which (i)]]
                 desc_class <- substring (Rd_value [i], r_i, nchar (Rd_value [i]))
                 desc_class <- substring (desc_class, 1, regexpr ("\\s+", desc_class) - 1)
+                desc_class <- gsub ("\\'|\\`|\\{|\\}", "", desc_class)
                 actual_class <- retclasses [which (retclasses == desc_class)]
 
                 if (actual_class != retclasses [1]) {
