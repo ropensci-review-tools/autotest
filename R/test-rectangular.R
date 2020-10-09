@@ -64,8 +64,6 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
                                                                "class structure of `data.frame` ",
                                                                "input is removed.")))
             }
-        } else {
-            # TODO: Implement check for all nominated classes
         }
     }
     return (ret)
