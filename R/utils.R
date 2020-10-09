@@ -178,3 +178,21 @@ fns_without_examples <- function (package, exs) {
 
     return (fns [which (fns %in% ls (paste0 ("package:", pkg_name)))])
 }
+
+fns_from_other_pkgs <- function (package) {
+    if (pkg_is_source (package)) {
+        fp <- file.path (package)
+    } else {
+        fp <- file.path (R.home (), "library", package)
+    }
+    namespace_file <- file.path (fp, "NAMESPACE")
+    if (!file.exists (namespace_file))
+        stop ("There is no NAMESPACE file at [", fp, "]")
+
+    ns <- readLines (namespace_file)
+    ns <- gsub ("importFrom\\(|\\)$", "", ns [grep ("^importFrom", ns)])
+    fns <- vapply (ns, function (i) strsplit (i, split = ",") [[1]] [2],
+                   character (1))
+
+    return (fns)
+}
