@@ -38,8 +38,8 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
         for (xj in exs [[i]]) {
             y <- one_ex_to_yaml (pkg = pkg_name,
                                  fn = this_fn,
-                                 aliases = aliases,
                                  x = xj,
+                                 aliases = aliases,
                                  prev_fns = prev_fns)
             if (!is.null (y)) {
                 ret [[length (ret) + 1]] <- prev_fns [[length (prev_fns) + 1]] <- y
