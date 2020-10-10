@@ -18,6 +18,8 @@ underlying code (see, for example,
 primarily works by scraping documented examples for all functions, and
 mutating the parameters input to those functions.
 
+**This package is very unstable and subject to ongoing development (Oct 2020)**
+
 Tests are controlled via a simple YAML schema specifying one or more
 example workflows for each function of a package, with workflows able to
 be automatically generated from documented examples, and `autotest`
