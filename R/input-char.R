@@ -8,11 +8,14 @@ test_single_char <- function (pkg, this_fn, params, i) {
     if (length (h) == 0) {
         is_source <- TRUE
     } else {
-        h <- h [grep (paste0 ("^", this_fn, "\\.Rd$"), names (h))]
-        if (length (h) != 1) {
+        index <- which (vapply (h, function (j)
+                                this_fn %in% get_Rd_metadata (j, "alias"),
+                                logical (1)))
+        if (length (index) != 1) {
             message ("No single help topic for [", this_fn, "] found")
             return (NULL)
         }
+        h <- h [[index]]
     }
 
     # check whether vectors of 2 characters error or warn:
