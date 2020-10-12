@@ -29,9 +29,16 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
 
     # rm any functions with parameters == "(none)", as set at end of
     # `one_ex_to_yaml()`:
-    no_params <- vapply (x$functions, function (i)
-                         i [[1]] [[1]]$parameters == "(none)",
-                         logical (1))
+    no_params <- vapply (x$functions, function (i) {
+                             fi <- i [[1]] [[1]] # (name, empty [[1]] item)
+                             res <- FALSE
+                             if ("parameters" %in% names (fi)) {
+                                 if (length (fi$parameters) == 1 &
+                                     all (fi$parameters == "(none)"))
+                                     res <- TRUE
+                             }
+                             return (res) },
+                             logical (1))
     x$functions <- x$functions [which (!no_params)]
 
     for (f in seq (x$functions)) {
