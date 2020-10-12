@@ -256,7 +256,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     # fn calls by parsing expressions
     fn_calls <- vapply (seq_along (br1), function (i) {
                             this_x <- substring (x [i], 1, br1 [i] - 1)
-                            xp <- getParseData (parse (text = this_x))
+                            xp <- utils::getParseData (parse (text = this_x))
                             syms <- which (xp$token == "SYMBOL")
                             # last symbol must be function call:
                             xp$text [syms [length (syms)] ] },
