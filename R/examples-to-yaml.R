@@ -99,11 +99,6 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
         }
     }
 
-    # get fn formals:
-    pkg_env <- as.environment (paste0 ("package:", pkg))
-    pars <- formals (fun = fn, envir = pkg_env)
-    nms <- names (pars)
-
     # capture content between parentheses:
     x <- x [fn_calls [1]:length (x)]
     # remove comments at end of lines:
@@ -257,16 +252,24 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     nchars <- nchar (aliases) [nchars]
 
     br1 <- apply (do.call (rbind, br1), 2, function (i) min (i [i > 0])) + nchars
+    # those may still include assignment operators or similar, so extract actual
+    # fn calls by parsing expressions
+    fn_calls <- vapply (seq_along (br1), function (i) {
+                            this_x <- substring (x [i], 1, br1 [i] - 1)
+                            xp <- getParseData (parse (text = this_x))
+                            syms <- which (xp$token == "SYMBOL")
+                            # last symbol must be function call:
+                            xp$text [syms [length (syms)] ] },
+                            character (1))
 
-    fn_calls <- substring (x, 1, br1 - 1)
     ex <- substring (x, br1, nchar (x))
     # That reduces expressions down to everything after opening parenthesis of
     # first function call to one of the alias names. Now find the matching
     # closing bracket for each line
     brackets <- lapply (ex, bracket_sequences_one_line)
     for (i in seq_along (brackets)) {
-        ex [i] <- substring (ex [i], brackets [[i]] [1] + 1,
-                             brackets [[i]] [2] - 1)
+        ex [i] <- substring (ex [i], brackets [[i]] [1],
+                             brackets [[i]] [2])
     }
 
 
@@ -281,7 +284,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
                       index1 <- index1 [index1 > 0]
                       index2 <- index2 [index2 > 0]
                       commas <- commas [commas > 0]
-                      if (length (index1) > 0) {
+                      if (length (index1) > 0 & length (index2) > 0) {
                          for (j in seq_along (index1)) {
                              index <- which (commas > index1 [j] &
                                              commas < index2 [j])
@@ -372,11 +375,19 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
         yaml <- yaml [-which (d)]
 
     # assign names to any unnamed parameters:
+    pkg_env <- as.environment (paste0 ("package:", pkg))
+    all_nms <- NULL
     for (i in seq (ex)) {
+        pars <- formals (fun = names (ex) [i], envir = pkg_env)
+        nms <- names (pars)
+        all_nms <- unique (c (all_nms, nms))
         if (any (is.na (ex [[i]] [, 1]))) {
             other_nms <- nms [which (!nms %in% ex [[i]] [, 1])]
-            index <- which (is.na (ex [[i]] [, 1]))
-            ex [[i]] [index, 1] <- other_nms [seq (index)]
+            # other_nms will be NULL for fns which have no args
+            if (!all (is.null (other_nms))) {
+                index <- which (is.na (ex [[i]] [, 1]))
+                ex [[i]] [index, 1] <- other_nms [seq (index)]
+            }
         }
     }
 
@@ -389,8 +400,9 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     # this may sometimes fail with non-trival calls, such as starting an example
     # line which calls the primary function with `lapply`, `map`, or something
     # like that. These are virtually impossible to parse, so are caught and
-    # removed here.
-    ex <- lapply (ex, function (i) i [which (i [, 1] %in% nms), , drop = FALSE])
+    # removed here. (First element of ex will be NA for fns which have no args.)
+    ex <- lapply (ex, function (i) i [which (i [, 1] %in% all_nms |
+                                             is.na (i [, 1])), , drop = FALSE])
     # Default values of double quotes must also be replaced with escape
     # characters. Parameters may also be called "null" (like
     # changepoint::decision), yet this is a reserved yaml word, so must be
@@ -410,9 +422,15 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
         yaml <- c (yaml,
                    pre,
                    paste0 (i2, "- parameters:"))
-        for (j in seq (nrow (ex [[i]]))) {
+        # functions with no parameters:
+        if (nrow (ex [[i]]) == 1 & all (is.na (ex [[i]] [, 1]))) {
             yaml <- c (yaml,
-                       paste0 (i3, "- ", ex [[i]] [j, 1], ": ", ex [[i]] [j, 2]))
+                       paste0 (i3, "- (none)"))
+        } else {
+            for (j in seq (nrow (ex [[i]]))) {
+                yaml <- c (yaml,
+                           paste0 (i3, "- ", ex [[i]] [j, 1], ": ", ex [[i]] [j, 2]))
+            }
         }
     }
 

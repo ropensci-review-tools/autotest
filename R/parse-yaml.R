@@ -27,6 +27,13 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
     parameters <- preprocess <- classes <- list ()
     fn_names <- NULL
 
+    # rm any functions with parameters == "(none)", as set at end of
+    # `one_ex_to_yaml()`:
+    no_params <- vapply (x$functions, function (i)
+                         i [[1]] [[1]]$parameters == "(none)",
+                         logical (1))
+    x$functions <- x$functions [which (!no_params)]
+
     for (f in seq (x$functions)) {
         fn_names <- c (fn_names, names (x$functions [[f]]))
 
