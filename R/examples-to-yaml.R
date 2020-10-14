@@ -75,12 +75,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     yaml <- add_preprocessing_to_yaml (x, yaml, fn_calls, prev_fns, i2, i3)
     x <- x [fn_calls [1]:length (x)]
 
-    # remove comments at end of lines:
-    x <- gsub ("\\s$", "", gsub ("\\#.*", "", x))
-    # remove terminal bounding brackets if any:
-    index <- grep ("^\\(", x) # only lines which start with a bracket
-    if (length (index) > 0)
-        x [index] <- gsub ("^\\(|\\)$", "", x [index])
+    x <- rm_comments_and_brackets (x)
 
     temp <- library_calls_to_yaml (x, has_prepro, yaml, i2, i3)
     yaml <- temp$yaml
@@ -208,6 +203,18 @@ add_preprocessing_to_yaml <- function (x, yaml, fn_calls, prev_fns, i2, i3) {
     }
 
     return (yaml)
+}
+
+#' @param x Lines of example code
+#' @return Potentially modified version of `x` with comments at end of line
+#' removed, along with any terminal bounding brackets
+#' @noRd
+rm_comments_and_brackets <- function (x) {
+    x <- gsub ("\\s$", "", gsub ("\\#.*", "", x)) # rm comments
+    index <- grep ("^\\(", x) # only lines which start with a bracket
+    if (length (index) > 0)
+        x [index] <- gsub ("^\\(|\\)$", "", x [index])
+    return (x)
 }
 
 #' @param x Lines of example code
