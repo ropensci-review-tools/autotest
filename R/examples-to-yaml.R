@@ -88,17 +88,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     yaml <- prepro_return_values (x, yaml, aliases, has_prepro, i2, i3)
     if (!has_prepro)
         has_prepro <- any (grepl ("- proprocess:$", yaml))
-
-    # add any terminal pre-processing lines from above
-    if (!is.null (xpre)) {
-        if (!has_prepro) {
-            yaml <- c (yaml,
-                       paste0 (i2, "- preprocess:"))
-            has_prepro <- TRUE
-        }
-        for (i in xpre)
-            yaml <- c (yaml, paste0 (i3, "- '", i, "'"))
-    }
+    yaml <- terminal_prepro_to_yaml (xpre, yaml, has_prepro)
 
     x <- unlist (lapply (x, function (i) strip_if_cond (i)))
     x <- chk_fn_calls_are_primary (x, fn, fn_short, aliases)
@@ -328,6 +318,25 @@ prepro_return_values <- function (x, yaml, aliases, has_prepro, i2, i3) {
         }
     }
 
+    return (yaml)
+}
+
+#' add any terminal pre-processing lines from above
+#' @param xpre Terminal pre-processing lines returned from
+#' `terminal_prepro_lines()`.
+#' @return Potentially modified version of `yaml` with terminal pre-processing
+#' lines appended as internal pre-processing (non-terminal)
+#' @noRd
+terminal_prepro_to_yaml <- function (xpre, yaml, has_prepro) {
+    if (!is.null (xpre)) {
+        if (!has_prepro) {
+            yaml <- c (yaml,
+                       paste0 (i2, "- preprocess:"))
+            has_prepro <- TRUE
+        }
+        for (i in xpre)
+            yaml <- c (yaml, paste0 (i3, "- '", i, "'"))
+    }
     return (yaml)
 }
 
