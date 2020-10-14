@@ -133,12 +133,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     ex <- split_args_at_equals (ex)
 
     yaml <- add_prev_prepro (ex, yaml, fn, prev_fns, i2, i3)
-
-    # Remove any duplicated lines. This works because duplicated always flags
-    # the 2nd instances which are by definition redundant
-    d <- duplicated (yaml)
-    if (any (d))
-        yaml <- yaml [-which (d)]
+    yaml <- yaml [which (!duplicated (yaml))]
 
     # assign names to any unnamed parameters:
     pkg_env <- as.environment (paste0 ("package:", pkg))
