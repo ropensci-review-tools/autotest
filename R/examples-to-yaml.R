@@ -92,38 +92,9 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     # then remove any lines which aren't primary function calls
     x <- x [which (!x %in% temp$rm_lines)]
 
-    # also check whether any assign return values, and copy these to
-    # pre-processing:
-    prepro <- vapply (x, function (i) {
-                          p <- utils::getParseData (parse (text = i))
-                          ret <- FALSE
-                          if (any (p$token == "SYMBOL_FUNCTION_CALL")) {
-                              here <- which (p$token == "SYMBOL_FUNCTION_CALL" &
-                                             p$text %in% aliases)
-                              if (any (p$token [seq (here - 1)] %in% c ("LEFT_ASSIGN", "EQ_ASSIGN")))
-                                  ret <- TRUE
-                          } else { # values assigned with no function call
-                              syms <- which (p$token == "SYMBOL")
-                              assigns <- which (p$token %in% c ("LEFT_ASSIGN", "EQ_ASSIGN"))
-                              if (length (syms) > 0 & length (assigns) > 0) {
-                                  if (syms [1] < assigns [1]) {
-                                      ret <- TRUE
-                                  }
-                              }
-                          }
-                          return (ret)  }, logical (1), USE.NAMES = FALSE)
-    if (any (prepro)) {
-        if (!has_prepro) {
-            yaml <- c (yaml,
-                       paste0 (i2, "- preprocess:"))
-            has_prepro <- TRUE
-        }
-        for (i in which (prepro)) {
-            newpre <- paste0 (i3, "- '", x [i], "'")
-            if (!newpre %in% yaml)
-                yaml <- c (yaml, newpre)
-        }
-    }
+    yaml<- prepro_return_values (x, yaml, has_prepro, aliases, i2, i3)
+    if (!has_prepro)
+        has_prepro <- any (grepl ("- proprocess:$", yaml))
 
     # add any terminal pre-processing lines from above
     if (!is.null (xpre)) {
@@ -137,26 +108,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     }
 
     x <- unlist (lapply (x, function (i) strip_if_cond (i)))
-    # only proceed if primary function calls in all lines of x are for the focal
-    # function
-    chk <- vapply (x, function (i) {
-                       p <- utils::getParseData (parse (text = i))
-                       ret <- FALSE
-                       index <- which (p$token == "SYMBOL_FUNCTION_CALL")
-                       if (length (index) > 0) {
-                           ret <- (p$text [index [1]] %in% aliases |
-                                   p$text [index [1]] == fn_short)
-                           # can also be part of *apply or *map functions, yet
-                           # `getParseData` only parses these as SYMBOL
-                           if (any (grepl ("apply|map", p$text [index]))) {
-                               index2 <- index [1]:nrow (p)
-                               syms <- unique (p$text [index2] [which (p$token [index2] == "SYMBOL")])
-                               ret <- ret | (fn %in% syms | fn_short %in% syms)
-                           }
-                       }
-                       return (ret) }, logical (1), USE.NAMES = FALSE)
-    if (any (!chk))
-        x <- x [-which (!chk)]
+    x <- chk_fn_calls_are_primary (x, fn, fn_short, aliases)
     if (length (x) == 0)
         return (NULL)
 
@@ -476,6 +428,66 @@ parse_primary_fn_calls <- function (x, yaml, aliases, has_prepro, i2, i3) {
     }
 
     return (list (yaml = yaml, rm_lines = rm_lines))
+}
+
+# include any primary function calls which also assign return values as
+# preprocessing steps
+prepro_return_values <- function (x, yaml, has_prepro, aliases, i2, i3) {
+    prepro <- vapply (x, function (i) {
+                          p <- utils::getParseData (parse (text = i))
+                          ret <- FALSE
+                          if (any (p$token == "SYMBOL_FUNCTION_CALL")) {
+                              here <- which (p$token == "SYMBOL_FUNCTION_CALL" &
+                                             p$text %in% aliases)
+                              if (any (p$token [seq (here - 1)] %in% c ("LEFT_ASSIGN", "EQ_ASSIGN")))
+                                  ret <- TRUE
+                          } else { # values assigned with no function call
+                              syms <- which (p$token == "SYMBOL")
+                              assigns <- which (p$token %in% c ("LEFT_ASSIGN", "EQ_ASSIGN"))
+                              if (length (syms) > 0 & length (assigns) > 0) {
+                                  if (syms [1] < assigns [1]) {
+                                      ret <- TRUE
+                                  }
+                              }
+                          }
+                          return (ret)  }, logical (1), USE.NAMES = FALSE)
+    if (any (prepro)) {
+        if (!has_prepro) {
+            yaml <- c (yaml,
+                       paste0 (i2, "- preprocess:"))
+        }
+        for (i in which (prepro)) {
+            newpre <- paste0 (i3, "- '", x [i], "'")
+            if (!newpre %in% yaml)
+                yaml <- c (yaml, newpre)
+        }
+    }
+
+    return (yaml)
+}
+
+# reduce function calls in x down to primary function calls
+chk_fn_calls_are_primary <- function (x, fn, fn_short, aliases) {
+    chk <- vapply (x, function (i) {
+                       p <- utils::getParseData (parse (text = i))
+                       ret <- FALSE
+                       index <- which (p$token == "SYMBOL_FUNCTION_CALL")
+                       if (length (index) > 0) {
+                           ret <- (p$text [index [1]] %in% aliases |
+                                   p$text [index [1]] == fn_short)
+                           # can also be part of *apply or *map functions, yet
+                           # `getParseData` only parses these as SYMBOL
+                           if (any (grepl ("apply|map", p$text [index]))) {
+                               index2 <- index [1]:nrow (p)
+                               syms <- unique (p$text [index2] [which (p$token [index2] == "SYMBOL")])
+                               ret <- ret | (fn %in% syms | fn_short %in% syms)
+                           }
+                       }
+                       return (ret) }, logical (1), USE.NAMES = FALSE)
+    if (any (!chk))
+        x <- x [-which (!chk)]
+
+    return (x)
 }
 
 # Get preprocessing steps from previously constructed yaml representations of
