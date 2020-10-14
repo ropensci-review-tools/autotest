@@ -132,37 +132,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     ex <- rm_assignment_operators (ex, fn)
     ex <- split_args_at_equals (ex)
 
-    # check whether any other objects have been constructed in previous examples
-    # = previous pre-processing steps:
-    pp <- prev_preprocess (prev_fns, fn)
-    po <- prev_objects (pp)
-    for (i in seq_along (ex)) {
-        if (any (po %in% ex [[i]] [, 2])) {
-            # add those pre-processing steps
-            #iend <- grep ("parameters:$", yaml) - 1
-            iend <- length (yaml)
-            if (any (grepl ("preprocess:$", yaml))) {
-                istart <- grep ("preprocess:$", yaml)
-                prepro <- yaml [istart:iend]
-                yaml_top <- yaml [1:(istart - 1)]
-            } else {
-                prepro <- paste0 (i2, "- preprocess:")
-                yaml_top <- yaml [1:iend]
-            }
-
-            # TODO: The following is not correct because it only grabs one line, but
-            # there may be cases with multiple lines
-            this_pp <- vapply (pp [[which (po %in% ex [[i]] [, 2])]], function (i)
-                               paste0 (i3, "- '", i, "'"), character (1),
-                               USE.NAMES = FALSE)
-            this_prepro <- c (prepro [1], this_pp)
-            if (length (prepro) > 1)
-                this_prepro <- c (this_prepro, prepro [2:length (prepro)])
-
-            # stick those preprocessing lines in the yaml
-            yaml <- c (yaml_top, this_prepro)
-        }
-    }
+    yaml <- add_prev_prepro (ex, yaml, fn, prev_fns, i2, i3)
 
     # Remove any duplicated lines. This works because duplicated always flags
     # the 2nd instances which are by definition redundant
@@ -561,6 +531,43 @@ split_args_at_equals <- function (x) {
                             })
                 do.call (rbind, res)  })
 }
+
+#' Add any other objects have been constructed in previous examples as
+#' pre-processing steps.
+#' @noRd
+add_prev_prepro <- function (x, yaml, fn, prev_fns, i2, i3) {
+    pp <- prev_preprocess (prev_fns, fn)
+    po <- prev_objects (pp)
+    for (i in seq_along (x)) {
+        if (any (po %in% x [[i]] [, 2])) {
+            # add those pre-processing steps
+            iend <- length (yaml)
+            if (any (grepl ("preprocess:$", yaml))) {
+                istart <- grep ("preprocess:$", yaml)
+                prepro <- yaml [istart:iend]
+                yaml_top <- yaml [1:(istart - 1)]
+            } else {
+                prepro <- paste0 (i2, "- preprocess:")
+                yaml_top <- yaml [1:iend]
+            }
+
+            # TODO: The following is not correct because it only grabs one line, but
+            # there may be cases with multiple lines
+            this_pp <- vapply (pp [[which (po %in% x [[i]] [, 2])]], function (i)
+                               paste0 (i3, "- '", i, "'"), character (1),
+                               USE.NAMES = FALSE)
+            this_prepro <- c (prepro [1], this_pp)
+            if (length (prepro) > 1)
+                this_prepro <- c (this_prepro, prepro [2:length (prepro)])
+
+            # stick those preprocessing lines in the yaml
+            yaml <- c (yaml_top, this_prepro)
+        }
+    }
+
+    return (yaml)
+}
+
 
 # Get preprocessing steps from previously constructed yaml representations of
 # examples
