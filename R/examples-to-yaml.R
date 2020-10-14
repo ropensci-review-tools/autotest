@@ -70,22 +70,8 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
         xpre <- x [(max (fn_calls) + 1):length (x)]
     x <- x [1:max (fn_calls)]
 
-    has_prepro <- FALSE
-    if (fn_calls [1] > 1) {
-        has_prepro <- TRUE
-        yaml <- c (yaml,
-                   paste0 (i2, "- preprocess:"))
-        # add any pre-processing lines from prev_fns
-        yaml <- c (yaml,
-                   get_preprocess_lines (prev_fns))
-        # Then new pre-processing lines, adding all pre-processing lines for all
-        # functions
-        if (fn_calls [1] > 1) {
-            for (i in x [seq (fn_calls [1]) - 1])
-                yaml <- c (yaml,
-                           paste0 (i3, "- '", i, "'"))
-        }
-    }
+    has_prepro <- (fn_calls [1] > 1)
+    yaml <- add_preprocessing_to_yaml (x, yaml, fn_calls, prev_fns, i3)
 
     # capture content between parentheses:
     x <- x [fn_calls [1]:length (x)]
@@ -433,7 +419,7 @@ find_function_calls <- function (x, fn, aliases) {
     is_dispatch <- attr (x, "is_dispatch")
 
     fn_short <- fn
-    fn_calls <- 1
+    fn_calls <- 1 # dummy value that is never carried through
     if (is_dispatch &
         any (grepl ("[[:alpha:]]\\.[[:alpha:]]", fn))) {
             fn_short <- gsub ("\\..*$", "", fn)
@@ -446,6 +432,25 @@ find_function_calls <- function (x, fn, aliases) {
     }
 
     return (fn_calls)
+}
+
+add_preprocessing_to_yaml <- function (x, yaml, fn_calls, prev_fns, i3) {
+    if (fn_calls [1] > 1) {
+        yaml <- c (yaml,
+                   paste0 (i2, "- preprocess:"))
+        # add any pre-processing lines from prev_fns
+        yaml <- c (yaml,
+                   get_preprocess_lines (prev_fns))
+        # Then new pre-processing lines, adding all pre-processing lines for all
+        # functions
+        if (fn_calls [1] > 1) {
+            for (i in x [seq (fn_calls [1]) - 1])
+                yaml <- c (yaml,
+                           paste0 (i3, "- '", i, "'"))
+        }
+    }
+
+    return (yaml)
 }
 
 # Get preprocessing steps from previously constructed yaml representations of
