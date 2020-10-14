@@ -87,7 +87,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     x <- temp$x
     has_prepro <- x$has_prepro
 
-    temp <- parse_primary_function_calls (x, yaml, aliases, has_prepro, i2, i3)
+    temp <- parse_primary_fn_calls (x, yaml, aliases, has_prepro, i2, i3)
     yaml <- temp$yaml
     # then remove any lines which aren't primary function calls
     x <- x [which (!x %in% temp$rm_lines)]
@@ -450,7 +450,7 @@ library_calls_to_yaml <- function (x, has_prepro, yaml, i2, i3) {
 # statements and similar. Any of these which also assign to named variables are
 # also included in pre-processing, in case subsequent calls refer to those
 # objects
-parse_primary_function_calls <- function (x, yaml, aliases, has_prepro, i2, i3) {
+parse_primary_fn_calls <- function (x, yaml, aliases, has_prepro, i2, i3) {
     rm_lines <- NULL
     rm_fns <- c ("stopifnot")
     for (xi in x) {
