@@ -88,7 +88,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     yaml <- prepro_return_values (x, yaml, aliases, has_prepro, i2, i3)
     if (!has_prepro)
         has_prepro <- any (grepl ("- proprocess:$", yaml))
-    yaml <- terminal_prepro_to_yaml (xpre, yaml, has_prepro)
+    yaml <- terminal_prepro_to_yaml (xpre, yaml, has_prepro, i2, i3)
 
     x <- unlist (lapply (x, function (i) strip_if_cond (i)))
     x <- chk_fn_calls_are_primary (x, fn, fn_short, aliases)
@@ -327,7 +327,7 @@ prepro_return_values <- function (x, yaml, aliases, has_prepro, i2, i3) {
 #' @return Potentially modified version of `yaml` with terminal pre-processing
 #' lines appended as internal pre-processing (non-terminal)
 #' @noRd
-terminal_prepro_to_yaml <- function (xpre, yaml, has_prepro) {
+terminal_prepro_to_yaml <- function (xpre, yaml, has_prepro, i2, i3) {
     if (!is.null (xpre)) {
         if (!has_prepro) {
             yaml <- c (yaml,
