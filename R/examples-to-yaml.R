@@ -73,9 +73,8 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
 
     has_prepro <- (fn_calls [1] > 1)
     yaml <- add_preprocessing_to_yaml (x, yaml, fn_calls, prev_fns, i2, i3)
-
-    # capture content between parentheses:
     x <- x [fn_calls [1]:length (x)]
+
     # remove comments at end of lines:
     x <- gsub ("\\s$", "", gsub ("\\#.*", "", x))
     # remove terminal bounding brackets if any:
@@ -83,24 +82,10 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     if (length (index) > 0)
         x [index] <- gsub ("^\\(|\\)$", "", x [index])
 
-    # move any library calls from x to yaml preprocessing
-    if (any (grepl ("^library\\s?\\(", x))) {
-        index <- grep ("^library\\s?\\(", x)
-        libs <- unlist (lapply (x [index], function (i) strsplit (i, "\\)\\s?;") [[1]] [1]))
-        if (!has_prepro) {
-            yaml <- c (yaml,
-                       paste0 (i2, "- preprocess:"))
-            has_prepro <- TRUE
-        }
-        for (l in libs)
-            yaml <- c (yaml,
-                       paste0 (i3, "- '", l, "'"))
-
-
-        # rm those lines from x if they are not compound expressions
-        index2 <- !grepl ("\\)\\s?;", x [index])
-        x <- x [-index [index2] ]
-    }
+    temp <- library_calls_to_yaml (x, has_prepro, yaml, i2, i3)
+    yaml <- temp$yaml
+    x <- temp$x
+    has_prepro <- x$has_prepro
 
     # Parse the function calls, and only retain those for which the first
     # enclosing functions are the primary function, which notably excludes
@@ -461,6 +446,28 @@ add_preprocessing_to_yaml <- function (x, yaml, fn_calls, prev_fns, i2, i3) {
     }
 
     return (yaml)
+}
+
+# move any library calls from x to yaml preprocessing
+library_calls_to_yaml <- function (x, has_prepro, yaml, i2, i3) {
+    if (any (grepl ("^library\\s?\\(", x))) {
+        index <- grep ("^library\\s?\\(", x)
+        libs <- unlist (lapply (x [index], function (i) strsplit (i, "\\)\\s?;") [[1]] [1]))
+        if (!has_prepro) {
+            yaml <- c (yaml,
+                       paste0 (i2, "- preprocess:"))
+            has_prepro <- TRUE
+        }
+        for (l in libs)
+            yaml <- c (yaml,
+                       paste0 (i3, "- '", l, "'"))
+
+        # rm those lines from x if they are not compound expressions
+        index2 <- !grepl ("\\)\\s?;", x [index])
+        x <- x [-index [index2] ]
+    }
+
+    return (list (yaml = yaml, x = x, has_prepro <- has_prepro))
 }
 
 # Get preprocessing steps from previously constructed yaml representations of
