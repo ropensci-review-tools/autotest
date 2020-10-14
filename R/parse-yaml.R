@@ -52,29 +52,32 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
         is_char <- which (vapply (pars, function (i) is.character (i [[1]]), logical (1)))
         # then check whether yaml vals are quoted:
         index <- grep ("- parameters:$", yaml)
-        if (f < length (x$functions)) {
-            index <- index [f]:(index [f + 1] - 2)
-        } else {
-            index <- index [f]:length (yaml)
-        }
-
-        yaml2 <- yaml [index]
-        for (p in is_char) {
-            ystr <- paste0 ("- ", names (pars [[p]]), ":")
-            if (ystr == "- null:") # specific processing because yaml itself reserves that
-                ystr <- "- \"null\":"
-            yaml_version <- gsub ("^\\s+", "",
-                                  strsplit (yaml2 [grep (ystr, yaml2)], ystr) [[1]] [2])
-            if (!grepl ("\"|\'", yaml_version)) {
-                if (grepl ("formula", names (pars [[p]]), ignore.case = TRUE)) {
-                    pars [[p]] [[1]] <- stats::formula (pars [[p]] [[1]])
-                    attr (pars [[p]] [[1]], ".Environment") <- NULL
-                } else
-                    pars [[p]] [[1]] <- as.name (pars [[p]] [[1]])
+        if (length (index) > 0) {
+            if (f < length (x$functions)) {
+                index <- index [f]:(index [f + 1] - 2)
+            } else {
+                index <- index [f]:length (yaml)
             }
-        }
 
-        parameters [[length (parameters) + 1]] <- pars
+            yaml2 <- yaml [index]
+            for (p in is_char) {
+                ystr <- paste0 ("- ", names (pars [[p]]), ":")
+                if (ystr == "- null:") # specific processing because yaml itself reserves that
+                    ystr <- "- \"null\":"
+                yaml_version <- gsub ("^\\s+", "",
+                                      strsplit (yaml2 [grep (ystr, yaml2)], ystr) [[1]] [2])
+                if (!grepl ("\"|\'", yaml_version)) {
+                    if (grepl ("formula", names (pars [[p]]), ignore.case = TRUE)) {
+                        pars [[p]] [[1]] <- stats::formula (pars [[p]] [[1]])
+                        attr (pars [[p]] [[1]], ".Environment") <- NULL
+                    } else
+                        pars [[p]] [[1]] <- as.name (pars [[p]] [[1]])
+                }
+            }
+
+            parameters [[length (parameters) + 1]] <- pars
+        } else
+            parameters [[length (parameters) + 1]] <- NA_character_
 
         if ("preprocess" %in% nms)
             preprocess [[length (preprocess) + 1]] <-
