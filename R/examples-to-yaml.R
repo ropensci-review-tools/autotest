@@ -126,42 +126,8 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     fn_calls <- grep (paste0 (paste0 (aliases, "\\s?\\("), collapse = "|"), x)
     x <- x [seq (max (fn_calls))]
 
-    # grab content inside primary parentheses:
-    br1 <- lapply (aliases, function (a) {
-                       x <- gsub (paste0 (a, "\\s?"), a, x)
-                       g <- paste0 (a, "\\(")
-                       vapply (gregexpr (g, x), function (i) i [1], integer (1))
-                       })
-    nchars <- rep (NA, length (x))
-    for (i in seq (br1)) {
-        nchars [which (br1 [[i]] > 0)] <- i
-    }
-    nchars <- nchar (aliases) [nchars]
+    ex <- extract_primary_call_content (x, aliases)
 
-    br1 <- apply (do.call (rbind, br1), 2, function (i) min (i [i > 0])) + nchars
-    # those may still include assignment operators or similar, so extract actual
-    # fn calls by parsing expressions
-    fn_calls <- vapply (seq_along (br1), function (i) {
-                            this_x <- substring (x [i], 1, br1 [i] - 1)
-                            xp <- utils::getParseData (parse (text = this_x))
-                            syms <- which (xp$token == "SYMBOL")
-                            # last symbol must be function call:
-                            xp$text [syms [length (syms)] ] },
-                            character (1))
-
-    ex <- substring (x, br1, nchar (x))
-    # That reduces expressions down to everything after opening parenthesis of
-    # first function call to one of the alias names. Now find the matching
-    # closing bracket for each line
-    brackets <- lapply (ex, bracket_sequences_one_line)
-    for (i in seq_along (brackets)) {
-        ex [i] <- substring (ex [i], brackets [[i]] [1],
-                             brackets [[i]] [2])
-    }
-
-
-
-    ex <- ex [which (vapply (ex, length, integer (1), USE.NAMES = FALSE) > 0)]
     # split at commas, but only those within primary enclosing parentheses:
     ex <- lapply (ex, function (i) {
                       i <- gsub ("^\\(|\\)$", "", i)
@@ -486,6 +452,45 @@ chk_fn_calls_are_primary <- function (x, fn, fn_short, aliases) {
                        return (ret) }, logical (1), USE.NAMES = FALSE)
     if (any (!chk))
         x <- x [-which (!chk)]
+
+    return (x)
+}
+
+# grab content from all primary calls inside primary parentheses:
+extract_primary_call_content <- function (x, aliases) {
+    br1 <- lapply (aliases, function (a) {
+                       x <- gsub (paste0 (a, "\\s?"), a, x)
+                       g <- paste0 (a, "\\(")
+                       vapply (gregexpr (g, x), function (i) i [1], integer (1))
+                       })
+    nchars <- rep (NA, length (x))
+    for (i in seq (br1)) {
+        nchars [which (br1 [[i]] > 0)] <- i
+    }
+    nchars <- nchar (aliases) [nchars]
+
+    br1 <- apply (do.call (rbind, br1), 2, function (i) min (i [i > 0])) + nchars
+    # those may still include assignment operators or similar, so extract actual
+    # fn calls by parsing expressions
+    fn_calls <- vapply (seq_along (br1), function (i) {
+                            this_x <- substring (x [i], 1, br1 [i] - 1)
+                            xp <- utils::getParseData (parse (text = this_x))
+                            syms <- which (xp$token == "SYMBOL")
+                            # last symbol must be function call:
+                            xp$text [syms [length (syms)] ] },
+                            character (1))
+
+    x <- substring (x, br1, nchar (x))
+    # That reduces expressions down to everything after opening parenthesis of
+    # first function call to one of the alias names. Now find the matching
+    # closing bracket for each line
+    brackets <- lapply (x, bracket_sequences_one_line)
+    for (i in seq_along (brackets)) {
+        x [i] <- substring (x [i], brackets [[i]] [1],
+                            brackets [[i]] [2])
+    }
+
+    x <- x [which (vapply (x, length, integer (1), USE.NAMES = FALSE) > 0)]
 
     return (x)
 }
