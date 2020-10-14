@@ -85,14 +85,15 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     temp <- library_calls_to_yaml (x, has_prepro, yaml, i2, i3)
     yaml <- temp$yaml
     x <- temp$x
-    has_prepro <- x$has_prepro
+    has_prepro <- temp$has_prepro
 
     temp <- parse_primary_fn_calls (x, yaml, aliases, has_prepro, i2, i3)
     yaml <- temp$yaml
     # then remove any lines which aren't primary function calls
     x <- x [which (!x %in% temp$rm_lines)]
+    rm (temp)
 
-    yaml<- prepro_return_values (x, yaml, has_prepro, aliases, i2, i3)
+    yaml <- prepro_return_values (x, yaml, has_prepro, aliases, i2, i3)
     if (!has_prepro)
         has_prepro <- any (grepl ("- proprocess:$", yaml))
 
@@ -127,34 +128,6 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     x <- x [seq (max (fn_calls))]
 
     ex <- extract_primary_call_content (x, aliases)
-
-    # split at commas, but only those within primary enclosing parentheses:
-    ex <- lapply (ex, function (i) {
-                      i <- gsub ("^\\(|\\)$", "", i)
-                      index1 <- gregexpr ("\\(", i) [[1]]
-                      index2 <- gregexpr ("\\)", i) [[1]]
-                      commas <- gregexpr (",", i) [[1]]
-                      index1 <- index1 [index1 > 0]
-                      index2 <- index2 [index2 > 0]
-                      commas <- commas [commas > 0]
-                      if (length (index1) > 0 & length (index2) > 0) {
-                         for (j in seq_along (index1)) {
-                             index <- which (commas > index1 [j] &
-                                             commas < index2 [j])
-                             commas <- commas [which (!seq_along (commas) %in% index)]
-                          }
-                      }
-                      # do not split if the value is in double quotes
-                      if (grepl ("^\"", i) & grepl ("\"$", i))
-                          commas <- cbind (1, nchar (i))
-                      else
-                          commas <- cbind (c (1, commas + 1),
-                                           c (commas - 1, nchar (i)))
-
-                      apply (commas, 1, function (j)
-                             substring (i, j [1], j [2]))
-                       })
-    names (ex) <- fn_calls
 
     # remove any assignment operators, to reduce to bare function calls
     for (i in seq_along (ex)) {
@@ -360,7 +333,7 @@ library_calls_to_yaml <- function (x, has_prepro, yaml, i2, i3) {
         x <- x [-index [index2] ]
     }
 
-    return (list (yaml = yaml, x = x, has_prepro <- has_prepro))
+    return (list (yaml = yaml, x = x, has_prepro = has_prepro))
 }
 
 # Parse the function calls, and only retain those for which the first enclosing
@@ -491,6 +464,39 @@ extract_primary_call_content <- function (x, aliases) {
     }
 
     x <- x [which (vapply (x, length, integer (1), USE.NAMES = FALSE) > 0)]
+
+    names (x) <- fn_calls
+
+    return (split_content_at_commas (x))
+}
+
+split_content_at_commas <- function (x) {
+
+    x <- lapply (x, function (i) {
+                     i <- gsub ("^\\(|\\)$", "", i)
+                     index1 <- gregexpr ("\\(", i) [[1]]
+                     index2 <- gregexpr ("\\)", i) [[1]]
+                     commas <- gregexpr (",", i) [[1]]
+                     index1 <- index1 [index1 > 0]
+                     index2 <- index2 [index2 > 0]
+                     commas <- commas [commas > 0]
+                     if (length (index1) > 0 & length (index2) > 0) {
+                        for (j in seq_along (index1)) {
+                            index <- which (commas > index1 [j] &
+                                            commas < index2 [j])
+                            commas <- commas [which (!seq_along (commas) %in% index)]
+                         }
+                     }
+                     # do not split if the value is in double quotes
+                     if (grepl ("^\"", i) & grepl ("\"$", i))
+                         commas <- cbind (1, nchar (i))
+                     else
+                         commas <- cbind (c (1, commas + 1),
+                                          c (commas - 1, nchar (i)))
+
+                     apply (commas, 1, function (j)
+                            substring (i, j [1], j [2]))
+                      })
 
     return (x)
 }
