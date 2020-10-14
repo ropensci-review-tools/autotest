@@ -62,19 +62,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
                "functions:",
                paste0 (i1, "- ", fn, ":"))
 
-    is_dispatch <- attr (x, "is_dispatch")
-    # find which lines call `fn`:
-    fn_short <- fn
-    if (is_dispatch &
-        any (grepl ("[[:alpha:]]\\.[[:alpha:]]", fn))) {
-            fn_short <- gsub ("\\..*$", "", fn)
-            fn_calls <- grep (paste0 (fn, "|", fn_short), x)
-    } else {
-        fn_here <- fn
-        if (!is.null (aliases))
-            fn_here <- paste0 (fn, "|", paste0 (aliases, collapse = "|"))
-        fn_calls <- grep (fn_here, x)
-    }
+    fn_calls <- find_function_calls (x, fn, aliases)
     # rm all lines after final fn_calls, but keep to add as terminal
     # pre-processing lines
     xpre <- NULL
@@ -412,6 +400,9 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
                       i [which (i [, 1] == "null"), 1] <- "\"null\""
                       return (i)    })
 
+    # Finally, check documentation to see whether those parameters include
+    # descriptions of expected classes
+
     # add to parameters list of yaml, duplicating fn name and preprocessing
     # stages each time:
     fn_start <- grep (paste0 ("- ", fn, ":"), yaml)
@@ -435,6 +426,26 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     }
 
     return (yaml)
+}
+
+# find which lines in `x` call `fn`:
+find_function_calls <- function (x, fn, aliases) {
+    is_dispatch <- attr (x, "is_dispatch")
+
+    fn_short <- fn
+    fn_calls <- 1
+    if (is_dispatch &
+        any (grepl ("[[:alpha:]]\\.[[:alpha:]]", fn))) {
+            fn_short <- gsub ("\\..*$", "", fn)
+            fn_calls <- grep (paste0 (fn, "|", fn_short), x)
+    } else {
+        fn_here <- fn
+        if (!is.null (aliases))
+            fn_here <- paste0 (fn, "|", paste0 (aliases, collapse = "|"))
+        fn_calls <- grep (fn_here, x)
+    }
+
+    return (fn_calls)
 }
 
 # Get preprocessing steps from previously constructed yaml representations of
