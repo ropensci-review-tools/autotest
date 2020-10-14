@@ -37,6 +37,7 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
         aliases <- get_fn_aliases (package, this_fn)
         for (xj in exs [[i]]) {
             y <- one_ex_to_yaml (pkg = pkg_name,
+                                 pkg_full = package,
                                  fn = this_fn,
                                  x = xj,
                                  aliases = aliases,
@@ -52,7 +53,7 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
 }
 
 # convert one example from get_fn_exs to yaml output
-one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
+one_ex_to_yaml <- function (pkg, pkg_full, fn, x, aliases = NULL, prev_fns = NULL) {
 
     yaml <- c (paste0 ("package: ", pkg),
                "functions:",
@@ -117,7 +118,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
 
     # Finally, check documentation to see whether those parameters include
     # descriptions of expected classes
-    classes <- param_classes_in_desc (x_content, yaml, package, fn)
+    classes <- param_classes_in_desc (x_content, yaml, pkg_full, fn)
 
     yaml <- add_params_to_yaml (x_content, yaml, fn)
 
