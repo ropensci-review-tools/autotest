@@ -54,13 +54,9 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
 # convert one example from get_fn_exs to yaml output
 one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
 
-    i1 <- paste0 (rep (" ", 4), collapse = "")
-    i2 <- paste0 (rep (" ", 8), collapse = "")
-    i3 <- paste0 (rep (" ", 12), collapse = "")
-
     yaml <- c (paste0 ("package: ", pkg),
                "functions:",
-               paste0 (i1, "- ", fn, ":"))
+               paste0 (yaml_indent (1), "- ", fn, ":"))
 
     fn_calls <- find_function_calls (x, fn, aliases)
     fn_short <- get_function_short_name (fn, attr (x, "is_dispatch"))
@@ -69,26 +65,26 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     x <- x [1:max (fn_calls)]
 
     has_prepro <- (fn_calls [1] > 1)
-    yaml <- add_preprocessing_to_yaml (x, yaml, fn_calls, prev_fns, i2, i3)
+    yaml <- add_preprocessing_to_yaml (x, yaml, fn_calls, prev_fns)
     x <- x [fn_calls [1]:length (x)]
 
     x <- rm_comments_and_brackets (x)
 
-    temp <- library_calls_to_yaml (x, has_prepro, yaml, i2, i3)
+    temp <- library_calls_to_yaml (x, has_prepro, yaml)
     yaml <- temp$yaml
     x <- temp$x
     has_prepro <- temp$has_prepro
 
-    temp <- parse_primary_fn_calls (x, yaml, aliases, has_prepro, i2, i3)
+    temp <- parse_primary_fn_calls (x, yaml, aliases, has_prepro)
     yaml <- temp$yaml
     # then remove any lines which aren't primary function calls
     x <- x [which (!x %in% temp$rm_lines)]
     rm (temp)
 
-    yaml <- prepro_return_values (x, yaml, aliases, has_prepro, i2, i3)
+    yaml <- prepro_return_values (x, yaml, aliases, has_prepro)
     if (!has_prepro)
         has_prepro <- any (grepl ("- proprocess:$", yaml))
-    yaml <- terminal_prepro_to_yaml (xpre, yaml, has_prepro, i2, i3)
+    yaml <- terminal_prepro_to_yaml (xpre, yaml, has_prepro)
 
     x <- unlist (lapply (x, function (i) strip_if_cond (i)))
     x <- chk_fn_calls_are_primary (x, fn, fn_short, aliases)
@@ -100,7 +96,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     fn_calls <- grep (paste0 (paste0 (aliases, "\\s?\\("), collapse = "|"), x)
     if (fn_calls [1] > 1) {
         for (i in seq (fn_calls [1] - 1)) {
-            yaml <- c (yaml, paste0 (i3, "- '", x [i], "'"))
+            yaml <- c (yaml, paste0 (yaml_indent (3), "- '", x [i], "'"))
         }
         x <- x [-seq (fn_calls [1] - 1)]
     }
@@ -114,7 +110,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     x_content <- rm_assignment_operators (x_content, fn)
     x_content <- split_args_at_equals (x_content)
 
-    yaml <- add_prev_prepro (x_content, yaml, fn, prev_fns, i2, i3)
+    yaml <- add_prev_prepro (x_content, yaml, fn, prev_fns)
     yaml <- yaml [which (!duplicated (yaml))]
 
     x_content <- assign_names_to_params (x_content, pkg)
@@ -123,9 +119,16 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     # descriptions of expected classes
     classes <- param_classes_in_desc (x_content, yaml, package, fn)
 
-    yaml <- add_params_to_yaml (x_content, yaml, fn, i1, i2, i3)
+    yaml <- add_params_to_yaml (x_content, yaml, fn)
 
     return (yaml)
+}
+
+#' @param n number of indendentations, with each one determined by
+#' `options()$autotest_yaml_indent
+#' @noRd
+yaml_indent <- function (n = 1) {
+    paste0 (rep (" ", n * options()$autotest_yaml_indent), collapse = "")
 }
 
 #' @param fn Proposed name of which which may be a method dispatch
@@ -173,10 +176,10 @@ find_function_calls <- function (x, fn, aliases) {
 #' @return Potentially modified version of yaml with preprocessing lines
 #' appended
 #' @noRd
-add_preprocessing_to_yaml <- function (x, yaml, fn_calls, prev_fns, i2, i3) {
+add_preprocessing_to_yaml <- function (x, yaml, fn_calls, prev_fns) {
     if (fn_calls [1] > 1) {
         yaml <- c (yaml,
-                   paste0 (i2, "- preprocess:"))
+                   paste0 (yaml_indent (2), "- preprocess:"))
         # add any pre-processing lines from prev_fns
         yaml <- c (yaml,
                    get_preprocess_lines (prev_fns))
@@ -185,7 +188,7 @@ add_preprocessing_to_yaml <- function (x, yaml, fn_calls, prev_fns, i2, i3) {
         if (fn_calls [1] > 1) {
             for (i in x [seq (fn_calls [1]) - 1])
                 yaml <- c (yaml,
-                           paste0 (i3, "- '", i, "'"))
+                           paste0 (yaml_indent (3), "- '", i, "'"))
         }
     }
 
@@ -222,18 +225,18 @@ terminal_prepro_lines <- function (x, fn_calls) {
 #' @return List including potentially modified version of `yaml` with any
 #' `library` calls appended to "preprocess" stage, and removed from `x`.
 #' @noRd
-library_calls_to_yaml <- function (x, has_prepro, yaml, i2, i3) {
+library_calls_to_yaml <- function (x, has_prepro, yaml) {
     if (any (grepl ("^library\\s?\\(", x))) {
         index <- grep ("^library\\s?\\(", x)
         libs <- unlist (lapply (x [index], function (i) strsplit (i, "\\)\\s?;") [[1]] [1]))
         if (!has_prepro) {
             yaml <- c (yaml,
-                       paste0 (i2, "- preprocess:"))
+                       paste0 (yaml_indent (2), "- preprocess:"))
             has_prepro <- TRUE
         }
         for (l in libs)
             yaml <- c (yaml,
-                       paste0 (i3, "- '", l, "'"))
+                       paste0 (yaml_indent (3), "- '", l, "'"))
 
         # rm those lines from x if they are not compound expressions
         index2 <- !grepl ("\\)\\s?;", x [index])
@@ -254,7 +257,7 @@ library_calls_to_yaml <- function (x, has_prepro, yaml, i2, i3) {
 #' assignment operations, along with an index of lines which may be removed from
 #' `x` as they do not call primary functions or aliases.
 #' @noRd
-parse_primary_fn_calls <- function (x, yaml, aliases, has_prepro, i2, i3) {
+parse_primary_fn_calls <- function (x, yaml, aliases, has_prepro) {
     rm_lines <- NULL
     rm_fns <- c ("stopifnot")
     for (xi in x) {
@@ -267,13 +270,13 @@ parse_primary_fn_calls <- function (x, yaml, aliases, has_prepro, i2, i3) {
                 if (which (p$token %in% c ("LEFT_ASSIGN", "EQ_ASSIGN")) [1] < syms [1]) {
                     if (!has_prepro) {
                         yaml <- c (yaml,
-                                   paste0 (i2, "- preprocess:"))
+                                   paste0 (yaml_indent (2), "- preprocess:"))
                         has_prepro <- TRUE
                     }
                     #if (p$text [syms [1]] != fn)
                     #    rm_lines <- c (rm_lines, xi)
                     yaml <- c (yaml,
-                               paste0 (i3, "- '", xi, "'"))
+                               paste0 (yaml_indent (3), "- '", xi, "'"))
                 }
             }
         }
@@ -287,7 +290,7 @@ parse_primary_fn_calls <- function (x, yaml, aliases, has_prepro, i2, i3) {
 #' also parses expressions which assign values without necessarily being
 #' function calls.
 #' @noRd
-prepro_return_values <- function (x, yaml, aliases, has_prepro, i2, i3) {
+prepro_return_values <- function (x, yaml, aliases, has_prepro) {
     prepro <- vapply (x, function (i) {
                           p <- utils::getParseData (parse (text = i))
                           ret <- FALSE
@@ -309,10 +312,10 @@ prepro_return_values <- function (x, yaml, aliases, has_prepro, i2, i3) {
     if (any (prepro)) {
         if (!has_prepro) {
             yaml <- c (yaml,
-                       paste0 (i2, "- preprocess:"))
+                       paste0 (yaml_indent (2), "- preprocess:"))
         }
         for (i in which (prepro)) {
-            newpre <- paste0 (i3, "- '", x [i], "'")
+            newpre <- paste0 (yaml_indent (3), "- '", x [i], "'")
             if (!newpre %in% yaml)
                 yaml <- c (yaml, newpre)
         }
@@ -327,15 +330,15 @@ prepro_return_values <- function (x, yaml, aliases, has_prepro, i2, i3) {
 #' @return Potentially modified version of `yaml` with terminal pre-processing
 #' lines appended as internal pre-processing (non-terminal)
 #' @noRd
-terminal_prepro_to_yaml <- function (xpre, yaml, has_prepro, i2, i3) {
+terminal_prepro_to_yaml <- function (xpre, yaml, has_prepro) {
     if (!is.null (xpre)) {
         if (!has_prepro) {
             yaml <- c (yaml,
-                       paste0 (i2, "- preprocess:"))
+                       paste0 (yaml_indent (2), "- preprocess:"))
             has_prepro <- TRUE
         }
         for (i in xpre)
-            yaml <- c (yaml, paste0 (i3, "- '", i, "'"))
+            yaml <- c (yaml, paste0 (yaml_indent (3), "- '", i, "'"))
     }
     return (yaml)
 }
@@ -500,7 +503,7 @@ split_args_at_equals <- function (x) {
 #' Add any other objects have been constructed in previous examples as
 #' pre-processing steps.
 #' @noRd
-add_prev_prepro <- function (x, yaml, fn, prev_fns, i2, i3) {
+add_prev_prepro <- function (x, yaml, fn, prev_fns) {
     pp <- prev_preprocess (prev_fns, fn)
     po <- prev_objects (pp)
     for (i in seq_along (x)) {
@@ -512,14 +515,15 @@ add_prev_prepro <- function (x, yaml, fn, prev_fns, i2, i3) {
                 prepro <- yaml [istart:iend]
                 yaml_top <- yaml [1:(istart - 1)]
             } else {
-                prepro <- paste0 (i2, "- preprocess:")
+                prepro <- paste0 (yaml_indent (2), "- preprocess:")
                 yaml_top <- yaml [1:iend]
             }
 
             # TODO: The following is not correct because it only grabs one line, but
             # there may be cases with multiple lines
             this_pp <- vapply (pp [[which (po %in% x [[i]] [, 2])]], function (i)
-                               paste0 (i3, "- '", i, "'"), character (1),
+                               paste0 (yaml_indent (3), "- '", i, "'"),
+                               character (1),
                                USE.NAMES = FALSE)
             this_prepro <- c (prepro [1], this_pp)
             if (length (prepro) > 1)
@@ -685,7 +689,7 @@ param_classes_in_desc <- function (x, yaml, pkg, fn_name) {
 #' @return Modified version of `yaml` which repeats all submitted stages once
 #' for each list item of `x`.
 #' @noRd
-add_params_to_yaml <- function (x, yaml, fn, i1, i2, i3) {
+add_params_to_yaml <- function (x, yaml, fn, i1) {
 
     fn_start <- grep (paste0 ("- ", fn, ":"), yaml)
     pre <- yaml [fn_start:length (yaml)]
@@ -695,16 +699,20 @@ add_params_to_yaml <- function (x, yaml, fn, i1, i2, i3) {
         pre [1] <- paste0 (i1, "- ", names (x) [i], ":")
         yaml <- c (yaml,
                    pre,
-                   paste0 (i2, "- parameters:"))
+                   paste0 (yaml_indent (2), "- parameters:"))
         # functions with no parameters - these are not processed in any
         # autotests
         if (nrow (x [[i]]) == 1 & all (is.na (x [[i]] [, 1]))) {
             yaml <- c (yaml,
-                       paste0 (i3, "- (none)"))
+                       paste0 (yaml_indent (3), "- (none)"))
         } else {
             for (j in seq (nrow (x [[i]]))) {
                 yaml <- c (yaml,
-                           paste0 (i3, "- ", x [[i]] [j, 1], ": ", x [[i]] [j, 2]))
+                           paste0 (yaml_indent (3),
+                                   "- ",
+                                   x [[i]] [j, 1],
+                                   ": ",
+                                   x [[i]] [j, 2]))
             }
         }
     }

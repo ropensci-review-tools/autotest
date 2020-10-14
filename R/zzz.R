@@ -1,3 +1,17 @@
+# nocov start
+.onLoad <- function (libname, pkgname)
+{
+    op <- options ()
+	
+    op.autotest <- list (autotest_yaml_indent = 4)
+	
+    toset <- !(names (op.autotest) %in% names (op))
+    if (any (toset))
+        options (op.autotest [toset])
+    invisible ()
+}
+# nocov end
+
 
 # logical test whether a report data.frame is null, or whether it does not
 # contain expected type ("not_this"). A result might, for example, be expected
