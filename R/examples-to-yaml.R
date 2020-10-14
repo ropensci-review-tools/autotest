@@ -663,7 +663,7 @@ param_classes_in_desc <- function (x, yaml, pkg, fn_name) {
 
     res <- parse_yaml_template (yaml)
     e <- new.env ()
-    eval (parse (text = res$preprocess [[fn]]), envir = e)
+    eval (parse (text = res$preprocess [[fn_name]]), envir = e)
     classes <- unique (unlist (lapply (ls (envir = e), function (i)
                                        class (get (i, envir = e)))))
     class_in_desc <- vapply (param_descs, function (i) {
@@ -689,14 +689,14 @@ param_classes_in_desc <- function (x, yaml, pkg, fn_name) {
 #' @return Modified version of `yaml` which repeats all submitted stages once
 #' for each list item of `x`.
 #' @noRd
-add_params_to_yaml <- function (x, yaml, fn, i1) {
+add_params_to_yaml <- function (x, yaml, fn) {
 
     fn_start <- grep (paste0 ("- ", fn, ":"), yaml)
     pre <- yaml [fn_start:length (yaml)]
     yaml <- yaml [1:(fn_start - 1)]
 
     for (i in seq_along (x)) {
-        pre [1] <- paste0 (i1, "- ", names (x) [i], ":")
+        pre [1] <- paste0 (yaml_indent (1), "- ", names (x) [i], ":")
         yaml <- c (yaml,
                    pre,
                    paste0 (yaml_indent (2), "- parameters:"))
