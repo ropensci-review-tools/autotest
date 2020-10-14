@@ -64,11 +64,8 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
 
     fn_calls <- find_function_calls (x, fn, aliases)
     fn_short <- get_function_short_name (fn, attr (x, "is_dispatch"))
-    # rm all lines after final fn_calls, but keep to add as terminal
-    # pre-processing lines
-    xpre <- NULL
-    if (max (fn_calls) < length (x))
-        xpre <- x [(max (fn_calls) + 1):length (x)]
+
+    xpre <- terminal_prepro_lines (x, fn_calls)
     x <- x [1:max (fn_calls)]
 
     has_prepro <- (fn_calls [1] > 1)
@@ -215,6 +212,18 @@ rm_comments_and_brackets <- function (x) {
     if (length (index) > 0)
         x [index] <- gsub ("^\\(|\\)$", "", x [index])
     return (x)
+}
+
+#' @param x Lines of example code
+#' @param fn_calls Index into `x` of lines which call primary function(s)
+#' @return Any lines in `x` subsequent to final `fn_calls`, which can
+#' potentially be used as pre-processing lines of subsequent calls.
+#' @noRd
+terminal_prepro_lines <- function (x, fn_calls) {
+    xpre <- NULL
+    if (max (fn_calls) < length (x))
+        xpre <- x [(max (fn_calls) + 1):length (x)]
+    return (xpre)
 }
 
 #' @param x Lines of example code
