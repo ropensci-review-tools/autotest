@@ -63,6 +63,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
                paste0 (i1, "- ", fn, ":"))
 
     fn_calls <- find_function_calls (x, fn, aliases)
+    fn_short <- get_function_short_name (fn, attr (x, "is_dispatch"))
     # rm all lines after final fn_calls, but keep to add as terminal
     # pre-processing lines
     xpre <- NULL
@@ -71,7 +72,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     x <- x [1:max (fn_calls)]
 
     has_prepro <- (fn_calls [1] > 1)
-    yaml <- add_preprocessing_to_yaml (x, yaml, fn_calls, prev_fns, i3)
+    yaml <- add_preprocessing_to_yaml (x, yaml, fn_calls, prev_fns, i2, i3)
 
     # capture content between parentheses:
     x <- x [fn_calls [1]:length (x)]
@@ -414,11 +415,20 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     return (yaml)
 }
 
+get_function_short_name <- function (fn, is_dispatch) {
+    fn_short <- fn
+    if (is_dispatch &
+        any (grepl ("[[:alpha:]]\\.[[:alpha:]]", fn))) {
+            fn_short <- gsub ("\\..*$", "", fn)
+    }
+
+    return (fn_short)
+}
+
 # find which lines in `x` call `fn`:
 find_function_calls <- function (x, fn, aliases) {
     is_dispatch <- attr (x, "is_dispatch")
 
-    fn_short <- fn
     fn_calls <- 1 # dummy value that is never carried through
     if (is_dispatch &
         any (grepl ("[[:alpha:]]\\.[[:alpha:]]", fn))) {
@@ -434,7 +444,7 @@ find_function_calls <- function (x, fn, aliases) {
     return (fn_calls)
 }
 
-add_preprocessing_to_yaml <- function (x, yaml, fn_calls, prev_fns, i3) {
+add_preprocessing_to_yaml <- function (x, yaml, fn_calls, prev_fns, i2, i3) {
     if (fn_calls [1] > 1) {
         yaml <- c (yaml,
                    paste0 (i2, "- preprocess:"))
