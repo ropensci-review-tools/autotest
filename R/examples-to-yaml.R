@@ -129,21 +129,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
 
     ex <- extract_primary_call_content (x, aliases)
 
-    # remove any assignment operators, to reduce to bare function calls
-    for (i in seq_along (ex)) {
-        p <- tryCatch (utils::getParseData (parse (text = ex [[i]])),
-                       error = function (e) NULL)
-        if (is.null (p))
-            next
-
-        j <- which (p$token == "SYMBOL_FUNCTION_CALL" & p$text == fn)
-        k <- which (p$token == "LEFT_ASSIGN")
-        if (length (j) == 0 | length (k) == 0)
-            next
-
-        if (k [1] < j [1])
-            ex [[i]] <- substring (ex [[i]], p$col1 [j], nchar (ex [[i]]))
-    }
+    ex <- rm_assigment_operators (ex, fn)
 
     # split all example lines around "=", but only if they're not quoted
     ex <- lapply (ex, function (i) {
@@ -497,6 +483,29 @@ split_content_at_commas <- function (x) {
                      apply (commas, 1, function (j)
                             substring (i, j [1], j [2]))
                       })
+
+    return (x)
+}
+
+#' @param x content of primary function calls which may include assignment
+#' operators
+#' @return Same content but with assignment operations removed
+#' @noRd
+rm_assigment_operators <- function (x, fn) {
+    for (i in seq_along (x)) {
+        p <- tryCatch (utils::getParseData (parse (text = x [[i]])),
+                       error = function (e) NULL)
+        if (is.null (p))
+            next
+
+        j <- which (p$token == "SYMBOL_FUNCTION_CALL" & p$text == fn)
+        k <- which (p$token == "LEFT_ASSIGN")
+        if (length (j) == 0 | length (k) == 0)
+            next
+
+        if (k [1] < j [1])
+            x [[i]] <- substring (x [[i]], p$col1 [j], nchar (x [[i]]))
+    }
 
     return (x)
 }
