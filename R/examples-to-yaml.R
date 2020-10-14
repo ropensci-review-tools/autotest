@@ -130,23 +130,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     ex <- extract_primary_call_content (x, aliases)
 
     ex <- rm_assignment_operators (ex, fn)
-
-    # split all example lines around "=", but only if they're not quoted
-    ex <- lapply (ex, function (i) {
-                      res <- lapply (i, function (j) {
-                                         if (!grepl ("=", j) | grepl ("^\"", j))
-                                             c (NA_character_, j)
-                                         else {
-                                             #strsplit (j, "=") [[1]]   })
-                                             # split at first "=", presume all
-                                             # others to be internal list items
-                                             # or the like
-                                             indx <- regexpr ("=", j)
-                                             c (substring (j, 1, indx - 1),
-                                                substring (j, indx + 1, nchar (j)))
-                                         }
-                                   })
-                      do.call (rbind, res)  })
+    ex <- split_args_at_equals (ex)
 
     # check whether any other objects have been constructed in previous examples
     # = previous pre-processing steps:
@@ -554,6 +538,28 @@ rm_assignment_operators <- function (x, fn) {
     }
 
     return (x)
+}
+
+#' @param x Content of primary function calls split into separate parameters
+#' @return Equivalent content with any named parameters split between names and
+#' values
+#' @noRd
+split_args_at_equals <- function (x) {
+    lapply (x, function (i) {
+                res <- lapply (i, function (j) {
+                                   if (!grepl ("=", j) | grepl ("^\"", j))
+                                       c (NA_character_, j)
+                                   else {
+                                       #strsplit (j, "=") [[1]]   })
+                                       # split at first "=", presume all
+                                       # others to be internal list items
+                                       # or the like
+                                       indx <- regexpr ("=", j)
+                                       c (substring (j, 1, indx - 1),
+                                          substring (j, indx + 1, nchar (j)))
+                                   }
+                            })
+                do.call (rbind, res)  })
 }
 
 # Get preprocessing steps from previously constructed yaml representations of
