@@ -141,27 +141,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     # descriptions of expected classes
     # ... TODO
 
-    # add to parameters list of yaml, duplicating fn name and preprocessing
-    # stages each time:
-    fn_start <- grep (paste0 ("- ", fn, ":"), yaml)
-    pre <- yaml [fn_start:length (yaml)]
-    yaml <- yaml [1:(fn_start - 1)]
-    for (i in seq_along (ex)) {
-        pre [1] <- paste0 (i1, "- ", names (ex) [i], ":")
-        yaml <- c (yaml,
-                   pre,
-                   paste0 (i2, "- parameters:"))
-        # functions with no parameters:
-        if (nrow (ex [[i]]) == 1 & all (is.na (ex [[i]] [, 1]))) {
-            yaml <- c (yaml,
-                       paste0 (i3, "- (none)"))
-        } else {
-            for (j in seq (nrow (ex [[i]]))) {
-                yaml <- c (yaml,
-                           paste0 (i3, "- ", ex [[i]] [j, 1], ": ", ex [[i]] [j, 2]))
-            }
-        }
-    }
+    yaml <- add_params_to_yaml (ex, yaml, fn, i1, i2, i3)
 
     return (yaml)
 }
@@ -623,6 +603,40 @@ assign_names_to_params <- function (x, pkg) {
                      return (i)    })
 
     return (x)
+}
+
+#' add to parameters list of yaml, duplicating fn name and preprocessing stages
+#' each time
+#' @param `x` List of arrays of parameter names and values, each of which
+#' specifies one set of arguments submitted to `fn`.
+#' @return Modified version of `yaml` which repeats all submitted stages once
+#' for each list item of `x`.
+#' @noRd
+add_params_to_yaml <- function (x, yaml, fn, i1, i2, i3) {
+
+    fn_start <- grep (paste0 ("- ", fn, ":"), yaml)
+    pre <- yaml [fn_start:length (yaml)]
+    yaml <- yaml [1:(fn_start - 1)]
+
+    for (i in seq_along (x)) {
+        pre [1] <- paste0 (i1, "- ", names (x) [i], ":")
+        yaml <- c (yaml,
+                   pre,
+                   paste0 (i2, "- parameters:"))
+        # functions with no parameters - these are not processed in any
+        # autotests
+        if (nrow (x [[i]]) == 1 & all (is.na (x [[i]] [, 1]))) {
+            yaml <- c (yaml,
+                       paste0 (i3, "- (none)"))
+        } else {
+            for (j in seq (nrow (x [[i]]))) {
+                yaml <- c (yaml,
+                           paste0 (i3, "- ", x [[i]] [j, 1], ": ", x [[i]] [j, 2]))
+            }
+        }
+    }
+
+    return (yaml)
 }
 
 # merge multi-line expressions to single line:
