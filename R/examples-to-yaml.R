@@ -109,21 +109,21 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     fn_calls <- grep (paste0 (paste0 (aliases, "\\s?\\("), collapse = "|"), x)
     x <- x [seq (max (fn_calls))]
 
-    ex <- extract_primary_call_content (x, aliases)
+    x_content <- extract_primary_call_content (x, aliases)
 
-    ex <- rm_assignment_operators (ex, fn)
-    ex <- split_args_at_equals (ex)
+    x_content <- rm_assignment_operators (x_content, fn)
+    x_content <- split_args_at_equals (x_content)
 
-    yaml <- add_prev_prepro (ex, yaml, fn, prev_fns, i2, i3)
+    yaml <- add_prev_prepro (x_content, yaml, fn, prev_fns, i2, i3)
     yaml <- yaml [which (!duplicated (yaml))]
 
-    ex <- assign_names_to_params (ex, pkg)
+    x_content <- assign_names_to_params (x_content, pkg)
 
     # Finally, check documentation to see whether those parameters include
     # descriptions of expected classes
     # ... TODO
 
-    yaml <- add_params_to_yaml (ex, yaml, fn, i1, i2, i3)
+    yaml <- add_params_to_yaml (x_content, yaml, fn, i1, i2, i3)
 
     return (yaml)
 }
