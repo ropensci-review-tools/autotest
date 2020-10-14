@@ -93,7 +93,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     x <- x [which (!x %in% temp$rm_lines)]
     rm (temp)
 
-    yaml <- prepro_return_values (x, yaml, has_prepro, aliases, i2, i3)
+    yaml <- prepro_return_values (x, yaml, aliases, has_prepro, i2, i3)
     if (!has_prepro)
         has_prepro <- any (grepl ("- proprocess:$", yaml))
 
@@ -129,7 +129,7 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
 
     ex <- extract_primary_call_content (x, aliases)
 
-    ex <- rm_assigment_operators (ex, fn)
+    ex <- rm_assignment_operators (ex, fn)
 
     # split all example lines around "=", but only if they're not quoted
     ex <- lapply (ex, function (i) {
@@ -252,6 +252,11 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     return (yaml)
 }
 
+#' @param fn Proposed name of which which may be a method dispatch
+#' @param is_dispatch Logical
+#' @return fn if not dispatch, otherwise the (shorter) name of the class of
+#' object on which dispatch is implemented.
+#' @noRd
 get_function_short_name <- function (fn, is_dispatch) {
     fn_short <- fn
     if (is_dispatch &
@@ -262,7 +267,11 @@ get_function_short_name <- function (fn, is_dispatch) {
     return (fn_short)
 }
 
-# find which lines in `x` call `fn`:
+#' @param x Lines of example code
+#' @param fn Name of primary function
+#' @param aliases Aliases for `fn`
+#' @return Index of lines in `x` which call the primary function or its alises
+#' @noRd
 find_function_calls <- function (x, fn, aliases) {
     is_dispatch <- attr (x, "is_dispatch")
 
@@ -281,6 +290,13 @@ find_function_calls <- function (x, fn, aliases) {
     return (fn_calls)
 }
 
+#' @param x Lines of example code
+#' @param yaml yaml representation of one example
+#' @param fn_calls Result of `find_function_calls`
+#' @param prev_fns yaml representation of previous function calls
+#' @return Potentially modified version of yaml with preprocessing lines
+#' appended
+#' @noRd
 add_preprocessing_to_yaml <- function (x, yaml, fn_calls, prev_fns, i2, i3) {
     if (fn_calls [1] > 1) {
         yaml <- c (yaml,
@@ -300,7 +316,12 @@ add_preprocessing_to_yaml <- function (x, yaml, fn_calls, prev_fns, i2, i3) {
     return (yaml)
 }
 
-# move any library calls from x to yaml preprocessing
+#' @param x Lines of example code
+#' @param has_prepro logical
+#' @param yaml yaml representation of one example
+#' @return List including potentially modified version of `yaml` with any
+#' `library` calls appended to "preprocess" stage, and removed from `x`.
+#' @noRd
 library_calls_to_yaml <- function (x, has_prepro, yaml, i2, i3) {
     if (any (grepl ("^library\\s?\\(", x))) {
         index <- grep ("^library\\s?\\(", x)
@@ -322,11 +343,17 @@ library_calls_to_yaml <- function (x, has_prepro, yaml, i2, i3) {
     return (list (yaml = yaml, x = x, has_prepro = has_prepro))
 }
 
-# Parse the function calls, and only retain those for which the first enclosing
-# functions are the primary function, which notably excludes 'stopifnot'
-# statements and similar. Any of these which also assign to named variables are
-# also included in pre-processing, in case subsequent calls refer to those
-# objects
+#' Parse the function calls, and only retain those for which the first enclosing
+#' functions are the primary function, which notably excludes 'stopifnot'
+#' statements and similar. Any of these which also assign to named variables are
+#' also included in pre-processing, in case subsequent calls refer to those
+#' objects
+#'
+#' @return List including potentially modified version of `yaml` with
+#' preprocessing lines representing any primary function calls which include
+#' assignment operations, along with an index of lines which may be removed from
+#' `x` as they do not call primary functions or aliases.
+#' @noRd
 parse_primary_fn_calls <- function (x, yaml, aliases, has_prepro, i2, i3) {
     rm_lines <- NULL
     rm_fns <- c ("stopifnot")
@@ -355,9 +382,12 @@ parse_primary_fn_calls <- function (x, yaml, aliases, has_prepro, i2, i3) {
     return (list (yaml = yaml, rm_lines = rm_lines))
 }
 
-# include any primary function calls which also assign return values as
-# preprocessing steps
-prepro_return_values <- function (x, yaml, has_prepro, aliases, i2, i3) {
+#' Include any primary function calls which also assign return values as
+#' preprocessing steps. This differs from `parse_primary_fn_calls` because it
+#' also parses expressions which assign values without necessarily being
+#' function calls.
+#' @noRd
+prepro_return_values <- function (x, yaml, aliases, has_prepro, i2, i3) {
     prepro <- vapply (x, function (i) {
                           p <- utils::getParseData (parse (text = i))
                           ret <- FALSE
@@ -391,7 +421,10 @@ prepro_return_values <- function (x, yaml, has_prepro, aliases, i2, i3) {
     return (yaml)
 }
 
-# reduce function calls in x down to primary function calls
+#' reduce function calls in x down to primary function calls
+#' @return Modified verison of `x` which only includes lines which call primary
+#' function or its aliases.
+#' @noRd
 chk_fn_calls_are_primary <- function (x, fn, fn_short, aliases) {
     chk <- vapply (x, function (i) {
                        p <- utils::getParseData (parse (text = i))
@@ -415,7 +448,12 @@ chk_fn_calls_are_primary <- function (x, fn, fn_short, aliases) {
     return (x)
 }
 
-# grab content from all primary calls inside primary parentheses:
+#' Extract content from inside primary parentheses of all primary function calls 
+#' @param x Lines of example code reduced down to primary function calls only
+#' @param aliases List of all aliases for function(s) being called
+#' @return Named list each item of which is names by the function it calls, and
+#' contains a string representing the content of the primary call.
+#' @noRd
 extract_primary_call_content <- function (x, aliases) {
     br1 <- lapply (aliases, function (a) {
                        x <- gsub (paste0 (a, "\\s?"), a, x)
@@ -456,6 +494,14 @@ extract_primary_call_content <- function (x, aliases) {
     return (split_content_at_commas (x))
 }
 
+#' Split the content of primary calls at any primary dividing commas (if such
+#' exist), effectively separating distinct argument values for each parameter.
+#' @param x The content of primary calls as initially extracted above in
+#' `extract_primary_call_content`
+#' @return Potentially modified form of `x`, with each single-character list
+#' item split into multiple elements, one for each parameter, around primary
+#' dividing commas.
+#' @noRd
 split_content_at_commas <- function (x) {
 
     x <- lapply (x, function (i) {
@@ -487,11 +533,11 @@ split_content_at_commas <- function (x) {
     return (x)
 }
 
-#' @param x content of primary function calls which may include assignment
-#' operators
+#' @param x content of primary function calls split into separate parameters,
+#' each of which may include assignment operators
 #' @return Same content but with assignment operations removed
 #' @noRd
-rm_assigment_operators <- function (x, fn) {
+rm_assignment_operators <- function (x, fn) {
     for (i in seq_along (x)) {
         p <- tryCatch (utils::getParseData (parse (text = x [[i]])),
                        error = function (e) NULL)
