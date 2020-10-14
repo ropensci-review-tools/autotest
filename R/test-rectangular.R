@@ -15,6 +15,10 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
         res1 <- res2 <- res3 <- res4 <- NULL
 
         other <- c ("data.frame", "tibble::tibble", "data.table::data.table")
+        if (length (classes) > 0) {
+            other <- other [which (gsub (".*::", "", other) %in% classes)]
+        }
+
         for (o in seq_along (other)) {
             this_ret <- test_rect_as_other (this_fn, params_r, r, other [o])
             ret <- rbind (ret, this_ret)
@@ -24,9 +28,13 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
             }
         }
 
-        ret <- compare_rect_outputs (ret, res1, res2, this_fn, params, r)
-        ret <- compare_rect_outputs (ret, res1, res3, this_fn, params, r)
-        ret <- compare_rect_outputs (ret, res2, res3, this_fn, params, r)
+        if ("res1" %in% ls () & "res2" %in% ls ()) {
+            ret <- compare_rect_outputs (ret, res1, res2, this_fn, params, r)
+            if ("res3" %in% ls ()) {
+                ret <- compare_rect_outputs (ret, res1, res3, this_fn, params, r)
+                ret <- compare_rect_outputs (ret, res2, res3, this_fn, params, r)
+            }
+        }
 
         # Modify class definitions for rectangular inputs if not excluded by
         # yaml class definitions

@@ -52,7 +52,15 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
     return (ret)
 }
 
-# convert one example from get_fn_exs to yaml output
+#' @param pkg Name (not file path) of package
+#' @param pkg_full File path for source packages, otherwise same as `pkg`
+#' @param fn Name of function for which yaml is to be constructed
+#' @param x All lines of example code for function
+#' @param aliases Aliases for the function
+#' @param prev_fns yaml for previous functions to be used as pre-processing
+#' stages for nominated function.
+#' @return An autotest `yaml` specification of the example code given in `x`.
+#' @noRd
 one_ex_to_yaml <- function (pkg, pkg_full, fn, x, aliases = NULL, prev_fns = NULL) {
 
     yaml <- c (paste0 ("package: ", pkg),
@@ -119,6 +127,18 @@ one_ex_to_yaml <- function (pkg, pkg_full, fn, x, aliases = NULL, prev_fns = NUL
     # Finally, check documentation to see whether those parameters include
     # descriptions of expected classes
     classes <- param_classes_in_desc (x_content, yaml, pkg_full, fn)
+    if (length (classes) > 0) {
+        yaml <- c (yaml,
+                   paste0 (yaml_indent (2), "- class:"))
+        for (i in seq_along (classes)) {
+            yaml <- c (yaml,
+                       paste0 (yaml_indent (3),
+                               "- ",
+                               names (classes ) [i],
+                               ": ",
+                               classes [[i]]))
+        }
+    }
 
     yaml <- add_params_to_yaml (x_content, yaml, fn)
 
@@ -677,9 +697,21 @@ param_classes_in_desc <- function (x, yaml, pkg, fn_name) {
                                  logical (1),
                                  USE.NAMES = FALSE)
 
-    names (class_in_desc) <- param_names
+    index <- which (class_in_desc)
+    param_names <- param_names [index]
+    param_classes <- vapply (param_descs [index], function (i) {
+                                 i_s <- gsub ("\"|\'|\`", "", strsplit (i, " ") [[1]])
+                                 chk <- vapply (i_s, function (j)
+                                                any (grepl (j, classes)),
+                                                logical (1),
+                                                USE.NAMES = FALSE)
+                                 return (i_s [which (chk) [1]])
+                                 }, character (1),
+                                 USE.NAMES = FALSE)
+    ret <- as.list (param_classes)
+    names (ret) <- param_names
 
-    return (class_in_desc)
+    return (ret)
 }
 
 
