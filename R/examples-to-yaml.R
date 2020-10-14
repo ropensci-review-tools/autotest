@@ -135,35 +135,8 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
     yaml <- add_prev_prepro (ex, yaml, fn, prev_fns, i2, i3)
     yaml <- yaml [which (!duplicated (yaml))]
 
-    # assign names to any unnamed parameters:
-    pkg_env <- as.environment (paste0 ("package:", pkg))
-    all_nms <- NULL
-    for (i in seq (ex)) {
-        pars <- formals (fun = names (ex) [i], envir = pkg_env)
-        nms <- names (pars)
-        all_nms <- unique (c (all_nms, nms))
-        if (any (is.na (ex [[i]] [, 1]))) {
-            other_nms <- nms [which (!nms %in% ex [[i]] [, 1])]
-            # other_nms will be NULL for fns which have no args
-            if (!all (is.null (other_nms))) {
-                index <- which (is.na (ex [[i]] [, 1]))
-                ex [[i]] [index, 1] <- other_nms [seq (index)]
-            }
-        }
-    }
+    ex <- assign_names_to_params (ex, pkg)
 
-    # remove any extraneous white space
-    ex <- lapply (ex, function (i) {
-                      i [, 1] <- gsub ("^\\s?|\\s?$", "", i [, 1])
-                      i [, 2] <- gsub ("^\\s?|\\s?$", "", i [, 2])
-                      return (i)    })
-
-    # this may sometimes fail with non-trival calls, such as starting an example
-    # line which calls the primary function with `lapply`, `map`, or something
-    # like that. These are virtually impossible to parse, so are caught and
-    # removed here. (First element of ex will be NA for fns which have no args.)
-    ex <- lapply (ex, function (i) i [which (i [, 1] %in% all_nms |
-                                             is.na (i [, 1])), , drop = FALSE])
     # Default values of double quotes must also be replaced with escape
     # characters. Parameters may also be called "null" (like
     # changepoint::decision), yet this is a reserved yaml word, so must be
@@ -611,6 +584,44 @@ get_preprocess_lines <- function (x) {
         })
     ret <- unlist (ret)
     ret [which (!duplicated (ret))]
+}
+
+#' @param x Content of primary function calls split into separate parameters.
+#' Only those assigning to named values will have names
+#' @return Equivalent to `x`, but with all unnamed parameters (those passed by
+#' order) given names
+#' @NoRd
+assign_names_to_params <- function (x, pkg) {
+    pkg_env <- as.environment (paste0 ("package:", pkg))
+    all_nms <- NULL
+    for (i in seq (x)) {
+        pars <- formals (fun = names (x) [i], envir = pkg_env)
+        nms <- names (pars)
+        all_nms <- unique (c (all_nms, nms))
+        if (any (is.na (x [[i]] [, 1]))) { # first column hold parameter names
+            other_nms <- nms [which (!nms %in% x [[i]] [, 1])]
+            # other_nms will be NULL for fns which have no args
+            if (!all (is.null (other_nms))) {
+                index <- which (is.na (x [[i]] [, 1]))
+                x [[i]] [index, 1] <- other_nms [seq (index)]
+            }
+        }
+    }
+    
+    # also also remove any extraneous white space
+    x <- lapply (x, function (i) {
+                     i [, 1] <- gsub ("^\\s?|\\s?$", "", i [, 1])
+                     i [, 2] <- gsub ("^\\s?|\\s?$", "", i [, 2])
+                     return (i)    })
+
+    # this may sometimes fail with non-trival calls, such as starting an example
+    # line which calls the primary function with `lapply`, `map`, or something
+    # like that. These are virtually impossible to parse, so are caught and
+    # removed here. (First element of ex will be NA for fns which have no args.)
+    x <- lapply (x, function (i) i [which (i [, 1] %in% all_nms |
+                                           is.na (i [, 1])), , drop = FALSE])
+
+    return (x)
 }
 
 # merge multi-line expressions to single line:
