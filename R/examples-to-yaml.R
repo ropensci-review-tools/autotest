@@ -137,17 +137,9 @@ one_ex_to_yaml <- function (pkg, fn, x, aliases = NULL, prev_fns = NULL) {
 
     ex <- assign_names_to_params (ex, pkg)
 
-    # Default values of double quotes must also be replaced with escape
-    # characters. Parameters may also be called "null" (like
-    # changepoint::decision), yet this is a reserved yaml word, so must be
-    # quoted.
-    ex <- lapply (ex, function (i) {
-                      i [which (i [, 2] == ""), 2] <- "\"\""
-                      i [which (i [, 1] == "null"), 1] <- "\"null\""
-                      return (i)    })
-
     # Finally, check documentation to see whether those parameters include
     # descriptions of expected classes
+    # ... TODO
 
     # add to parameters list of yaml, duplicating fn name and preprocessing
     # stages each time:
@@ -620,6 +612,15 @@ assign_names_to_params <- function (x, pkg) {
     # removed here. (First element of ex will be NA for fns which have no args.)
     x <- lapply (x, function (i) i [which (i [, 1] %in% all_nms |
                                            is.na (i [, 1])), , drop = FALSE])
+
+    # Default values of double quotes must also be replaced with escape
+    # characters. Parameters may also be called "null" (like
+    # changepoint::decision), yet this is a reserved yaml word, so must be
+    # quoted.
+    x <- lapply (x, function (i) {
+                     i [which (i [, 2] == ""), 2] <- "\"\""
+                     i [which (i [, 1] == "null"), 1] <- "\"null\""
+                     return (i)    })
 
     return (x)
 }
