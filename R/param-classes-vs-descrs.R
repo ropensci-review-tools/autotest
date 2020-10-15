@@ -80,7 +80,9 @@ param_classes_in_desc <- function (yaml, pkg_full, rdname) {
 class_in_main_fn_desc <- function (yaml, fn_name, param_descs) {
     res <- parse_yaml_template (yaml)
     e <- new.env ()
-    eval (parse (text = res$preprocess [[fn_name]]), envir = e)
+    suppressPackageStartupMessages (
+            eval (parse (text = res$preprocess [[fn_name]]), envir = e)
+            )
     classes <- unique (unlist (lapply (ls (envir = e), function (i)
                                        class (get (i, envir = e)))))
     class_in_desc <- vapply (param_descs, function (i) {
