@@ -21,7 +21,6 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
     count <- 1
     for (i in seq (res$parameters)) {
         this_fn <- names (res$parameters) [i]
-
         params <- get_params (res, i, this_fn)
         params <- params [which (params != "NULL")]
         classes <- res$classes [[i]]
@@ -79,7 +78,7 @@ autotest_package <- function (package, exclude = NULL, quiet = FALSE) {
     }
     res <- res [which (!duplicated (res)), ]
 
-    no_examples <- fns_without_examples (package, exs)
+    no_examples <- fns_without_examples (package)
     if (length (no_examples) > 0) {
         for (i in no_examples) {
             rtemp <- report_object (type = "error",

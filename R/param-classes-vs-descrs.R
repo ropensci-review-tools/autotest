@@ -3,6 +3,7 @@
 #' @param yaml An autotest `yaml` including only pre-processing specifications,
 #' and NOT including either class or parameter definitions.
 #' @param pkg Either name of locally installed package or path to source
+#' @param rdname Name of .Rd file documented function represnted in `yaml`.
 #' @return A `data.frame` with the following columns:
 #'  1. "parameter" the name of each parameter of the function represented in the
 #'  yaml
@@ -15,7 +16,7 @@
 #'  5. "fn_is_construtor" Logical variable for any non-NA `param_classes`
 #'  indicating whether they functions they describe serve as class-constructors.
 #' @noRd
-param_classes_in_desc <- function (yaml, pkg_full) {
+param_classes_in_desc <- function (yaml, pkg_full, rdname) {
 
     i <- grep ("functions:", yaml)
     if (length (i) > 1)
@@ -26,7 +27,7 @@ param_classes_in_desc <- function (yaml, pkg_full) {
 
     if (pkg_is_source (pkg_full)) {
         pkg <- get_package_name (pkg_full)
-        f <- file.path (pkg_full, "man", paste0 (fn_name, ".Rd"))
+        f <- file.path (pkg_full, "man", paste0 (rdname, ".Rd"))
         m <- get_Rd_metadata (tools::parse_Rd (f), "arguments")
     } else {
         r <- tools::Rd_db (pkg)
@@ -84,7 +85,7 @@ class_in_main_fn_desc <- function (yaml, fn_name, param_descs) {
                                        class (get (i, envir = e)))))
     class_in_desc <- vapply (param_descs, function (i) {
                                  i_s <- gsub ("\"|\'|\`", "", strsplit (i, " ") [[1]])
-                                 i_s <- gsub ("^.*\\{\\}$", "", i_s)
+                                 i_s <- gsub ("^.*\\{\\}$|^\\(|\\)$", "", i_s)
                                  chk <- vapply (i_s, function (j)
                                                 any (grepl (j, classes)),
                                                 logical (1),
@@ -110,8 +111,9 @@ param_desc_is_other_fn <- function (pkg, param_descs) {
     for (p in plist)
         if (!paste0 ("package:", p) %in% search ())
             suppressMessages (library (p, character.only = TRUE))
-    allfns <- lapply (search (), function (i) ls (envir = as.environment (i)))
-    names (allfns) <- search ()
+    s <- search () [!search () == ".GlobalEnv"]
+    allfns <- lapply (s, function (i) ls (envir = as.environment (i)))
+    names (allfns) <- s
 
     param_classes <- vapply (param_descs, function (i) {
                                  i_s <- gsub ("\"|\'|\`|^.*\\{|\\}$", "",

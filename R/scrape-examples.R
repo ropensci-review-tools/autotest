@@ -5,21 +5,21 @@ get_all_examples <- function (package, is_source, exclude = NULL) {
     fns <- get_pkg_functions (package)
     if (!is.null (exclude))
         fns <- fns [which (!fns %in% exclude)]
+    topics <- fns_to_topics (fns, package)
+
+    index <- which (!duplicated (topics$topic))
+    topic <- topics$topic [index]
+    rdnames <- gsub ("\\.Rd$", "", topics$name [index])
 
     exs <- list ()
-    for (i in seq (fns)) {
-        fn <- fns [i]
-        exi <- get_fn_exs (package, fn, is_source = is_source)
+    for (i in seq (rdnames)) {
+        exi <- get_fn_exs (package, rdnames [i], topic [i], is_source = is_source)
         if (!is.null (exi)) {
+            attr (exi, "Rdname") <- rdnames [i]
             exs [[length (exs) + 1]] <- exi
             names (exs) [length (exs)] <- fns [i]
         }
     }
-
-    # reduce only to examples from functions, not from data sets
-    ex_classes <- vapply (names (exs), function (i)
-                          class (get (i)) [1], character (1))
-    exs <- exs [which (ex_classes == "function")]
 
     not_null <- vapply (exs, function (i) length (i) > 0, logical (1))
     ret <- exs [not_null]
@@ -28,7 +28,8 @@ get_all_examples <- function (package, is_source, exclude = NULL) {
     # single quotes with esacped double versions (because yaml::yaml.load fails
     # on the former)
     ret <- lapply (ret, function (i) {
-                       lapply (i, function (j) {
+                       a <- attributes (i)
+                       out <- lapply (i, function (j) {
                                    index <- grep ("^\\(", j)
                                    if (length (index) > 0) {
                                        j [index] <-
@@ -37,17 +38,17 @@ get_all_examples <- function (package, is_source, exclude = NULL) {
                                    }
                                    j <- gsub ("'", "\"", j, fixed = TRUE)
                                    return (j)   })
-        })
+                       attributes (out) <- a
+                       return (out) })
 
 
     return (ret)
 }
 
-get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
-                        is_source = FALSE) {
+get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
+                        exclude_not_run = TRUE, is_source = FALSE) {
     
-
-    ex <- get_example_lines (pkg, fn)
+    ex <- get_example_lines (pkg, rd_name)
 
     if (length (ex) == 0)
         return (NULL)
@@ -86,16 +87,13 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
     ex <- rm_plot_lines (ex)
 
     # find all points of function calls:
-    pkg_name <- get_package_name (pkg)
-    fns <- ls (paste0 ("package:", pkg_name))
-    dispatches <- dispatched_fns (pkg_name)
-    is_dispatch <- FALSE
-    if (!is.null (dispatches)) {
-        fns <- c (fns, gsub ("\\..*$", "", dispatches))
-        if (fn %in% dispatches) {
-            fn <- c (fn, gsub ("\\..*$", "", dispatches))
-            is_dispatch <- TRUE
-        }
+    fns <- topic_to_fns (topic, package = package)
+    dispatches <- dispatched_fns (package)
+    is_dispatch <- any (fns %in% dispatches)
+    if (is_dispatch) {
+        fns_short <- vapply (fns, function (i) strsplit (i, "\\.") [[1]] [1],
+                             character (1), USE.NAMES = FALSE)
+        fns <- fns_short [which (!duplicated (fns_short))]
     }
 
     fn_calls <- do.call (c, lapply (fns, function (i) grep (i, ex)))
@@ -129,10 +127,10 @@ get_fn_exs <- function (pkg, fn, rm_seed = TRUE, exclude_not_run = TRUE,
     # concatenate any example lines which do not call the actual function or
     # it's aliases into effective preprocessing lines for subsequent function
     # calls.
-    aliases <- paste0 (get_fn_aliases (pkg, fn [1]), collapse = "|")
+    aliases <- paste0 (get_fn_aliases (pkg, rd_name), collapse = "|")
     index <- vapply (ret, function (i) any (grepl (aliases, i)), logical (1))
-    if (length (fn) == 2) { # when it's a dispatch method
-        index2 <- vapply (ret, function (i) any (grepl (fn [2], i)), logical (1))
+    if (length (fns) == 2) { # when it's a dispatch method
+        index2 <- vapply (ret, function (i) any (grepl (fns [2], i)), logical (1))
         index <- index | index2
     }
 
@@ -222,32 +220,18 @@ get_package_name <- function (package) {
 
 # find which functions are method dispatches, so grep can be done on the method
 # and not the class
-dispatched_fns <- function (pkg_name) {
-    h <- utils::help (package = eval (substitute (pkg_name)), help_type = "text")
-    fns <- h$info [[2]]
-    fns <- gsub ("\\s.*", "", fns [which (!grepl ("^\\s", fns))])
-    # reduce only to exported functions, methods, or data sets
-    fns <- fns [fns %in% ls (paste0 ("package:", pkg_name))]
-    # Then reduce only to functions:
-    fn_classes <- vapply (fns, function (i) class (get (i)) [1], character (1))
-    fns <- fns [which (fn_classes == "function")]
+dispatched_fns <- function (package) {
+    res <- fns_to_topics (package = package)
+    index <- grep ("[[:alpha:]]?\\.[[:alpha:]]", res$alias)
+    if (length (index) == 0)
+        return (NULL)
 
-    index <- grep ("\\.", fns)
-    classes <- gsub (".*\\.", "", fns [index])
-    dispatch <- rep (FALSE, length (classes))
-    for (i in seq_along (index)) {
-        h <- utils::help (topic = classes [i],
-                          package = eval (substitute (pkg_name)),
-                          help_type = "text")
-        if (length (nchar (h)) > 0)
-            dispatch [i] <- TRUE
-    }
-
-    res <- NULL
-    if (any (dispatch))
-        res <- fns [index] [which (dispatch)]
-
-    return (res)
+    fns <- res$alias [index]
+    fns_short <- vapply (fns, function (i) strsplit (i, "\\.") [[1]] [1],
+                         character (1), USE.NAMES = FALSE)
+    index <- which (vapply (fns_short, function (i) any (grepl (i, res$alias)),
+                            logical (1), USE.NAMES = FALSE))
+    return (fns_short [index])
 }
 
 # join multiple lines connected by operators (*, /, -, +)

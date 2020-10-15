@@ -35,11 +35,13 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
     for (i in seq (exs)) {
         this_fn <- names (exs) [i]
         prev_fns <- list ()
-        aliases <- get_fn_aliases (package, this_fn)
+        rdname <- attr (exs [[i]], "Rdname")
+        aliases <- get_fn_aliases (package, rdname)
         for (xj in exs [[i]]) {
             y <- one_ex_to_yaml (pkg = pkg_name,
                                  pkg_full = package,
                                  fn = this_fn,
+                                 rdname = rdname,
                                  x = xj,
                                  aliases = aliases,
                                  prev_fns = prev_fns)
@@ -56,13 +58,14 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
 #' @param pkg Name (not file path) of package
 #' @param pkg_full File path for source packages, otherwise same as `pkg`
 #' @param fn Name of function for which yaml is to be constructed
+#' @param rdname Name of .Rd file documenting fn
 #' @param x All lines of example code for function
 #' @param aliases Aliases for the function
 #' @param prev_fns yaml for previous functions to be used as pre-processing
 #' stages for nominated function.
 #' @return An autotest `yaml` specification of the example code given in `x`.
 #' @noRd
-one_ex_to_yaml <- function (pkg, pkg_full, fn, x, aliases = NULL, prev_fns = NULL) {
+one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x, aliases = NULL, prev_fns = NULL) {
 
     yaml <- c (paste0 ("package: ", pkg),
                "functions:",
@@ -127,7 +130,7 @@ one_ex_to_yaml <- function (pkg, pkg_full, fn, x, aliases = NULL, prev_fns = NUL
 
     # Finally, check documentation to see whether those parameters include
     # descriptions of expected classes
-    classes <- param_classes_in_desc (yaml, pkg_full)
+    classes <- param_classes_in_desc (yaml, pkg_full, rdname)
 
     yaml <- add_params_to_yaml (x_content, yaml, fn)
 
