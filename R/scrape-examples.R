@@ -195,8 +195,10 @@ get_example_lines <- function (package, fn) {
                 if (v > v0)
                     doload <- TRUE
             }
-            if (doload)
+            if (doload) {
+                requireNamespace ("devtools")
                 devtools::load_all (package, export_all = FALSE)
+            }
         } else {
             ex <- NULL
         }

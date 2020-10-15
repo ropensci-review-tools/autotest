@@ -132,7 +132,6 @@ add_msg_output <- function (res, msgs, types = c ("warning", "error"),
 
 get_pkg_functions <- function (package) {
     if (pkg_is_source (package)) {
-        requireNamespace ("devtools")
         fns <- gsub (".Rd$", "",
                      list.files (file.path (package, "man"), pattern = ".Rd$"))
         fn_classes <- vapply (fns, function (i)
