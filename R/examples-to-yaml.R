@@ -37,6 +37,8 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
         prev_fns <- list ()
         rdname <- attr (exs [[i]], "Rdname")
         aliases <- get_fn_aliases (package, rdname)
+
+        chk_desc <- TRUE
         for (xj in exs [[i]]) {
             y <- one_ex_to_yaml (pkg = pkg_name,
                                  pkg_full = package,
@@ -45,11 +47,21 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
                                  x = xj,
                                  aliases = aliases,
                                  prev_fns = prev_fns)
+            if (!is.null (y) & chk_desc) {
+                # Check documentation to see which parameters include descriptions of
+                # expected classes. This just needs the first pre-processing
+                # steps, which are the same even for cases where lots of
+                # prev_fns have been repeated
+                par_start <- grep ("- parameters:", y) [1] - 1
+                classes <- param_classes_in_desc (y [1:par_start], package, rdname)
+                chk_desc <- FALSE
+            }
             if (!is.null (y)) {
                 ret [[length (ret) + 1]] <- prev_fns [[length (prev_fns) + 1]] <- y
                 names (ret ) [length (ret)] <- this_fn
             }
         }
+
     }
 
     return (ret)
@@ -127,10 +139,6 @@ one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x, aliases = NULL, prev_f
     yaml <- yaml [which (!duplicated (yaml))]
 
     x_content <- assign_names_to_params (x_content, pkg)
-
-    # Finally, check documentation to see whether those parameters include
-    # descriptions of expected classes
-    classes <- param_classes_in_desc (yaml, pkg_full, rdname)
 
     yaml <- add_params_to_yaml (x_content, yaml, fn)
 

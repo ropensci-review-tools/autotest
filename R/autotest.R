@@ -74,7 +74,7 @@ autotest_package <- function (package, exclude = NULL, quiet = FALSE) {
         if (!quiet)
             message (cli::col_green (cli::symbol$tick, " [",
                                      i, " / ", length (exs),
-                                     "]: ", fn_name))
+                                     "]: ", fn_name [1]))
     }
     res <- res [which (!duplicated (res)), ]
 
