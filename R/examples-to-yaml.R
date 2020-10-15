@@ -126,19 +126,7 @@ one_ex_to_yaml <- function (pkg, pkg_full, fn, x, aliases = NULL, prev_fns = NUL
 
     # Finally, check documentation to see whether those parameters include
     # descriptions of expected classes
-    classes <- param_classes_in_desc (x_content, yaml, pkg_full, fn)
-    if (length (classes) > 0) {
-        yaml <- c (yaml,
-                   paste0 (yaml_indent (2), "- class:"))
-        for (i in seq_along (classes)) {
-            yaml <- c (yaml,
-                       paste0 (yaml_indent (3),
-                               "- ",
-                               names (classes ) [i],
-                               ": ",
-                               classes [[i]]))
-        }
-    }
+    classes <- param_classes_in_desc (yaml, pkg_full)
 
     yaml <- add_params_to_yaml (x_content, yaml, fn)
 
@@ -654,66 +642,6 @@ assign_names_to_params <- function (x, pkg) {
 
     return (x)
 }
-
-#' check whether params in `x` have classes that are specified in the
-#' description of `fn_name`
-#' @param x Content of primary function calls split into separate parameters.
-#' @return Named logical vector indicating whether classes of objects are
-#' specified in descriptions of each parameter
-#' @noRd
-param_classes_in_desc <- function (x, yaml, pkg, fn_name) {
-
-    if (pkg_is_source (pkg)) {
-        f <- file.path (pkg, "man", paste0 (fn_name, ".Rd"))
-        x <- get_Rd_metadata (tools::parse_Rd (f), "arguments")
-    } else {
-        r <- tools::Rd_db (pkg)
-        aliases <- lapply (r, function (i) get_Rd_metadata (i, "alias"))
-        i <- vapply (aliases, function (i) fn_name %in% i, logical (1))
-        r <- r [[which (i) [1] ]]
-        x <- get_Rd_metadata (tools::parse_Rd (r), "arguments")
-    }
-
-    x <- strsplit (x, "\\n") [[1]]
-    x <- x [x != ""]
-
-    param_names <- unlist (lapply (x, function (i)
-                                   eval (parse (text = i)) [[1]] [[1]]))
-    param_descs <- unlist (lapply (x, function (i)
-                                   eval (parse (text = i)) [[2]] [[1]]))
-
-    res <- parse_yaml_template (yaml)
-    e <- new.env ()
-    eval (parse (text = res$preprocess [[fn_name]]), envir = e)
-    classes <- unique (unlist (lapply (ls (envir = e), function (i)
-                                       class (get (i, envir = e)))))
-    class_in_desc <- vapply (param_descs, function (i) {
-                                 i_s <- gsub ("\"|\'|\`", "", strsplit (i, " ") [[1]])
-                                 chk <- vapply (i_s, function (j)
-                                                any (grepl (j, classes)),
-                                                logical (1),
-                                                USE.NAMES = FALSE)
-                                 return (any (chk)) },
-                                 logical (1),
-                                 USE.NAMES = FALSE)
-
-    index <- which (class_in_desc)
-    param_names <- param_names [index]
-    param_classes <- vapply (param_descs [index], function (i) {
-                                 i_s <- gsub ("\"|\'|\`", "", strsplit (i, " ") [[1]])
-                                 chk <- vapply (i_s, function (j)
-                                                any (grepl (j, classes)),
-                                                logical (1),
-                                                USE.NAMES = FALSE)
-                                 return (i_s [which (chk) [1]])
-                                 }, character (1),
-                                 USE.NAMES = FALSE)
-    ret <- as.list (param_classes)
-    names (ret) <- param_names
-
-    return (ret)
-}
-
 
 #' add to parameters list of yaml, duplicating fn name and preprocessing stages
 #' each time

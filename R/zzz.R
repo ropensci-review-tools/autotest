@@ -62,28 +62,42 @@ pkg_is_source <- function (package) {
     return (is_source)
 }
 
-# match opening and corresponding closing curly brackets in terms of line
-# numbers of input character vector, `x`.
-match_curlies <- function (x) {
-    opens <- vapply (gregexpr ("\\{", x), function (i) {
-                if (all (i <= 0))
-                    return (0L)
-                else
-                    return <- length (i)
-                           }, integer (1))
-    closes <- vapply (gregexpr ("\\}", x), function (i) {
-                if (all (i <= 0))
-                    return (0L)
-                else
-                    return <- length (i)
-                           }, integer (1))
-    oc <- cumsum (opens) - cumsum (closes)
-    return (which (oc == 0) [1] - 1)
-}
-
 get_git_hash <- function (package) {
     wd <- setwd (package)
     x <- system2 ("git", c ("log", "-1"), stdout = TRUE) [1]
     setwd (wd)
     return (gsub ("commit\\s+", "", x))
+}
+
+#' @param pkg Either name of locally-installed package or path to package source
+#' @param suggests If `FALSE`, return just names of package Imports, if `TRUE`
+#' then also include Suggests
+#' @return List of package Imports (and optionally Suggests)
+#' @noRd
+get_pkg_deps <- function (pkg, suggests = FALSE) {
+    if (pkg_is_source (pkg)) {
+        desc <- readLines (file.path (pkg, "DESCRIPTION"))
+        get_imports <- function (desc, s = "^Imports:") {
+            i_start <- grep (s, desc)
+            i_end <- grep ("[[:alpha:]]$|\\)$", desc)
+            i_end <- i_end [i_end >= i_start] [1]
+            imports <- gsub (s, "", paste0 (desc [i_start:i_end], collapse = " "))
+            imports <- strsplit (imports, ", ") [[1]]
+            imports <- gsub ("\\(.*\\)$", "", imports)
+            return (gsub ("^\\s*|\\s*$", "", imports))
+        }
+        imports <- get_imports (desc)
+        if (suggests)
+            imports <- c (imports, get_imports (desc, "^Suggests:"))
+    } else {
+        ip <- data.frame (utils::installed.packages ())
+        imports <- strsplit (ip$Imports [ip$Package == pkg], ", ") [[1]]
+        imports <- gsub ("\\s*\\(.*$", "", imports)
+        if (suggests) {
+            s <- strsplit (ip$Suggests [ip$Package == pkg], ", ") [[1]]
+            imports <- c (imports, gsub ("\\s*\\(.*$", "", s))
+        }
+    }
+
+    return (imports)
 }
