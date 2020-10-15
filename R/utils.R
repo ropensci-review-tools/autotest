@@ -171,11 +171,7 @@ fns_without_examples <- function (package, exs) {
     if (length (fns) == 0)
         return (NULL)
 
-    pkg_name <- package
-    if (pkg_is_source (package)) {
-        desc <- readLines (file.path (package, "DESCRIPTION"))
-        pkg_name <- gsub ("Package:\\s?", "", desc [grep ("^Package\\:", desc)])
-    }
+    pkg_name <- get_package_name (package)
 
     return (fns [which (fns %in% ls (paste0 ("package:", pkg_name)))])
 }

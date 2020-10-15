@@ -10,8 +10,7 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
 
     if (pkg_is_source (package)) {
 
-        desc <- readLines (file.path (package, "DESCRIPTION"))
-        pkg_name <- gsub ("Package:\\s?", "", desc [grep ("^Package\\:", desc)])
+        pkg_name <- get_package_name (package)
         if (!paste0 ("package:", pkg_name) %in% search ()) {
             requireNamespace ("devtools")
             devtools::load_all (package, export_all = FALSE)
