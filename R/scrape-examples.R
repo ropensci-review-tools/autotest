@@ -2,10 +2,10 @@
 
 get_all_examples <- function (package, is_source, exclude = NULL) {
 
-    fns <- get_pkg_functions (package)
+    fns <- m_get_pkg_functions (package)
     if (!is.null (exclude))
         fns <- fns [which (!fns %in% exclude)]
-    topics <- fns_to_topics (fns, package)
+    topics <- m_fns_to_topics (fns, package)
 
     index <- which (!duplicated (topics$topic))
     topic <- topics$topic [index]
@@ -221,7 +221,7 @@ get_package_name <- function (package) {
 # find which functions are method dispatches, so grep can be done on the method
 # and not the class
 dispatched_fns <- function (package) {
-    res <- fns_to_topics (package = package)
+    res <- m_fns_to_topics (package = package)
     index <- grep ("[[:alpha:]]?\\.[[:alpha:]]", res$alias)
     if (length (index) == 0)
         return (NULL)

@@ -27,8 +27,12 @@ get_pkg_functions <- function (package) {
 
     return (fns [which (!fns %in% other_fns)])
 }
+m_get_pkg_functions <- memoise::memoise (get_pkg_functions)
 
 #' @param package Name of locally installed package or path to local source
+#' @note This function is really slow, but is only called one so no gain from
+#' memoising.
+#' @noRd
 fns_without_examples <- function (package) {
     if (pkg_is_source (package)) {
         man_dir <- list.files (file.path (package, "man"), pattern = "\\.Rd$",
@@ -53,7 +57,7 @@ fns_without_examples <- function (package) {
     fns <- lapply (ex_alias [index], function (i) i$alias)
     fns <- unique (unlist (fns))
 
-    fns <- fns [which (fns %in% get_pkg_functions (package))]
+    fns <- fns [which (fns %in% m_get_pkg_functions (package))]
 
     return (fns)
 }
@@ -126,11 +130,13 @@ fns_to_topics <- function (x = NULL, package) {
     names (res) <- c ("alias", "topic", "name")
     return (res)
 }
+m_fns_to_topics <- memoise::memoise (fns_to_topics)
 
 #' @param topic A single .Rd topic
 #' @return List of aliases associated with that .Rd topic
 #' @noRd
 topic_to_fns <- function (topic, package) {
-    alias_topic <- fns_to_topics (package = package)
+    alias_topic <- m_fns_to_topics (package = package)
     return (alias_topic$alias [alias_topic$topic == topic])
 }
+m_topic_to_fns <- memoise::memoise (topic_to_fns)

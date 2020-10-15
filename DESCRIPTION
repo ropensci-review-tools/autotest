@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.0.1.316
+Version: 0.0.1.317
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -17,6 +17,7 @@ Imports:
     digest,
     here,
     magrittr,
+    memoise,
     methods,
     rlang,
     tibble,
