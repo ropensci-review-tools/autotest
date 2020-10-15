@@ -87,8 +87,8 @@ get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
     ex <- rm_plot_lines (ex)
 
     # find all points of function calls:
-    fns <- topic_to_fns (topic, package = package)
-    dispatches <- dispatched_fns (package)
+    fns <- topic_to_fns (topic, package = pkg)
+    dispatches <- dispatched_fns (pkg)
     is_dispatch <- any (fns %in% dispatches)
     if (is_dispatch) {
         fns_short <- vapply (fns, function (i) strsplit (i, "\\.") [[1]] [1],

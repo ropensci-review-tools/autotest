@@ -36,7 +36,9 @@ autotest_return <- function (pkg, params, this_fn, package = NULL) {
     }
 
     if (!is.null (attr (retval, "class"))) {
-        Rd_value <- get_Rd_value (package = package, fn_name = this_fn)
+        aliases <- fns_to_topics (package = package)
+        rdname <- gsub ("\\.Rd$", "", aliases$name [aliases$alias == this_fn])
+        Rd_value <- get_Rd_value (package = package, fn_name = rdname)
         if (is.null (Rd_value)) {
             ret <- rbind (ret,
                           report_object (type = "diagnostic",
