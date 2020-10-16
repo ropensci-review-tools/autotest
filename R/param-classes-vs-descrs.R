@@ -1,3 +1,80 @@
+
+pkg_param_classes <- function (package) {
+
+    if (pkg_is_source (package)) {
+        pkg <- get_package_name (package)
+        f <- file.path (package, "man")
+        flist <- list.files (f, full.names = TRUE, pattern = "*\\.Rd$")
+        rdnames <- gsub ("\\.Rd$", "",
+                        list.files (f, full.names = FALSE, pattern = "*\\.Rd$"))
+        params <- lapply (flist, function (i)
+                          get_Rd_metadata (tools::parse_Rd (i), "arguments"))
+        names (params) <- rdnames
+        fn_names <- vapply (flist, function (i)
+                            get_Rd_metadata (tools::parse_Rd (i), "alias") [1],
+                            character (1), USE.NAMES = FALSE)
+    } else {
+        r <- tools::Rd_db (package)
+        rdnames <- gsub ("\\.Rd$", "", names (r))
+        params <- lapply (r, function (i) get_Rd_metadata (i, "arguments"))
+        names (params) <- rdnames
+        fn_names <- unname (unlist (lapply (r, function (i)
+                                            get_Rd_metadata (i, "alias") [1])))
+    }
+
+    index <- which (vapply (params, length, integer (1)) > 0)
+    params <- lapply (params [index], function (i) {
+                      res <- strsplit (i, "\\n") [[1]]
+                      res [!grepl ("^\\s*$", res)]  })
+    fn_names <- fn_names [index]
+
+    # p is one result from tools:::.Rd_get_metadata (., "arguments"). Instances
+    # that are not able to be parsed return NA and are subsequently removed,
+    # meaning this will not necessarily catch all 
+    # TODO: Use `formals` to at least have names of all fn parameters
+    parse_one_params <- function (p) {
+        nm_desc <- vapply (p, function (i) {
+                               res <- tryCatch (eval (parse (text = i)),
+                                                error = function (e) NULL)
+                               if (is.null (res))
+                                   return (rep (NA_character_, 2))
+
+                               name <- res [[1]] [[1]]
+                               desc <- gsub ("\\n|\\t", "",
+                                             paste0 (unlist (res [[2]]),
+                                                     collapse = " "))
+                               c (name, desc)
+                               return (c (name, desc)) },
+                               character (2), USE.NAMES = FALSE)
+        index <- apply (nm_desc, 2, function (i) !all (is.na (i)))
+        data.frame (param = nm_desc [1, index],
+                    descr = nm_desc [2, index],
+                    stringsAsFactors = FALSE)
+    }
+    params <- lapply (seq_along (params), function (i) {
+                          res <- parse_one_params (params [[i]])
+                          res$rdname <- names (params) [i]
+                          return (res)  })
+    for (i in seq_along (params))
+        params [[i]]$fn_name <- fn_names [i]
+    params <- do.call (rbind, params)
+
+    objs <- get_example_objs (package)
+
+    nms <- strsplit (names (objs), "::")
+    ret <- data.frame (object = unname (objs),
+                       package = vapply (nms, function (i) i [1], character (1)),
+                       fn = vapply (nms, function (i) i [2], character (1)),
+                       stringsAsFactors = FALSE,
+                       row.names = seq_along (objs))
+
+    base_pkgs <- c ("stats", "graphics", "grDevices", "utils",
+                    "datasets", "methods", "base")
+    ret <- ret [which (!ret$package %in% base_pkgs), ]
+
+    return (ret)
+}
+
 #' Match parameter descriptions to classes of objects
 #'
 #' @param yaml An autotest `yaml` including only pre-processing specifications,
@@ -113,20 +190,44 @@ param_desc_is_other_fn <- function (pkg, param_descs) {
     for (p in plist)
         if (!paste0 ("package:", p) %in% search ())
             suppressMessages (library (p, character.only = TRUE))
-    s <- search () [!search () == ".GlobalEnv"]
+    s <- search ()
+    s <- s [grep ("^package:", s)]
     allfns <- lapply (s, function (i) ls (envir = as.environment (i)))
     names (allfns) <- s
+
+    # then also get all Rd topics
+    topics <- lapply (s, function (i) {
+                          rd <- tools::Rd_db (gsub ("^package:", "", i))
+                          vapply (rd, function (j) get_Rd_metadata (j, "name"),
+                                  character (1), USE.NAMES = FALSE)
+                                 })
+    for (i in seq_along (allfns)) {
+        allfns [[i]] <- unique (c (allfns [[i]], topics [[i]]))
+    }
+
+    match_txt_to_pkg <- function (txt, allfns) {
+        pkg_index <- vapply (allfns, function (i) any (grepl (txt, i)),
+                             logical (1))
+        pkgs <- names (pkg_index) [which (pkg_index)]
+        if (length (pkgs) > 0) {
+            # check whether any topics are "class" descriptions:
+            nms <- lapply (pkgs, function (i)
+                           allfns [[i]] [grep (txt, allfns [[i]]) ])
+            has_class <- vapply (nms, function (i)
+                                 any (grepl ("class|as\\.", i)),
+                                 logical (1))
+            if (any (has_class))
+                pkgs <- pkgs [which (has_class)]
+        }
+        # otherwise just default to first-listed package
+        return (pkgs [1])
+    }
 
     param_classes <- vapply (param_descs, function (i) {
                                  i_s <- gsub ("\"|\'|\`|^.*\\{|\\}$", "",
                                               strsplit (i, " ") [[1]])
-                                 s_in_pkg <- function (s, f) {
-                                     vapply (f, function (j) s %in% j, logical (1))
-                                 }
-                                 res <- vapply (i_s, function (j) {
-                                                    res <- s_in_pkg (j, allfns)
-                                                    res <- names (res) [which (res) [1]]
-                                                    return (gsub ("package:", "", res))
+                                 res <- vapply (i_s, function (txt) {
+                                                    match_txt_to_pkg (txt, allfns)
                                               }, character (1),
                                               USE.NAMES = FALSE)
                                  index <- which (!is.na (res))
@@ -136,7 +237,7 @@ param_desc_is_other_fn <- function (pkg, param_descs) {
                                  return (res)
                                  }, character (1),
                                  USE.NAMES = FALSE)
-    return (param_classes)
+    return (gsub ("^package:", "", param_classes))
 }
 
 #' Does the `fn` f construct a class-based object?

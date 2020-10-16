@@ -77,27 +77,32 @@ get_git_hash <- function (package) {
 get_pkg_deps <- function (pkg, suggests = FALSE) {
     if (pkg_is_source (pkg)) {
         desc <- readLines (file.path (pkg, "DESCRIPTION"))
-        get_imports <- function (desc, s = "^Imports:") {
+        get_deps <- function (desc, s = "^Imports:") {
             i_start <- grep (s, desc)
             i_end <- grep ("[[:alpha:]]$|\\)$", desc)
             i_end <- i_end [i_end >= i_start] [1]
-            imports <- gsub (s, "", paste0 (desc [i_start:i_end], collapse = " "))
-            imports <- strsplit (imports, ", ") [[1]]
-            imports <- gsub ("\\(.*\\)$", "", imports)
-            return (gsub ("^\\s*|\\s*$", "", imports))
+            deps <- gsub (s, "", paste0 (desc [i_start:i_end], collapse = " "))
+            deps <- strsplit (deps, ", ") [[1]]
+            deps <- gsub ("\\(.*\\)$", "", deps)
+            return (gsub ("^\\s*|\\s*$", "", deps))
         }
-        imports <- get_imports (desc)
+        deps <- get_deps (desc)
         if (suggests)
-            imports <- c (imports, get_imports (desc, "^Suggests:"))
+            deps <- c (deps, get_deps (desc, "^Suggests:"))
     } else {
         ip <- data.frame (utils::installed.packages ())
+        deps <- strsplit (ip$Depends [ip$Package == pkg], ", ") [[1]]
+        deps <- gsub ("\\s*\\(.*$", "", deps [!is.na (deps)])
         imports <- strsplit (ip$Imports [ip$Package == pkg], ", ") [[1]]
-        imports <- gsub ("\\s*\\(.*$", "", imports)
+        deps <- c (deps, gsub ("\\s*\\(.*$", "", imports [!is.na (imports)]))
         if (suggests) {
             s <- strsplit (ip$Suggests [ip$Package == pkg], ", ") [[1]]
-            imports <- c (imports, gsub ("\\s*\\(.*$", "", s))
+            deps <- c (deps, gsub ("\\s*\\(.*$", "", s [!is.na (s)]))
         }
     }
+    base_pkgs <- c ("stats", "graphics", "grDevices", "utils",
+                    "datasets", "methods", "base")
+    deps <- deps [which (!deps %in% c ("R", base_pkgs))]
 
-    return (imports)
+    return (deps)
 }

@@ -78,7 +78,7 @@ autotest_package <- function (package, exclude = NULL, quiet = FALSE) {
     }
     res <- res [which (!duplicated (res)), ]
 
-    no_examples <- m_fns_without_examples (package)
+    no_examples <- fns_without_examples (package)
     if (length (no_examples) > 0) {
         for (i in no_examples) {
             rtemp <- report_object (type = "error",
