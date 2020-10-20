@@ -261,3 +261,21 @@ param_desc_is_other_fn <- function (pkg, param_descs) {
                                  USE.NAMES = FALSE)
     return (gsub ("^package:", "", param_classes))
 }
+
+#' @param classes A single line of the return value of `param_classes_in_desc`,
+#' containing a parameter value and associated class in `class_in_desc`.
+#' @return `yaml` with additional line restricting class of the specified object
+#' to the specified value.
+#' @noRd
+add_class_restriction <- function (yaml, classes) {
+    if (!any (grepl ("- class:", yaml)))
+        yaml <- c (yaml, paste0 (yaml_indent (2), "- class:"))
+
+    yaml <- c (yaml,
+               paste0 (yaml_indent (3),
+                       "- ",
+                       classes$parameter [1],
+                       ": ",
+                       classes$class_in_desc [1]))
+    return (yaml)
+}

@@ -53,9 +53,14 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
                 # Check documentation to see which parameters include descriptions of
                 # expected classes.
                 classes <- param_classes_in_desc (y, package)
-                #if (any (!is.na (classes$class_in_desc)))
+                if (any (!is.na (classes$class_in_desc))) {
+                    classes <- classes [which (!is.na (classes$class_in_desc)), ]
+                    for (i in seq (nrow (classes)))
+                        y <- add_class_restriction (y, classes [i, ])
+                }
             }
             if (!is.null (y)) {
+                attr (y, "package") <- package
                 ret [[length (ret) + 1]] <- prev_fns [[length (prev_fns) + 1]] <- y
                 names (ret ) [length (ret)] <- this_fn
             }
