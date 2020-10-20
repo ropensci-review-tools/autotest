@@ -59,10 +59,16 @@ example_objects <- function (f,
         return (NULL)
 
     env <- new.env (parent = globalenv ())
-    utils::capture.output (
-        ret <- source (tmp, echo = FALSE, local = env, max.deparse.length = Inf)
-    )
-    o1 <- class (ret$value)
+    utils::capture.output (suppressWarnings (
+        ret <- tryCatch (source (tmp,
+                                 echo = FALSE,
+                                 local = env,
+                                 max.deparse.length = Inf),
+                         error = function (e) NULL)
+    ))
+    o1 <- NULL
+    if (!is.null (ret))
+        o1 <- class (ret$value)
     o2 <- unlist (lapply (ls (envir = env), function (i) class (get (i, envir = env))))
     ret <- unique (c (o1, o2))
 

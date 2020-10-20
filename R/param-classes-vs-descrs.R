@@ -1,4 +1,30 @@
 
+#' @param p Result from `tools:::.Rd_get_metadata (., "arguments")`. Instances
+#' that are not able to be parsed return NA and are subsequently removed,
+#' meaning this will not necessarily catch all 
+#' @noRd
+parse_one_params <- function (p) {
+    nm_desc <- vapply (p, function (i) {
+                           res <- tryCatch (eval (parse (text = i)),
+                                            error = function (e) NULL)
+                           # TODO: Use `formals` to at least have names of all
+                           # fn parameters
+                           if (is.null (res))
+                               return (rep (NA_character_, 2))
+
+                           name <- res [[1]] [[1]]
+                           desc <- gsub ("\\n|\\t", "",
+                                         paste0 (unlist (res [[2]]),
+                                                 collapse = " "))
+                           c (name, desc)
+                           return (c (name, desc)) },
+                           character (2), USE.NAMES = FALSE)
+    index <- apply (nm_desc, 2, function (i) !all (is.na (i)))
+    data.frame (param = nm_desc [1, index],
+                descr = nm_desc [2, index],
+                stringsAsFactors = FALSE)
+}
+
 pkg_param_classes <- function (package) {
 
     if (pkg_is_source (package)) {
@@ -28,29 +54,6 @@ pkg_param_classes <- function (package) {
                       res [!grepl ("^\\s*$", res)]  })
     fn_names <- fn_names [index]
 
-    # p is one result from tools:::.Rd_get_metadata (., "arguments"). Instances
-    # that are not able to be parsed return NA and are subsequently removed,
-    # meaning this will not necessarily catch all 
-    # TODO: Use `formals` to at least have names of all fn parameters
-    parse_one_params <- function (p) {
-        nm_desc <- vapply (p, function (i) {
-                               res <- tryCatch (eval (parse (text = i)),
-                                                error = function (e) NULL)
-                               if (is.null (res))
-                                   return (rep (NA_character_, 2))
-
-                               name <- res [[1]] [[1]]
-                               desc <- gsub ("\\n|\\t", "",
-                                             paste0 (unlist (res [[2]]),
-                                                     collapse = " "))
-                               c (name, desc)
-                               return (c (name, desc)) },
-                               character (2), USE.NAMES = FALSE)
-        index <- apply (nm_desc, 2, function (i) !all (is.na (i)))
-        data.frame (param = nm_desc [1, index],
-                    descr = nm_desc [2, index],
-                    stringsAsFactors = FALSE)
-    }
     params <- lapply (seq_along (params), function (i) {
                           res <- parse_one_params (params [[i]])
                           res$rdname <- names (params) [i]
