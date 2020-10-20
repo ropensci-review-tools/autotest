@@ -229,7 +229,8 @@ dispatched_fns <- function (package) {
     fns <- res$alias [index]
     fns_short <- vapply (fns, function (i) strsplit (i, "\\.") [[1]] [1],
                          character (1), USE.NAMES = FALSE)
-    index <- which (vapply (fns_short, function (i) any (grepl (i, res$alias)),
+    index <- which (vapply (fns_short, function (i)
+                            any (grepl (i, res$alias, fixed = TRUE)),
                             logical (1), USE.NAMES = FALSE))
     return (fns_short [index])
 }
