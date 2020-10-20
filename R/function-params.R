@@ -141,7 +141,12 @@ get_Rd_value <- function (package, fn_name) {
         rd <- x [[paste0 (fn_name, ".Rd")]]
     }
 
-    val <- strsplit (get_Rd_metadata (rd, "value"), "\\n") [[1]]
+
+    val <- get_Rd_metadata (rd, "value")
+    if (length (val) == 0)
+        return (NULL)
+
+    val <- strsplit (val, "\\n") [[1]]
     index <- which (grepl ("^list\\(", val))
     val [index] <- vapply (val [index], function (i)
                            eval (parse (text = i)) [[1]],
