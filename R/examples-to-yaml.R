@@ -58,8 +58,6 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
                     for (i in seq (nrow (classes)))
                         y <- add_class_restriction (y, classes [i, ])
                 }
-            }
-            if (!is.null (y)) {
                 attr (y, "package") <- package
                 ret [[length (ret) + 1]] <- prev_fns [[length (prev_fns) + 1]] <- y
                 names (ret ) [length (ret)] <- this_fn

@@ -36,10 +36,15 @@ autotest_return <- function (pkg, params, this_fn, package = NULL) {
     }
 
     if (!is.null (attr (retval, "class"))) {
+        #params <- m_get_param_lists (package)
+        #classes <- pkg_param_classes (package)
         aliases <- m_fns_to_topics (package = package)
         rdname <- gsub ("\\.Rd$", "", aliases$name [aliases$alias == this_fn])
         Rd_value <- get_Rd_value (package = package, fn_name = rdname)
-        if (is.null (Rd_value)) {
+        chk <- vapply (attr (retval, "class"), function (i)
+                       grepl (i, Rd_value),
+                       logical (1))
+        if (!any (chk)) {
             ret <- rbind (ret,
                           report_object (type = "diagnostic",
                                          fn_name = this_fn,

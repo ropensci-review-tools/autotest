@@ -135,21 +135,18 @@ get_Rd_value <- function (package, fn_name) {
 
     if (pkg_is_source (package)) {
         f <- file.path (package, "man", paste0 (fn_name, ".Rd"))
-        x <- readLines (f, warn = FALSE)
-        val <- x [grep ("^\\\\value\\{", x):length (x)]
-        val <- val [2:(match_curlies (val) - 1)]
-        val <- val [val != ""]
+        rd <- tools::parse_Rd (f)
     } else {
         x <- tools::Rd_db (package = package)
-        xfn <- x [[paste0 (fn_name, ".Rd")]]
-
-        tags <- vapply (xfn, function (i) attr (i, "Rd_tag"), character (1))
-        if ("\\value" %in% tags) {
-            val <- unlist (xfn [[which (tags == "\\value")]])
-            val <- gsub ("\n", "", paste0 (val, collapse = " "))
-            val <- gsub ("\\s+", " ", gsub ("^\\s", "", val))
-        }
+        rd <- x [[paste0 (fn_name, ".Rd")]]
     }
+
+    val <- strsplit (get_Rd_metadata (rd, "value"), "\\n") [[1]]
+    index <- which (grepl ("^list\\(", val))
+    val [index] <- vapply (val [index], function (i)
+                           eval (parse (text = i)) [[1]],
+                           character (1))
+    val <- gsub ("\\s+", " ", paste0 (val, collapse = " "))
 
     return (val)
 }
