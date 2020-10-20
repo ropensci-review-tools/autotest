@@ -49,11 +49,9 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
                                  prev_fns = prev_fns)
             if (!is.null (y) & chk_desc) {
                 # Check documentation to see which parameters include descriptions of
-                # expected classes. This just needs the first pre-processing
-                # steps, which are the same even for cases where lots of
-                # prev_fns have been repeated
+                # expected classes.
                 par_start <- grep ("- parameters:", y) [1] - 1
-                classes <- param_classes_in_desc (y [1:par_start], package, rdname)
+                #classes <- param_classes_in_desc (y [1:par_start], package, rdname)
                 chk_desc <- FALSE
             }
             if (!is.null (y)) {

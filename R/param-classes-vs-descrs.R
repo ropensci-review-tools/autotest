@@ -120,12 +120,9 @@ param_classes_in_desc <- function (yaml, pkg_full, rdname) {
     m <- strsplit (m, "\\n") [[1]]
     m <- m [m != ""]
 
-    param_names <- unlist (lapply (m, function (i)
-                                   eval (parse (text = i)) [[1]] [[1]]))
-    param_descs <- unlist (lapply (m, function (i)
-                                   eval (parse (text = i)) [[2]] [[1]]))
+    params <- do.call (rbind, lapply (m, function (i) parse_one_params (i)))
 
-    class_in_desc <- class_in_main_fn_desc (yaml, fn_name, param_descs)
+    class_in_desc <- class_in_main_fn_desc (yaml, fn_name, params$descr)
     names (class_in_desc) <- param_names
 
     # otherwise check whether any elements of desription name functions from

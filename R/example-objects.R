@@ -25,22 +25,45 @@ get_example_objs <- function (package,
     }
 
     suppressWarnings (
-        objs <- lapply (flist, function (i)
-                        example_objects (i, run_dontrun, run_donttest))
+        objs <- lapply (flist, function (i) {
+                            ret <- example_objects (i, run_dontrun, run_donttest)
+                            rd <- tools::parse_Rd (i)
+                            a <- NULL
+                            if (!is.null (ret))
+                                a <- get_Rd_metadata (rd, "alias")
+                            return (list (objects = ret,
+                                          aliases = a))
+                        })
         )
-    objs <- unique (unlist (objs))
 
-    exclude_these <- c ("gg", "ggplot")
-    objs <- objs [which (!objs %in% exclude_these)]
-    if (length (objs) == 0) {
+    not_null <- which (vapply (objs, function (i) !is.null (i$objects), logical (1)))
+    objs <- objs [not_null]
+
+    # convert to data.frame of (aliases, objects)
+    objs <- lapply (objs, function (o) {
+                        len <- length (o$objects)
+                        o$objects <- rep.int (o$objects,
+                                              times = length (o$aliases))
+                        o$aliases <- rep (o$aliases, each = len)
+                        return (cbind (o$aliases, o$objects))   })
+    objs <- data.frame (do.call (rbind, objs))
+
+    if (nrow (objs) == 0) {
         objs <- NULL
     } else {
-        obj_pkgs <- param_desc_is_other_fn (package, objs)
-        names (objs) <- obj_pkgs
+        names (objs) <- c ("alias", "object")
+        exclude_these <- c ("gg", "ggplot")
+        objs <- objs [which (!objs$object %in% exclude_these), ]
+        if (nrow (objs) == 0) {
+            objs <- NULL
+        } else {
+            objs$package <- param_desc_is_other_fn (package, objs$object)
+        }
     }
 
     return (objs)
 }
+m_get_example_objs <- memoise::memoise (get_example_objs)
 
 #' Get objects from one single `.Rd` file
 #'
@@ -59,13 +82,13 @@ example_objects <- function (f,
         return (NULL)
 
     env <- new.env (parent = globalenv ())
-    utils::capture.output (suppressWarnings (
+    utils::capture.output (suppressWarnings (suppressMessages (
         ret <- tryCatch (source (tmp,
                                  echo = FALSE,
                                  local = env,
                                  max.deparse.length = Inf),
                          error = function (e) NULL)
-    ))
+    )))
     o1 <- NULL
     if (!is.null (ret))
         o1 <- class (ret$value)
