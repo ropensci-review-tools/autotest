@@ -1,4 +1,3 @@
-
 #' @param p Result from `tools:::.Rd_get_metadata (., "arguments")`. Instances
 #' that are not able to be parsed return NA and are subsequently removed,
 #' meaning this will not necessarily catch all 
@@ -25,7 +24,10 @@ parse_one_params <- function (p) {
                 stringsAsFactors = FALSE)
 }
 
-pkg_param_classes <- function (package) {
+#' @return List of data frames, one for each Rd file, containing parameter
+#' names, descriptions, and name of Rd file.
+#' @noRd
+get_param_lists <- function (package) {
 
     if (pkg_is_source (package)) {
         pkg <- get_package_name (package)
@@ -62,20 +64,30 @@ pkg_param_classes <- function (package) {
         params [[i]]$fn_name <- fn_names [i]
     params <- do.call (rbind, params)
 
-    objs <- get_example_objs (package)
+    return (params)
+}
+m_get_param_lists <- memoise::memoise (get_param_lists)
 
-    nms <- strsplit (names (objs), "::")
-    ret <- data.frame (object = unname (objs),
-                       package = vapply (nms, function (i) i [1], character (1)),
-                       fn = vapply (nms, function (i) i [2], character (1)),
-                       stringsAsFactors = FALSE,
-                       row.names = seq_along (objs))
+pkg_param_classes <- function (package) {
+
+    params <- m_get_param_lists (package)
+
+    objs <- m_get_example_objs (package)
+    objs$package <- vapply (objs$package, function (i)
+                            strsplit (i, "::") [[1]] [1],
+                            character (1))
 
     base_pkgs <- c ("stats", "graphics", "grDevices", "utils",
                     "datasets", "methods", "base")
-    ret <- ret [which (!ret$package %in% base_pkgs), ]
+    objs <- objs [which (!objs$package %in% base_pkgs), ]
 
-    return (ret)
+    return (objs)
+}
+
+package_param_descs <- function (package) {
+
+    return (m_get_param_lists (package))
+
 }
 
 #' Match parameter descriptions to classes of objects
@@ -83,7 +95,6 @@ pkg_param_classes <- function (package) {
 #' @param yaml An autotest `yaml` including only pre-processing specifications,
 #' and NOT including either class or parameter definitions.
 #' @param pkg Either name of locally installed package or path to source
-#' @param rdname Name of .Rd file documented function represnted in `yaml`.
 #' @return A `data.frame` with the following columns:
 #'  1. "parameter" the name of each parameter of the function represented in the
 #'  yaml
@@ -96,84 +107,95 @@ pkg_param_classes <- function (package) {
 #'  5. "fn_is_construtor" Logical variable for any non-NA `param_classes`
 #'  indicating whether they functions they describe serve as class-constructors.
 #' @noRd
-param_classes_in_desc <- function (yaml, pkg_full, rdname) {
+param_classes_in_desc <- function (yaml, pkg_full) {
 
-    i <- grep ("functions:", yaml)
-    if (length (i) > 1)
-        stop ("yaml must only define one single function")
-    fn_name <- gsub ("\\s*-\\s*|:", "", yaml [i + 1])
+    params <- m_get_param_lists (pkg_full)
+    classes <- pkg_param_classes (pkg_full)
 
-    pkg <- pkg_full
+    # classes includes all objects created in any pre-processing stages. Then
+    # just need to check whether the `parameter` stage of the `yaml` creates any
+    # other objects
+    param_classes <- yaml_param_classes (yaml)
 
-    if (pkg_is_source (pkg_full)) {
-        pkg <- get_package_name (pkg_full)
-        f <- file.path (pkg_full, "man", paste0 (rdname, ".Rd"))
-        m <- get_Rd_metadata (tools::parse_Rd (f), "arguments")
-    } else {
-        r <- tools::Rd_db (pkg)
-        aliases <- lapply (r, function (i) get_Rd_metadata (i, "alias"))
-        i <- vapply (aliases, function (i) fn_name %in% i, logical (1))
-        r <- r [[which (i) [1] ]]
-        m <- get_Rd_metadata (tools::parse_Rd (r), "arguments")
-    }
+    fn <- gsub (":", "",
+                strsplit (yaml [grep ("^functions:", yaml) + 1], "- ") [[1]] [2])
+    these_params <- params [params$fn_name == fn, ]
+    these_classes <- classes [classes$alias == fn, ]
 
-    m <- strsplit (m, "\\n") [[1]]
-    m <- m [m != ""]
+    class_in_desc <- vapply (seq (nrow (these_params)), function (i) {
+                                 class_i <- these_classes$object
+                                 if (these_params$param [i] %in%
+                                     names (param_classes))
+                                     class_i <- c (class_i,
+                                                   param_classes [[these_params$param [i] ]])
+                                 chk <- vapply (class_i, function (j)
+                                                any (grepl (j, these_params$descr [i],
+                                                            ignore.case = TRUE)),
+                                                logical (1))
+                                 ret <- NA_character_
+                                 if (any (chk))
+                                     ret <- names (chk) [which (chk) [1]]
+                                 return (ret)
+                }, character (1), USE.NAMES = FALSE)
 
-    params <- do.call (rbind, lapply (m, function (i) parse_one_params (i)))
-
-    class_in_desc <- class_in_main_fn_desc (yaml, fn_name, params$descr)
-    names (class_in_desc) <- param_names
-
-    # otherwise check whether any elements of desription name functions from
-    # other packages
-    index <- which (is.na (class_in_desc))
-    param_classes <- fn_is_constructor <- rep (NA_character_, length (param_names))
-    if (length (index) > 0) {
-        param_classes [index] <- param_desc_is_other_fn (pkg, param_descs [index])
-
-        # Then check that any such functions actually serve to construct class-based
-        # objects:
-        index <- which (!is.na (param_classes))
-        if (length (index) > 0) {
-            fn_is_constructor [index] <- vapply (param_classes [index],
-                                                 function (i)
-                                                     is_fn_a_constructor (i),
-                                                 logical (1))
-        }
-    }
-
-    ret <- data.frame (parameter = param_names,
-                       desc = param_descs,
+    ret <- data.frame (parameter = these_params$param,
+                       desc = these_params$descr,
                        class_in_desc = class_in_desc,
-                       param_classes = param_classes,
-                       fn_is_constructor = fn_is_constructor,
-                       stringsAsFactors = FALSE,
-                       row.names = seq_along (param_names))
+                       stringsAsFactors = FALSE)
 
     return (ret)
 }
 
-class_in_main_fn_desc <- function (yaml, fn_name, param_descs) {
-    res <- parse_yaml_template (yaml)
-    e <- new.env ()
-    suppressPackageStartupMessages (
-            eval (parse (text = res$preprocess [[fn_name]]), envir = e)
-            )
-    classes <- unique (unlist (lapply (ls (envir = e), function (i)
-                                       class (get (i, envir = e)))))
-    class_in_desc <- vapply (param_descs, function (i) {
-                                 i_s <- gsub ("\"|\'|\`", "", strsplit (i, " ") [[1]])
-                                 i_s <- gsub ("^.*\\{\\}$|^\\(|\\)$", "", i_s)
-                                 chk <- vapply (i_s, function (j)
-                                                any (grepl (j, classes)),
-                                                logical (1),
-                                                USE.NAMES = FALSE)
-                                 return (i_s [which (chk) [1]]) },
-                                 character (1),
-                                 USE.NAMES = FALSE)
-    return (class_in_desc)
+yaml_param_classes <- function (yaml) {
+    yaml <- yaml [(grep ("- parameters:", yaml) [1] + 1):length (yaml)]
+    objs <- vapply (yaml, function (i)
+                    strsplit (i, ": ") [[1]] [2],
+                    character (1), USE.NAMES = FALSE)
+    params <- vapply (yaml, function (i)
+                    strsplit (i, ": ") [[1]] [1],
+                    character (1), USE.NAMES = FALSE)
+    params <- gsub ("\\s*-\\s?", "", params)
+
+    classes <- lapply (objs, function (i) {
+                           class (eval (parse (text = i)))
+                    })
+    names (classes) <- params
+
+    return (classes)
 }
+
+
+#' Does the `fn` f construct a class-based object?
+#'
+#' @param fn Name of a function in form "\<package\>:\<function\>"
+#' @param phrases Vector of phrases to `grep` for in function title or return
+#' value to determine whether it is constructing a class-based object.
+#' @return `TRUE` is that function serves to construct an object with a defined
+#' class
+#'
+#' @note The `phrases` parameter is case-insensitive, and are OR-combined, so
+#' matching any one will suffice.
+#' @noRd
+is_fn_a_constructor <- function (fn, phrases = c ("create", "construt", "object", "class")) {
+    fn <- strsplit (fn, "::") [[1]]
+    this_pkg <- fn [1]
+    this_fn <- fn [2]
+    # get Rd for topic
+    h <- tools::Rd_db (package = this_pkg)
+    aliases <- lapply (h, function (i) get_Rd_metadata (i, "alias"))
+    i <- vapply (aliases, function (j) this_fn %in% j, logical (1))
+    h <- h [[which (i)]]
+
+    h_title <- get_Rd_metadata (h, "title")
+    h_value <- get_Rd_metadata (h, "value")
+
+    is_constructor <- grepl ("create|construct|object|class",
+                             paste0 (h_title, h_value, collapse = " "),
+                             ignore.case = TRUE)
+
+    return (is_constructor)
+}
+
 
 #' Does a parameter description refer to a function from another package?
 #'
@@ -200,7 +222,7 @@ param_desc_is_other_fn <- function (pkg, param_descs) {
                           rd <- tools::Rd_db (gsub ("^package:", "", i))
                           vapply (rd, function (j) get_Rd_metadata (j, "name"),
                                   character (1), USE.NAMES = FALSE)
-                                 })
+                             })
     for (i in seq_along (allfns)) {
         allfns [[i]] <- unique (c (allfns [[i]], topics [[i]]))
     }
@@ -238,35 +260,4 @@ param_desc_is_other_fn <- function (pkg, param_descs) {
                                  }, character (1),
                                  USE.NAMES = FALSE)
     return (gsub ("^package:", "", param_classes))
-}
-
-#' Does the `fn` f construct a class-based object?
-#'
-#' @param fn Name of a function in form "\<package\>:\<function\>"
-#' @param phrases Vector of phrases to `grep` for in function title or return
-#' value to determine whether it is constructing a class-based object.
-#' @return `TRUE` is that function serves to construct an object with a defined
-#' class
-#'
-#' @note The `phrases` parameter is case-insensitive, and are OR-combined, so
-#' matching any one will suffice.
-#' @noRd
-is_fn_a_constructor <- function (fn, phrases = c ("create", "construt", "object", "class")) {
-    fn <- strsplit (fn, "::") [[1]]
-    this_pkg <- fn [1]
-    this_fn <- fn [2]
-    # get Rd for topic
-    h <- tools::Rd_db (package = this_pkg)
-    aliases <- lapply (h, function (i) get_Rd_metadata (i, "alias"))
-    i <- vapply (aliases, function (j) this_fn %in% j, logical (1))
-    h <- h [[which (i)]]
-
-    h_title <- get_Rd_metadata (h, "title")
-    h_value <- get_Rd_metadata (h, "value")
-
-    is_constructor <- grepl ("create|construct|object|class",
-                             paste0 (h_title, h_value, collapse = " "),
-                             ignore.case = TRUE)
-
-    return (is_constructor)
 }

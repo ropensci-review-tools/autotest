@@ -31,6 +31,9 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
 
     exs <- get_all_examples (package, pkg_is_source (package), exclude)
 
+    pkg_classes <- pkg_param_classes (package)
+    descs <- package_param_descs (package)
+
     ret <- list ()
     for (i in seq (exs)) {
         this_fn <- names (exs) [i]
@@ -38,7 +41,6 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
         rdname <- attr (exs [[i]], "Rdname")
         aliases <- get_fn_aliases (package, rdname)
 
-        chk_desc <- TRUE
         for (xj in exs [[i]]) {
             y <- one_ex_to_yaml (pkg = pkg_name,
                                  pkg_full = package,
@@ -47,12 +49,11 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
                                  x = xj,
                                  aliases = aliases,
                                  prev_fns = prev_fns)
-            if (!is.null (y) & chk_desc) {
+            if (!is.null (y)) {
                 # Check documentation to see which parameters include descriptions of
                 # expected classes.
-                par_start <- grep ("- parameters:", y) [1] - 1
-                #classes <- param_classes_in_desc (y [1:par_start], package, rdname)
-                chk_desc <- FALSE
+                classes <- param_classes_in_desc (y, package)
+                #if (any (!is.na (classes$class_in_desc)))
             }
             if (!is.null (y)) {
                 ret [[length (ret) + 1]] <- prev_fns [[length (prev_fns) + 1]] <- y
