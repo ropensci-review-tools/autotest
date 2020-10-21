@@ -149,7 +149,8 @@ get_Rd_value <- function (package, fn_name) {
     val <- strsplit (val, "\\n") [[1]]
     index <- which (grepl ("^list\\(", val))
     val [index] <- vapply (val [index], function (i)
-                           eval (parse (text = i)) [[1]],
+                           paste0 (unlist (eval (parse (text = i))),
+                                   collapse = " "),
                            character (1))
     val <- gsub ("\\s+", " ", paste0 (val, collapse = " "))
 
