@@ -81,7 +81,7 @@ autotest_package <- function (package, exclude = NULL, quiet = FALSE) {
     no_examples <- fns_without_examples (package)
     if (length (no_examples) > 0) {
         for (i in no_examples) {
-            rtemp <- report_object (type = "error",
+            rtemp <- report_object (type = "warning",
                                     fn_name = i,
                                     operation = "<see content>",
                                     content = "This function has no documented example")
