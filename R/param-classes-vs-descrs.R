@@ -147,17 +147,50 @@ param_classes_in_desc <- function (yaml, pkg_full) {
 }
 
 yaml_param_classes <- function (yaml) {
-    yaml <- yaml [(grep ("- parameters:", yaml) [1] + 1):length (yaml)]
-    objs <- vapply (yaml, function (i)
+    # reduce to only preprocess and parameters clauses
+    yaml <- yaml [-grep ("^[a-z]", yaml)]
+    n <- nchar (yaml_indent (1))
+    fndef <- paste0 (c ("^", rep ("\\s", n), "\\-"), collapse = "")
+    yaml <- yaml [-grep (fndef, yaml)]
+
+    pre_start <- grep ("\\- preprocess:", yaml) + 1L
+    par_start <- grep ("\\- parameters:", yaml) + 1L
+    classes <- grep ("\\- classes:", yaml)
+    index <- sort (c (par_start - 1L, classes))
+    pre_end <- vapply (pre_start, function (i) {
+                       res <- index [which (index > i) [1]] - 1L
+                       if (is.na (res))
+                           res <- length (yaml)
+                       return (res) },
+                       integer (1))
+    index <- sort (c (pre_start - 1L, classes))
+    par_end <- vapply (par_start, function (i) {
+                       res <- index [which (index > i) [1]] - 1L
+                       if (is.na (res))
+                           res <- length (yaml)
+                       return (res) },
+                       integer (1))
+
+    pre_index <- unlist (lapply (seq_along (pre_start), function (i)
+                                 pre_start [i]:pre_end [i]))
+    par_index <- unlist (lapply (seq_along (par_start), function (i)
+                                 par_start [i]:par_end [i]))
+
+    yaml_pre <- gsub ("^\\s*\\-\\s*|\"|\'", "", yaml [pre_index])
+    e <- new.env ()
+    x <- tryCatch (eval (parse (text = yaml_pre), envir = e))
+
+    yaml_pars <- gsub ("^\\s*\\-\\s*|\"|\'", "", yaml [par_index])
+    objs <- vapply (yaml_pars, function (i)
                     strsplit (i, ": ") [[1]] [2],
                     character (1), USE.NAMES = FALSE)
-    params <- vapply (yaml, function (i)
-                    strsplit (i, ": ") [[1]] [1],
-                    character (1), USE.NAMES = FALSE)
+    params <- vapply (yaml_pars, function (i)
+                      strsplit (i, ": ") [[1]] [1],
+                      character (1), USE.NAMES = FALSE)
     params <- gsub ("\\s*-\\s?", "", params)
 
     classes <- lapply (objs, function (i) {
-                           class (eval (parse (text = i)))
+                           class (eval (parse (text = i), envir = e))
                     })
     names (classes) <- params
 
