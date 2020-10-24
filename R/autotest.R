@@ -64,7 +64,14 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
 #' @param quiet If 'FALSE', provide printed output on screen.
 #' @export
 autotest_package <- function (package, exclude = NULL, quiet = FALSE) {
+    if (!quiet)
+        message (cli::col_yellow (cli::symbol$line),
+                 cli::col_green (" parsing all package examples"),
+                 appendLF = FALSE)
     exs <- examples_to_yaml (package, exclude = exclude)
+    if (!quiet)
+        message ("\r", cli::col_green (cli::symbol$tick,
+                 " parsed all package examples"))
     res <- NULL
     for (i in seq_along (exs)) {
         yaml <- exs [[i]]
