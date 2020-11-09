@@ -192,9 +192,20 @@ yaml_param_classes <- function (yaml) {
                       character (1), USE.NAMES = FALSE)
     params <- gsub ("\\s*-\\s?", "", params)
 
-    classes <- lapply (objs, function (i) {
-                           class (eval (parse (text = i), envir = e))
-                    })
+    classes <- lapply (seq_along (objs), function (i) {
+                           res <- tryCatch (
+                                     class (eval (parse (text = objs [i]), envir = e)),
+                                     error = function (z) "error")
+                           if (i > 1 & "error" %in% res) {
+                               iprev <- i - 1
+                               while (res == "error") {
+                                   res <- tryCatch (class (eval (parse (text = objs [i]),
+                                                                 envir = get (objs [iprev]))),
+                                                    error = function (z) "error")
+                               }
+                           }
+                           return (res)
+                           })
     names (classes) <- params
 
     return (classes)
