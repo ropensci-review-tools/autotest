@@ -122,21 +122,24 @@ param_classes_in_desc <- function (yaml, pkg_full) {
     these_params <- params [params$fn_name == fn, ]
     these_classes <- classes [classes$alias == fn, ]
 
-    class_in_desc <- vapply (seq (nrow (these_params)), function (i) {
-                                 class_i <- these_classes$object
-                                 if (these_params$param [i] %in%
-                                     names (param_classes))
-                                     class_i <- c (class_i,
-                                                   param_classes [[these_params$param [i] ]])
-                                 chk <- vapply (class_i, function (j)
-                                                any (grepl (j, these_params$descr [i],
-                                                            ignore.case = TRUE)),
-                                                logical (1))
-                                 ret <- NA_character_
-                                 if (any (chk))
-                                     ret <- names (chk) [which (chk) [1]]
-                                 return (ret)
+    class_in_desc <- NULL
+    if (nrow (these_params) > 0) {
+        class_in_desc <- vapply (seq_along (nrow (these_params)), function (i) {
+                                     class_i <- these_classes$object
+                                     if (these_params$param [i] %in%
+                                         names (param_classes))
+                                         class_i <- c (class_i,
+                                                       param_classes [[these_params$param [i] ]])
+                                     chk <- vapply (class_i, function (j)
+                                                    any (grepl (j, these_params$descr [i],
+                                                                ignore.case = TRUE)),
+                                                    logical (1))
+                                     ret <- NA_character_
+                                     if (any (chk))
+                                         ret <- names (chk) [which (chk) [1]]
+                                     return (ret)
                 }, character (1), USE.NAMES = FALSE)
+    }
 
     ret <- data.frame (parameter = these_params$param,
                        desc = these_params$descr,
