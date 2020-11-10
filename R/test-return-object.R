@@ -38,48 +38,64 @@ autotest_return <- function (pkg, params, this_fn, package = NULL) {
     if (!is.null (attr (retval, "class"))) {
         #params <- m_get_param_lists (package)
         #classes <- pkg_param_classes (package)
-        aliases <- m_fns_to_topics (package = package)
-        rdname <- gsub ("\\.Rd$", "", aliases$name [aliases$alias == this_fn])
-        Rd_value <- get_Rd_value (package = package, fn_name = rdname)
-        if (is.null (Rd_value)) {
+        ret <- test_return_desc (package, this_fn, retval)
+    }
+
+    return (ret)
+}
+
+test_return_desc <- function (package, this_fn, retval) {
+
+    aliases <- m_fns_to_topics (package = package)
+    rdname <- gsub ("\\.Rd$", "", aliases$name [aliases$alias == this_fn])
+    Rd_value <- get_Rd_value (package = package, fn_name = rdname)
+
+    ret <- NULL
+
+    if (is.null (Rd_value)) {
+
+        ret <- rbind (ret,
+                      report_object (type = "warning",
+                                     fn_name = this_fn,
+                                     parameter = NA_character_,
+                                     operation = "check that description has return value",
+                                     content = paste0 ("Function [",
+                                                       this_fn,
+                                                       "] does not specify a return value.")))
+
+    } else {
+
+        chk <- vapply (attr (retval, "class"), function (i)
+                       grepl (i, Rd_value),
+                       logical (1))
+        if (!any (chk)) {
+
             ret <- rbind (ret,
-                          report_object (type = "warning",
+                          report_object (type = "diagnostic",
                                          fn_name = this_fn,
                                          parameter = NA_character_,
                                          operation = "check that description has return value",
                                          content = paste0 ("Function [",
                                                            this_fn,
-                                                           "] does not specify a return value.")))
-        } else {
-            chk <- vapply (attr (retval, "class"), function (i)
-                           grepl (i, Rd_value),
-                           logical (1))
-            if (!any (chk)) {
-                ret <- rbind (ret,
-                              report_object (type = "diagnostic",
-                                             fn_name = this_fn,
-                                             parameter = NA_character_,
-                                             operation = "check that description has return value",
-                                             content = paste0 ("Function [",
-                                                               this_fn,
-                                                               "] does not specify a return value, ",
-                                                               "yet returns a value of class [",
-                                                               paste0 (attr (retval, "class"),
-                                                                       collapse = ", "),
-                                                               "]")))
-            } else {
-                txt <- test_return_classes (Rd_value, retval)
+                                                           "] does not specify a return value, ",
+                                                           "yet returns a value of class [",
+                                                           paste0 (attr (retval, "class"),
+                                                                   collapse = ", "),
+                                                           "]")))
 
-                if (!is.null (txt))
-                    for (i in txt) {
-                        ret <- rbind (ret,
-                                      report_object (type = "diagnostic",
-                                                     fn_name = this_fn,
-                                                     parameter = NA_character_,
-                                                     operation = "compare class of return value with description",
-                                                     content = i))
-                    }
-            }
+        } else {
+
+            txt <- test_return_classes (Rd_value, retval)
+
+            if (!is.null (txt))
+                for (i in txt) {
+                    ret <- rbind (ret,
+                                  report_object (type = "diagnostic",
+                                                 fn_name = this_fn,
+                                                 parameter = NA_character_,
+                                                 operation = "compare class of return value with description",
+                                                 content = i))
+                }
         }
     }
 
