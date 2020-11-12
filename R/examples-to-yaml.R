@@ -53,8 +53,8 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
                 index <- which (!is.na (classes$class_in_desc))
                 if (length (index) > 0) {
                     classes <- classes [index, ]
-                    for (i in seq (nrow (classes)))
-                        y <- add_class_restriction (y, classes [i, ])
+                    for (j in seq (nrow (classes)))
+                        y <- add_class_restriction (y, classes [j, ])
                 }
                 attr (y, "package") <- package
                 ret [[length (ret) + 1]] <-
