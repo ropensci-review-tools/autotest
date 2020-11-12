@@ -326,6 +326,10 @@ add_class_restriction <- function (yaml, classes) {
     if (!any (grepl ("- class:", yaml)))
         yaml <- c (yaml, paste0 (yaml_indent (2), "- class:"))
 
+    if (classes$parameter [1] == "null")
+        classes$parameter [1] <- "\"null\""
+
+
     yaml <- c (yaml,
                paste0 (yaml_indent (3),
                        "- ",
