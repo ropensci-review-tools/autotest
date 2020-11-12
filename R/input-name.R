@@ -9,13 +9,14 @@ test_single_name <- function (pkg, this_fn, params, i) {
     params_i [[i]] <- as.character (params_i [[i]])
     msgs <- catch_all_msgs (f, this_fn, params_i)
     if (!is.null (msgs)) {
+        operation <- paste0 ("(unquoted) ",
+                             this_class,
+                             " param as (quoted) character")
         res <- rbind (res,
                       report_object (type = msgs$type,
                                      fn_name = msgs$fn_name,
                                      parameter = names (params) [i],
-                                     operation = paste0 ("(unquoted) ",
-                                                         this_class,
-                                                         " param as (quoted) character"),
+                                     operation = operation,
                                      content = msgs$content))
     }
 

@@ -26,7 +26,9 @@ get_example_objs <- function (package,
 
     suppressWarnings (
         objs <- lapply (flist, function (i) {
-                            ret <- example_objects (i, run_dontrun, run_donttest)
+                            ret <- example_objects (i,
+                                                    run_dontrun,
+                                                    run_donttest)
                             if (methods::is (i, "Rd")) # installed packages
                                 rd <- i
                             else # source packages
@@ -39,7 +41,9 @@ get_example_objs <- function (package,
                         })
         )
 
-    not_null <- which (vapply (objs, function (i) !is.null (i$objects), logical (1)))
+    not_null <- which (vapply (objs, function (i)
+                               !is.null (i$objects),
+                               logical (1)))
     objs <- objs [not_null]
 
     # convert to data.frame of (aliases, objects)
@@ -95,13 +99,15 @@ example_objects <- function (f,
     o1 <- NULL
     if (!is.null (ret))
         o1 <- class (ret$value)
-    o2 <- unlist (lapply (ls (envir = env), function (i) class (get (i, envir = env))))
+    o2 <- unlist (lapply (ls (envir = env), function (i)
+                          class (get (i, envir = env))))
     ret <- unique (c (o1, o2))
 
     # List given in ?typeof, but noting that they need to be be transformed
     # because, for example, typeof(2.) is "double", yet class(2.) is "numeric".
     simple_types <- c ("logical", "integer", "double", "complex", "character",
-                       "raw", "list") # plus "NULL", "closeure", "special", "builtin")
+                       "raw", "list")
+    # plus "NULL", "closeure", "special", "builtin"?
     simple_types <- vapply (simple_types, function (s)
                             class (do.call (paste0 ("as.", s), list (1))),
                             character (1), USE.NAMES = FALSE)

@@ -13,7 +13,8 @@ get_all_examples <- function (package, is_source, exclude = NULL) {
 
     exs <- list ()
     for (i in seq (rdnames)) {
-        exi <- get_fn_exs (package, rdnames [i], topic [i], is_source = is_source)
+        exi <- get_fn_exs (package, rdnames [i], topic [i],
+                           is_source = is_source)
         if (!is.null (exi)) {
             attr (exi, "Rdname") <- rdnames [i]
             exs [[length (exs) + 1]] <- exi
@@ -47,7 +48,7 @@ get_all_examples <- function (package, is_source, exclude = NULL) {
 
 get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
                         exclude_not_run = TRUE, is_source = FALSE) {
-    
+
     ex <- get_example_lines (pkg, rd_name)
 
     if (length (ex) == 0)
@@ -58,7 +59,7 @@ get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
     ex <- ex [which (!grepl ("^\\s?$", ex))]
 
     if (any (grepl ("^### \\*\\* Examples", ex)))
-        ex <- ex [-(1:grep ("^### \\*\\* Examples", ex))]
+        ex <- ex [- (1:grep ("^### \\*\\* Examples", ex))]
 
     for (dontrun in c (TRUE, FALSE))
         ex <- rm_dontrun_lines (ex, is_source = is_source, dontrun = dontrun,
@@ -101,7 +102,7 @@ get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
     # reduce to only final calls in a sequence
     index <- which (c (2, diff (fn_calls)) == 1)
     if (length (index) > 0)
-        fn_calls <- fn_calls [-(index - 1)]
+        fn_calls <- fn_calls [- (index - 1)]
     # remove any plot or summary calls
     #index <- grepl ("^plot|^summary", ex [fn_calls])
     #index <- grepl ("plot|^summary", ex [fn_calls])
@@ -118,7 +119,7 @@ get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
     ret <- lapply (exs, function (i) {
                        i <- i [which (!i == "")]
                        i [!grepl ("^\\#|^plot|^summary|^print", i)] })
-    
+
     if (rm_seed) {
         ret <- lapply (ret, function (i) {
                            i [!grepl ("^set.seed", i)]  })
@@ -130,7 +131,8 @@ get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
     aliases <- paste0 (get_fn_aliases (pkg, rd_name), collapse = "|")
     index <- vapply (ret, function (i) any (grepl (aliases, i)), logical (1))
     if (length (fns) == 2) { # when it's a dispatch method
-        index2 <- vapply (ret, function (i) any (grepl (fns [2], i)), logical (1))
+        index2 <- vapply (ret, function (i)
+                          any (grepl (fns [2], i)), logical (1))
         index <- index | index2
     }
 
@@ -188,7 +190,7 @@ get_example_lines <- function (package, rd_name) {
             } else {
                 v0 <- utils::packageVersion (pkg_name)
                 desc <- file.path (package, "DESCRIPTION")
-                d <-readLines (desc)
+                d <- readLines (desc)
                 v <- gsub ("^Version:\\s+", "", d [grep ("^Version:", d)])
                 if (v > v0)
                     doload <- TRUE
@@ -246,7 +248,7 @@ join_at_operators <- function (x) {
     index <- rev (grep (operators, x))
     for (i in index) {
         x [i] <- paste0 (x [i], x [i + 1], collapse = " ")
-        x <- x [-(i + 1)]
+        x <- x [- (i + 1)]
     }
 
     return (x)
@@ -256,8 +258,8 @@ merge_piped_lines <- function (x) {
     x <- gsub ("\\s$", "", x)
     index <- rev (grep ("%>%\\s?$|\\\\%>\\\\%\\s?$", x))
     for (i in index) {
-        x [i] <- gsub ("\\s+", " ", paste0 (x [i:(i+1)], collapse = " "))
-        x <- x [-(i + 1)]
+        x [i] <- gsub ("\\s+", " ", paste0 (x [i:(i + 1)], collapse = " "))
+        x <- x [- (i + 1)]
         if (any (grepl ("\\\\%", x))) {
             x <- gsub ("\\\\%", "%", x)
         }
@@ -267,8 +269,10 @@ merge_piped_lines <- function (x) {
 
 merge_fn_defs <- function (x) {
     if (any (grepl ("function(\\s?)\\(", x))) {
-        br_open <- lapply (gregexpr ("\\{", x), function (i) as.integer (i [i >= 0]))
-        br_closed <- lapply (gregexpr ("\\}", x), function (i) as.integer (i [i >= 0]))
+        br_open <- lapply (gregexpr ("\\{", x), function (i)
+                           as.integer (i [i >= 0]))
+        br_closed <- lapply (gregexpr ("\\}", x), function (i)
+                             as.integer (i [i >= 0]))
 
         br_open2 <- br_closed2 <- NULL
         for (i in seq (br_open))
@@ -324,7 +328,7 @@ single_clause <- function (x) {
         index <- index [grep ("^\\s*$", xcut)]
         if (length (index) > 0) {
             x [index] <- paste0 (x [index], x [index + 1], collapse = " ")
-            x <- x [-(index + 1)]
+            x <- x [- (index + 1)]
         }
     }
 
@@ -351,7 +355,7 @@ multi_line_quotes <- function (x, double_quote = TRUE) {
                          function (i) rev (i))
         for (i in index) {
             x [i [1]] <- paste0 (x [i [1]:i [2]], collapse = " ")
-            x <- x [-((i [1] + 1):i [2])]
+            x <- x [- ((i [1] + 1):i [2])]
         }
     }
     return (x)
@@ -369,7 +373,7 @@ rm_dontrun_lines <- function (x, is_source = TRUE, dontrun = TRUE,
         while (length (n) > 0) {
             n_end <- n [1] + match_curlies (x [n [1]:length (x)])
             if (exclude_not_run)
-                x <- x [-(n [1] + seq (n_end) - 1)]
+                x <- x [- (n [1] + seq (n_end) - 1)]
             else
                 x <- x [-c (n [1], n_end)]
             n <- grep (txt, x)
@@ -384,7 +388,7 @@ rm_dontrun_lines <- function (x, is_source = TRUE, dontrun = TRUE,
             if (length (n_end) == 0)
                 n_end <- n
             if (exclude_not_run)
-                x <- x [-(n [1]:n_end [1])]
+                x <- x [- (n [1]:n_end [1])]
             else
                 x <- x [-c (n [1], n_end)]
             n <- grep (txt_start, x)

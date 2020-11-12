@@ -18,7 +18,6 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
 
     reports <- NULL
 
-    count <- 1
     for (i in seq (res$parameters)) {
         this_fn <- names (res$parameters) [i]
         params <- get_params (res, i, this_fn)
@@ -26,18 +25,28 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
         classes <- res$classes [[i]]
 
         reports <- rbind (reports,
-                          autotest_rectangular (params, this_fn, classes, quiet))
+                          autotest_rectangular (params,
+                                                this_fn,
+                                                classes,
+                                                quiet))
         reports <- rbind (reports,
-                          autotest_vector (params, this_fn, classes, quiet))
+                          autotest_vector (params,
+                                           this_fn,
+                                           classes,
+                                           quiet))
         reports <- rbind (reports,
-                          autotest_single (res$package, params, this_fn, quiet))
+                          autotest_single (res$package,
+                                           params,
+                                           this_fn,
+                                           quiet))
         reports <- rbind (reports,
-                          autotest_return (res$package, params, this_fn,
+                          autotest_return (res$package,
+                                           params,
+                                           this_fn,
                                            attr (yaml, "package")))
 
         if (!quiet)
             message (cli::col_green (cli::symbol$tick, " ", this_fn))
-        #message (cli::col_red (cli::symbol$cross), " ", cli::col_yellow (this_fn))
     }
 
     if (!is.null (reports)) {
@@ -87,11 +96,12 @@ autotest_package <- function (package, exclude = NULL, quiet = FALSE) {
 
     no_examples <- fns_without_examples (package)
     if (length (no_examples) > 0) {
+        cnt <- "This function has no documented example"
         for (i in no_examples) {
             rtemp <- report_object (type = "warning",
                                     fn_name = i,
                                     operation = "<see content>",
-                                    content = "This function has no documented example")
+                                    content = cnt)
             rtemp$yaml_hash <- NA_character_
             res <- rbind (res, rtemp)
 

@@ -20,39 +20,44 @@ test_single_int <- function (pkg, this_fn, params, i) {
         return (int_range)
 
     if (!any (is.finite (int_range))) {
+        content <- paste0 ("Parameter [",
+                           names (params) [i],
+                           "] permits unrestricted integer inputs")
         res <- rbind (res,
                       report_object (type = "diagnostic",
                                      fn_name = this_fn,
                                      parameter = names (params) [i],
                                      operation = "ascertain integer range",
-                                     content = paste0 ("Parameter [",
-                                                       names (params) [i],
-                                                       "] permits unrestricted integer inputs")))
+                                     content = content))
     } else if (!is.null (int_range)) {
+        content <- paste0 ("Parameter [",
+                           names (params) [i],
+                           "] responds to integer values in [",
+                           paste0 (int_range, collapse = ", "), "]")
         res <- rbind (res,
                       report_object (type = "diagnostic",
                                      fn_name = this_fn,
                                      parameter = names (params) [i],
                                      operation = "ascertain integer range",
-                                     content = paste0 ("Parameter [",
-                                                       names (params) [i],
-                                                       "] responds to integer values in [",
-                                                       paste0 (int_range, collapse = ", "), "]")))
+                                     content = content))
 
         rd <- get_Rd_param (package = pkg,
                             fn_name = this_fn,
                             param_name = names (params) [i])
         range_in_rd <- vapply (int_range, function (j)
                                grepl (j, rd), logical (1))
-        if (!all (range_in_rd))
+        if (!all (range_in_rd)) {
+            operation <- "match integer range to documentation"
+            content <- paste0 (" Parameter range for ",
+                               names (params) [i],
+                               " is NOT documented")
             res <- rbind (res,
                           report_object (type = "diagnostic",
                                          fn_name = this_fn,
                                          parameter = names (params) [i],
-                                         operation = "match integer range to documentation",
-                                         content = paste0 (" Parameter range for ",
-                                                           names (params) [i],
-                                                           " is NOT documented")))
+                                         operation = operation,
+                                         content = content))
+        }
     }
 
     return (res)
@@ -82,14 +87,15 @@ get_int_range <- function (this_fn, params, i) {
     # the actual int range.
     if (get_fn_response (this_fn, params) == 1) # allow warnings
     {
+        content <- paste0 ("Function [", this_fn,
+                           "] does not respond appropriately for ",
+                           "specified/default input [",
+                           names (params) [i], " = ",
+                           params [[i]], "]")
         ret <- report_object (type = "diagnostic",
                               fn_name = this_fn,
                               parameter = names (params) [i],
-                              content = paste0 ("Function [", this_fn,
-                                                "] does not respond appropriately for ",
-                                                "specified/default input [",
-                                                names (params) [i], " = ",
-                                                params [[i]], "]"))
+                              content = content)
         return (ret)
     }
 

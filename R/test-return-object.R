@@ -12,9 +12,7 @@ autotest_return <- function (pkg, params, this_fn, package = NULL) {
     ret <- NULL
     f <- file.path (tempdir (), "junk.txt")
 
-    null_params <- NULL
     if (any (params == "NULL")) {
-        null_params <- params [params == "NULL"]
         params <- params [params != "NULL"]
     }
 
@@ -48,20 +46,22 @@ test_return_desc <- function (package, this_fn, retval) {
 
     aliases <- m_fns_to_topics (package = package)
     rdname <- gsub ("\\.Rd$", "", aliases$name [aliases$alias == this_fn])
-    Rd_value <- get_Rd_value (package = package, fn_name = rdname)
+    Rd_value <- get_Rd_value (package = package, fn_name = rdname) # nolint
 
     ret <- NULL
 
     if (is.null (Rd_value)) {
 
+        operation <- "check that description has return value"
+        content <- paste0 ("Function [",
+                           this_fn,
+                           "] does not specify a return value.")
         ret <- rbind (ret,
                       report_object (type = "warning",
                                      fn_name = this_fn,
                                      parameter = NA_character_,
-                                     operation = "check that description has return value",
-                                     content = paste0 ("Function [",
-                                                       this_fn,
-                                                       "] does not specify a return value.")))
+                                     operation = operation,
+                                     content = content))
 
     } else {
 
@@ -70,32 +70,35 @@ test_return_desc <- function (package, this_fn, retval) {
                        logical (1))
         if (!any (chk)) {
 
+            operation <- "check that description has return value"
+            content <- paste0 ("Function [",
+                               this_fn,
+                               "] does not specify a return value, ",
+                               "yet returns a value of class [",
+                               paste0 (attr (retval, "class"), collapse = ", "),
+                               "]")
             ret <- rbind (ret,
                           report_object (type = "diagnostic",
                                          fn_name = this_fn,
                                          parameter = NA_character_,
-                                         operation = "check that description has return value",
-                                         content = paste0 ("Function [",
-                                                           this_fn,
-                                                           "] does not specify a return value, ",
-                                                           "yet returns a value of class [",
-                                                           paste0 (attr (retval, "class"),
-                                                                   collapse = ", "),
-                                                           "]")))
+                                         operation = operation,
+                                         content = content))
 
         } else {
 
             txt <- test_return_classes (Rd_value, retval)
 
-            if (!is.null (txt))
+            if (!is.null (txt)) {
+                operation <- "compare class of return value with description"
                 for (i in txt) {
                     ret <- rbind (ret,
                                   report_object (type = "diagnostic",
                                                  fn_name = this_fn,
                                                  parameter = NA_character_,
-                                                 operation = "compare class of return value with description",
+                                                 operation = operation,
                                                  content = i))
                 }
+            }
         }
     }
 
@@ -116,12 +119,13 @@ test_return_classes <- function (Rd_value, retval) {
         # can be multiple return classes, so match the first one from
         # descr with the returned object
         r_i <- r [which (i)]
-        Rd_i <- Rd_value [which (i)]
+        rd_i <- Rd_value [which (i)]
         desc_classes <- lapply (seq_along (which (i)), function (j) {
                                     pos1 <- as.integer (r_i [[j]])
                                     pos2 <- as.integer (r_i [[j]] +
-                                                        attr (r_i [[j]], "match.length") - 1)
-                                    substring (Rd_i [j], pos1, pos2)     })
+                                            attr (r_i [[j]],
+                                                  "match.length") - 1)
+                                    substring (rd_i [j], pos1, pos2)     })
         desc_classes <- unique (unlist (desc_classes))
 
         actual_class <- retclasses [which (retclasses %in% desc_classes)]
@@ -144,7 +148,8 @@ test_return_classes <- function (Rd_value, retval) {
 
             r_i <- r [[which (i)]]
             desc_class <- substring (Rd_value [i], r_i, nchar (Rd_value [i]))
-            desc_class <- substring (desc_class, 1, regexpr ("\\s+", desc_class) - 1)
+            desc_class <- substring (desc_class, 1,
+                                     regexpr ("\\s+", desc_class) - 1)
             actual_class <- retclasses [which (retclasses_mod == desc_class)]
 
             txt <- paste0 ("Function returns an object of class [",
@@ -154,9 +159,11 @@ test_return_classes <- function (Rd_value, retval) {
                            "]")
 
             if (actual_class != retclasses [1])
-                txt <- c (txt, paste0 ("Function returns an object of primary class [",
+                txt <- c (txt, paste0 ("Function returns an object of ",
+                                       "primary class [",
                                        retclasses [1],
-                                       "] yet documentation says value is of class [",
+                                       "] yet documentation says value ",
+                                       "is of class [",
                                        desc_class,
                                        "]"))
         }

@@ -31,13 +31,18 @@ match_brackets <- function (x, curly = FALSE) {
     for (i in seq_along (br_open)) {
 
         xmid <- x [br_open [i]:br_closed [i]]
-        if (grepl ("\\{\\s?$", xmid [1])) # join line after opening curly bracket
-            xmid <- c (paste0 (xmid [1:2], collapse = " "), xmid [3:length (xmid)])
-        if (grepl ("^\\s?\\}", xmid [length (xmid)])) # join line before closing curly 
+        if (grepl ("\\{\\s?$", xmid [1])) {
+            # join line after opening curly bracket
+            xmid <- c (paste0 (xmid [1:2], collapse = " "),
+                       xmid [3:length (xmid)])
+        }
+        if (grepl ("^\\s?\\}", xmid [length (xmid)]))
         {
+            # join line before closing curly
             if (length (xmid) > 2)
                 xmid <- c (xmid [1:(length (xmid) - 2)],
-                           paste0 (xmid [(length (xmid) - 1):length (xmid)], collapse = " "))
+                           paste0 (xmid [(length (xmid) - 1):length (xmid)],
+                                   collapse = " "))
             else
                 xmid <- paste0 (xmid, collapse = " ")
         }
@@ -50,7 +55,8 @@ match_brackets <- function (x, curly = FALSE) {
             rms <- NULL
             for (j in index) {
                 if (j < length (xmid)) {
-                        xmid [j + 1] <- paste0 (xmid [j], xmid [j + 1], collapse = " ")
+                        xmid [j + 1] <- paste0 (xmid [j], xmid [j + 1],
+                                                collapse = " ")
                         rms <- c (rms, j)
                 }
             }
@@ -66,7 +72,7 @@ match_brackets <- function (x, curly = FALSE) {
                                  br_open [i]:(br_closed [i] - 1)))
         x <- x [-index]
     }
-    
+
     x <- gsub ("\\s+", " ", x)
 
     if (has_gg_pluses) {
@@ -76,7 +82,7 @@ match_brackets <- function (x, curly = FALSE) {
                          c (i, max (i) + 1))
 
         for (i in index) {
-            x [i [1] ] <- paste0 (x [i], collapse = " ")
+            x [i [1]] <- paste0 (x [i], collapse = " ")
         }
         x <- x [-unlist (lapply (index, function (i) i [-1]))]
     }
@@ -88,7 +94,7 @@ match_brackets <- function (x, curly = FALSE) {
         if (length (index) > 0) {
             for (i in index) {
                 x [i] <- paste0 (x [i], " ", x [i + 1])
-                x <- x [-(i + 1)]
+                x <- x [- (i + 1)]
             }
         }
     }
@@ -152,7 +158,8 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
 
     # no matching brackets just gives empty lines for all that follows:
     nested <- nested_sequences (br_open2, br_closed2)
-    br_open <- rev (nested$br_open) # rev to ensure lines are sequentially joined
+    # rev to ensure lines are sequentially joined
+    br_open <- rev (nested$br_open)
     br_closed <- rev (nested$br_closed)
     index <- which (!duplicated (cbind (br_open, br_closed)))
     br_open <- br_open [index]
@@ -201,10 +208,13 @@ nested_sequences <- function (br_open, br_closed) {
 # prior to standard "match_brackets" calls.
 # example: stats::approx
 parse_expressions <- function (x) {
-    brseq <- bracket_sequences (x, open_sym = "\\{", close_sym = "\\}", both_sym = "\\{(.+)?\\}")
+    brseq <- bracket_sequences (x,
+                                open_sym = "\\{",
+                                close_sym = "\\}",
+                                both_sym = "\\{(.+)?\\}")
     br_open <- brseq$br_open
     br_closed <- brseq$br_closed
-    
+
     for (i in seq_along (br_open)) {
         xmid <- x [br_open [i]:br_closed [i]]
         if (length (xmid) > 2) {
@@ -243,16 +253,19 @@ parse_expressions <- function (x) {
                     brseq <- nested_sequences (br1 [[j]], br2 [[j]])
                     br_end [j] <- brseq$br_closed [1]
                 }
-                xmid_after <- substring (xmid [index], br_end + 1, nchar (xmid [index]))
+                xmid_after <- substring (xmid [index],
+                                         br_end + 1,
+                                         nchar (xmid [index]))
                 index2 <- grep ("^\\s*$", xmid_after)
                 if (length (index2) > 0) {
                     xmid [index [index2]] <- paste0 (xmid [index [index2]],
                                                      xmid [index [index2] + 1])
-                    xmid <- xmid [-(index [index2] + 1)]
+                    xmid <- xmid [- (index [index2] + 1)]
                 }
             }
 
-            xmid <- match_brackets (c (xstart, match_brackets (xmid), xend), curly = TRUE)
+            xmid <- match_brackets (c (xstart, match_brackets (xmid), xend),
+                                    curly = TRUE)
 
             xfirst <- xlast <- NULL
             if (br_open [i] > 1)
@@ -295,7 +308,7 @@ join_function_lines <- function (x) {
         if (length (defs_on_next_line) > 0) {
             index <- fns [defs_on_next_line]
             x [index] <- paste0 (x [index], x [index + 1])
-            x <- x [-(index + 1)]
+            x <- x [- (index + 1)]
         }
     }
 

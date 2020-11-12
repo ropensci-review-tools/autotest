@@ -1,10 +1,10 @@
 # nocov start
-.onLoad <- function (libname, pkgname)
+.onLoad <- function (libname, pkgname) # nolint
 {
     op <- options ()
-	
-    op.autotest <- list (autotest_yaml_indent = 4)
-	
+
+    op.autotest <- list (autotest_yaml_indent = 4) # nolint
+
     toset <- !(names (op.autotest) %in% names (op))
     if (any (toset))
         options (op.autotest [toset])

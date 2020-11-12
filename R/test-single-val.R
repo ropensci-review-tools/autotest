@@ -1,8 +1,6 @@
 autotest_single <- function (pkg, params, this_fn, quiet) {
 
-    null_params <- NULL
     if (any (params == "NULL")) {
-        null_params <- params [params == "NULL"]
         params <- params [params != "NULL"]
     }
 
@@ -50,7 +48,8 @@ autotest_single <- function (pkg, params, this_fn, quiet) {
                 val_type <- "logical"
                 res <- rbind (res,
                               test_single_logical (pkg, this_fn, params_i, i))
-            } else if (methods::is (p_i, "name") | methods::is (p_i, "formula")) {
+            } else if (methods::is (p_i, "name") |
+                       methods::is (p_i, "formula")) {
                 val_type <- class (p_i) [1]
                 res <- rbind (res,
                               test_single_name (pkg, this_fn, params_i, i))
@@ -73,18 +72,20 @@ check_vec_length <- function (fn, params, i, val_type, res) {
     f <- file.path (tempdir (), "junk.txt")
     msgs <- catch_all_msgs (f, fn, params)
     if (null_or_not (msgs, c ("warning", "error"))) {
+        operation <- "length 2 vector for single-length parameter"
+        content <- paste0 ("parameter [",
+                           names (params) [i],
+                           "] is assumed to be ",
+                           "a single value of ",
+                           val_type,
+                           " type, yet admits vectors ",
+                           "of length > 1")
         res <- rbind (res,
                       report_object (type = "diagnostic",
                                      fn_name = fn,
                                      parameter = names (params) [i],
-                                     operation = "length 2 vector for single-length parameter",
-                                     content = paste0 ("parameter [",
-                                                       names (params) [i],
-                                                       "] is assumed to be ",
-                                                       "a single value of ",
-                                                       val_type,
-                                                       " type, yet admits vectors ",
-                                                       "of length > 1")))
+                                     operation = operation,
+                                     content = content))
     }
 
     return (res)

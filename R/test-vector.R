@@ -3,9 +3,7 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
     ret <- NULL
     f <- file.path (tempdir (), "junk.txt")
 
-    null_params <- NULL
     if (any (params == "NULL")) {
-        null_params <- params [params == "NULL"]
         params <- params [params != "NULL"]
     }
 
@@ -20,29 +18,32 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
         msgs <- catch_all_msgs (f, this_fn, params_v)
         ret <- add_msg_output (ret, msgs, types = "warning",
                                operation = "normal function call")
-        warn <- not_null_and_is (msgs, "warning")
+        #warn <- not_null_and_is (msgs, "warning")
 
         # int columns submitted as double should return different result:
-        if (typeof (params_v [[v]]) == "integer" & !is.factor (params_v [[v]])) {
+        if (typeof (params_v [[v]]) == "integer" &
+            !is.factor (params_v [[v]])) {
             res1 <- suppressWarnings (do.call (this_fn, params_v))
             params_v [[v]] <- as.numeric (params_v [[v]])
             res2 <- suppressWarnings (do.call (this_fn, params_v))
             if (!identical (res1, res2)) {
+                operation <- "integer vector converted to numeric"
+                content <- paste0 ("Function [",
+                                   this_fn,
+                                   "] returns different values when ",
+                                   "assumed int-valued parameter [",
+                                   names (params) [v],
+                                   "] is submitted as double. ",
+                                   "Error message: ",
+                                   "different classes when ",
+                                   "submitted as ",
+                                   names (params) [v])
                 ret <- rbind (ret,
                               report_object (type = "diagnostic",
                                              fn_name = this_fn,
                                              parameter = names (params_v) [v],
-                                             operation = "integer vector converted to numeric",
-                                             content = paste0 ("Function [",
-                                                               this_fn,
-                                                               "] returns different values when ",
-                                                               "assumed int-valued parameter [",
-                                                               names (params) [v],
-                                                               "] is submitted as double. ",
-                                                               "Error message: ",
-                                                               "different classes when ",
-                                                               "submitted as ",
-                                                               names (params) [v])))
+                                             operation = operation,
+                                             content = content))
             }
             params_v <- params
         }
@@ -56,19 +57,22 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
             if (not_null_and_is (msgs, "error")) {
                 index <- which (msgs$type == "error")
                 for (e in index) {
+                    operation <- "custom class definitions for vector input"
+                    content <- paste0 ("Function [",
+                                       this_fn,
+                                       "] errors on vector columns with ",
+                                       "different classes when ",
+                                       "submitted as ",
+                                       names (params_v) [v],
+                                       " Error message: ",
+                                       msgs$content [e])
                     ret <- rbind (ret,
                                   report_object (type = "diagnostic",
                                                  fn_name = this_fn,
-                                                 parameter = names (params_v) [v],
-                                                 operation = "custom class definitions for vector input",
-                                                 content = paste0 ("Function [",
-                                                                   this_fn,
-                                                                   "] errors on vector columns with ",
-                                                                   "different classes when ",
-                                                                   "submitted as ",
-                                                                   names (params_v) [v],
-                                                                   " Error message: ",
-                                                                   msgs$content [e])))
+                                                 parameter =
+                                                     names (params_v) [v],
+                                                 operation = operation,
+                                                 content = content))
                 }
             } else {
                 # TODO: Expectation - they need not be identical, because class
@@ -88,18 +92,20 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
         if (not_null_and_is (msgs, "error")) {
             index <- which (msgs$type == "error")
             for (e in index) {
+                operation <- "convert vector input to list-columns"
+                content <- paste0 ("Function [",
+                                   this_fn,
+                                   "] errors on list-columns ",
+                                   "when submitted as ",
+                                   names (params) [v],
+                                   " Error message: ",
+                                   msgs$content [e])
                 ret <- rbind (ret,
                               report_object (type = "diagnostic",
                                              fn_name = this_fn,
                                              parameter = names (params_v) [v],
-                                             operation = "convert vector input to list-columns",
-                                             content = paste0 ("Function [",
-                                                               this_fn,
-                                                               "] errors on list-columns ",
-                                                               "when submitted as ",
-                                                               names (params) [v],
-                                                               " Error message: ",
-                                                               msgs$content [e])))
+                                             operation = operation,
+                                             content = content))
             }
         }
     }

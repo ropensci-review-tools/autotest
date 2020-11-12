@@ -14,14 +14,20 @@ log_all_msgs <- function (con, this_fn, params = NULL) {
                                         else
                                             do.call (this_fn, params),
                                        error = function(e) {
-                                           write (toString (e), con, append = TRUE)
+                                           write (toString (e),
+                                                  con,
+                                                  append = TRUE)
                                        },
                                        warning = function(w) {
-                                           write (toString (w), con, append = TRUE)
+                                           write (toString (w),
+                                                  con,
+                                                  append = TRUE)
                                            invokeRestart("muffleWarning")
                                        },
                                        message = function (z) {
-                                           write (toString (z), con, append = TRUE)
+                                           write (toString (z),
+                                                  con,
+                                                  append = TRUE)
                                        }),
                    error = function(e) { return ("error detected") })
     return (x)
@@ -61,7 +67,8 @@ parse_all_msgs <- function (f) {
             types <- c ("message", "error", "warning")
             type <- NA_character_
             for (ti in types)
-                if (grepl (ti, substring (x [i], 1, colon1), ignore.case = TRUE))
+                if (grepl (ti, substring (x [i], 1, colon1),
+                           ignore.case = TRUE))
                     type <- ti
 
             ret <- rbind (ret,
@@ -75,10 +82,11 @@ parse_all_msgs <- function (f) {
 
     # anything left must be messages
     if (length (x) > 0) {
+        nac <- rep (NA_character_, length (x))
         ret <- rbind (ret,
                       report_object (type = rep ("message", length (x)),
-                                     fn_name = rep (NA_character_, length (x)),
-                                     parameter = rep (NA_character_, length (x)),
+                                     fn_name = nac,
+                                     parameter = nac,
                                      content = x))
     }
 

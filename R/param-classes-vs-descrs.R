@@ -1,6 +1,6 @@
 #' @param p Result from `tools:::.Rd_get_metadata (., "arguments")`. Instances
 #' that are not able to be parsed return NA and are subsequently removed,
-#' meaning this will not necessarily catch all 
+#' meaning this will not necessarily catch all
 #' @noRd
 parse_one_params <- function (p) {
     nm_desc <- vapply (p, function (i) {
@@ -30,7 +30,6 @@ parse_one_params <- function (p) {
 get_param_lists <- function (package) {
 
     if (pkg_is_source (package)) {
-        pkg <- get_package_name (package)
         f <- file.path (package, "man")
         flist <- list.files (f, full.names = TRUE, pattern = "*\\.Rd$")
         rdnames <- gsub ("\\.Rd$", "",
@@ -69,8 +68,6 @@ get_param_lists <- function (package) {
 m_get_param_lists <- memoise::memoise (get_param_lists)
 
 pkg_param_classes <- function (package) {
-
-    params <- m_get_param_lists (package)
 
     objs <- m_get_example_objs (package)
     objs$package <- vapply (objs$package, function (i)
@@ -118,7 +115,8 @@ param_classes_in_desc <- function (yaml, pkg_full) {
     param_classes <- yaml_param_classes (yaml)
 
     fn <- gsub (":", "",
-                strsplit (yaml [grep ("^functions:", yaml) + 1], "- ") [[1]] [2])
+                strsplit (yaml [grep ("^functions:", yaml) + 1],
+                          "- ") [[1]] [2])
     these_params <- params [params$fn_name == fn, ]
     these_classes <- classes [classes$alias == fn, ]
 
@@ -126,13 +124,14 @@ param_classes_in_desc <- function (yaml, pkg_full) {
     if (nrow (these_params) > 0) {
         class_in_desc <- vapply (seq_along (nrow (these_params)), function (i) {
                                      class_i <- these_classes$object
-                                     if (these_params$param [i] %in%
-                                         names (param_classes))
+                                     these <- these_params$params [i]
+                                     if (these %in% names (param_classes))
                                          class_i <- c (class_i,
-                                                       param_classes [[these_params$param [i] ]])
+                                                       param_classes [[these]])
                                      chk <- vapply (class_i, function (j)
-                                                    any (grepl (j, these_params$descr [i],
-                                                                ignore.case = TRUE)),
+                                            any (grepl (j,
+                                                        these_params$descr [i],
+                                                        ignore.case = TRUE)),
                                                     logical (1))
                                      ret <- NA_character_
                                      if (any (chk))
@@ -184,7 +183,7 @@ yaml_param_classes <- function (yaml) {
     if (length (index) > 0)
         yaml_pre [index] <- gsub ("^\'|^\"|\"$|\'$", "", yaml_pre [index])
     e <- new.env ()
-    x <- tryCatch (eval (parse (text = yaml_pre), envir = e))
+    x <- tryCatch (eval (parse (text = yaml_pre), envir = e)) # nolint
 
     yaml_pars <- gsub ("^\\s*\\-\\s*", "", yaml [par_index])
     objs <- vapply (yaml_pars, function (i)
@@ -197,14 +196,15 @@ yaml_param_classes <- function (yaml) {
 
     classes <- lapply (seq_along (objs), function (i) {
                            res <- tryCatch (
-                                     class (eval (parse (text = objs [i]), envir = e)),
+                                     class (eval (parse (text = objs [i]),
+                                                  envir = e)),
                                      error = function (z) "error")
                            if (i > 1 & "error" %in% res) {
                                iprev <- i - 1
                                while (res == "error") {
-                                   res <- tryCatch (class (eval (parse (text = objs [i]),
-                                                                 envir = get (objs [iprev]))),
-                                                    error = function (z) "error")
+                   res <- tryCatch (class (eval (parse (text = objs [i]),
+                                                 envir = get (objs [iprev]))),
+                                    error = function (z) "error")
                                }
                            }
                            return (res)
@@ -226,7 +226,11 @@ yaml_param_classes <- function (yaml) {
 #' @note The `phrases` parameter is case-insensitive, and are OR-combined, so
 #' matching any one will suffice.
 #' @noRd
-is_fn_a_constructor <- function (fn, phrases = c ("create", "construt", "object", "class")) {
+is_fn_a_constructor <- function (fn,
+                                 phrases = c ("create",
+                                              "construt",
+                                              "object",
+                                              "class")) {
     fn <- strsplit (fn, "::") [[1]]
     this_pkg <- fn [1]
     this_fn <- fn [2]
@@ -250,8 +254,8 @@ is_fn_a_constructor <- function (fn, phrases = c ("create", "construt", "object"
 #' Does a parameter description refer to a function from another package?
 #'
 #' @param pkg Name of installed package or path to local source
-#' @param param_descs Vector of character descriptions given to each function of a
-#' pacakge
+#' @param param_descs Vector of character descriptions given to each function
+#' of a pacakge
 #' @return Vector of same length as `param_descs` with `NA` for descriptions
 #' which contain no elements matching functions from other pacakge, otherwise a
 #' single
@@ -284,7 +288,7 @@ param_desc_is_other_fn <- function (pkg, param_descs) {
         if (length (pkgs) > 0) {
             # check whether any topics are "class" descriptions:
             nms <- lapply (pkgs, function (i)
-                           allfns [[i]] [grep (txt, allfns [[i]]) ])
+                           allfns [[i]] [grep (txt, allfns [[i]])])
             has_class <- vapply (nms, function (i)
                                  any (grepl ("class|as\\.", i)),
                                  logical (1))
@@ -299,7 +303,8 @@ param_desc_is_other_fn <- function (pkg, param_descs) {
                                  i_s <- gsub ("\"|\'|\`|^.*\\{|\\}$", "",
                                               strsplit (i, " ") [[1]])
                                  res <- vapply (i_s, function (txt) {
-                                                    match_txt_to_pkg (txt, allfns)
+                                                    match_txt_to_pkg (txt,
+                                                                      allfns)
                                               }, character (1),
                                               USE.NAMES = FALSE)
                                  index <- which (!is.na (res))

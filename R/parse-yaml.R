@@ -48,8 +48,9 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
         nms <- vapply (i, function (i) names (i), character (1))
 
         # check whether character variables are quoted:
-        pars <- i [[which (nms == "parameters") [1] ]]$parameters
-        is_char <- which (vapply (pars, function (i) is.character (i [[1]]), logical (1)))
+        pars <- i [[which (nms == "parameters") [1]]]$parameters
+        is_char <- which (vapply (pars, function (i)
+                                  is.character (i [[1]]), logical (1)))
         # then check whether yaml vals are quoted:
         index <- grep ("- parameters:$", yaml)
         if (length (index) > 0) {
@@ -62,12 +63,15 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
             yaml2 <- yaml [index]
             for (p in is_char) {
                 ystr <- paste0 ("- ", names (pars [[p]]), ":")
-                if (ystr == "- null:") # specific processing because yaml itself reserves that
+                # specific processing because yaml itself reserves "null"
+                if (ystr == "- null:")
                     ystr <- "- \"null\":"
                 yaml_version <- gsub ("^\\s+", "",
-                                      strsplit (yaml2 [grep (ystr, yaml2)], ystr) [[1]] [2])
+                                      strsplit (yaml2 [grep (ystr, yaml2)],
+                                                ystr) [[1]] [2])
                 if (!grepl ("\"|\'", yaml_version)) {
-                    if (grepl ("formula", names (pars [[p]]), ignore.case = TRUE)) {
+                    if (grepl ("formula", names (pars [[p]]),
+                               ignore.case = TRUE)) {
                         pars [[p]] [[1]] <- stats::formula (pars [[p]] [[1]])
                         attr (pars [[p]] [[1]], ".Environment") <- NULL
                     } else
@@ -104,14 +108,17 @@ load_libraries <- function (x, quiet = FALSE) {
     libraries <- vapply (x [grep ("::", x)], function (i) {
                              first_bit <- strsplit (i, "::") [[1]] [1]
                              # then remove everything before space
-                             utils::tail (strsplit (first_bit, "\\s+") [[1]], 1) },
-                             character (1), USE.NAMES = FALSE)
+                             utils::tail (strsplit (first_bit, "\\s+") [[1]], 1)
+          },
+          character (1),
+          USE.NAMES = FALSE)
     # then main package
     this_lib <- gsub ("package:\\s", "", x [grep ("package:", x)])
     libraries <- unique (c (libraries, this_lib))
     libraries <- libraries [which (!libraries %in% loadedNamespaces ())]
     if (!quiet & length (libraries) > 0) {
-        message (cli::col_green (cli::symbol$star, " Loading the following libraries:"))
+        message (cli::col_green (cli::symbol$star,
+                                 " Loading the following libraries:"))
         cli::cli_ul (libraries)
         suppressMessages (
                           chk <- lapply (libraries, function (i)
@@ -150,7 +157,7 @@ yaml_template <- function () {
        "functions:",
        "    - <name of function>:",
        "        - preprocess:",
-       "            - '<R code required for pre-processing exlosed in quotation marks>'",
+       "            - '<R code required for pre-processing exlosed in quotation marks>'", # nolint
        "            - '<second line of pre-processing code>'",
        "            - '<more code>'",
        "        - parameters:",

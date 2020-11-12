@@ -73,14 +73,16 @@ test_single_char <- function (pkg, this_fn, params, i) {
     #a <- rlang::parse_exprs (tools:::.Rd_get_metadata (h, "arguments"))
     a <- rlang::parse_exprs (get_Rd_metadata (h, "arguments"))
     ## also .Rd_get_metadata ("title", "name", "description", "value", ...)
-    arg_names <- unlist (lapply (a, function (i) eval (i) [[1]] [[1]]))
+    #rg_names <- unlist (lapply (a, function (i) eval (i) [[1]] [[1]]))
+    #arg_name <- arg_names [i]
     arg_descs <- lapply (a, function (i) unlist (eval (i) [[2]]))
-    arg_name <- arg_names [i]
     arg_desc <- arg_descs [i]
     if (grepl ("~", params [[i]]) | any (grepl ("formula", arg_desc)))
         return (msgs) # do not test formulas
 
-    # regex the actual string to extract all item descriptions. These are formatted
+
+    # regex the actual string to extract all item descriptions.
+    # These are formatted
     # "\\item { <name> } { <description> }
     # start by removing the { <name> } portion
     hc <- paste0 (paste (h), collapse = " ")
@@ -88,7 +90,10 @@ test_single_char <- function (pkg, this_fn, params, i) {
     #index <- gregexpr ("\\\\item\\s+\\{.*\\}\\s+\\{(.*?)\\}", hc) [[1]]
     i <- as.integer (index)
     j <- i + attr (index, "match.length")
-    rms <- gsub ("}", "\\}", gsub ("\\item\\s+", "", substring (hc, i, j)), fixed = TRUE)
+    rms <- gsub ("}", "\\}",
+                 gsub ("\\item\\s+", "",
+                       substring (hc, i, j)),
+                 fixed = TRUE)
 
     # these don't necessary match the end brackets, so need extension where not
     n_open <- vapply (gregexpr ("\\{", rms), length, integer (1))
@@ -97,7 +102,9 @@ test_single_char <- function (pkg, this_fn, params, i) {
     for (k in index) {
         pos <- gregexpr ("\\}", substring (hc, j [k], nchar (hc))) [[1]]
         #j [k] <- j [k] + pos [n_open [k] - n_closed [k]]
-        add <- substring (hc, j [k] + 1, j [k] + pos [n_open [k] - n_closed [k]])
+        add <- substring (hc,
+                          j [k] + 1,
+                          j [k] + pos [n_open [k] - n_closed [k]])
         add <- gsub ("}", "\\}", add, fixed = TRUE)
         add <- gsub (":", "\\:", add, fixed = TRUE)
         rms [k] <- paste0 (rms [k], add)
@@ -118,7 +125,7 @@ test_single_char <- function (pkg, this_fn, params, i) {
     match_res_k <- function (res, hc, i, j, k) {
         rk <- res [k]
         #(length (gregexpr ("\\{", rk) [[1]]) !=
-        #    length (gregexpr ("\\}", rk) [[1]])) 
+        #    length (gregexpr ("\\}", rk) [[1]]))
         if (length (gregexpr ("\\{", rk) [[1]]) !=
             length (gregexpr ("\\}", rk) [[1]])) {
             this_i <- i [k] + 1
@@ -148,7 +155,13 @@ test_single_char <- function (pkg, this_fn, params, i) {
     return (msgs)
 }
 
-append_single_char_reports <- function (res, msgs, operation, params, this_fn, i, content) {
+append_single_char_reports <- function (res,
+                                        msgs,
+                                        operation,
+                                        params,
+                                        this_fn,
+                                        i,
+                                        content) {
 
     if (is.null (msgs)) {
         content <- paste0 ("Parameter [",

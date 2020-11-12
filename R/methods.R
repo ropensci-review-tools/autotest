@@ -3,7 +3,8 @@
 summary.autotest_package <- function (object, ...) {
     # non-dplyr grouping of fn_names
     fns <- sort (unique (object$fn_name))
-    errors <- warns <- messages <- diagnostics <- rep (NA_integer_, length (fns))
+    errors <- warns <- messages <- diagnostics <-
+        rep (NA_integer_, length (fns))
     for (i in seq (fns)) {
         objecti <- object [which (object$fn_name == fns [i]), ]
         errors [i] <- length (which (objecti$type == "error"))
@@ -41,9 +42,11 @@ summary.autotest_package <- function (object, ...) {
     message ("     ", sum (messages), " message", msg_txt)
     diag_txt <- ifelse (sum (diagnostics) == 1, "", "s")
     message ("     ", sum (diagnostics), " other diagnostics", diag_txt)
-    objecttrim <- object [which (!grepl ("no documented example", object$content)), ]
+    objecttrim <- object [which (!grepl ("no documented example",
+                                         object$content)), ]
     message ("That corresponds to ",
-             round (nrow (objecttrim) / length (unique (objecttrim$fn_name)), 3),
+             round (nrow (objecttrim) /
+                    length (unique (objecttrim$fn_name)), 3),
              " messages per documented function (which has examples)")
     message ("")
 

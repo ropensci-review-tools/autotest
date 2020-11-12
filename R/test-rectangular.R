@@ -3,7 +3,7 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
     ret <- NULL
 
     f <- file.path (tempdir (), "junk.txt")
-    
+
     rect_index <- which (vapply (params, function (i)
                                  length (dim (i)) == 2 &
                                      !(inherits (i, "Matrix") |
@@ -31,8 +31,18 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
         if ("res1" %in% ls () & "res2" %in% ls ()) {
             ret <- compare_rect_outputs (ret, res1, res2, this_fn, params, r)
             if ("res3" %in% ls ()) {
-                ret <- compare_rect_outputs (ret, res1, res3, this_fn, params, r)
-                ret <- compare_rect_outputs (ret, res2, res3, this_fn, params, r)
+                ret <- compare_rect_outputs (ret,
+                                             res1,
+                                             res3,
+                                             this_fn,
+                                             params,
+                                             r)
+                ret <- compare_rect_outputs (ret,
+                                             res2,
+                                             res3,
+                                             this_fn,
+                                             params,
+                                             r)
             }
         }
 
@@ -45,7 +55,9 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
             if (!is.null (msgs))
                 msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
             ret <- add_msg_output (ret, msgs, types = c ("warning", "error"),
-                                   operation = "rectangular parameter with extended class structure")
+                                   operation = paste0 ("rectangular parameter ",
+                                                       "with extended ",
+                                                       "class structure"))
             if (!"error" %in% msgs$type) {
                 res4 <- suppressWarnings (do.call (this_fn, params_r))
             }
@@ -61,16 +73,17 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
             msgs <- catch_all_msgs (f, this_fn, params_r)
             if (!null_or_not (msgs, "error")) {
                 msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
+                operation <- "tabular structure with new class structure"
+                content <- paste0 ("Function [",
+                                   this_fn,
+                                   "] should error when class structure of ",
+                                   "`data.frame` input is removed.")
                 ret <- rbind (ret,
                               report_object (type = "diagnostic",
                                              fn_name = this_fn,
                                              parameter = names (params) [r],
-                                             operation = "tabular structure with new class structure",
-                                             content = paste0 ("Function [",
-                                                               this_fn,
-                                                               "] should error when ",
-                                                               "class structure of `data.frame` ",
-                                                               "input is removed.")))
+                                             operation = operation,
+                                             content = content))
             }
         }
     }
@@ -80,18 +93,21 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
 chk_dims <- function (this_fn, params, r, res1, res2) {
     ret <- NULL
     if (!identical (dim (res1), dim (res2))) {
+        operation <- paste0 ("compare output dimensions for ",
+                             "different rectangular inputs")
+        content <- paste0 ("Function [",
+                           this_fn,
+                           "] errors on rectangular input for [",
+                           names (params) [r],
+                           "]: Dimensions differ between ",
+                           class (res1) [1],
+                           " and ",
+                           class (res2) [1], " inputs")
         ret <- report_object (type = "diagnostic",
                               fn_name = this_fn,
                               parameter = names (params) [r],
-                              operation = "compare output dimensions for different rectangular inputs",
-                              content = paste0 ("Function [",
-                                                this_fn,
-                                                "] errors on rectangular input for [",
-                                                names (params) [r],
-                                                "]: Dimensions differ between ",
-                                                class (res1) [1],
-                                                " and ",
-                                                class (res2) [1], " inputs"))
+                              operation = operation,
+                              content = content)
     }
     return (ret)
 }
@@ -99,19 +115,21 @@ chk_dims <- function (this_fn, params, r, res1, res2) {
 chk_names <- function (this_fn, params, r, res1, res2) {
     ret <- NULL
     if (!identical (names (res1), names (res2))) {
+        operation <- "compare output names for different rectangular inputs"
+        content <- paste0 ("Function [",
+                           this_fn,
+                           "] errors on rectangular input for [",
+                           names (params) [r],
+                           "]: Column names differ between ",
+                           class (res1) [1],
+                           " and ",
+                           class (res2) [1],
+                           " inputs")
         ret <- report_object (type = "diagnostic",
                               fn_name = this_fn,
                               parameter = names (params) [r],
-                              operation = "compare output names for different rectangular inputs",
-                              content = paste0 ("Function [",
-                                                this_fn,
-                                                "] errors on rectangular input for [",
-                                                names (params) [r],
-                                                "]: Column names differ between ",
-                                                class (res1) [1],
-                                                " and ",
-                                                class (res2) [1],
-                                                " inputs"))
+                              operation = operation,
+                              content = content)
     }
     return (ret)
 }
@@ -120,23 +138,25 @@ chk_columns <- function (this_fn, params, r, res1, res2) {
     ret <- NULL
     for (i in seq (ncol (res1))) {
         if (!identical (res1 [[i]], res2 [[i]])) {
+            operation <- paste0 ("compare output columns for ",
+                                 "different rectangular inputs")
+            content <- paste0 ("Function [",
+                               this_fn,
+                               "] errors on rectangular input for [",
+                               names (params) [r],
+                               "]: Column [",
+                               names (res1) [i],
+                               "] differs between ",
+                               class (res1) [1],
+                               " and ",
+                               class (res2) [1],
+                               " inputs")
             ret <- rbind (ret,
                           report_object (type = "diagnostic",
                                          fn_name = this_fn,
                                          parameter = names (params) [r],
-                                         operation = "compare output columns for different rectangular inputs",
-                                         content = paste0 ("Function [",
-                                                           this_fn,
-                                                           "] errors on rectangular ",
-                                                           "input for [",
-                                                           names (params) [r],
-                                                           "]: Column [",
-                                                           names (res1) [i],
-                                                           "] differs between ",
-                                                           class (res1) [1],
-                                                           " and ",
-                                                           class (res2) [1],
-                                                           " inputs")))
+                                         operation = operation,
+                                         content = content))
         }
     }
     return (ret)

@@ -11,7 +11,7 @@ get_params <- function (res, i, this_fn) {
     #p_keys <- p_keys [index]
     #p_vals <- p_vals [index]
 
-    . <- NULL # suppress no visible binding note
+    . <- NULL # suppress no visible binding note # nolint
     pre <- res$preprocess [[i]]
     e <- new.env ()
     for (p in pre) {
@@ -39,17 +39,20 @@ get_params <- function (res, i, this_fn) {
                     this_val <- eval (parse (text = this_val), envir = e)
                 } else if (temp_val %in% ls (envir = e)) {
                     this_val <- get (temp_val, envir = e)
-                } else if (temp_val %in% ls (paste0 ("package:", res$package))) {
-                    this_val <- get (temp_val,
-                                     envir = as.environment (paste0 ("package:", res$package)))
+                } else if (temp_val %in%
+                           ls (paste0 ("package:", res$package))) {
+                    e <- as.environment (paste0 ("package:", res$package))
+                    this_val <- get (temp_val, envir = e)
                 } else if (grepl ("::", temp_val)) {
                     this_pkg <- strsplit (temp_val, "::") [[1]] [1]
                     if (!this_pkg %in% search ())
                         suppressMessages (
-                                          library (this_pkg, character.only = TRUE)
+                                          library (this_pkg,
+                                                   character.only = TRUE)
                         )
                     this_val <- parse (text = temp_val) %>%
-                        eval (envir = as.environment (paste0 ("package:", this_pkg)))
+                        eval (envir = as.environment (paste0 ("package:",
+                                                              this_pkg)))
                 }
             } else if (is.character (this_val)) {
                 if (this_val %in% names (e)) {
@@ -62,7 +65,8 @@ get_params <- function (res, i, this_fn) {
                             library (this_pkg, character.only = TRUE)
                             )
                     this_val <- parse (text = this_val) %>%
-                        eval (envir = as.environment (paste0 ("package:", this_pkg)))
+                        eval (envir = as.environment (paste0 ("package:",
+                                                              this_pkg)))
                 } else {
                     tryeval <- tryCatch (eval (parse (text = this_val)),
                                          error = function (e) NULL)
@@ -112,7 +116,8 @@ get_params <- function (res, i, this_fn) {
         no_defaults <- no_defaults [which (no_defaults %in% names (params))]
         if (length (no_defaults) > 0)
             stop ("function includes the following parameters which require ",
-                  "non-default values:\n   [", paste0 (no_defaults, collapse = ", "),
+                  "non-default values:\n   [",
+                  paste0 (no_defaults, collapse = ", "),
                   "]")
         # The rest must be in params, so the default "MISSING" entries can be
         # removed here:
@@ -183,7 +188,8 @@ get_param_descs_source <- function (package, fn) {
     x <- x [x != ""]
 
     index <- grep ("^\\\\item\\{", x)
-    index <- rep (seq (index), times = c (diff (index), length (x) - max (index) + 1))
+    index <- rep (seq (index),
+                  times = c (diff (index), length (x) - max (index) + 1))
     xs <- split (x, f = as.factor (index))
 
     items <- vapply (xs, function (i) {
@@ -191,8 +197,10 @@ get_param_descs_source <- function (package, fn) {
                          return (strsplit (i, "\\}") [[1]] [1]) },
                          character (1), USE.NAMES = FALSE)
     descs <- vapply (xs, function (i) {
-                         i <- paste0 (gsub ("^\\\\item\\{|\\}$", "", i), collapse = " ")
-                         return (substr (i, regexpr ("\\{", i) + 1, nchar (i))) },
+                         i <- paste0 (gsub ("^\\\\item\\{|\\}$", "", i),
+                                      collapse = " ")
+                         return (substr (i, regexpr ("\\{", i) + 1, nchar (i)))
+                         },
                          character (1), USE.NAMES = FALSE)
 
     names (descs) <- items

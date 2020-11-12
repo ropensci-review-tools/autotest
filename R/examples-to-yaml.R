@@ -31,9 +31,6 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
 
     exs <- get_all_examples (package, pkg_is_source (package), exclude)
 
-    pkg_classes <- pkg_param_classes (package)
-    descs <- package_param_descs (package)
-
     ret <- list ()
     for (i in seq (exs)) {
         this_fn <- names (exs) [i]
@@ -50,17 +47,19 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
                                  aliases = aliases,
                                  prev_fns = prev_fns)
             if (!is.null (y)) {
-                # Check documentation to see which parameters include descriptions of
-                # expected classes.
+                # Check documentation to see which parameters include
+                # descriptions of expected classes.
                 classes <- param_classes_in_desc (y, package)
-                if (any (!is.na (classes$class_in_desc))) {
-                    classes <- classes [which (!is.na (classes$class_in_desc)), ]
+                index <- which (!is.na (classes$class_in_desc))
+                if (length (index) > 0) {
+                    classes <- classes [index, ]
                     for (i in seq (nrow (classes)))
                         y <- add_class_restriction (y, classes [i, ])
                 }
                 attr (y, "package") <- package
-                ret [[length (ret) + 1]] <- prev_fns [[length (prev_fns) + 1]] <- y
-                names (ret ) [length (ret)] <- this_fn
+                ret [[length (ret) + 1]] <-
+                    prev_fns [[length (prev_fns) + 1]] <- y
+                names (ret) [length (ret)] <- this_fn
             }
         }
 
@@ -79,7 +78,8 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
 #' stages for nominated function.
 #' @return An autotest `yaml` specification of the example code given in `x`.
 #' @noRd
-one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x, aliases = NULL, prev_fns = NULL) {
+one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x,
+                            aliases = NULL, prev_fns = NULL) {
 
     yaml <- c (paste0 ("package: ", pkg),
                "functions:",
@@ -132,7 +132,8 @@ one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x, aliases = NULL, prev_f
     fn_calls <- grep (paste0 (paste0 (aliases, "\\s?\\("), collapse = "|"), x)
     x <- x [seq (max (fn_calls))]
 
-    x_content <- extract_primary_call_content (x, unique (c (fn, fn_short, aliases)))
+    x_content <- extract_primary_call_content (x,
+                                        unique (c (fn, fn_short, aliases)))
 
     x_content <- rm_assignment_operators (x_content, fn)
     x_content <- split_args_at_equals (x_content)
@@ -251,7 +252,8 @@ terminal_prepro_lines <- function (x, fn_calls) {
 library_calls_to_yaml <- function (x, has_prepro, yaml) {
     if (any (grepl ("^library\\s?\\(", x))) {
         index <- grep ("^library\\s?\\(", x)
-        libs <- unlist (lapply (x [index], function (i) strsplit (i, "\\)\\s?;") [[1]] [1]))
+        libs <- unlist (lapply (x [index], function (i)
+                                strsplit (i, "\\)\\s?;") [[1]] [1]))
         if (!has_prepro) {
             yaml <- c (yaml,
                        paste0 (yaml_indent (2), "- preprocess:"))
@@ -263,7 +265,7 @@ library_calls_to_yaml <- function (x, has_prepro, yaml) {
 
         # rm those lines from x if they are not compound expressions
         index2 <- !grepl ("\\)\\s?;", x [index])
-        x <- x [-index [index2] ]
+        x <- x [-index [index2]]
     }
 
     return (list (yaml = yaml, x = x, has_prepro = has_prepro))
@@ -287,10 +289,12 @@ parse_primary_fn_calls <- function (x, yaml, aliases, has_prepro) {
         p <- utils::getParseData (parse (text = xi))
         syms <- which (p$token == "SYMBOL_FUNCTION_CALL")
         if (any (syms)) {
-            if (!p$text [syms [1]] %in% aliases & p$text [syms [1]] %in% rm_fns) {
+            if (!p$text [syms [1]] %in% aliases &
+                p$text [syms [1]] %in% rm_fns) {
                 rm_lines <- c (rm_lines, xi)
             } else if (any (p$token %in% c ("LEFT_ASSIGN", "EQ_ASSIGN"))) {
-                if (which (p$token %in% c ("LEFT_ASSIGN", "EQ_ASSIGN")) [1] < syms [1]) {
+                if (which (p$token %in% c ("LEFT_ASSIGN", "EQ_ASSIGN")) [1] <
+                    syms [1]) {
                     if (!has_prepro) {
                         yaml <- c (yaml,
                                    paste0 (yaml_indent (2), "- preprocess:"))
@@ -320,11 +324,13 @@ prepro_return_values <- function (x, yaml, aliases, has_prepro) {
                           if (any (p$token == "SYMBOL_FUNCTION_CALL")) {
                               here <- which (p$token == "SYMBOL_FUNCTION_CALL" &
                                              p$text %in% aliases)
-                              if (any (p$token [seq (here - 1)] %in% c ("LEFT_ASSIGN", "EQ_ASSIGN")))
+                              if (any (p$token [seq (here - 1)] %in%
+                                       c ("LEFT_ASSIGN", "EQ_ASSIGN")))
                                   ret <- TRUE
                           } else { # values assigned with no function call
                               syms <- which (p$token == "SYMBOL")
-                              assigns <- which (p$token %in% c ("LEFT_ASSIGN", "EQ_ASSIGN"))
+                              assigns <- which (p$token %in%
+                                                c ("LEFT_ASSIGN", "EQ_ASSIGN"))
                               if (length (syms) > 0 & length (assigns) > 0) {
                                   if (syms [1] < assigns [1]) {
                                       ret <- TRUE
@@ -382,7 +388,8 @@ chk_fn_calls_are_primary <- function (x, fn, fn_short, aliases) {
                                # can also be part of *apply or *map functions,
                                # yet `getParseData` only parses these as SYMBOL
                                index2 <- index [1]:nrow (p)
-                               syms <- unique (p$text [index2] [which (p$token [index2] == "SYMBOL")])
+                               index3 <- which (p$token [index2] == "SYMBOL")
+                               syms <- unique (p$text [index2] [index3])
                                ret <- ret | (fn %in% syms | fn_short %in% syms)
                            }
                        }
@@ -393,7 +400,7 @@ chk_fn_calls_are_primary <- function (x, fn, fn_short, aliases) {
     return (x)
 }
 
-#' Extract content from inside primary parentheses of all primary function calls 
+#' Extract content from inside primary parentheses of all primary function calls
 #' @param x Lines of example code reduced down to primary function calls only
 #' @param aliases List of all aliases for function(s) being called
 #' @return Named list each item of which is names by the function it calls, and
@@ -411,7 +418,8 @@ extract_primary_call_content <- function (x, aliases) {
     }
     nchars <- nchar (aliases) [nchars]
 
-    br1 <- apply (do.call (rbind, br1), 2, function (i) min (i [i > 0])) + nchars
+    br1 <- apply (do.call (rbind, br1), 2, function (i)
+                  min (i [i > 0])) + nchars
     # those may still include assignment operators or similar, so extract actual
     # fn calls by parsing expressions
     fn_calls <- vapply (seq_along (br1), function (i) {
@@ -419,7 +427,7 @@ extract_primary_call_content <- function (x, aliases) {
                             xp <- utils::getParseData (parse (text = this_x))
                             syms <- which (xp$token == "SYMBOL")
                             # last symbol must be function call:
-                            xp$text [syms [length (syms)] ] },
+                            xp$text [syms [length (syms)]] },
                             character (1))
 
     x <- substring (x, br1, nchar (x))
@@ -461,7 +469,8 @@ split_content_at_commas <- function (x) {
                         for (j in seq_along (index1)) {
                             index <- which (commas > index1 [j] &
                                             commas < index2 [j])
-                            commas <- commas [which (!seq_along (commas) %in% index)]
+                            commas <- commas [which (!seq_along (commas) %in%
+                                                     index)]
                          }
                      }
                      # do not split if the value is in double quotes
@@ -542,9 +551,10 @@ add_prev_prepro <- function (x, yaml, fn, prev_fns) {
                 yaml_top <- yaml [1:iend]
             }
 
-            # TODO: The following is not correct because it only grabs one line, but
-            # there may be cases with multiple lines
-            this_pp <- vapply (pp [[which (po %in% x [[i]] [, 2])]], function (i)
+            # TODO: The following is not correct because it only grabs one line,
+            # but there may be cases with multiple lines
+            this_pp <- vapply (pp [[which (po %in% x [[i]] [, 2])]],
+                               function (i)
                                paste0 (yaml_indent (3), "- '", i, "'"),
                                character (1),
                                USE.NAMES = FALSE)
@@ -566,7 +576,8 @@ add_prev_prepro <- function (x, yaml, fn, prev_fns) {
 prev_preprocess <- function (prev_fns, fn) {
     lapply (prev_fns, function (i) {
                 out <- yaml::yaml.load (i)$functions
-                out <- unlist (lapply (out, function (j) j [[fn]] [[1]]$preprocess))
+                out <- unlist (lapply (out, function (j)
+                                       j [[fn]] [[1]]$preprocess))
                 return (out [which (!duplicated (out))])
                        })
 }
@@ -603,7 +614,10 @@ get_preprocess_lines <- function (x) {
                        par_index <- grep ("parameters:", i)
                        res <- NULL
                        for (j in seq_along (pre_index))
-                           res <- c (res, i [(pre_index [j] + 1):(par_index [j] - 1)])
+                       {
+                           index <- (pre_index [j] + 1):(par_index [j] - 1)
+                           res <- c (res, i [index])
+                       }
                        return (res [which (!duplicated (res))])
         })
     ret <- unlist (ret)
@@ -631,7 +645,7 @@ assign_names_to_params <- function (x, pkg) {
             }
         }
     }
-    
+
     # also also remove any extraneous white space
     x <- lapply (x, function (i) {
                      i [, 1] <- gsub ("^\\s?|\\s?$", "", i [, 1])
@@ -706,24 +720,27 @@ get_aliases_non_source <- function (pkg, fn_name) {
     # first get all aliases for all functions in package:
     loc <- file.path (R.home (), "library", pkg, "help", pkg)
     e <- new.env ()
-    chk <- lazyLoad (loc, envir = e)
+    chk <- lazyLoad (loc, envir = e) # nolint
     fns <- ls (envir = e)
     all_aliases <- lapply (fns, function (i) {
                            rd <- get (i, envir = e)
                            is_alias <- vapply (rd, function (j)
                                 attr (j, "Rd_tag") == "\\alias",
                                 logical (1))
-                        vapply (rd [which (is_alias)], function (j) j [[1]], character (1))
+                        vapply (rd [which (is_alias)], function (j)
+                                j [[1]], character (1))
         })
     names (all_aliases) <- fns
 
     #x <- get (fn_name, envir = e)
 
-    has_fn_name <- which (vapply (all_aliases, function (i) fn_name %in% i, logical (1)))
+    has_fn_name <- which (vapply (all_aliases, function (i)
+                                  fn_name %in% i, logical (1)))
     if (length (has_fn_name) > 0) {
         aliases <- unname (unlist (all_aliases [has_fn_name]))
         classes <- vapply (aliases, function (i) {
-                               pkg_env <- as.environment (paste0 ("package:", pkg))
+                               pkg_env <- as.environment (paste0 ("package:",
+                                                                  pkg))
                                i_get <- tryCatch (get (i, envir = pkg_env),
                                                   error = function (e) NULL)
                                ret <- NA_character_

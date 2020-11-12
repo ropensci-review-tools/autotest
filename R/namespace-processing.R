@@ -17,7 +17,7 @@ get_pkg_functions <- function (package) {
         fns <- ls (paste0 ("package:", package))
     }
 
-    fn_classes <- vapply (fns, function (i) 
+    fn_classes <- vapply (fns, function (i)
                           tryCatch (class (get (i, envir = e)) [1],
                                     error = function (err) NA_character_),
                           character (1))
@@ -114,7 +114,8 @@ fns_to_topics <- function (x = NULL, package) {
         alias_topic <- lapply (rd, function (i) {
                                 alias <- get_Rd_metadata (i, "alias")
                                 topic <- get_Rd_metadata (i, "name")
-                                name <- strsplit (attr (i, "Rdfile"), .Platform$file.sep) [[1]]
+                                name <- strsplit (attr (i, "Rdfile"),
+                                                  .Platform$file.sep) [[1]]
                                 name <- name [length (name)]
                                 cbind (alias,
                                        rep (topic, length (alias)),

@@ -11,15 +11,17 @@ test_single_double <- function (pkg, this_fn, params, i) {
 
     if (!is.null (res0) & !is.null (res1)) {
         if (!identical (res0, res1)) {
+            op <- "add trivial noise to double parameter"
+            content <- paste0 ("Parameter [",
+                               names (params) [i],
+                               "] yields different result when trivial ",
+                               "noise is added")
             res <- rbind (res,
                           report_object (type = "diagnostic",
                                          fn_name = this_fn,
                                          parameter = names (params) [i],
-                                         operation = "add trivial noise to double parameter",
-                                         content = paste0 ("Parameter [",
-                                                           names (params) [i],
-                                                           "] yields different result when trivial ",
-                                                           "noise is added")))
+                                         operation = op,
+                                         content = content))
         }
     }
 }
