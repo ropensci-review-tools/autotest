@@ -1,5 +1,5 @@
 
-get_Rd_metadata <- utils::getFromNamespace (".Rd_get_metadata", "tools")
+get_Rd_metadata <- utils::getFromNamespace (".Rd_get_metadata", "tools") # nolint
 
 test_single_char <- function (pkg, this_fn, params, i) {
 
@@ -32,29 +32,72 @@ test_single_char <- function (pkg, this_fn, params, i) {
     } else
         msgs <- NULL
 
-    # check case sensitivity:
+    for (lower in c (TRUE, FALSE))
+        msgs <- case_dependency (params, i, msgs, this_fn, lower = lower)
+
+    msgs <- chk_match_arg (params, i, msgs, this_fn)
+
+    if (is_source)
+        return (msgs) # TODO: Remove that and process the remainder for src pkgs
+
+
+    return (msgs)
+}
+
+append_single_char_reports <- function (res,
+                                        msgs,
+                                        operation,
+                                        params,
+                                        this_fn,
+                                        i,
+                                        content) {
+
+    if (is.null (msgs)) {
+        content <- paste0 ("Parameter [",
+                           names (params) [i],
+                           "] of function [",
+                           this_fn,
+                           "] is assumed to be a single character, but ",
+                           content)
+        res <- rbind (res,
+                      report_object (type = "diagnostic",
+                                     fn_name = this_fn,
+                                     parameter = names (params) [i],
+                                     operation = operation,
+                                     content = content))
+    }
+    return (res)
+}
+
+case_dependency <- function (params, i, msgs, this_fn, lower = TRUE) {
+
     p <- params
-    p [[i]] <- tolower (p [[i]])
+
+    p [[i]] <- ifelse (lower, tolower (p [[i]]), toupper (p [[i]]))
+
+    f <- tempfile ()
     these_msgs <- catch_all_msgs (f, this_fn, p)
     if (!is.null (these_msgs)) {
+        op <- paste0 (ifelse (lower, "lower", "upper"),
+                      "-case character parameter")
         msgs <- append_single_char_reports (msgs, these_msgs,
-                        operation = "lower-case character parameter",
+                        operation = op,
                         params, this_fn, i,
                         content = "is case dependent")
     }
 
-    p [[i]] <- toupper (p [[i]])
-    these_msgs <- catch_all_msgs (f, this_fn, p)
-    if (!is.null (these_msgs)) {
-        msgs <- append_single_char_reports (msgs, these_msgs,
-                        operation = "upper case character parameter",
-                        params, this_fn, i,
-                        content = "is case dependent")
-    }
+    return (msgs)
+}
 
-    # check whether match.arg is used
+chk_match_arg <- function (params, i, msgs, this_fn) {
+
+    p <- params
+
     p [[i]] <- paste0 (sample (c (letters, LETTERS), size = 10), collapse = "")
+
+    f <- tempfile ()
     these_msgs <- catch_all_msgs (f, this_fn, p)
+
     if (!"error" %in% these_msgs$type) {
         msgs <- append_single_char_reports (msgs, these_msgs,
                         operation = "random character string as parameter",
@@ -62,8 +105,11 @@ test_single_char <- function (pkg, this_fn, params, i) {
                         content = "does not match arguments to expected values")
     }
 
-    if (is_source)
-        return (msgs) # TODO: Remove that and process the remainder for src pkgs
+    return (msgs)
+}
+
+# currently not used
+regex_param_descs <- function (h, params, i, msgs) {
 
     # The following lines are used just to test whether params[[i]] corresponds
     # to a formula input. They can't be used to parse general parameter
@@ -79,7 +125,6 @@ test_single_char <- function (pkg, this_fn, params, i) {
     arg_desc <- arg_descs [i]
     if (grepl ("~", params [[i]]) | any (grepl ("formula", arg_desc)))
         return (msgs) # do not test formulas
-
 
     # regex the actual string to extract all item descriptions.
     # These are formatted
@@ -151,31 +196,4 @@ test_single_char <- function (pkg, this_fn, params, i) {
     }
     for (k in seq (res))
         res [k] <- match_res_k (res, hc, i, j, k)
-
-    return (msgs)
-}
-
-append_single_char_reports <- function (res,
-                                        msgs,
-                                        operation,
-                                        params,
-                                        this_fn,
-                                        i,
-                                        content) {
-
-    if (is.null (msgs)) {
-        content <- paste0 ("Parameter [",
-                           names (params) [i],
-                           "] of function [",
-                           this_fn,
-                           "] is assumed to be a single character, but ",
-                           content)
-        res <- rbind (res,
-                      report_object (type = "diagnostic",
-                                     fn_name = this_fn,
-                                     parameter = names (params) [i],
-                                     operation = operation,
-                                     content = content))
-    }
-    return (res)
 }
