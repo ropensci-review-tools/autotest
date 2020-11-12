@@ -27,7 +27,10 @@ get_example_objs <- function (package,
     suppressWarnings (
         objs <- lapply (flist, function (i) {
                             ret <- example_objects (i, run_dontrun, run_donttest)
-                            rd <- tools::parse_Rd (i)
+                            if (methods::is (i, "Rd")) # installed packages
+                                rd <- i
+                            else # source packages
+                                rd <- tools::parse_Rd (i)
                             a <- NULL
                             if (!is.null (ret))
                                 a <- get_Rd_metadata (rd, "alias")
