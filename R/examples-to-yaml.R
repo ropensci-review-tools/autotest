@@ -132,7 +132,7 @@ one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x, aliases = NULL, prev_f
     fn_calls <- grep (paste0 (paste0 (aliases, "\\s?\\("), collapse = "|"), x)
     x <- x [seq (max (fn_calls))]
 
-    x_content <- extract_primary_call_content (x, aliases)
+    x_content <- extract_primary_call_content (x, unique (c (fn, fn_short, aliases)))
 
     x_content <- rm_assignment_operators (x_content, fn)
     x_content <- split_args_at_equals (x_content)
@@ -378,9 +378,9 @@ chk_fn_calls_are_primary <- function (x, fn, fn_short, aliases) {
                        if (length (index) > 0) {
                            ret <- (p$text [index [1]] %in% aliases |
                                    p$text [index [1]] == fn_short)
-                           # can also be part of *apply or *map functions, yet
-                           # `getParseData` only parses these as SYMBOL
                            if (any (grepl ("apply|map", p$text [index]))) {
+                               # can also be part of *apply or *map functions,
+                               # yet `getParseData` only parses these as SYMBOL
                                index2 <- index [1]:nrow (p)
                                syms <- unique (p$text [index2] [which (p$token [index2] == "SYMBOL")])
                                ret <- ret | (fn %in% syms | fn_short %in% syms)

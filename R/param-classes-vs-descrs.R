@@ -179,11 +179,11 @@ yaml_param_classes <- function (yaml) {
     par_index <- unlist (lapply (seq_along (par_start), function (i)
                                  par_start [i]:par_end [i]))
 
-    yaml_pre <- gsub ("^\\s*\\-\\s*|\"|\'", "", yaml [pre_index])
+    yaml_pre <- gsub ("^\\s*\\-\\s*", "", yaml [pre_index])
     e <- new.env ()
     x <- tryCatch (eval (parse (text = yaml_pre), envir = e))
 
-    yaml_pars <- gsub ("^\\s*\\-\\s*|\"|\'", "", yaml [par_index])
+    yaml_pars <- gsub ("^\\s*\\-\\s*", "", yaml [par_index])
     objs <- vapply (yaml_pars, function (i)
                     strsplit (i, ": ") [[1]] [2],
                     character (1), USE.NAMES = FALSE)
