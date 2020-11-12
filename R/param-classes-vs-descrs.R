@@ -180,6 +180,9 @@ yaml_param_classes <- function (yaml) {
                                  par_start [i]:par_end [i]))
 
     yaml_pre <- gsub ("^\\s*\\-\\s*", "", yaml [pre_index])
+    index <- which (grepl ("^\'.*\'$", yaml_pre) | grepl ("^\".*\"$", yaml_pre))
+    if (length (index) > 0)
+        yaml_pre [index] <- gsub ("^\'|^\"|\"$|\'$", "", yaml_pre [index])
     e <- new.env ()
     x <- tryCatch (eval (parse (text = yaml_pre), envir = e))
 
