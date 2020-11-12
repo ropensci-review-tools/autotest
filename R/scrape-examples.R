@@ -158,14 +158,14 @@ get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
 }
 
 
-get_example_lines <- function (package, fn) {
+get_example_lines <- function (package, rd_name) {
     ex <- NULL
 
     pkg_name <- get_package_name (package)
 
     if (!pkg_is_source (package)) {
         # example called for function which have no help file trigger warnings
-        ex <- tryCatch (utils::example (eval (substitute (fn)),
+        ex <- tryCatch (utils::example (eval (substitute (rd_name)),
                                         package = package,
                                         character.only = TRUE,
                                         give.lines = TRUE,
@@ -173,7 +173,7 @@ get_example_lines <- function (package, fn) {
                         warning = function (w) NULL)
 
     } else {
-        f <- file.path (package, "man", paste0 (fn, ".Rd"))
+        f <- file.path (package, "man", paste0 (rd_name, ".Rd"))
         ex <- readLines (f, warn = FALSE)
         ex_start <- grep ("^\\\\examples\\{", ex)
         if (length (ex_start) > 0) {
