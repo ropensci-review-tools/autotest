@@ -124,7 +124,7 @@ param_classes_in_desc <- function (yaml, pkg_full) {
     if (nrow (these_params) > 0) {
         class_in_desc <- vapply (seq_along (nrow (these_params)), function (i) {
                                      class_i <- these_classes$object
-                                     these <- these_params$params [i]
+                                     these <- these_params$param [i]
                                      if (these %in% names (param_classes))
                                          class_i <- c (class_i,
                                                        param_classes [[these]])
