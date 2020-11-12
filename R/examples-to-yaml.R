@@ -613,8 +613,7 @@ get_preprocess_lines <- function (x) {
                        pre_index <- grep ("preprocess:", i)
                        par_index <- grep ("parameters:", i)
                        res <- NULL
-                       for (j in seq_along (pre_index))
-                       {
+                       for (j in seq_along (pre_index)) {
                            index <- (pre_index [j] + 1):(par_index [j] - 1)
                            res <- c (res, i [index])
                        }

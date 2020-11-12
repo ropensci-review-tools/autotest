@@ -11,7 +11,7 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
     # YAML spec dictates "y", "yes", "Y", and so on are converted to boolean.
     # These handlers prevent that
     # see https://github.com/viking/r-yaml/issues/5
-    handlers <- list('bool#yes' = function(x) {
+    handlers <- list("bool#yes" = function(x) {
                          if (substr (tolower (x), 1, 1) == "y")
                              x
                          else

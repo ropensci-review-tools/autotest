@@ -36,8 +36,7 @@ match_brackets <- function (x, curly = FALSE) {
             xmid <- c (paste0 (xmid [1:2], collapse = " "),
                        xmid [3:length (xmid)])
         }
-        if (grepl ("^\\s?\\}", xmid [length (xmid)]))
-        {
+        if (grepl ("^\\s?\\}", xmid [length (xmid)])) {
             # join line before closing curly
             if (length (xmid) > 2)
                 xmid <- c (xmid [1:(length (xmid) - 2)],

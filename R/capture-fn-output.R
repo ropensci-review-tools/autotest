@@ -29,7 +29,9 @@ log_all_msgs <- function (con, this_fn, params = NULL) {
                                                   con,
                                                   append = TRUE)
                                        }),
-                   error = function(e) { return ("error detected") })
+                   error = function(e) {
+                       return ("error detected")
+                   })
     return (x)
 }
 

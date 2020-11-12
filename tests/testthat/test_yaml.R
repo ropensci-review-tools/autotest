@@ -15,7 +15,7 @@ test_that("yaml test", {
 
     f <- file.path (tempdir (), "junk.yaml")
     expect_message (
-                    at_yaml_template (f), 
+                    at_yaml_template (f),
                     "template written to")
     expect_true (file.exists (f))
 

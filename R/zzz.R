@@ -1,6 +1,6 @@
 # nocov start
-.onLoad <- function (libname, pkgname) # nolint
-{
+.onLoad <- function (libname, pkgname) { # nolint
+
     op <- options ()
 
     op.autotest <- list (autotest_yaml_indent = 4) # nolint

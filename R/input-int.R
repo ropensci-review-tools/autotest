@@ -85,8 +85,8 @@ get_int_range <- function (this_fn, params, i) {
     # if standard call generates an error, then return that as a standard
     # data.frame object. Otherwise return value from the subsequent code is
     # the actual int range.
-    if (get_fn_response (this_fn, params) == 1) # allow warnings
-    {
+    if (get_fn_response (this_fn, params) == 1) { # allow warnings
+
         content <- paste0 ("Function [", this_fn,
                            "] does not respond appropriately for ",
                            "specified/default input [",
