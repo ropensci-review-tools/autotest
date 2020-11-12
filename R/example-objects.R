@@ -24,6 +24,8 @@ get_example_objs <- function (package,
         flist <- tools::Rd_db (package)
     }
 
+    dev <- options()$"device"
+    options (device = NULL) # suppress plot output
     suppressWarnings (
         objs <- lapply (flist, function (i) {
                             ret <- example_objects (i,
@@ -40,6 +42,7 @@ get_example_objs <- function (package,
                                           aliases = a))
                         })
         )
+    options (device = dev)
 
     not_null <- which (vapply (objs, function (i)
                                !is.null (i$objects),
