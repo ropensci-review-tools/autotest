@@ -27,53 +27,13 @@ get_params <- function (res, i, this_fn) {
             next
 
         if (!methods::is (this_val, "formula")) {
-            if (is.name (this_val)) {
-                temp_val <- paste0 (this_val)
-                can_get <- !is.null (tryCatch (get (temp_val),
-                                                  error = function (e) NULL))
-                can_eval <- !is.null (tryCatch (eval (parse (text = this_val)),
-                                                error = function (e) NULL))
-                if (can_get) {
-                    this_val <- get (temp_val, envir = e)
-                } else if (can_eval) {
-                    this_val <- eval (parse (text = this_val), envir = e)
-                } else if (temp_val %in% ls (envir = e)) {
-                    this_val <- get (temp_val, envir = e)
-                } else if (temp_val %in%
-                           ls (paste0 ("package:", res$package))) {
-                    e <- as.environment (paste0 ("package:", res$package))
-                    this_val <- get (temp_val, envir = e)
-                } else if (grepl ("::", temp_val)) {
-                    this_pkg <- strsplit (temp_val, "::") [[1]] [1]
-                    if (!this_pkg %in% search ())
-                        suppressMessages (
-                                          library (this_pkg,
-                                                   character.only = TRUE)
-                        )
-                    this_val <- parse (text = temp_val) %>%
-                        eval (envir = as.environment (paste0 ("package:",
-                                                              this_pkg)))
-                }
-            } else if (is.character (this_val)) {
-                if (this_val %in% names (e)) {
-                    this_val <- parse (text = this_val) %>%
-                        eval (envir = e)
-                } else if (grepl ("::", this_val)) {
-                    this_pkg <- strsplit (p_vals [[p]], "::") [[1]] [1]
-                    if (!this_pkg %in% search ())
-                        suppressMessages (
-                            library (this_pkg, character.only = TRUE)
-                            )
-                    this_val <- parse (text = this_val) %>%
-                        eval (envir = as.environment (paste0 ("package:",
-                                                              this_pkg)))
-                } else {
-                    tryeval <- tryCatch (eval (parse (text = this_val)),
-                                         error = function (e) NULL)
-                    if (!is.null (tryeval))
-                        this_val <- tryeval
-                }
-            }
+
+            this_val <- get_non_formula_val (this_val,
+                                             e,
+                                             res$package,
+                                             p_vals,
+                                             p)
+
         }
 
         params [[length (params) + 1]] <- this_val
@@ -206,4 +166,56 @@ get_param_descs_source <- function (package, fn) {
     names (descs) <- items
 
     return (descs)
+}
+
+get_non_formula_val <- function (this_val, e, package, p_vals, p) {
+    if (is.name (this_val)) {
+        temp_val <- paste0 (this_val)
+        can_get <- !is.null (tryCatch (get (temp_val),
+                                       error = function (e) NULL))
+        can_eval <- !is.null (tryCatch (eval (parse (text = this_val)),
+                                        error = function (e) NULL))
+        if (can_get) {
+            this_val <- get (temp_val, envir = e)
+        } else if (can_eval) {
+            this_val <- eval (parse (text = this_val), envir = e)
+        } else if (temp_val %in% ls (envir = e)) {
+            this_val <- get (temp_val, envir = e)
+        } else if (temp_val %in%
+                   ls (paste0 ("package:", package))) {
+            e <- as.environment (paste0 ("package:", package))
+            this_val <- get (temp_val, envir = e)
+        } else if (grepl ("::", temp_val)) {
+            this_pkg <- strsplit (temp_val, "::") [[1]] [1]
+            if (!this_pkg %in% search ())
+                suppressMessages (
+                                  library (this_pkg,
+                                           character.only = TRUE)
+                )
+            this_val <- parse (text = temp_val) %>%
+                eval (envir = as.environment (paste0 ("package:",
+                                                      this_pkg)))
+        }
+    } else if (is.character (this_val)) {
+        if (this_val %in% names (e)) {
+            this_val <- parse (text = this_val) %>%
+                eval (envir = e)
+        } else if (grepl ("::", this_val)) {
+            this_pkg <- strsplit (p_vals [[p]], "::") [[1]] [1]
+            if (!this_pkg %in% search ())
+                suppressMessages (
+                                  library (this_pkg, character.only = TRUE)
+                )
+            this_val <- parse (text = this_val) %>%
+                eval (envir = as.environment (paste0 ("package:",
+                                                      this_pkg)))
+        } else {
+            tryeval <- tryCatch (eval (parse (text = this_val)),
+                                 error = function (e) NULL)
+            if (!is.null (tryeval))
+                this_val <- tryeval
+        }
+    }
+
+    return (this_val)
 }
