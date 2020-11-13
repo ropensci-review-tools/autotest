@@ -18,7 +18,7 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
 
     reports <- NULL
 
-    for (i in seq (res$parameters)) {
+    for (i in seq_along (res$parameters)) {
         this_fn <- names (res$parameters) [i]
         params <- get_params (res, i, this_fn)
         params <- params [which (params != "NULL")]
