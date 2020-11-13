@@ -31,39 +31,7 @@ get_params <- function (res, i, this_fn) {
     pars <- formals (fun = this_fn, envir = pkg_env)
     nms <- names (pars)
 
-    # If fn includes ... AND any submitted params are not named, then remove the
-    # ... from returned list
-    if ("..." %in% nms & any (!names (params) %in% nms)) {
-        pars <- pars [which (!nms == "...")]
-        nms <- nms [which (!nms == "...")]
-    }
-
-    # parameters in formals with no default values are returned as empty
-    # 'symbol' expressions - this converts these to "MISSING":
-    pars <- lapply (pars, function (i) {
-                if (typeof (i) == "symbol" & deparse (i) == "")
-                    return ("MISSING")
-                else if (is.null (i))
-                    return ("NULL")
-                else
-                    return (i)
-            })
-    pars <- pars [which (!nms %in% names (params))]
-    nms <- nms [which (!nms %in% names (params))]
-    # That can then be used to check that any with non-default values have been
-    # provided:
-    if (any (pars == "MISSING")) {
-        no_defaults <- nms [which (pars == "MISSING")]
-        no_defaults <- no_defaults [which (no_defaults %in% names (params))]
-        if (length (no_defaults) > 0)
-            stop ("function includes the following parameters which require ",
-                  "non-default values:\n   [",
-                  paste0 (no_defaults, collapse = ", "),
-                  "]")
-        # The rest must be in params, so the default "MISSING" entries can be
-        # removed here:
-        pars <- pars [which (pars != "MISSING")]
-    }
+    pars <- clean_final_pars_list (params, pars, nms)
 
     # Add all resultant params from fn definition yet not directly specified to
     # the return list.
@@ -226,4 +194,43 @@ get_non_formula_val <- function (this_val, e, package, p_vals, p) {
     }
 
     return (this_val)
+}
+
+clean_final_pars_list <- function (params, pars, nms) {
+
+    # If fn includes ... AND any submitted params are not named, then remove the
+    # ... from returned list
+    if ("..." %in% nms & any (!names (params) %in% nms)) {
+        pars <- pars [which (!nms == "...")]
+        nms <- nms [which (!nms == "...")]
+    }
+
+    # parameters in formals with no default values are returned as empty
+    # 'symbol' expressions - this converts these to "MISSING":
+    pars <- lapply (pars, function (i) {
+                if (typeof (i) == "symbol" & deparse (i) == "")
+                    return ("MISSING")
+                else if (is.null (i))
+                    return ("NULL")
+                else
+                    return (i)
+            })
+    pars <- pars [which (!nms %in% names (params))]
+    nms <- nms [which (!nms %in% names (params))]
+    # That can then be used to check that any with non-default values have been
+    # provided:
+    if (any (pars == "MISSING")) {
+        no_defaults <- nms [which (pars == "MISSING")]
+        no_defaults <- no_defaults [which (no_defaults %in% names (params))]
+        if (length (no_defaults) > 0)
+            stop ("function includes the following parameters which require ",
+                  "non-default values:\n   [",
+                  paste0 (no_defaults, collapse = ", "),
+                  "]")
+        # The rest must be in params, so the default "MISSING" entries can be
+        # removed here:
+        pars <- pars [which (pars != "MISSING")]
+    }
+
+    return (pars)
 }
