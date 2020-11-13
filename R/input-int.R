@@ -64,23 +64,33 @@ test_single_int <- function (pkg, this_fn, params, i) {
 }
 
 
+get_fn_response <- function (this_fn, params) {
+    f <- tempfile ()
+    msgs <- catch_all_msgs (f, this_fn, params)
+    val <- 3
+    if (!is.null (msgs)) {
+        if (any (msgs$type == "error"))
+            val <- 1
+        else if (any (msgs$type == "warning"))
+            val <- 2
+    }
+
+    return (val)
+}
+
+# log-space search by 'step_factor':
+stepdown <- function (this_fn, params, i, maxval, step_factor = 10) {
+    val <- maxval
+    while (val == maxval && abs (params [[i]]) > 1) {
+        params [[i]] <- ceiling (params [[i]] / step_factor)
+        val <- get_fn_response (this_fn, params)
+    }
+    return (params [[i]])
+}
+
 
 # Test int inputs to functions to determine accepted range of inputs.
 get_int_range <- function (this_fn, params, i) {
-
-    get_fn_response <- function (this_fn, params) {
-        f <- file.path (tempdir (), "junk.txt")
-        msgs <- catch_all_msgs (f, this_fn, params)
-        val <- 3
-        if (!is.null (msgs)) {
-            if (any (msgs$type == "error"))
-                val <- 1
-            else if (any (msgs$type == "warning"))
-                val <- 2
-        }
-
-        return (val)
-    }
 
     # if standard call generates an error, then return that as a standard
     # data.frame object. Otherwise return value from the subsequent code is
@@ -99,18 +109,18 @@ get_int_range <- function (this_fn, params, i) {
         return (ret)
     }
 
-    # log-space search by 'step_factor':
-    stepdown <- function (this_fn, params, i, maxval, step_factor = 10) {
-        val <- maxval
-        while (val == maxval && abs (params [[i]]) > 1) {
-            params [[i]] <- ceiling (params [[i]] / step_factor)
-            val <- get_fn_response (this_fn, params)
-        }
-        return (params [[i]])
-    }
+    p_i_max <- int_upper_limit (this_fn, params, i)
+
+    p_i <- int_lower_limit (this_fn, params, i)
+
+    return (c (p_i, p_i_max))
+}
+
+int_upper_limit <- function (this_fn, params, i) {
 
     params [[i]] <- .Machine$integer.max
     maxval <- get_fn_response (this_fn, params)
+
     if (maxval > 1) {
         p_i_max <- params [[i]]
     } else {
@@ -128,8 +138,17 @@ get_int_range <- function (this_fn, params, i) {
         }
     }
 
+    if (p_i_max == .Machine$integer.max)
+        p_i_max <- Inf
+
+    return (p_i_max)
+}
+
+int_lower_limit <- function (this_fn, params, i) {
+
     params [[i]] <- -.Machine$integer.max
     maxval <- get_fn_response (this_fn, params)
+
     if (maxval > 1) {
         p_i <- params [[i]]
     } else {
@@ -151,11 +170,8 @@ get_int_range <- function (this_fn, params, i) {
             p_i <- stepdown (this_fn, params, i, maxval, step_factor = 2)
         }
     }
-
     if (p_i == -.Machine$integer.max)
         p_i <- -Inf
-    if (p_i_max == .Machine$integer.max)
-        p_i_max <- Inf
 
-    return (c (p_i, p_i_max))
+    return (p_i)
 }
