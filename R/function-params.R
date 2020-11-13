@@ -20,28 +20,9 @@ get_params <- function (res, i, this_fn) {
                          error = function (e) NULL)
     }
 
-    params <- list ()
-    for (p in seq_along (p_keys)) {
-        this_val <- p_vals [[p]]
-        if (is.null (this_val))
-            next
-
-        if (!methods::is (this_val, "formula")) {
-
-            this_val <- get_non_formula_val (this_val,
-                                             e,
-                                             res$package,
-                                             p_vals,
-                                             p)
-
-        }
-
-        params [[length (params) + 1]] <- this_val
-        names (params) [length (params)] <- p_keys [p]
-    }
+    params <- fill_param_vals (p_keys, p_vals, e, res$package)
 
     # Parse fn definition to get list of all parameters:
-    #pars <- at_get_fn_params (fn_name = this_fn, pkg_name = res$package)
     if (!res$package %in% search ())
         suppressMessages (
             library (res$package, character.only = TRUE)
@@ -166,6 +147,33 @@ get_param_descs_source <- function (package, fn) {
     names (descs) <- items
 
     return (descs)
+}
+
+fill_param_vals <- function (p_keys, p_vals, e, package) {
+
+    params <- list ()
+
+    for (p in seq_along (p_keys)) {
+
+        this_val <- p_vals [[p]]
+        if (is.null (this_val))
+            next
+
+        if (!methods::is (this_val, "formula")) {
+
+            this_val <- get_non_formula_val (this_val,
+                                             e,
+                                             package,
+                                             p_vals,
+                                             p)
+
+        }
+
+        params [[length (params) + 1]] <- this_val
+        names (params) [length (params)] <- p_keys [p]
+    }
+
+    return (params)
 }
 
 get_non_formula_val <- function (this_val, e, package, p_vals, p) {
