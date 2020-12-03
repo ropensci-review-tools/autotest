@@ -34,12 +34,18 @@ get_param_lists <- function (package) {
         flist <- list.files (f, full.names = TRUE, pattern = "*\\.Rd$")
         rdnames <- gsub ("\\.Rd$", "",
                         list.files (f, full.names = FALSE, pattern = "*\\.Rd$"))
-        params <- lapply (flist, function (i)
-                          get_Rd_metadata (tools::parse_Rd (i), "arguments"))
+        suppressWarnings (
+            params <- lapply (flist, function (i)
+                              get_Rd_metadata (tools::parse_Rd (i),
+                                               "arguments"))
+            )
         names (params) <- rdnames
-        fn_names <- vapply (flist, function (i)
-                            get_Rd_metadata (tools::parse_Rd (i), "alias") [1],
-                            character (1), USE.NAMES = FALSE)
+        suppressWarnings (
+            fn_names <- vapply (flist, function (i)
+                                get_Rd_metadata (tools::parse_Rd (i),
+                                                 "alias") [1],
+                                character (1), USE.NAMES = FALSE)
+            )
     } else {
         r <- tools::Rd_db (package)
         rdnames <- gsub ("\\.Rd$", "", names (r))
