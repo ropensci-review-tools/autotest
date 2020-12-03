@@ -20,9 +20,12 @@ autotest_return <- function (pkg, params, this_fn, package = NULL) {
     ret <- add_msg_output (ret, msgs, types = "warning",
                            operation = "normal function call")
 
-    retval <- tryCatch (do.call (this_fn, params),
-                        warning = function (w) w,
-                        error = function (e) e)
+    o <- capture.output (
+        retval <- tryCatch (do.call (this_fn, params),
+                            warning = function (w) w,
+                            error = function (e) e)
+        )
+
     if (methods::is (retval, "error")) {
         ret <- rbind (ret,
                       report_object (type = "error",
