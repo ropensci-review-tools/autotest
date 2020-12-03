@@ -22,10 +22,9 @@ summary.autotest_package <- function (object, ...) {
 
     pkg_name <- attr (object, "package")
     if (pkg_is_source (pkg_name)) {
-        desc <- readLines (file.path (pkg_name, "DESCRIPTION"))
-        pkg_name <- gsub ("Package:\\s?", "", desc [grep ("^Package\\:", desc)])
-        pkg_version <- gsub ("^\\s?Version:\\s+", "",
-                             desc [grep ("\\s?Version:", desc)])
+        desc <- file.path (pkg_name, "DESCRIPTION")
+        pkg_name <- read.dcf (desc, "Package")
+        pkg_version <- read.dcf (desc, "Version")
     } else {
         pkg_version <- utils::packageVersion (pkg_name)
     }

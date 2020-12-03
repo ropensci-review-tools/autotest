@@ -77,18 +77,14 @@ get_git_hash <- function (package) {
 get_pkg_deps <- function (pkg, suggests = FALSE) {
     if (pkg_is_source (pkg)) {
         desc <- readLines (file.path (pkg, "DESCRIPTION"))
-        get_deps <- function (desc, s = "^Imports:") {
-            i_start <- grep (s, desc)
-            i_end <- grep ("[[:alpha:]]$|\\)$", desc)
-            i_end <- i_end [i_end >= i_start] [1]
-            deps <- gsub (s, "", paste0 (desc [i_start:i_end], collapse = " "))
-            deps <- strsplit (deps, ", ") [[1]]
+        get_deps <- function (desc, s = "Imports") {
+            deps <- strsplit (read.dcf (desc, s), ",\\n") [[1]]
             deps <- gsub ("\\(.*\\)$", "", deps)
             return (gsub ("^\\s*|\\s*$", "", deps))
         }
         deps <- get_deps (desc)
         if (suggests)
-            deps <- c (deps, get_deps (desc, "^Suggests:"))
+            deps <- c (deps, get_deps (desc, "Suggests"))
     } else {
         ip <- data.frame (utils::installed.packages ())
         deps <- strsplit (ip$Depends [ip$Package == pkg], ", ") [[1]]

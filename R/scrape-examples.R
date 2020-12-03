@@ -190,8 +190,7 @@ get_example_lines <- function (package, rd_name) {
             } else {
                 v0 <- utils::packageVersion (pkg_name)
                 desc <- file.path (package, "DESCRIPTION")
-                d <- readLines (desc)
-                v <- gsub ("^Version:\\s+", "", d [grep ("^Version:", d)])
+                v <- read.dcf (desc, "Version")
                 if (v > v0)
                     doload <- TRUE
             }
@@ -213,8 +212,8 @@ get_package_name <- function (package) {
     if (!pkg_is_source (package)) {
         pkg_name <- package
     } else {
-        desc <- readLines (file.path (package, "DESCRIPTION"))
-        pkg_name <- gsub ("Package:\\s?", "", desc [grep ("^Package\\:", desc)])
+        desc <- file.path (package, "DESCRIPTION")
+        pkg_name <- read.dcf (desc, "Package")
     }
 
     return (pkg_name)
