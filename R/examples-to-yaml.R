@@ -81,6 +81,8 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
 one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x,
                             aliases = NULL, prev_fns = NULL) {
 
+    x <- clean_ex_code (x)
+
     yaml <- c (paste0 ("package: ", pkg),
                "functions:",
                paste0 (yaml_indent (1), "- ", fn, ":"))
@@ -146,6 +148,20 @@ one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x,
     yaml <- add_params_to_yaml (x_content, yaml, fn)
 
     return (yaml)
+}
+
+#' clean any expressions that do not parse via parse_Rd.
+#'
+#' currently just "\\%<operator>\\%" -> "%<operator>%"
+#' @param x Initial (unprocessed) lines of one example
+#' @return Modified and parse-able version of x
+clean_ex_code <- function (x) {
+
+    index <- which (grepl ("\\\\%", x))
+    if (length (index) > 0)
+        x [index] <- gsub ("\\\\%", "%", x [index])
+
+    return (x)
 }
 
 #' @param n number of indendentations, with each one determined by
