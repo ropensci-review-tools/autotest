@@ -182,6 +182,9 @@ yaml_param_classes <- function (yaml) {
     index <- which (grepl ("^\'.*\'$", yaml_pre) | grepl ("^\".*\"$", yaml_pre))
     if (length (index) > 0)
         yaml_pre [index] <- gsub ("^\'|^\"|\"$|\'$", "", yaml_pre [index])
+    index <- which (grepl ("\\\\%", yaml_pre))
+    if (length (index) > 0)
+        yaml_pre [index] <- gsub ("\\\\%", "%", yaml_pre [index])
     e <- new.env ()
     junk <- capture.output (
         x <- tryCatch (eval (parse (text = yaml_pre), envir = e)) # nolint
