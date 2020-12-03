@@ -73,14 +73,18 @@ autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
 #' @param quiet If 'FALSE', provide printed output on screen.
 #' @export
 autotest_package <- function (package, exclude = NULL, quiet = FALSE) {
+
     if (!quiet)
         message (cli::col_yellow (cli::symbol$line),
                  cli::col_green (" parsing all package examples"),
                  appendLF = FALSE)
+
     exs <- examples_to_yaml (package, exclude = exclude)
+
     if (!quiet)
         message ("\r", cli::col_green (cli::symbol$tick,
                  " parsed all package examples"))
+
     res <- NULL
     for (i in seq_along (exs)) {
         yaml <- exs [[i]]
@@ -109,16 +113,21 @@ autotest_package <- function (package, exclude = NULL, quiet = FALSE) {
     }
 
     attr (res, "package") <- package
+
     if (pkg_is_source (package)) {
+
         desc <- readLines (file.path (package, "DESCRIPTION"))
         attr (res, "packageName") <-
             gsub ("Package:\\s?", "", desc [grep ("^Package\\:", desc)])
         attr (res, "packageVersion") <-
             gsub ("^Version:\\s+", "", desc [grep ("^Version:", desc)])
         attr (res, "githash") <- get_git_hash (package)
+
     } else {
+
         attr (res, "packageName") <- package
         attr (res, "packageVersion") <- utils::packageVersion (package)
+
     }
 
     res <- tibble::tibble (res)
@@ -129,7 +138,9 @@ autotest_package <- function (package, exclude = NULL, quiet = FALSE) {
 
 # Extract function name from yaml; used only to screen dump in autootest_package
 fn_from_yaml <- function (yaml) {
+
     x <- yaml::yaml.load (yaml)
     nms <- vapply (x$functions, names, character (1))
     return (unique (nms))
+
 }
