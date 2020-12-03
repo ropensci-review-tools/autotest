@@ -76,7 +76,7 @@ get_git_hash <- function (package) {
 #' @noRd
 get_pkg_deps <- function (pkg, suggests = FALSE) {
     if (pkg_is_source (pkg)) {
-        desc <- readLines (file.path (pkg, "DESCRIPTION"))
+        desc <- file.path (pkg, "DESCRIPTION")
         get_deps <- function (desc, s = "Imports") {
             deps <- strsplit (read.dcf (desc, s), ",\\n") [[1]]
             deps <- gsub ("\\(.*\\)$", "", deps)
