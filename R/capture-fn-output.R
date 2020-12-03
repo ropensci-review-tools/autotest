@@ -35,8 +35,9 @@ log_all_msgs <- function (con, this_fn, params = NULL) {
                        })
         ) # end capture.output
 
-    if (length (o) > 1 | any (o != "NULL"))
-        write (toString (o), con, append = TRUE)
+    # Next 2 lines write messages to logfile, but not used here
+    #if (length (o) > 1 | any (o != "NULL"))
+    #    write (toString (o), con, append = TRUE)
 
     return (x)
 }
