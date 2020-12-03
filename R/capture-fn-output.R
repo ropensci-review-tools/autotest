@@ -8,30 +8,36 @@
 
 log_all_msgs <- function (con, this_fn, params = NULL) {
 
-    x <- tryCatch (withCallingHandlers (
-                                        if (is.null (params))
-                                           eval (call (this_fn))
-                                        else
-                                            do.call (this_fn, params),
-                                       error = function(e) {
-                                           write (toString (e),
-                                                  con,
-                                                  append = TRUE)
-                                       },
-                                       warning = function(w) {
-                                           write (toString (w),
-                                                  con,
-                                                  append = TRUE)
-                                           invokeRestart("muffleWarning")
-                                       },
-                                       message = function (z) {
-                                           write (toString (z),
-                                                  con,
-                                                  append = TRUE)
-                                       }),
-                   error = function(e) {
-                       return ("error detected")
-                   })
+    o <- capture.output (
+        x <- tryCatch (withCallingHandlers (
+                                if (is.null (params))
+                                   eval (call (this_fn))
+                                else
+                                    do.call (this_fn, params),
+                               error = function(e) {
+                                   write (toString (e),
+                                          con,
+                                          append = TRUE)
+                               },
+                               warning = function(w) {
+                                   write (toString (w),
+                                          con,
+                                          append = TRUE)
+                                   invokeRestart("muffleWarning")
+                               },
+                               message = function (z) {
+                                   write (toString (z),
+                                          con,
+                                          append = TRUE)
+                               }),
+                       error = function(e) {
+                           return ("error detected")
+                       })
+        ) # end capture.output
+
+    if (length (o) > 1 | any (o != "NULL"))
+        write (toString (o), con, append = TRUE)
+
     return (x)
 }
 
