@@ -49,7 +49,9 @@ get_Rd_value <- function (package, fn_name) {
 
     if (pkg_is_source (package)) {
         f <- file.path (package, "man", paste0 (fn_name, ".Rd"))
-        rd <- tools::parse_Rd (f)
+        suppressWarnings (
+            rd <- tools::parse_Rd (f)
+            )
     } else {
         x <- tools::Rd_db (package = package)
         rd <- x [[paste0 (fn_name, ".Rd")]]

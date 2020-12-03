@@ -40,7 +40,9 @@ fns_without_examples <- function (package) {
         man_dir <- list.files (file.path (package, "man"), pattern = "\\.Rd$",
                                full.names = TRUE)
         ex_alias <- lapply (man_dir, function (i) {
-                                rd <- tools::parse_Rd (i)
+                                suppressWarnings (
+                                    rd <- tools::parse_Rd (i)
+                                    )
                                 list (ex = get_Rd_metadata (rd, "examples"),
                                       aliases = get_Rd_metadata (rd, "alias"))
                                })

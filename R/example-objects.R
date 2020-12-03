@@ -33,8 +33,11 @@ get_example_objs <- function (package,
                                                     run_donttest)
                             if (methods::is (i, "Rd")) # installed packages
                                 rd <- i
-                            else # source packages
-                                rd <- tools::parse_Rd (i)
+                            else { # source packages
+                                suppressWarnings (
+                                    rd <- tools::parse_Rd (i)
+                                    )
+                            }
                             a <- NULL
                             if (!is.null (ret))
                                 a <- get_Rd_metadata (rd, "alias")
