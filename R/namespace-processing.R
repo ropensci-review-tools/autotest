@@ -10,8 +10,10 @@ get_pkg_functions <- function (package) {
     if (pkg_is_source (package)) {
         man_dir <- list.files (file.path (package, "man"), pattern = "\\.Rd$",
                                full.names = TRUE)
-        fns <- lapply (man_dir, function (i)
-                       get_Rd_metadata (tools::parse_Rd (i), "alias"))
+        suppressWarnings (
+            fns <- lapply (man_dir, function (i)
+                           get_Rd_metadata (tools::parse_Rd (i), "alias"))
+            )
         fns <- unique (unlist (fns))
     } else {
         fns <- ls (paste0 ("package:", package))
@@ -99,14 +101,16 @@ fns_to_topics <- function (x = NULL, package) {
         man_dir <- list.files (file.path (package, "man"), pattern = "\\.Rd$",
                                full.names = TRUE)
         alias_topic <- lapply (man_dir, function (i) {
-                                rd <- tools::parse_Rd (i)
-                                alias <- get_Rd_metadata (rd, "alias")
-                                topic <- get_Rd_metadata (rd, "name")
-                                name <- strsplit (i, .Platform$file.sep) [[1]]
-                                name <- name [length (name)]
-                                cbind (alias,
-                                       rep (topic, length (alias)),
-                                       rep (name, length (alias)))
+                               suppressWarnings (
+                                    rd <- tools::parse_Rd (i)
+                                    )
+                               alias <- get_Rd_metadata (rd, "alias")
+                               topic <- get_Rd_metadata (rd, "name")
+                               name <- strsplit (i, .Platform$file.sep) [[1]]
+                               name <- name [length (name)]
+                               cbind (alias,
+                                      rep (topic, length (alias)),
+                                      rep (name, length (alias)))
                                })
     } else {
         rd <- tools::Rd_db (package = package)
