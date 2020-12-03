@@ -34,7 +34,6 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
     ret <- list ()
     for (i in seq (exs)) {
         this_fn <- names (exs) [i]
-        message ("[", i, "]: ", this_fn)
         prev_fns <- list ()
         rdname <- attr (exs [[i]], "Rdname")
         aliases <- get_fn_aliases (package, rdname)
