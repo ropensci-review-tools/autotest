@@ -59,7 +59,9 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
                                                        "with extended ",
                                                        "class structure"))
             if (!"error" %in% msgs$type) {
-                res4 <- suppressWarnings (do.call (this_fn, params_r))
+                o <- capture.output (
+                    res4 <- suppressWarnings (do.call (this_fn, params_r))
+                    )
             }
 
             ret <- compare_rect_outputs (ret, res1, res4, this_fn, params, r)
