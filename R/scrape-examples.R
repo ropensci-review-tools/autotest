@@ -275,7 +275,7 @@ process_fn_calls <- function (fns, ex) {
 split_ex_by_fn_calls <- function (ex, fn_calls) {
     index <- rep (seq (length (fn_calls)),
                   times = c (fn_calls [1], diff (fn_calls)))
-    split (ex [seq (length (index))], f = as.factor (index))
+    split (ex [seq_along (index)], f = as.factor (index))
 }
 
 rm_seed_calls <- function (exs, rm_seed) {
