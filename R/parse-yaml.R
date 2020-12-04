@@ -24,20 +24,9 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
                         NA_character_)
         parameters [[length (parameters) + 1]] <- pars
 
-        fi <- x$functions [[f]] [[1]]
-        nms <- get_fn_names (x, f)
+        preprocess <- add_yaml_prepro (preprocess, x, f)
 
-        if ("preprocess" %in% nms)
-            preprocess [[length (preprocess) + 1]] <-
-                fi [[which (nms == "preprocess")]]$preprocess
-        else
-            preprocess [[length (preprocess) + 1]] <- NA_character_
-
-        if ("class" %in% nms)
-            classes [[length (classes) + 1]] <-
-                fi [[which (nms == "class")]]$class [[1]]
-        else
-            classes [[length (classes) + 1]] <- NA_character_
+        classes <- add_yaml_classes (classes, x, f)
     }
     names (parameters) <- names (preprocess) <- names (classes) <- fn_names
 
@@ -144,6 +133,34 @@ pars_one_fn <- function (x, f, yaml) {
 get_fn_names <- function (x, f) {
     vapply (x$functions [[f]] [[1]], function (j)
             names (j), character (1))
+}
+
+add_yaml_prepro <- function (preprocess, x, f) {
+
+    this_fn <- x$functions [[f]] [[1]]
+    nms <- get_fn_names (x, f)
+
+    if ("preprocess" %in% nms)
+        preprocess [[length (preprocess) + 1]] <-
+            this_fn [[which (nms == "preprocess")]]$preprocess
+    else
+        preprocess [[length (preprocess) + 1]] <- NA_character_
+
+    return (preprocess)
+}
+
+add_yaml_classes <- function (classes, x, f) {
+
+    this_fn <- x$functions [[f]] [[1]]
+    nms <- get_fn_names (x, f)
+
+    if ("class" %in% nms)
+        classes [[length (classes) + 1]] <-
+            this_fn [[which (nms == "class")]]$class [[1]]
+        else
+            classes [[length (classes) + 1]] <- NA_character_
+
+    return (classes)
 }
 
 # x is raw yaml from 'readLines' NOY parsed from yaml.load
