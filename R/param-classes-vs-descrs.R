@@ -65,7 +65,11 @@ get_param_lists <- function (package) {
 
     params <- lapply (seq_along (params), function (i) {
                           res <- parse_one_params (params [[i]])
-                          res$rdname <- names (params) [i]
+                          is_empty <- length (res) == 0 | any (dim (res) == 0)
+                          if (is_empty)
+                              res <- NULL
+                          else
+                              res$rdname <- names (params) [i]
                           return (res)  })
     for (i in seq_along (params))
         params [[i]]$fn_name <- fn_names [i]
