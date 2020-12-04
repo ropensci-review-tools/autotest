@@ -95,7 +95,7 @@ yaml_handlers <- function () {
                           else
                               TRUE  })
 
-    return (hanlders)
+    return (handlers)
 }
 
 #' Remove any functions with no parameters
