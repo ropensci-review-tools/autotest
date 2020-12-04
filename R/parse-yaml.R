@@ -10,22 +10,10 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
 
     x <- yaml::yaml.load (yaml, handlers = yaml_handlers ())
 
+    x <- rm_no_param_fns (x)
+
     parameters <- preprocess <- classes <- list ()
     fn_names <- NULL
-
-    # rm any functions with parameters == "(none)", as set at end of
-    # `one_ex_to_yaml()`:
-    no_params <- vapply (x$functions, function (i) {
-                             fi <- i [[1]] [[1]] # (name, empty [[1]] item)
-                             res <- FALSE
-                             if ("parameters" %in% names (fi)) {
-                                 if (length (fi$parameters) == 1 &
-                                     all (fi$parameters == "(none)"))
-                                     res <- TRUE
-                             }
-                             return (res) },
-                             logical (1))
-    x$functions <- x$functions [which (!no_params)]
 
     for (f in seq (x$functions)) {
         fn_names <- c (fn_names, names (x$functions [[f]]))
@@ -89,9 +77,12 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
           classes = classes)
 }
 
-# YAML spec dictates "y", "yes", "Y", and so on are converted to boolean.
-# These handlers prevent that
-# see https://github.com/viking/r-yaml/issues/5
+#' handlers for yaml parsing
+#'
+#' YAML spec dictates "y", "yes", "Y", and so on are converted to boolean.
+#' These handlers prevent that
+#' see https://github.com/viking/r-yaml/issues/5
+#' @noRd
 yaml_handlers <- function () {
     handlers <- list("bool#yes" = function(x) {
                          if (substr (tolower (x), 1, 1) == "y")
@@ -105,6 +96,32 @@ yaml_handlers <- function () {
                               TRUE  })
 
     return (hanlders)
+}
+
+#' Remove any functions with no parameters
+#'
+#' rm any functions with parameters == "(none)", as set at end of
+#' `one_ex_to_yaml()`:
+#' @param x yaml function definition loaded by yaml.load
+#' @return Modified version of input, `x`, after removal of any functions with
+#' no parameters.
+#' @noRd
+rm_no_param_fns <- function (x) {
+
+    no_params <- vapply (x$functions, function (i) {
+                             fi <- i [[1]] [[1]] # (name, empty [[1]] item)
+                             res <- FALSE
+                             if ("parameters" %in% names (fi)) {
+                                 if (length (fi$parameters) == 1 &
+                                     all (fi$parameters == "(none)"))
+                                     res <- TRUE
+                             }
+                             return (res) },
+                             logical (1))
+
+    x$functions <- x$functions [which (!no_params)]
+
+    return (x)
 }
 
 # x is raw yaml from 'readLines' NOY parsed from yaml.load
