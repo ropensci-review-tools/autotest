@@ -114,8 +114,6 @@ get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
 get_example_lines <- function (package, rd_name) {
     ex <- NULL
 
-    pkg_name <- get_package_name (package)
-
     if (!pkg_is_source (package)) {
 
         ex <- get_example_lines_installed (package, rd_name)
