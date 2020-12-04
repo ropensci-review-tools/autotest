@@ -95,6 +95,9 @@ example_objects <- function (f,
         return (NULL)
 
     env <- new.env (parent = globalenv ())
+    # source still displays errors messages, so:
+    errmsg <- options ("show.error.messages")
+    options(show.error.messages = FALSE)
     utils::capture.output (suppressWarnings (suppressMessages (
         ret <- tryCatch (source (tmp,
                                  echo = FALSE,
@@ -102,6 +105,8 @@ example_objects <- function (f,
                                  max.deparse.length = Inf),
                          error = function (e) NULL)
     )))
+    options(show.error.messages = errmsg)
+
     o1 <- NULL
     if (!is.null (ret))
         o1 <- class (ret$value)
