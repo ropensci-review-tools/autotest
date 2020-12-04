@@ -38,22 +38,7 @@ get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
     if (length (ex) == 0)
         return (NULL)
 
-    # remove comments and empty lines
-    ex <- gsub ("\\#.*$", "", ex)
-    ex <- ex [which (!grepl ("^\\s?$", ex))]
-
-    if (any (grepl ("^### \\*\\* Examples", ex)))
-        ex <- ex [- (1:grep ("^### \\*\\* Examples", ex))]
-
-    for (dontrun in c (TRUE, FALSE))
-        ex <- rm_dontrun_lines (ex, is_source = is_source, dontrun = dontrun,
-                                exclude_not_run = exclude_not_run)
-
-    if (is_source) { # rm any roxygen2 auto-generated lines
-        index <- grep ("^%", ex)
-        if (length (index) > 0)
-            ex <- ex [-index]
-    }
+    ex <- preprocess_example_lines (ex, exclude_not_run, is_source)
 
     if (length (ex) == 0)
         return (NULL)
@@ -225,6 +210,33 @@ get_package_name <- function (package) {
     }
 
     return (pkg_name)
+}
+
+#' A few preprocessing cleaning operations for example code lines
+#'
+#' @param ex Example lines from one '.Rd' file
+#' @return Cleaned version of ex
+#' @noRd
+preprocess_example_lines <- function (ex, exclude_not_run, is_source) {
+    # remove comments and empty lines
+    ex <- gsub ("\\#.*$", "", ex)
+    ex <- ex [which (!grepl ("^\\s?$", ex))]
+
+    # Cut Rd lines down to example code only
+    if (any (grepl ("^### \\*\\* Examples", ex)))
+        ex <- ex [- (1:grep ("^### \\*\\* Examples", ex))]
+
+    for (dontrun in c (TRUE, FALSE))
+        ex <- rm_dontrun_lines (ex, is_source = is_source, dontrun = dontrun,
+                                exclude_not_run = exclude_not_run)
+
+    if (is_source) { # rm any roxygen2 auto-generated lines
+        index <- grep ("^%", ex)
+        if (length (index) > 0)
+            ex <- ex [-index]
+    }
+
+    return (ex)
 }
 
 # find which functions are method dispatches, so grep can be done on the method
