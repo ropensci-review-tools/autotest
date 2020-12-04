@@ -8,7 +8,7 @@
 
 log_all_msgs <- function (con, this_fn, params = NULL) {
 
-    o <- capture.output (
+    o <- utils::capture.output (
         x <- tryCatch (withCallingHandlers (
                                 if (is.null (params))
                                    eval (call (this_fn))

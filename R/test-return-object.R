@@ -20,7 +20,7 @@ autotest_return <- function (pkg, params, this_fn, package = NULL) {
     ret <- add_msg_output (ret, msgs, types = "warning",
                            operation = "normal function call")
 
-    o <- capture.output (
+    o <- utils::capture.output (
         retval <- tryCatch (do.call (this_fn, params),
                             warning = function (w) w,
                             error = function (e) e)

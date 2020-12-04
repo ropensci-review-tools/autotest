@@ -192,7 +192,7 @@ yaml_param_classes <- function (yaml) {
     if (length (index) > 0)
         yaml_pre [index] <- gsub ("\\\\%", "%", yaml_pre [index])
     e <- new.env ()
-    junk <- capture.output (
+    junk <- utils::capture.output (
         x <- tryCatch (eval (parse (text = yaml_pre), envir = e)) # nolint
         )
 

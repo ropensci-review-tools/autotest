@@ -59,7 +59,7 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
                                                        "with extended ",
                                                        "class structure"))
             if (!"error" %in% msgs$type) {
-                o <- capture.output (
+                o <- utils::capture.output (
                     res4 <- suppressWarnings (do.call (this_fn, params_r))
                     )
             }
