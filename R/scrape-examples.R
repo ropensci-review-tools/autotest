@@ -150,44 +150,68 @@ get_example_lines <- function (package, rd_name) {
     pkg_name <- get_package_name (package)
 
     if (!pkg_is_source (package)) {
-        # example called for function which have no help file trigger warnings
-        ex <- tryCatch (utils::example (eval (substitute (rd_name)),
-                                        package = package,
-                                        character.only = TRUE,
-                                        give.lines = TRUE,
-                                        lib.loc = .libPaths ()),
-                        warning = function (w) NULL)
+
+        ex <- get_example_lines_installed (package, rd_name)
 
     } else {
-        f <- file.path (package, "man", paste0 (rd_name, ".Rd"))
-        ex <- readLines (f, warn = FALSE)
-        ex_start <- grep ("^\\\\examples\\{", ex)
-        if (length (ex_start) > 0) {
-            ex <- ex [ex_start:length (ex)]
-
-            ex_end <- match_curlies (ex)
-            ex <- ex [2:ex_end]
-
-            doload <- FALSE
-            if (!paste0 ("package:", pkg_name) %in% search ()) {
-                doload <- TRUE
-            } else {
-                v0 <- utils::packageVersion (pkg_name)
-                desc <- file.path (package, "DESCRIPTION")
-                v <- read.dcf (desc, "Version")
-                if (v > v0)
-                    doload <- TRUE
-            }
-            if (doload) {
-                requireNamespace ("devtools")
-                devtools::load_all (package, export_all = FALSE)
-            }
-        } else {
-            ex <- NULL
-        }
+        ex <- get_example_lines_source (package, rd_name)
+        if (!is.null (ex))
+            load_all_if_needed (package)
     }
 
     return (ex)
+}
+
+get_example_lines_installed <- function (package, rd_name) {
+
+    # example called for function which have no help file trigger warnings
+    tryCatch (utils::example (eval (substitute (rd_name)),
+                              package = package,
+                              character.only = TRUE,
+                              give.lines = TRUE,
+                              lib.loc = .libPaths ()),
+              warning = function (w) NULL)
+}
+
+get_example_lines_source <- function (package, rd_name) {
+    f <- file.path (package, "man", paste0 (rd_name, ".Rd"))
+    ex <- readLines (f, warn = FALSE)
+    ex_start <- grep ("^\\\\examples\\{", ex)
+    if (length (ex_start) > 0) {
+        ex <- ex [ex_start:length (ex)]
+
+        ex_end <- match_curlies (ex)
+        ex <- ex [2:ex_end]
+    } else {
+        ex <- NULL
+    }
+
+    return (ex)
+}
+
+#' Load a local source package via devtools::load_all if either not loaded, or
+#' if local version is > installed version.
+#' @param package Full path to local source package
+#' @return Nothing
+#' @noRd
+load_all_if_needed <- function (package) {
+
+    pkg_name <- get_package_name (package)
+
+    doload <- FALSE
+    if (!paste0 ("package:", pkg_name) %in% search ()) {
+        doload <- TRUE
+    } else {
+        v0 <- utils::packageVersion (pkg_name)
+        desc <- file.path (package, "DESCRIPTION")
+        v <- read.dcf (desc, "Version")
+        if (v > v0)
+            doload <- TRUE
+    }
+    if (doload) {
+        requireNamespace ("devtools")
+        devtools::load_all (package, export_all = FALSE)
+    }
 }
 
 get_package_name <- function (package) {
