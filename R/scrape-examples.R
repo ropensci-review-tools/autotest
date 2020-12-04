@@ -43,18 +43,7 @@ get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
     if (length (ex) == 0)
         return (NULL)
 
-    ex <- join_at_operators (ex)
-    ex <- parse_expressions (ex)
-    ex <- match_brackets (ex)
-    if (any (grepl ("\\{", ex)))
-        ex <- match_brackets (ex, curly = TRUE)
-    ex <- merge_piped_lines (ex)
-    ex <- merge_fn_defs (ex)
-    ex <- single_clause (ex)
-    for (double_quote in c (TRUE, FALSE))
-        ex <- multi_line_quotes (ex, double_quote = double_quote)
-    ex <- join_function_lines (ex)
-    ex <- rm_plot_lines (ex)
+    ex <- clean_example_lines (ex)
 
     # find all points of function calls:
     fns <- topic_to_fns (topic, package = pkg)
@@ -235,6 +224,24 @@ preprocess_example_lines <- function (ex, exclude_not_run, is_source) {
         if (length (index) > 0)
             ex <- ex [-index]
     }
+
+    return (ex)
+}
+
+clean_example_lines <- function (ex) {
+
+    ex <- join_at_operators (ex)
+    ex <- parse_expressions (ex)
+    ex <- match_brackets (ex)
+    if (any (grepl ("\\{", ex)))
+        ex <- match_brackets (ex, curly = TRUE)
+    ex <- merge_piped_lines (ex)
+    ex <- merge_fn_defs (ex)
+    ex <- single_clause (ex)
+    for (double_quote in c (TRUE, FALSE))
+        ex <- multi_line_quotes (ex, double_quote = double_quote)
+    ex <- join_function_lines (ex)
+    ex <- rm_plot_lines (ex)
 
     return (ex)
 }
