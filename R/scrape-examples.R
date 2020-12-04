@@ -246,6 +246,8 @@ find_fn_call_points <- function (topic, package) {
 #' @noRd
 process_fn_calls <- function (fns, ex) {
 
+    # rm select functions:
+    fns <- fns [!grepl ("^\\[", fns)]
     fns <- do.call (c, lapply (fns, function (i) grep (i, ex)))
     fns <- sort (unique (fns))
 
