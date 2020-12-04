@@ -71,6 +71,11 @@ get_param_lists <- function (package) {
                           else
                               res$rdname <- names (params) [i]
                           return (res)  })
+
+    index <- which (vapply (params, function (i) !is.null (i), logical (1)))
+    params <- params [index]
+    fn_names <- fn_names [index]
+
     for (i in seq_along (params))
         params [[i]]$fn_name <- fn_names [i]
     params <- do.call (rbind, params)
