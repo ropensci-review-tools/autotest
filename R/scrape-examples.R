@@ -25,23 +25,7 @@ get_all_examples <- function (package, is_source, exclude = NULL) {
     not_null <- vapply (exs, function (i) length (i) > 0, logical (1))
     ret <- exs [not_null]
 
-    # remove any enclosing brackets from any example lines, and also replace any
-    # single quotes with esacped double versions (because yaml::yaml.load fails
-    # on the former)
-    ret <- lapply (ret, function (i) {
-                       a <- attributes (i)
-                       out <- lapply (i, function (j) {
-                                   index <- grep ("^\\(", j)
-                                   if (length (index) > 0) {
-                                       j [index] <-
-                                           gsub ("\\)$", "",
-                                                 gsub ("^\\(", "", j [index]))
-                                   }
-                                   j <- gsub ("'", "\"", j, fixed = TRUE)
-                                   return (j)   })
-                       attributes (out) <- a
-                       return (out) })
-
+    ret <- rm_enclosing_brackets (ret)
 
     return (ret)
 }
@@ -415,4 +399,27 @@ rm_plot_lines <- function (x) {
         x <- x [-which (plotlines)]
 
     return (x)
+}
+
+#' Remove enclosing brackets from example lines
+#'
+#' Also replace any single quotes with esacped double versions (because
+#' yaml::yaml.load fails on the former)
+#' @param Extracted and cleaned list of examples for each function in a package.
+#' @noRd
+rm_enclosing_brackets <- function (x) {
+
+    lapply (x, function (i) {
+                a <- attributes (i)
+                out <- lapply (i, function (j) {
+                                   index <- grep ("^\\(", j)
+                                   if (length (index) > 0) {
+                                       j [index] <-
+                                           gsub ("\\)$", "",
+                                                 gsub ("^\\(", "", j [index]))
+                                   }
+                                   j <- gsub ("'", "\"", j, fixed = TRUE)
+                                   return (j)   })
+                attributes (out) <- a
+                return (out) })
 }
