@@ -48,18 +48,7 @@ get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
     fns <- find_fn_call_points (topic, pkg)
     is_dispatch <- attr (fns, "is_dispatch")
 
-    fn_calls <- do.call (c, lapply (fns, function (i) grep (i, ex)))
-    fn_calls <- sort (unique (fn_calls))
-    # reduce to only final calls in a sequence
-    index <- which (c (2, diff (fn_calls)) == 1)
-    if (length (index) > 0)
-        fn_calls <- fn_calls [- (index - 1)]
-    # remove any plot or summary calls
-    #index <- grepl ("^plot|^summary", ex [fn_calls])
-    #index <- grepl ("plot|^summary", ex [fn_calls])
-    #if (any (index))
-    #    fn_calls <- fn_calls [-(which (index))]
-
+    fn_calls <- process_fn_calls (fns, ex)
     if (length (fn_calls) == 0)
         return (NULL)
 
@@ -252,6 +241,32 @@ find_fn_call_points <- function (topic, package) {
         fns <- fns_short [which (!duplicated (fns_short))]
     }
     attr (fns, "is_dispatch") <- is_dispatch
+
+    return (fns)
+}
+
+#' process function calls obtained from 'find_fn_call_points'
+#'
+#' @param fns Output of 'find_fn_call_points'
+#' @param ex Cleaned lines of example code
+#' @return Function call points reduced to unique values of only those functions
+#' contained in examples
+#' @noRd
+process_fn_calls <- function (fns, ex) {
+
+    fns <- do.call (c, lapply (fns, function (i) grep (i, ex)))
+    fns <- sort (unique (fns))
+
+    # reduce to only final calls in a sequence
+    index <- which (c (2, diff (fns)) == 1)
+    if (length (index) > 0)
+        fns <- fns [- (index - 1)]
+
+    # remove any plot or summary calls
+    #index <- grepl ("^plot|^summary", ex [fns])
+    #index <- grepl ("plot|^summary", ex [fns])
+    #if (any (index))
+    #    fns <- fns [-(which (index))]
 
     return (fns)
 }
