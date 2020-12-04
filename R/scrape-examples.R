@@ -45,15 +45,8 @@ get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
 
     ex <- clean_example_lines (ex)
 
-    # find all points of function calls:
-    fns <- topic_to_fns (topic, package = pkg)
-    dispatches <- dispatched_fns (pkg)
-    is_dispatch <- any (fns %in% dispatches)
-    if (is_dispatch) {
-        fns_short <- vapply (fns, function (i) strsplit (i, "\\.") [[1]] [1],
-                             character (1), USE.NAMES = FALSE)
-        fns <- fns_short [which (!duplicated (fns_short))]
-    }
+    fns <- find_fn_call_points (topic, pkg)
+    is_dispatch <- attr (fns, "is_dispatch")
 
     fn_calls <- do.call (c, lapply (fns, function (i) grep (i, ex)))
     fn_calls <- sort (unique (fn_calls))
@@ -244,6 +237,25 @@ clean_example_lines <- function (ex) {
     ex <- rm_plot_lines (ex)
 
     return (ex)
+}
+
+#' find all points of function calls for a given Rd topic
+#' @noRd
+find_fn_call_points <- function (topic, package) {
+
+    fns <- topic_to_fns (topic, package = package)
+
+    dispatches <- dispatched_fns (package)
+    is_dispatch <- any (fns %in% dispatches)
+
+    if (is_dispatch) {
+        fns_short <- vapply (fns, function (i) strsplit (i, "\\.") [[1]] [1],
+                             character (1), USE.NAMES = FALSE)
+        fns <- fns_short [which (!duplicated (fns_short))]
+    }
+    attr (fns, "is_dispatch") <- is_dispatch
+
+    return (fns)
 }
 
 # find which functions are method dispatches, so grep can be done on the method
