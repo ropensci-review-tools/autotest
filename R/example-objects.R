@@ -95,7 +95,8 @@ example_objects <- function (f,
         return (NULL)
 
     env <- new.env (parent = globalenv ())
-    # source still displays errors messages, so:
+    # source still displays errors messages where these are intended, as in
+    # ?stats::chisq.test, so:
     errmsg <- options ("show.error.messages")
     options(show.error.messages = FALSE)
     utils::capture.output (suppressWarnings (suppressMessages (
