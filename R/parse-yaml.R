@@ -18,54 +18,24 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
     for (f in seq (x$functions)) {
         fn_names <- c (fn_names, names (x$functions [[f]]))
 
-        i <- x$functions [[f]] [[1]]
-        nms <- vapply (i, function (i) names (i), character (1))
-
-        # check whether character variables are quoted:
-        pars <- i [[which (nms == "parameters") [1]]]$parameters
-        is_char <- which (vapply (pars, function (i)
-                                  is.character (i [[1]]), logical (1)))
-        # then check whether yaml vals are quoted:
         index <- grep ("- parameters:$", yaml)
-        if (length (index) > 0) {
-            if (f < length (x$functions)) {
-                index <- index [f]:(index [f + 1] - 2)
-            } else {
-                index <- index [f]:length (yaml)
-            }
+        pars <- ifelse (length (index) > 0,
+                        pars_one_fn (x, f, yaml),
+                        NA_character_)
+        parameters [[length (parameters) + 1]] <- pars
 
-            yaml2 <- yaml [index]
-            for (p in is_char) {
-                ystr <- paste0 ("- ", names (pars [[p]]), ":")
-                # specific processing because yaml itself reserves "null"
-                if (ystr == "- null:")
-                    ystr <- "- \"null\":"
-                yaml_version <- gsub ("^\\s+", "",
-                                      strsplit (yaml2 [grep (ystr, yaml2)],
-                                                ystr) [[1]] [2])
-                if (!grepl ("\"|\'", yaml_version)) {
-                    if (grepl ("formula", names (pars [[p]]),
-                               ignore.case = TRUE)) {
-                        pars [[p]] [[1]] <- stats::formula (pars [[p]] [[1]])
-                        attr (pars [[p]] [[1]], ".Environment") <- NULL
-                    } else
-                        pars [[p]] [[1]] <- as.name (pars [[p]] [[1]])
-                }
-            }
-
-            parameters [[length (parameters) + 1]] <- pars
-        } else
-            parameters [[length (parameters) + 1]] <- NA_character_
+        fi <- x$functions [[f]] [[1]]
+        nms <- get_fn_names (x, f)
 
         if ("preprocess" %in% nms)
             preprocess [[length (preprocess) + 1]] <-
-                i [[which (nms == "preprocess")]]$preprocess
+                fi [[which (nms == "preprocess")]]$preprocess
         else
             preprocess [[length (preprocess) + 1]] <- NA_character_
 
         if ("class" %in% nms)
             classes [[length (classes) + 1]] <-
-                i [[which (nms == "class")]]$class [[1]]
+                fi [[which (nms == "class")]]$class [[1]]
         else
             classes [[length (classes) + 1]] <- NA_character_
     }
@@ -122,6 +92,58 @@ rm_no_param_fns <- function (x) {
     x$functions <- x$functions [which (!no_params)]
 
     return (x)
+}
+
+pars_one_fn <- function (x, f, yaml) {
+
+    i <- x$functions [[f]] [[1]]
+    nms <- get_fn_names (x, f)
+
+    # check whether character variables are quoted:
+    pars <- i [[which (nms == "parameters") [1]]]$parameters
+    is_char <- which (vapply (pars, function (j)
+                              is.character (j [[1]]), logical (1)))
+    # then check whether yaml vals are quoted:
+    index <- grep ("- parameters:$", yaml)
+    if (length (index) > 0) {
+        if (f < length (x$functions)) {
+            index <- index [f]:(index [f + 1] - 2)
+        } else {
+            index <- index [f]:length (yaml)
+        }
+
+        yaml2 <- yaml [index]
+        for (p in is_char) {
+            ystr <- paste0 ("- ", names (pars [[p]]), ":")
+            # specific processing because yaml itself reserves "null"
+            if (ystr == "- null:")
+                ystr <- "- \"null\":"
+            yaml_version <- gsub ("^\\s+", "",
+                                  strsplit (yaml2 [grep (ystr, yaml2)],
+                                            ystr) [[1]] [2])
+            if (!grepl ("\"|\'", yaml_version)) {
+                if (grepl ("formula", names (pars [[p]]),
+                           ignore.case = TRUE)) {
+                    pars [[p]] [[1]] <- stats::formula (pars [[p]] [[1]])
+                    attr (pars [[p]] [[1]], ".Environment") <- NULL
+                } else
+                    pars [[p]] [[1]] <- as.name (pars [[p]] [[1]])
+            }
+        }
+    }
+
+    return (pars)
+}
+
+#' Get names of functions from parsed yaml
+#'
+#' @param x yaml version of examples from one package
+#' @param f integer index of one entry in f
+#' @return Names of all functions included in the f'th entry of x
+#' @noRd
+get_fn_names <- function (x, f) {
+    vapply (x$functions [[f]] [[1]], function (j)
+            names (j), character (1))
 }
 
 # x is raw yaml from 'readLines' NOY parsed from yaml.load
