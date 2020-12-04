@@ -15,6 +15,8 @@ parse_one_params <- function (p) {
                            desc <- gsub ("\\n|\\t", "",
                                          paste0 (unlist (res [[2]]),
                                                  collapse = " "))
+                           if (length (name) == 0)
+                               name <- desc <- NA_character_
                            c (name, desc)
                            return (c (name, desc)) },
                            character (2), USE.NAMES = FALSE)
