@@ -133,7 +133,7 @@ fns_to_topics <- function (x = NULL, package) {
     index <- seq (nrow (alias_topic))
     if (!is.null (x))
         index <- match (x, alias_topic [, 1])
-    res <- data.frame (alias_topic [index, ])
+    res <- data.frame (alias_topic [index, , drop = FALSE])
     names (res) <- c ("alias", "topic", "name")
     return (res)
 }
