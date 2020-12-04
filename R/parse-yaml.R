@@ -18,10 +18,9 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
     for (f in seq (x$functions)) {
         fn_names <- c (fn_names, names (x$functions [[f]]))
 
-        index <- grep ("- parameters:$", yaml)
-        pars <- ifelse (length (index) > 0,
-                        pars_one_fn (x, f, yaml),
-                        NA_character_)
+        pars <- NA_character_
+        if (any (grepl ("- parameters:$", yaml)))
+            pars <- pars_one_fn (x, f, yaml)
         parameters [[length (parameters) + 1]] <- pars
 
         preprocess <- add_yaml_prepro (preprocess, x, f)
