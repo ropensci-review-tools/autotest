@@ -54,18 +54,15 @@ get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
 
     exs <- split_ex_by_fn_calls (ex, fn_calls)
 
-    if (rm_seed) {
-        ret <- lapply (ret, function (i) {
-                           i [!grepl ("^set.seed", i)]  })
-    }
+    exs <- rm_seed_calls (exs, rm_seed)
 
     # concatenate any example lines which do not call the actual function or
     # it's aliases into effective preprocessing lines for subsequent function
     # calls.
     aliases <- paste0 (get_fn_aliases (pkg, rd_name), collapse = "|")
-    index <- vapply (ret, function (i) any (grepl (aliases, i)), logical (1))
+    index <- vapply (exs, function (i) any (grepl (aliases, i)), logical (1))
     if (length (fns) == 2) { # when it's a dispatch method
-        index2 <- vapply (ret, function (i)
+        index2 <- vapply (exs, function (i)
                           any (grepl (fns [2], i)), logical (1))
         index <- index | index2
     }
@@ -75,22 +72,22 @@ get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
 
     # can do the following via split, but it's a lot more convoluted than this
     # loop. Start by removing any trailing FALSE values
-    ret <- ret [1:max (which (index))]
+    exs <- exs [1:max (which (index))]
     index <- index [1:max (which (index))]
     for (i in rev (seq_along (index))) {
         if (index [i])
             here <- i
         else {
-            ret [[here]] <- c (ret [[i]], ret [[here]])
+            exs [[here]] <- c (exs [[i]], exs [[here]])
         }
     }
-    ret <- ret [which (index)]
+    exs <- exs [which (index)]
 
-    ret <- lapply (ret, function (i) {
+    exs <- lapply (exs, function (i) {
                        attr (i, "is_dispatch") <- is_dispatch
                        return (i)   })
 
-    return (ret)
+    return (exs)
 }
 
 
@@ -276,6 +273,13 @@ split_ex_by_fn_calls <- function (ex, fn_calls) {
     index <- rep (seq (length (fn_calls)),
                   times = c (fn_calls [1], diff (fn_calls)))
     split (ex [seq (length (index))], f = as.factor (index))
+}
+
+rm_seed_calls <- function (exs, rm_seed) {
+    if (rm_seed) {
+        exs <- lapply (exs, function (i) i [!grepl ("^set.seed", i)])
+    }
+    return (exs)
 }
 
 # find which functions are method dispatches, so grep can be done on the method
