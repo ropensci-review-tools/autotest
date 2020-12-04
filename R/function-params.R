@@ -210,7 +210,7 @@ clean_final_pars_list <- function (params, pars, nms) {
     # parameters in formals with no default values are returned as empty
     # 'symbol' expressions - this converts these to "MISSING":
     pars <- lapply (pars, function (i) {
-                if (typeof (i) == "symbol" & deparse (i) == "")
+                if (typeof (i) == "symbol" & all (deparse (i) == ""))
                     return ("MISSING")
                 else if (is.null (i))
                     return ("NULL")
