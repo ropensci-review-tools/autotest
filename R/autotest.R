@@ -20,6 +20,15 @@
 #' @export
 autotest <- function (yaml = NULL, filename = NULL, quiet = FALSE) {
 
+    if (is.null (yaml) & is.null (filename)) {
+        stop ("either yaml or filename must be given")
+    } else if (!is.null (filename)) {
+        yaml <- readLines (filename)
+        pkg <- strsplit (yaml [grep ("^package:", yaml)],
+                         "^package: ") [[1]] [2]
+        attr (yaml, "package") <- pkg
+    }
+
     if (is.character (yaml) & !is.null (attr (yaml, "package"))) {
         yaml <- list (yaml)
     }

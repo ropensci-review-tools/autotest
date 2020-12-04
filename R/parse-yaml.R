@@ -3,8 +3,9 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
 
     if (is.null (yaml) & is.null (filename)) {
         stop ("either yaml or filename must be given")
-    } else if (!is.null (filename))
+    } else if (!is.null (filename)) {
         yaml <- readLines (filename)
+    }
 
     load_libraries (yaml)
 
