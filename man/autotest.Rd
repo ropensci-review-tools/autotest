@@ -25,7 +25,7 @@ Nothing
 Automatically test inputs to functions specified in a 'yaml' template.
 }
 \examples{
-/dontrun{
+\dontrun{
 exs <- examples_to_yaml (package = "stats", functions = "reshape")
 res <- autotest (yaml = exs)
 }

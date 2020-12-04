@@ -13,7 +13,7 @@
 #' @return Nothing
 #'
 #' @examples
-#' /dontrun{
+#' \dontrun{
 #' exs <- examples_to_yaml (package = "stats", functions = "reshape")
 #' res <- autotest (yaml = exs)
 #' }
