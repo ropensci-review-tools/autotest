@@ -8,21 +8,7 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
 
     load_libraries (yaml)
 
-    # YAML spec dictates "y", "yes", "Y", and so on are converted to boolean.
-    # These handlers prevent that
-    # see https://github.com/viking/r-yaml/issues/5
-    handlers <- list("bool#yes" = function(x) {
-                         if (substr (tolower (x), 1, 1) == "y")
-                             x
-                         else
-                             TRUE   },
-                      "bool#no" = function(x) {
-                          if (substr (tolower (x), 1, 1) == "n")
-                              x
-                          else
-                              TRUE  })
-
-    x <- yaml::yaml.load (yaml, handlers = handlers)
+    x <- yaml::yaml.load (yaml, handlers = yaml_handlers ())
 
     parameters <- preprocess <- classes <- list ()
     fn_names <- NULL
@@ -101,6 +87,24 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
           parameters = parameters,
           preprocess = preprocess,
           classes = classes)
+}
+
+# YAML spec dictates "y", "yes", "Y", and so on are converted to boolean.
+# These handlers prevent that
+# see https://github.com/viking/r-yaml/issues/5
+yaml_handlers <- function () {
+    handlers <- list("bool#yes" = function(x) {
+                         if (substr (tolower (x), 1, 1) == "y")
+                             x
+                         else
+                             TRUE   },
+                      "bool#no" = function(x) {
+                          if (substr (tolower (x), 1, 1) == "n")
+                              x
+                          else
+                              TRUE  })
+
+    return (hanlders)
 }
 
 # x is raw yaml from 'readLines' NOY parsed from yaml.load
