@@ -52,13 +52,7 @@ get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
     if (length (fn_calls) == 0)
         return (NULL)
 
-    index <- rep (seq (length (fn_calls)),
-                  times = c (fn_calls [1], diff (fn_calls)))
-    exs <- split (ex [seq (length (index))], f = as.factor (index))
-    # rm extraneous lines
-    ret <- lapply (exs, function (i) {
-                       i <- i [which (!i == "")]
-                       i [!grepl ("^\\#|^plot|^summary|^print", i)] })
+    exs <- split_ex_by_fn_calls (ex, fn_calls)
 
     if (rm_seed) {
         ret <- lapply (ret, function (i) {
@@ -271,6 +265,19 @@ process_fn_calls <- function (fns, ex) {
     return (fns)
 }
 
+#' Split lines of one example into list items separated by each call to target
+#' function
+#'
+#' @param ex Complete code for one documented example
+#' @param fn_calls Points at which focal function is called
+#' @return List of code lines obtained by splitting ex and each fn_call point
+#' @noRd
+split_ex_by_fn_calls <- function (ex, fn_calls) {
+    index <- rep (seq (length (fn_calls)),
+                  times = c (fn_calls [1], diff (fn_calls)))
+    split (ex [seq (length (index))], f = as.factor (index))
+}
+
 # find which functions are method dispatches, so grep can be done on the method
 # and not the class
 dispatched_fns <- function (package) {
@@ -458,13 +465,19 @@ rm_plot_lines <- function (x) {
                              s <- which (p$token == "SYMBOL_FUNCTION_CALL")
                              ret <- FALSE
                              if (length (s) > 0)
-                                 ret <- grepl ("plot|summary", p$text [s [1]])
+                                 ret <- grepl ("plot|summary|print",
+                                               p$text [s [1]])
                              return (ret)   },
 
                              logical (1),
                              USE.NAMES = FALSE)
     if (any (plotlines))
         x <- x [-which (plotlines)]
+
+    # rm other extraneous lines, repeating plot etc
+    index <- grepl ("^\\#|^plot|^summary|^print", x)
+    if (any (index))
+        x <- x [!index]
 
     return (x)
 }
