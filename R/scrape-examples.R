@@ -10,6 +10,7 @@ get_all_examples <- function (package, is_source, exclude = NULL) {
     index <- which (!duplicated (topics$topic))
     topic <- topics$topic [index]
     rdnames <- gsub ("\\.Rd$", "", topics$name [index])
+    fns <- fns [index]
 
     exs <- list ()
     for (i in seq (rdnames)) {
