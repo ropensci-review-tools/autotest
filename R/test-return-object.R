@@ -133,7 +133,7 @@ test_return_classes <- function (Rd_value, retval) {
 
         actual_class <- retclasses [which (retclasses %in% desc_classes)]
 
-        if (actual_class [1] != retclasses [1]) {
+        if (length (actual_class) > 0 & actual_class [1] != retclasses [1]) {
             txt <- paste0 ("Function returns an object of primary class [",
                            retclasses [1],
                            "] yet documentation says value is of class [",
