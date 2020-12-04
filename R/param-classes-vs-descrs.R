@@ -8,7 +8,7 @@ parse_one_params <- function (p) {
                                             error = function (e) NULL)
                            # TODO: Use `formals` to at least have names of all
                            # fn parameters
-                           if (is.null (res))
+                           if (length (res) < 2)
                                return (rep (NA_character_, 2))
 
                            name <- res [[1]] [[1]]
