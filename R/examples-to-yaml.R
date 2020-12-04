@@ -76,7 +76,7 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
 #' @param aliases Aliases for the function
 #' @param prev_fns yaml for previous functions to be used as pre-processing
 #' stages for nominated function.
-#' @return An autotest `yaml` specification of the example code given in `x`.
+#' @return An autotest 'yaml' specification of the example code given in 'x'.
 #' @noRd
 one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x,
                             aliases = NULL, prev_fns = NULL) {
@@ -152,9 +152,10 @@ one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x,
 
 #' clean any expressions that do not parse via parse_Rd.
 #'
-#' currently just "\\%<operator>\\%" -> "%<operator>%"
 #' @param x Initial (unprocessed) lines of one example
+#' currently just `\\%<operator>\\%` -> `%<operator>%`
 #' @return Modified and parse-able version of x
+#' @noRd
 clean_ex_code <- function (x) {
 
     index <- which (grepl ("\\\\%", x))
