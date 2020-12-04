@@ -1,12 +1,15 @@
 #' examples_to_yaml
 #'
-#' Convert examples for a specified package to an 'autotest' 'yaml' to use to
-#' automatically test package
+#' Convert examples for a specified package, optionally restricted to one or
+#' more specified functions, to a list of 'autotest' 'yaml' objects to use to
+#' automatically test package.
 #'
 #' @param package Name of package for which 'yaml' is to be generated.
+#' @param functions If specified, names of functions from which examples are to
+#' be obtained.
 #' @param exclude Names of functions to exclude from 'yaml' template
 #' @export
-examples_to_yaml <- function (package = NULL, exclude = NULL) {
+examples_to_yaml <- function (package = NULL, functions = NULL, exclude = NULL) {
 
     if (pkg_is_source (package)) {
 
@@ -29,6 +32,16 @@ examples_to_yaml <- function (package = NULL, exclude = NULL) {
         pkg_name <- package
     }
 
+    if (!is.null (functions)) {
+        fns <- m_get_pkg_functions (package)
+        if (!all (functions %in% fns)) {
+            functions <- functions [which (!functions %in% fns)]
+            stop ("The following functions are not in the namespace of ",
+                  "package:", package, ": [",
+                  paste0 (functions, collapse = ", "), "]")
+        }
+        exclude <- c (exclude, fns [which (!fns %in% functions)])
+    }
     exs <- get_all_examples (package, pkg_is_source (package), exclude)
 
     ret <- list ()

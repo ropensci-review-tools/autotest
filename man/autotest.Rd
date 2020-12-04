@@ -24,3 +24,9 @@ Nothing
 \description{
 Automatically test inputs to functions specified in a 'yaml' template.
 }
+\examples{
+/dontrun{
+exs <- examples_to_yaml (package = "stats", functions = "reshape")
+res <- autotest (yaml = exs)
+}
+}
