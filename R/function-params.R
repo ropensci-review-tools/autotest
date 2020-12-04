@@ -40,6 +40,13 @@ get_params <- function (res, i, this_fn) {
         names (params) [length (params)] <- names (pars) [p]
     }
 
+    # finally, remove any params that are if conditionals, since evaluting these
+    # requires parsing and evaluating all other parameters, and if conditions
+    # can not be mutated anyway
+    index <- which (vapply (params, function (i) !methods::is (i, "if"),
+                            logical (1)))
+    params <- params [index]
+
     return (params)
 }
 
