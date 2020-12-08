@@ -42,6 +42,7 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
                               report_object (type = "diagnostic",
                                              fn_name = this_fn,
                                              parameter = names (params_v) [v],
+                                             parameter_type = "integer vector",
                                              operation = operation,
                                              content = content))
             }
@@ -71,6 +72,7 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
                                                  fn_name = this_fn,
                                                  parameter =
                                                      names (params_v) [v],
+                                                 parameter_type = "generic vector",
                                                  operation = operation,
                                                  content = content))
                 }
@@ -104,6 +106,7 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
                               report_object (type = "diagnostic",
                                              fn_name = this_fn,
                                              parameter = names (params_v) [v],
+                                             parameter_type = "generic vector",
                                              operation = operation,
                                              content = content))
             }
