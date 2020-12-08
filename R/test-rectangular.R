@@ -84,6 +84,7 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
                               report_object (type = "diagnostic",
                                              fn_name = this_fn,
                                              parameter = names (params) [r],
+                                             parameter_type = "generic tabular",
                                              operation = operation,
                                              content = content))
             }
@@ -108,6 +109,7 @@ chk_dims <- function (this_fn, params, r, res1, res2) {
         ret <- report_object (type = "diagnostic",
                               fn_name = this_fn,
                               parameter = names (params) [r],
+                              parameter_type = "generic tabular",
                               operation = operation,
                               content = content)
     }
@@ -130,6 +132,7 @@ chk_names <- function (this_fn, params, r, res1, res2) {
         ret <- report_object (type = "diagnostic",
                               fn_name = this_fn,
                               parameter = names (params) [r],
+                              parameter_type = "generic tabular",
                               operation = operation,
                               content = content)
     }
@@ -157,6 +160,7 @@ chk_columns <- function (this_fn, params, r, res1, res2) {
                           report_object (type = "diagnostic",
                                          fn_name = this_fn,
                                          parameter = names (params) [r],
+                                         parameter_type = "generic tabular",
                                          operation = operation,
                                          content = content))
         }
