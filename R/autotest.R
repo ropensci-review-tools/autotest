@@ -53,8 +53,10 @@ autotest <- function (yaml = NULL,
                       autotest_single_yaml (i, filename, test, quiet))
     reports <- do.call (rbind, reports)
 
-    reports <- tibble::tibble (reports)
-    class (reports) <- c ("autotest_package", class (reports))
+    if (!is.null (reports)) {
+        reports <- tibble::tibble (reports)
+        class (reports) <- c ("autotest_package", class (reports))
+    }
 
     return (reports)
 }
