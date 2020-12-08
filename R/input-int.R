@@ -27,6 +27,7 @@ test_single_int <- function (pkg, this_fn, params, i) {
                       report_object (type = "diagnostic",
                                      fn_name = this_fn,
                                      parameter = names (params) [i],
+                                     parameter_type = "single integer",
                                      operation = "ascertain integer range",
                                      content = content))
     } else if (!is.null (int_range)) {
@@ -38,6 +39,7 @@ test_single_int <- function (pkg, this_fn, params, i) {
                       report_object (type = "diagnostic",
                                      fn_name = this_fn,
                                      parameter = names (params) [i],
+                                     parameter_type = "single integer",
                                      operation = "ascertain integer range",
                                      content = content))
 
@@ -55,6 +57,7 @@ test_single_int <- function (pkg, this_fn, params, i) {
                           report_object (type = "diagnostic",
                                          fn_name = this_fn,
                                          parameter = names (params) [i],
+                                         parameter_type = "single integer",
                                          operation = operation,
                                          content = content))
         }
@@ -105,6 +108,7 @@ get_int_range <- function (this_fn, params, i) {
         ret <- report_object (type = "diagnostic",
                               fn_name = this_fn,
                               parameter = names (params) [i],
+                              parameter_type = "single integer",
                               content = content)
         return (ret)
     }

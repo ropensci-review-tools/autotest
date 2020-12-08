@@ -33,10 +33,11 @@ autotest_single <- function (pkg, params, this_fn, test, quiet) {
             params_i <- params
 
             p_i <- params_i [[i]]
-            val_type <- NULL
+            val_type <- param_type <- NULL
             check_vec <- TRUE
             if (is_int (p_i)) {
                 val_type <- "integer"
+                param_type <- "single integer"
                 if (test)
                     res <- rbind (res,
                                   test_single_int (pkg, this_fn, params_i, i))
@@ -45,10 +46,12 @@ autotest_single <- function (pkg, params, this_fn, test, quiet) {
                                   report_object (type = "dummy",
                                                  fn_name = this_fn,
                                                  parameter = names (params) [i],
+                                                 parameter_type = param_type,
                                          operation = "ascertain integer range"))
 
             } else if (methods::is (p_i, "numeric")) {
                 val_type <- "numeric"
+                param_type <- "single numeric"
                 if (test)
                     res <- rbind (res,
                                   test_single_double (pkg, this_fn, params_i, i))
@@ -57,9 +60,11 @@ autotest_single <- function (pkg, params, this_fn, test, quiet) {
                                   report_object (type = "dummy",
                                                  fn_name = this_fn,
                                                  parameter = names (params) [i],
+                                                 parameter_type = param_type,
                                          operation = "add trivial noise"))
             } else if (is.character (p_i)) {
                 val_type <- "character"
+                param_type <- "single character"
                 if (test)
                     res <- rbind (res,
                                   test_single_char (pkg, this_fn, params_i, i))
@@ -68,9 +73,11 @@ autotest_single <- function (pkg, params, this_fn, test, quiet) {
                                   report_object (type = "dummy",
                                                  fn_name = this_fn,
                                                  parameter = names (params) [i],
+                                                 parameter_type = param_type,
                                          operation = "single character tests"))
             } else if (is.logical (p_i)) {
                 val_type <- "logical"
+                param_type <- "single logical"
                 if (test)
                     res <- rbind (res,
                                   test_single_logical (pkg, this_fn, params_i, i))
@@ -79,10 +86,12 @@ autotest_single <- function (pkg, params, this_fn, test, quiet) {
                                   report_object (type = "dummy",
                                                  fn_name = this_fn,
                                                  parameter = names (params) [i],
+                                                 parameter_type = param_type,
                                          operation = "single logical param tests"))
             } else if (methods::is (p_i, "name") |
                        methods::is (p_i, "formula")) {
                 val_type <- class (p_i) [1]
+                param_type <- paste0 ("single ", val_type)
                 if (test)
                     res <- rbind (res,
                                   test_single_name (pkg, this_fn, params_i, i))
@@ -91,6 +100,7 @@ autotest_single <- function (pkg, params, this_fn, test, quiet) {
                                   report_object (type = "dummy",
                                                  fn_name = this_fn,
                                                  parameter = names (params) [i],
+                                                 parameter_type = param_type,
                                          operation = "single formula tests"))
                 check_vec <- FALSE
             } else {
@@ -100,12 +110,13 @@ autotest_single <- function (pkg, params, this_fn, test, quiet) {
             # check response to vector input:
             if (check_vec) {
                 if (test)
-                    res <- check_vec_length (this_fn, params_i, i, val_type, res)
+                    res <- check_vec_length (this_fn, params_i, i, val_type, param_type, res)
                 else
                     res <- rbind (res,
                                   report_object (type = "dummy",
                                                  fn_name = this_fn,
                                                  parameter = names (params) [i],
+                                                 parameter_type = param_type,
                                          operation = "submit vector of multiple items as single"))
             }
     }
@@ -113,7 +124,7 @@ autotest_single <- function (pkg, params, this_fn, test, quiet) {
     return (res [which (!duplicated (res)), ])
 }
 
-check_vec_length <- function (fn, params, i, val_type, res) {
+check_vec_length <- function (fn, params, i, val_type, param_type, res) {
     params [[i]] <- rep (params [[i]], 2)
     f <- file.path (tempdir (), "junk.txt")
     msgs <- catch_all_msgs (f, fn, params)
@@ -130,6 +141,7 @@ check_vec_length <- function (fn, params, i, val_type, res) {
                       report_object (type = "diagnostic",
                                      fn_name = fn,
                                      parameter = names (params) [i],
+                                     parameter_type = param_type,
                                      operation = operation,
                                      content = content))
     }
