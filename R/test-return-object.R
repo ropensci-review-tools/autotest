@@ -30,7 +30,6 @@ autotest_return <- function (pkg, params, this_fn, package = NULL) {
         ret <- rbind (ret,
                       report_object (type = "error",
                                      fn_name = this_fn,
-                                     parameter = NA_character_,
                                      operation = "error from normal operation",
                                      content = retval$message))
         return (ret)
@@ -62,7 +61,6 @@ test_return_desc <- function (package, this_fn, retval) {
         ret <- rbind (ret,
                       report_object (type = "warning",
                                      fn_name = this_fn,
-                                     parameter = NA_character_,
                                      operation = operation,
                                      content = content))
 
@@ -83,7 +81,6 @@ test_return_desc <- function (package, this_fn, retval) {
             ret <- rbind (ret,
                           report_object (type = "diagnostic",
                                          fn_name = this_fn,
-                                         parameter = NA_character_,
                                          operation = operation,
                                          content = content))
 
@@ -97,7 +94,6 @@ test_return_desc <- function (package, this_fn, retval) {
                     ret <- rbind (ret,
                                   report_object (type = "diagnostic",
                                                  fn_name = this_fn,
-                                                 parameter = NA_character_,
                                                  operation = operation,
                                                  content = i))
                 }

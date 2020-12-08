@@ -53,7 +53,10 @@ autotest_rectangular <- function (params, this_fn, classes, quiet) {
             params_r [[r]] <- structure (x, class = c ("newclass", class (x)))
             msgs <- catch_all_msgs (f, this_fn, params_r)
             if (!is.null (msgs))
+            {
                 msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
+                msgs$parameter_type <- "general tabular"
+            }
             ret <- add_msg_output (ret, msgs, types = c ("warning", "error"),
                                    operation = paste0 ("rectangular parameter ",
                                                        "with extended ",

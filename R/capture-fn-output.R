@@ -139,6 +139,7 @@ add_msg_output <- function (res, msgs, types = c ("warning", "error"),
                           report_object (type = msgs$type [i],
                                          fn_name = msgs$fn_name [i],
                                          parameter = msgs$parameter [i],
+                                         parameter_type = msgs$parameter_type,
                                          operation = operation,
                                          content = paste0 (txt,
                                                            msgs$content [i])))
