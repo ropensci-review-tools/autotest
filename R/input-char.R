@@ -63,6 +63,7 @@ append_single_char_reports <- function (res,
                       report_object (type = "diagnostic",
                                      fn_name = this_fn,
                                      parameter = names (params) [i],
+                                     parameter_type = "single character",
                                      operation = operation,
                                      content = content))
     }

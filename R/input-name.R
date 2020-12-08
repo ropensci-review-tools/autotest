@@ -16,6 +16,7 @@ test_single_name <- function (pkg, this_fn, params, i) {
                       report_object (type = msgs$type,
                                      fn_name = msgs$fn_name,
                                      parameter = names (params) [i],
+                                     parameter_type = "single formula or name",
                                      operation = operation,
                                      content = msgs$content))
     }

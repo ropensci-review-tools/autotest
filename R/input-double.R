@@ -20,6 +20,7 @@ test_single_double <- function (pkg, this_fn, params, i) {
                           report_object (type = "diagnostic",
                                          fn_name = this_fn,
                                          parameter = names (params) [i],
+                                         parameter_type = "single numeric",
                                          operation = op,
                                          content = content))
         }

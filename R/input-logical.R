@@ -28,6 +28,7 @@ test_single_logical <- function (pkg, this_fn, params, i) {
                       report_object (type = "diagnostic",
                                      fn_name = this_fn,
                                      parameter = names (params) [i],
+                                     parameter_type = "single logical",
                                      operation = operation,
                                      content = content))
     }
@@ -47,6 +48,7 @@ test_single_logical <- function (pkg, this_fn, params, i) {
                       report_object (type = "diagnostic",
                                      fn_name = this_fn,
                                      parameter = names (params) [i],
+                                     parameter_type = "single logical",
                                      operation = operation,
                                      content = content))
     }
@@ -67,6 +69,7 @@ test_single_logical <- function (pkg, this_fn, params, i) {
                       report_object (type = "diagnostic",
                                      fn_name = this_fn,
                                      parameter = names (params) [i],
+                                     parameter_type = "single logical",
                                      operation = operation,
                                      content = content))
     }
