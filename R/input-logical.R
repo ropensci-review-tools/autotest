@@ -20,10 +20,9 @@ negate_logical <- function (this_fn, params, i, test = TRUE) {
         f <- tempfile (fileext = ".txt")
         res <- rbind (res,
                       catch_all_msgs (f, this_fn, params))
-        p <- params
-        p [[i]] <- !p [[i]]
+        params [[i]] <- !params [[i]]
         res <- rbind (res,
-                      catch_all_msgs (f, this_fn, p))
+                      catch_all_msgs (f, this_fn, params))
 
     } else {
 
@@ -41,7 +40,7 @@ negate_logical <- function (this_fn, params, i, test = TRUE) {
     return (res)
 }
 
-int_for_logical <- function (this_fn, params, i, test = TRuE) {
+int_for_logical <- function (this_fn, params, i, test = TRUE) {
 
     res <- subst_for_logical (this_fn, params, i, subst = "integer")
 
@@ -81,8 +80,9 @@ char_for_logical <- function (this_fn, params, i, test = TRUE) {
 
     if (test) {
 
-        p [[i]] <- "a"
-        msgs <- catch_all_msgs (f, this_fn, p)
+        f <- tempfile (fileext = ".txt")
+        params [[i]] <- "a"
+        msgs <- catch_all_msgs (f, this_fn, params)
         res$type <- "diagnostic"
         if (is.null (msgs)) {
             # function returns with char as logical, so keep res_tmp
