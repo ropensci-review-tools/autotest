@@ -9,39 +9,14 @@
 #' be obtained.
 #' @param exclude Names of functions to exclude from 'yaml' template
 #' @export
-examples_to_yaml <- function (package = NULL, functions = NULL, exclude = NULL) {
+examples_to_yaml <- function (package = NULL,
+                              functions = NULL,
+                              exclude = NULL) {
 
-    if (pkg_is_source (package)) {
+    pkg_name <- preload_package (package)
 
-        pkg_name <- get_package_name (package)
-        if (!paste0 ("package:", pkg_name) %in% search ()) {
-            requireNamespace ("devtools")
-            devtools::load_all (package, export_all = FALSE)
-        }
+    exclude <- exclude_functions (package, functions, exclude)
 
-        # TODO: Use g to get hash of HEAD
-        #g <- rprojroot::find_root (rprojroot::is_git_root, path = package)
-    } else {
-        ip <- data.frame (utils::installed.packages ())
-        if (!package %in% ip$Package) {
-            stop ("package [", package, "] does not appear to be installed.")
-        }
-        suppressMessages (
-                          library (package, character.only = TRUE)
-                          )
-        pkg_name <- package
-    }
-
-    if (!is.null (functions)) {
-        fns <- m_get_pkg_functions (package)
-        if (!all (functions %in% fns)) {
-            functions <- functions [which (!functions %in% fns)]
-            stop ("The following functions are not in the namespace of ",
-                  "package:", package, ": [",
-                  paste0 (functions, collapse = ", "), "]")
-        }
-        exclude <- c (exclude, fns [which (!fns %in% functions)])
-    }
     exs <- get_all_examples (package, pkg_is_source (package), exclude)
 
     ret <- list ()
@@ -79,6 +54,47 @@ examples_to_yaml <- function (package = NULL, functions = NULL, exclude = NULL) 
     }
 
     return (ret)
+}
+
+preload_package <- function (package) {
+    if (pkg_is_source (package)) {
+
+        pkg_name <- get_package_name (package)
+        if (!paste0 ("package:", pkg_name) %in% search ()) {
+            requireNamespace ("devtools")
+            devtools::load_all (package, export_all = FALSE)
+        }
+
+        # TODO: Use g to get hash of HEAD
+        #g <- rprojroot::find_root (rprojroot::is_git_root, path = package)
+    } else {
+        ip <- data.frame (utils::installed.packages ())
+        if (!package %in% ip$Package) {
+            stop ("package [", package, "] does not appear to be installed.")
+        }
+        suppressMessages (
+                          library (package, character.only = TRUE)
+                          )
+        pkg_name <- package
+    }
+
+    return (pkg_name)
+}
+
+# combine lists of `functions` to include and `exclude` into single vector
+exclude_functions <- function (package, functions, exclude) {
+    if (!is.null (functions)) {
+        fns <- m_get_pkg_functions (package)
+        if (!all (functions %in% fns)) {
+            functions <- functions [which (!functions %in% fns)]
+            stop ("The following functions are not in the namespace of ",
+                  "package:", package, ": [",
+                  paste0 (functions, collapse = ", "), "]")
+        }
+        exclude <- c (exclude, fns [which (!fns %in% functions)])
+    }
+
+    return (exclude)
 }
 
 #' @param pkg Name (not file path) of package
