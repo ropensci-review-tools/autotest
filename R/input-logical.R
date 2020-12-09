@@ -1,5 +1,5 @@
 
-test_single_logical <- function (pkg, this_fn, params, i) {
+test_single_logical <- function (this_fn, params, i) {
 
     res <- NULL
 

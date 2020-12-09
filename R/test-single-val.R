@@ -44,8 +44,7 @@ autotest_single <- function (pkg,
                 param_type <- "single logical"
                 if (test)
                     res <- rbind (res,
-                                  test_single_logical (pkg,
-                                                       this_fn,
+                                  test_single_logical (this_fn,
                                                        params_i,
                                                        i))
                 else {
