@@ -53,26 +53,5 @@ test_single_logical <- function (pkg, this_fn, params, i) {
                                      content = content))
     }
 
-    p <- params
-    p [[i]] <- c (p [[i]], !p [[i]])
-    res_len2 <- catch_all_msgs (f, this_fn, p)
-    if (is.null (res_len2)) {
-        operation <- "multiple values for logical parameter"
-        content <- paste0 ("Parameter ",
-                           names (params) [i],
-                           " of function [",
-                           this_fn,
-                           "] is assumed to be logical ",
-                           "of length 1, but responds to ",
-                           "vectors of length > 1")
-        res <- rbind (res,
-                      report_object (type = "diagnostic",
-                                     fn_name = this_fn,
-                                     parameter = names (params) [i],
-                                     parameter_type = "single logical",
-                                     operation = operation,
-                                     content = content))
-    }
-
     return (res)
 }
