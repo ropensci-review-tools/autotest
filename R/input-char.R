@@ -1,54 +1,44 @@
 
 test_single_char <- function (this_fn, params, i) {
 
-    # check whether vectors of 2 characters error or warn:
-    p <- params
-    p [[i]] <- rep (p [[i]], 2)
-    f <- file.path (tempdir (), "junk.txt")
-    msgs <- catch_all_msgs (f, this_fn, p)
-
-    if (is.null (msgs)) {
-        msgs <- append_single_char_reports (msgs, msgs,
-                        operation = "length 2 vector for length 1 parameter",
-                        params, this_fn, i,
-                        content = "responds to vectors of length > 1")
-    } else
-        msgs <- NULL
+    res <- single_char_doubled (this_fn, params, i)
 
     for (lower in c (TRUE, FALSE))
-        msgs <- case_dependency (params, i, msgs, this_fn, lower = lower)
+        res <- case_dependency (params, i, res, this_fn, lower = lower)
 
-    msgs <- chk_match_arg (params, i, msgs, this_fn)
+    res <- chk_match_arg (params, i, res, this_fn)
 
     if (is_source)
-        return (msgs) # TODO: Remove that and process the remainder for src pkgs
+        return (res) # TODO: Remove that and process the remainder for src pkgs
 
-    return (msgs)
+    return (res)
 }
 
-append_single_char_reports <- function (res,
-                                        msgs,
-                                        operation,
-                                        params,
-                                        this_fn,
-                                        i,
-                                        content) {
+# check whether vectors of 2 characters error or warn:
+single_char_doubled <- function (this_fn, params, i) {
+
+    params [[i]] <- rep (params [[i]], 2)
+    f <- file.path (tempdir (), "junk.txt")
+    msgs <- catch_all_msgs (f, this_fn, params)
+
+    res <- NULL
 
     if (is.null (msgs)) {
+        operation = "length 2 vector for length 1 parameter"
         content <- paste0 ("Parameter [",
                            names (params) [i],
                            "] of function [",
                            this_fn,
                            "] is assumed to be a single character, but ",
-                           content)
-        res <- rbind (res,
-                      report_object (type = "diagnostic",
-                                     fn_name = this_fn,
-                                     parameter = names (params) [i],
-                                     parameter_type = "single character",
-                                     operation = operation,
-                                     content = content))
+                           "responds to vectors of length > 1")
+        res <- report_object (type = "diagnostic",
+                              fn_name = this_fn,
+                              parameter = names (params) [i],
+                              parameter_type = "single character",
+                              operation = operation,
+                              content = content)
     }
+
     return (res)
 }
 
