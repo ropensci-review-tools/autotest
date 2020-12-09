@@ -1,13 +1,14 @@
-autotest_rectangular <- function (params, this_fn, classes, quiet) {
+autotest_rectangular <- function (params,
+                                  param_types,
+                                  this_fn,
+                                  classes,
+                                  quiet) {
 
     ret <- NULL
 
     f <- file.path (tempdir (), "junk.txt")
 
-    rect_index <- which (vapply (params, function (i)
-                                 length (dim (i)) == 2 &
-                                     !(inherits (i, "Matrix") |
-                                       inherits (i, "matrix")), logical (1)))
+    rect_index <- which (param_types == "tabular")
     for (r in rect_index) {
         x <- params [[r]]
         params_r <- params
