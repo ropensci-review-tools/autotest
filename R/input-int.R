@@ -30,36 +30,38 @@ test_single_int_range <- function (pkg, this_fn, params, i) {
     if (!is.numeric (int_range)) # call with default parameters errored
         return (int_range)
 
+    res <- NULL
+
     if (!any (is.finite (int_range))) {
         content <- paste0 ("Parameter [",
                            names (params) [i],
                            "] permits unrestricted integer inputs")
-        res <- rbind (res,
-                      report_object (type = "diagnostic",
-                                     fn_name = this_fn,
-                                     parameter = names (params) [i],
-                                     parameter_type = "single integer",
-                                     operation = "ascertain integer range",
-                                     content = content))
+        res <- report_object (type = "diagnostic",
+                              fn_name = this_fn,
+                              parameter = names (params) [i],
+                              parameter_type = "single integer",
+                              operation = "ascertain integer range",
+                              content = content)
     } else if (!is.null (int_range)) {
         content <- paste0 ("Parameter [",
                            names (params) [i],
                            "] responds to integer values in [",
                            paste0 (int_range, collapse = ", "), "]")
-        res <- rbind (res,
-                      report_object (type = "diagnostic",
-                                     fn_name = this_fn,
-                                     parameter = names (params) [i],
-                                     parameter_type = "single integer",
-                                     operation = "ascertain integer range",
-                                     content = content))
+        res <- report_object (type = "diagnostic",
+                              fn_name = this_fn,
+                              parameter = names (params) [i],
+                              parameter_type = "single integer",
+                              operation = "ascertain integer range",
+                              content = content)
 
         rd <- get_Rd_param (package = pkg,
                             fn_name = this_fn,
                             param_name = names (params) [i])
         range_in_rd <- vapply (int_range, function (j)
                                grepl (j, rd), logical (1))
+
         if (!all (range_in_rd)) {
+
             operation <- "match integer range to documentation"
             content <- paste0 (" Parameter range for ",
                                names (params) [i],

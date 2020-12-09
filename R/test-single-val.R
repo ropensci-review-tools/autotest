@@ -37,16 +37,8 @@ autotest_single <- function (pkg,
             } else if (is.character (p_i)) {
                 val_type <- "character"
                 param_type <- "single character"
-                if (test)
-                    res <- rbind (res,
-                                  test_single_char (this_fn, params_i, i))
-                else
-                    res <- rbind (res,
-                                  report_object (type = "dummy",
-                                                 fn_name = this_fn,
-                                                 parameter = names (params) [i],
-                                                 parameter_type = param_type,
-                                         operation = "single character tests"))
+                res <- rbind (res,
+                              test_single_char (this_fn, params_i, i, test))
             } else if (is.logical (p_i)) {
                 val_type <- "logical"
                 param_type <- "single logical"
@@ -87,12 +79,12 @@ autotest_single <- function (pkg,
             # check response to vector input:
             if (check_vec) {
                 if (test)
-                    res <- check_vec_length (this_fn,
-                                             params_i,
-                                             i,
-                                             val_type,
-                                             param_type,
-                                             res)
+                    res <- rbind (res,
+                                  check_vec_length (this_fn,
+                                                    params_i,
+                                                    i,
+                                                    val_type,
+                                                    param_type))
                 else {
                     op <- "submit vector of multiple items as single"
                     res <- rbind (res,
@@ -108,11 +100,16 @@ autotest_single <- function (pkg,
     return (res [which (!duplicated (res)), ])
 }
 
-check_vec_length <- function (fn, params, i, val_type, param_type, res) {
+check_vec_length <- function (fn, params, i, val_type, param_type) {
+
+    res <- NULL
+
     params [[i]] <- rep (params [[i]], 2)
     f <- file.path (tempdir (), "junk.txt")
     msgs <- catch_all_msgs (f, fn, params)
+
     if (null_or_not (msgs, c ("warning", "error"))) {
+
         operation <- "length 2 vector for single-length parameter"
         content <- paste0 ("parameter [",
                            names (params) [i],
@@ -121,13 +118,12 @@ check_vec_length <- function (fn, params, i, val_type, param_type, res) {
                            val_type,
                            " type, yet admits vectors ",
                            "of length > 1")
-        res <- rbind (res,
-                      report_object (type = "diagnostic",
-                                     fn_name = fn,
-                                     parameter = names (params) [i],
-                                     parameter_type = param_type,
-                                     operation = operation,
-                                     content = content))
+        res <- report_object (type = "diagnostic",
+                              fn_name = fn,
+                              parameter = names (params) [i],
+                              parameter_type = param_type,
+                              operation = operation,
+                              content = content)
     }
 
     return (res)

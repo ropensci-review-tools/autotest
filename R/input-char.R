@@ -1,84 +1,106 @@
 
-test_single_char <- function (this_fn, params, i) {
+test_single_char <- function (this_fn, params, i, test = TRUE) {
 
-    res <- single_char_doubled (this_fn, params, i)
+    res <- single_char_doubled (this_fn, params, i, test)
 
     for (lower in c (TRUE, FALSE))
-        res <- case_dependency (params, i, res, this_fn, lower = lower)
+        res <- rbind (res,
+                      case_dependency (params, i, this_fn, lower = lower, test))
 
-    res <- chk_match_arg (params, i, res, this_fn)
-
-    if (is_source)
-        return (res) # TODO: Remove that and process the remainder for src pkgs
+    res <- rbind (res,
+                  chk_match_arg (params, i, this_fn, test))
 
     return (res)
 }
 
 # check whether vectors of 2 characters error or warn:
-single_char_doubled <- function (this_fn, params, i) {
+single_char_doubled <- function (this_fn, params, i, test = TRUE) {
 
-    params [[i]] <- rep (params [[i]], 2)
-    f <- file.path (tempdir (), "junk.txt")
-    msgs <- catch_all_msgs (f, this_fn, params)
+    operation <- "length 2 vector for length 1 parameter"
+    res <- report_object (type = "dummy",
+                          fn_name = this_fn,
+                          parameter = names (params) [i],
+                          parameter_type = "single character",
+                          operation = operation)
 
-    res <- NULL
+    if (test) {
 
-    if (is.null (msgs)) {
-        operation = "length 2 vector for length 1 parameter"
-        content <- paste0 ("Parameter [",
-                           names (params) [i],
-                           "] of function [",
-                           this_fn,
-                           "] is assumed to be a single character, but ",
-                           "responds to vectors of length > 1")
-        res <- report_object (type = "diagnostic",
-                              fn_name = this_fn,
-                              parameter = names (params) [i],
-                              parameter_type = "single character",
-                              operation = operation,
-                              content = content)
+        params [[i]] <- rep (params [[i]], 2)
+        f <- file.path (tempdir (), "junk.txt")
+        msgs <- catch_all_msgs (f, this_fn, params)
+
+        if (is.null (msgs)) {
+            res <- NULL
+        } else {
+            res$type <- "diagnostic"
+            res$content <- paste0 ("Parameter [",
+                                   names (params) [i],
+                                   "] of function [",
+                                   this_fn,
+                                   "] is assumed to be a single character, ",
+                                   "but responds to vectors of length > 1")
+        }
     }
 
     return (res)
 }
 
-case_dependency <- function (params, i, msgs, this_fn, lower = TRUE) {
+case_dependency <- function (params,
+                             i,
+                             this_fn,
+                             lower = TRUE,
+                             test = TRUE) {
 
-    p <- params
+    op <- paste0 (ifelse (lower, "lower", "upper"), "-case character parameter")
+    res <- report_object (type = "dummy",
+                          fn_name = this_fn,
+                          parameter = names (params) [i],
+                          parameter_type = "single character",
+                          operation = op)
 
-    p [[i]] <- ifelse (lower, tolower (p [[i]]), toupper (p [[i]]))
+    if (test) {
 
-    f <- tempfile ()
-    these_msgs <- catch_all_msgs (f, this_fn, p)
-    if (!is.null (these_msgs)) {
-        op <- paste0 (ifelse (lower, "lower", "upper"),
-                      "-case character parameter")
-        msgs <- append_single_char_reports (msgs, these_msgs,
-                        operation = op,
-                        params, this_fn, i,
-                        content = "is case dependent")
+        params [[i]] <- ifelse (lower,
+                                tolower (params [[i]]),
+                                toupper (params [[i]]))
+
+        f <- tempfile ()
+        msgs <- catch_all_msgs (f, this_fn, params)
+        if (is.null (msgs)) {
+            res <- NULL
+        } else {
+            res$type <- "diagnostic"
+            res$content <- "is case dependent"
+        }
     }
 
-    return (msgs)
+    return (res)
 }
 
-chk_match_arg <- function (params, i, msgs, this_fn) {
+chk_match_arg <- function (params, i, this_fn, test = TRUE) {
 
-    p <- params
+    res <- report_object (type = "dummy",
+                          fn_name = this_fn,
+                          parameter = names (params) [i],
+                          parameter_type = "single character",
+                          operation = "random character string as parameter")
 
-    p [[i]] <- paste0 (sample (c (letters, LETTERS), size = 10), collapse = "")
+    params [[i]] <- paste0 (sample (c (letters, LETTERS), size = 10), collapse = "")
 
-    f <- tempfile ()
-    these_msgs <- catch_all_msgs (f, this_fn, p)
+    if (test) {
 
-    if (!"error" %in% these_msgs$type) {
-        msgs <- append_single_char_reports (msgs, these_msgs,
-                        operation = "random character string as parameter",
-                        params, this_fn, i,
-                        content = "does not match arguments to expected values")
+        f <- tempfile ()
+        msgs <- catch_all_msgs (f, this_fn, params)
+
+        if (!"error" %in% msgs$type) {
+            res$type <- "diagnostic"
+            res$content <- "does not match arguments to expected values"
+        } else {
+            res <- NULL
+        }
     }
 
-    return (msgs)
+    return (res)
 }
 
 # currently not used
