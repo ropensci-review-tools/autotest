@@ -42,7 +42,10 @@ autotest_single <- function (pkg,
                 param_type <- "single numeric"
                 if (test)
                     res <- rbind (res,
-                                  test_single_double (pkg, this_fn, params_i, i))
+                                  test_single_double (pkg,
+                                                      this_fn,
+                                                      params_i,
+                                                      i))
                 else
                     res <- rbind (res,
                                   report_object (type = "dummy",
@@ -68,14 +71,19 @@ autotest_single <- function (pkg,
                 param_type <- "single logical"
                 if (test)
                     res <- rbind (res,
-                                  test_single_logical (pkg, this_fn, params_i, i))
-                else
+                                  test_single_logical (pkg,
+                                                       this_fn,
+                                                       params_i,
+                                                       i))
+                else {
+                    op <- "single logical param tests"
                     res <- rbind (res,
                                   report_object (type = "dummy",
                                                  fn_name = this_fn,
                                                  parameter = names (params) [i],
                                                  parameter_type = param_type,
-                                         operation = "single logical param tests"))
+                                                 operation = op))
+                }
             } else if (methods::is (p_i, "name") |
                        methods::is (p_i, "formula")) {
                 val_type <- class (p_i) [1]
@@ -98,14 +106,21 @@ autotest_single <- function (pkg,
             # check response to vector input:
             if (check_vec) {
                 if (test)
-                    res <- check_vec_length (this_fn, params_i, i, val_type, param_type, res)
-                else
+                    res <- check_vec_length (this_fn,
+                                             params_i,
+                                             i,
+                                             val_type,
+                                             param_type,
+                                             res)
+                else {
+                    op <- "submit vector of multiple items as single"
                     res <- rbind (res,
                                   report_object (type = "dummy",
                                                  fn_name = this_fn,
                                                  parameter = names (params) [i],
                                                  parameter_type = param_type,
-                                         operation = "submit vector of multiple items as single"))
+                                                 operation = op))
+                }
             }
     }
 

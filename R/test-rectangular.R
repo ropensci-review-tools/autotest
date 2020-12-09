@@ -53,8 +53,7 @@ autotest_rectangular <- function (params,
             # extended class structure should still work:
             params_r [[r]] <- structure (x, class = c ("newclass", class (x)))
             msgs <- catch_all_msgs (f, this_fn, params_r)
-            if (!is.null (msgs))
-            {
+            if (!is.null (msgs)) {
                 msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
                 msgs$parameter_type <- "general tabular"
             }
