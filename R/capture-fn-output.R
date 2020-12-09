@@ -8,10 +8,11 @@
 
 log_all_msgs <- function (con, this_fn, params = NULL) {
 
-    o <- utils::capture.output (
+    o <- utils::capture.output ({
+        en <- new.env ()
         x <- tryCatch (withCallingHandlers (
                                 if (is.null (params))
-                                   eval (call (this_fn))
+                                   eval (call (this_fn), envir = en)
                                 else
                                     do.call (this_fn, params),
                                error = function(e) {
@@ -33,7 +34,7 @@ log_all_msgs <- function (con, this_fn, params = NULL) {
                        error = function(e) {
                            return ("error detected")
                        })
-        ) # end capture.output
+    }) # end capture.output
 
     # Next 2 lines write messages to logfile, but not used here
     #if (length (o) > 1 | any (o != "NULL"))
