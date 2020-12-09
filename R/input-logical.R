@@ -68,7 +68,7 @@ int_for_logical <- function (this_fn, params, i, test = TRUE) {
         else
             res$type <- "diagnostic"
     } else {
-        res$content <- NULL
+        res$content <- NA_character_
     }
 
     return (res)
@@ -91,7 +91,7 @@ char_for_logical <- function (this_fn, params, i, test = TRUE) {
             res <- NULL
         }
     } else {
-        res$content <- NULL
+        res$content <- NA_character_
     }
 
     return (res)
