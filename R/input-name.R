@@ -15,7 +15,7 @@ test_single_name <- function (pkg, this_fn, params, i, test = TRUE) {
         f <- tempfile (fileext = ".txt")
 
         params [[i]] <- as.character (params [[i]])
-        msgs <- catch_all_msgs (f, this_fn, params_i)
+        msgs <- catch_all_msgs (f, this_fn, params)
         if (!is.null (msgs)) {
             res$type <- msgs$type
             res$content <- msgs$content

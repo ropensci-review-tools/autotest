@@ -98,6 +98,8 @@ vector_class_defs <- function (this_fn, params, classes, i, test = TRUE) {
         } else {
             res <- NULL
         }
+    } else {
+        res <- res0
     }
 
     return (res)
