@@ -28,31 +28,8 @@ autotest_vector <- function (params,
         ret <- rbind (ret,
                       vector_class_defs (this_fn, params_v, classes, v, test))
 
-        # List-columns
-        x <- params_v [[v]]
-        x <- I (as.list (x))
-        params_v [[v]] <- x
-        msgs <- catch_all_msgs (f, this_fn, params_v)
-        if (not_null_and_is (msgs, "error")) {
-            index <- which (msgs$type == "error")
-            for (e in index) {
-                operation <- "convert vector input to list-columns"
-                content <- paste0 ("Function [",
-                                   this_fn,
-                                   "] errors on list-columns ",
-                                   "when submitted as ",
-                                   names (params) [v],
-                                   " Error message: ",
-                                   msgs$content [e])
-                ret <- rbind (ret,
-                              report_object (type = "diagnostic",
-                                             fn_name = this_fn,
-                                             parameter = names (params_v) [v],
-                                             parameter_type = "generic vector",
-                                             operation = operation,
-                                             content = content))
-            }
-        }
+        ret <- rbind (ret,
+                      vector_as_list (this_fn, params_v, v, test))
     }
 
     return (ret)
@@ -71,11 +48,13 @@ vector_class_defs <- function (this_fn, params, classes, i, test = TRUE) {
     if (test) {
 
         if (!names (params) [i] %in% names (classes)) {
-            f <- tempfile (fileext = ".txt")
             x <- params [[i]]
             class (x) <- "different"
             params [[i]] <- x
+
+            f <- tempfile (fileext = ".txt")
             msgs <- catch_all_msgs (f, this_fn, params)
+
             if (not_null_and_is (msgs, "error")) {
                 index <- which (msgs$type == "error")
                 res <- NULL
@@ -94,6 +73,48 @@ vector_class_defs <- function (this_fn, params, classes, i, test = TRUE) {
                 }
             } else {
                 res <- NULL
+            }
+        } else {
+            res <- NULL
+        }
+    } else {
+        res <- res0
+    }
+
+    return (res)
+}
+
+vector_as_list <- function (this_fn, params, i, test = TRUE) {
+
+    operation <- "convert vector input to list-columns"
+    res0 <- report_object (type = "dummy",
+                          fn_name = this_fn,
+                          parameter = names (params) [i],
+                          parameter_type = "generic vector",
+                          operation = operation)
+
+    if (test) {
+
+        x <- params [[i]]
+        x <- I (as.list (x))
+        params [[i]] <- x
+
+        f <- tempfile (fileext = ".txt")
+        msgs <- catch_all_msgs (f, this_fn, params)
+
+        if (not_null_and_is (msgs, "error")) {
+            index <- which (msgs$type == "error")
+            res <- NULL
+            res0$type <- "diagnostic"
+            for (e in index) {
+                res0$content <- paste0 ("Function [",
+                                        this_fn,
+                                        "] errors on list-columns ",
+                                        "when submitted as ",
+                                        names (params) [i],
+                                        " Error message: ",
+                                        msgs$content [e])
+                res <- rbind (res, res0)
             }
         } else {
             res <- NULL
