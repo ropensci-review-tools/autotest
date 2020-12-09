@@ -1,4 +1,9 @@
-autotest_single <- function (pkg, params, this_fn, test, quiet) {
+autotest_single <- function (pkg,
+                             params,
+                             param_types,
+                             this_fn,
+                             test,
+                             quiet) {
 
     if (any (params == "NULL")) {
         params <- params [params != "NULL"]
@@ -11,24 +16,7 @@ autotest_single <- function (pkg, params, this_fn, test, quiet) {
     if (!is.null (res))
         res$operation <- "normal function call"
 
-    is_single <- function (j) {
-        chk <- FALSE
-        if (is.null (dim (j)) && length (j) == 1) {
-            if (methods::is (j, "name")) {
-                val <- tryCatch (eval (parse (text = j)),
-                                 error = function (e) NULL)
-                if (!is.null (val))
-                    chk <- length (val) == 1
-            } else {
-                chk <- TRUE
-            }
-        } else if (methods::is (j, "formula")) {
-            chk <- TRUE
-        }
-        return (chk)
-    }
-
-    index <- which (vapply (params, function (j) is_single (j), logical (1)))
+    index <- which (param_types == "single")
     for (i in index) {
             params_i <- params
 
