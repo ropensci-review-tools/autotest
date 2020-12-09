@@ -31,7 +31,7 @@ null_or_not <- function (x, not_this) {
 not_null_and_is <- function (x, is_this) {
     res <- FALSE
     if (!is.null (x))
-        if (is_this %in% x$type)
+        if (any (is_this %in% x$type))
             res <- TRUE
     return (res)
 }
