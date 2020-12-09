@@ -20,13 +20,16 @@ examples_to_yaml <- function (package = NULL,
     exs <- get_all_examples (package, pkg_is_source (package), exclude)
 
     ret <- list ()
+
     for (i in seq (exs)) {
+
         this_fn <- names (exs) [i]
         prev_fns <- list ()
         rdname <- attr (exs [[i]], "Rdname")
         aliases <- get_fn_aliases (package, rdname)
 
         for (xj in exs [[i]]) {
+
             y <- one_ex_to_yaml (pkg = pkg_name,
                                  pkg_full = package,
                                  fn = this_fn,
@@ -34,20 +37,15 @@ examples_to_yaml <- function (package = NULL,
                                  x = xj,
                                  aliases = aliases,
                                  prev_fns = prev_fns)
+
             if (!is.null (y)) {
-                # Check documentation to see which parameters include
-                # descriptions of expected classes.
-                classes <- param_classes_in_desc (y, package)
-                index <- which (!is.na (classes$class_in_desc))
-                if (length (index) > 0) {
-                    classes <- classes [index, ]
-                    for (j in seq (nrow (classes)))
-                        y <- add_class_restriction (y, classes [j, ])
-                }
-                attr (y, "package") <- package
+
+                y <- add_class_descriptions (y, package)
+
                 ret [[length (ret) + 1]] <-
                     prev_fns [[length (prev_fns) + 1]] <- y
                 names (ret) [length (ret)] <- this_fn
+
             }
         }
 
@@ -811,4 +809,21 @@ get_aliases_source <- function (pkg, fn_name) {
         aliases <- gsub ("^\\\\alias\\{|\\}$", "", x [index])
     }
     return (aliases)
+}
+
+#' Take initial yaml output from `one_ex_to_yaml`, check function documentation
+#' to see which parameters include descriptions of expected classes, and add
+#' those class restrictions to `yaml` if so.
+#' @noRd
+add_class_descriptions <- function (yaml, package) {
+    classes <- param_classes_in_desc (yaml, package)
+    index <- which (!is.na (classes$class_in_desc))
+    if (length (index) > 0) {
+        classes <- classes [index, ]
+        for (j in seq (nrow (classes)))
+            yaml <- add_class_restriction (yaml, classes [j, ])
+    }
+    attr (yaml, "package") <- package
+
+    return (yaml)
 }
