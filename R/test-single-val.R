@@ -42,20 +42,8 @@ autotest_single <- function (pkg,
             } else if (is.logical (p_i)) {
                 val_type <- "logical"
                 param_type <- "single logical"
-                if (test)
-                    res <- rbind (res,
-                                  test_single_logical (this_fn,
-                                                       params_i,
-                                                       i))
-                else {
-                    op <- "single logical param tests"
-                    res <- rbind (res,
-                                  report_object (type = "dummy",
-                                                 fn_name = this_fn,
-                                                 parameter = names (params) [i],
-                                                 parameter_type = param_type,
-                                                 operation = op))
-                }
+                res <- rbind (res,
+                              test_single_logical (this_fn, params_i, i, test))
             } else if (methods::is (p_i, "name") |
                        methods::is (p_i, "formula")) {
                 val_type <- class (p_i) [1]
