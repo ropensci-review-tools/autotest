@@ -32,19 +32,8 @@ autotest_single <- function (pkg,
             } else if (methods::is (p_i, "numeric")) {
                 val_type <- "numeric"
                 param_type <- "single numeric"
-                if (test)
-                    res <- rbind (res,
-                                  test_single_double (pkg,
-                                                      this_fn,
-                                                      params_i,
-                                                      i))
-                else
-                    res <- rbind (res,
-                                  report_object (type = "dummy",
-                                                 fn_name = this_fn,
-                                                 parameter = names (params) [i],
-                                                 parameter_type = param_type,
-                                         operation = "add trivial noise"))
+                res <- rbind (res,
+                              test_single_double (this_fn, params_i, i, test))
             } else if (is.character (p_i)) {
                 val_type <- "character"
                 param_type <- "single character"

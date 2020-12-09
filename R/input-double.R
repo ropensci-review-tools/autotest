@@ -1,5 +1,17 @@
 
-test_single_double <- function (pkg, this_fn, params, i) {
+test_single_double <- function (this_fn, params, i, test = TRUE) {
+
+    res <- NULL
+
+    if (test)
+        res <- test_single_double_noise (this_fn, params, i)
+    else
+        res <- single_dbl_dummy_report (this_fn, params, i)
+
+    return (res)
+}
+
+test_single_double_noise <- function (this_fn, params, i) {
 
     res <- NULL
 
@@ -25,4 +37,12 @@ test_single_double <- function (pkg, this_fn, params, i) {
                                          content = content))
         }
     }
+}
+
+single_dbl_dummy_report <- function (this_fn, params, i) {
+    report_object (type = "dummy",
+                   fn_name = this_fn,
+                   parameter = names (params) [i],
+                   parameter_type = "single numeric",
+                   operation = "add trivial noise")
 }
