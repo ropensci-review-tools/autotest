@@ -67,13 +67,12 @@ autotest_vector <- function (params,
                                        " Error message: ",
                                        msgs$content [e])
                     ret <- rbind (ret,
-                                  report_object (type = "diagnostic",
-                                                 fn_name = this_fn,
-                                                 parameter =
-                                                     names (params_v) [v],
-                                                 parameter_type = "generic vector",
-                                                 operation = operation,
-                                                 content = content))
+                              report_object (type = "diagnostic",
+                                             fn_name = this_fn,
+                                             parameter = names (params_v) [v],
+                                             parameter_type = "generic vector",
+                                             operation = operation,
+                                             content = content))
                 }
             } else {
                 # TODO: Expectation - they need not be identical, because class
