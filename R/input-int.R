@@ -11,11 +11,22 @@ is_int <- function (p) {
     return (p_is_int)
 }
 
-test_single_int <- function (pkg, this_fn, params, i) {
+test_single_int <- function (pkg, this_fn, params, i, test = TRUE) {
 
     res <- NULL
 
+    if (test)
+        res <- test_single_int_range (pkg, this_fn, params, i)
+    else
+        res <- single_int_dummy_report (this_fn, params, i)
+
+    return (res)
+}
+
+test_single_int_range <- function (pkg, this_fn, params, i) {
+
     int_range <- get_int_range (this_fn, params, i)
+
     if (!is.numeric (int_range)) # call with default parameters errored
         return (int_range)
 
@@ -178,4 +189,12 @@ int_lower_limit <- function (this_fn, params, i) {
         p_i <- -Inf
 
     return (p_i)
+}
+
+single_int_dummy_report <- function (this_fn, params, i) {
+    report_object (type = "dummy",
+                   fn_name = this_fn,
+                   parameter = names (params) [i],
+                   parameter_type = "single integer",
+                   operation = "ascertain integer range")
 }

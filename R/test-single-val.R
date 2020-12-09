@@ -26,16 +26,8 @@ autotest_single <- function (pkg,
             if (is_int (p_i)) {
                 val_type <- "integer"
                 param_type <- "single integer"
-                if (test)
-                    res <- rbind (res,
-                                  test_single_int (pkg, this_fn, params_i, i))
-                else
-                    res <- rbind (res,
-                                  report_object (type = "dummy",
-                                                 fn_name = this_fn,
-                                                 parameter = names (params) [i],
-                                                 parameter_type = param_type,
-                                         operation = "ascertain integer range"))
+                res <- rbind (res,
+                              test_single_int (pkg, this_fn, params_i, i, test))
 
             } else if (methods::is (p_i, "numeric")) {
                 val_type <- "numeric"
