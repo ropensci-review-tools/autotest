@@ -81,7 +81,7 @@ test_single_int_range <- function (pkg, this_fn, params, i) {
 
 
 get_fn_response <- function (this_fn, params) {
-    f <- tempfile ()
+    f <- tempfile (fileext = ".txt")
     msgs <- catch_all_msgs (f, this_fn, params)
     val <- 3
     if (!is.null (msgs)) {
@@ -199,4 +199,40 @@ single_int_dummy_report <- function (this_fn, params, i) {
                    parameter = names (params) [i],
                    parameter_type = "single integer",
                    operation = "ascertain integer range")
+}
+
+int_as_double <- function (this_fn, params, i,
+                           vec = FALSE,
+                           test = TRUE) {
+
+    operation <- "integer vector converted to numeric"
+    if (vec)
+        param_type <- "integer vector"
+    else
+        param_type <- "single integer"
+    res <- report_object (type = "dummy",
+                          fn_name = this_fn,
+                          parameter = names (params) [i],
+                          parameter_type = param_type,
+                          operation = operation)
+
+    if (test) {
+        out1 <- suppressWarnings (do.call (this_fn, params))
+        params [[i]] <- as.numeric (params [[i]])
+        out2 <- suppressWarnings (do.call (this_fn, params))
+
+        if (identical (out1, out2))
+            res <- NULL
+        else {
+            res$type <- "diagnostic"
+            res$content <- paste0 ("Function [",
+                                   this_fn,
+                                   "] returns different values when ",
+                                   "assumed int-valued parameter [",
+                                   names (params) [i],
+                                   "] is submitted as double.")
+        }
+    }
+
+    return (res)
 }

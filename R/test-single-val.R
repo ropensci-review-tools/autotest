@@ -27,6 +27,8 @@ autotest_single <- function (pkg,
                 val_type <- "integer"
                 res <- rbind (res,
                               test_single_int (pkg, this_fn, params_i, i, test))
+                res <- rbind (res,
+                              int_as_double (this_fn, params_i, i, test))
 
             } else if (methods::is (p_i, "numeric")) {
                 val_type <- "numeric"

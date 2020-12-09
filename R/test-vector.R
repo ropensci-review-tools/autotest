@@ -2,6 +2,7 @@ autotest_vector <- function (params,
                              param_types,
                              this_fn,
                              classes,
+                             test = TRUE,
                              quiet) {
 
     ret <- NULL
@@ -17,72 +18,15 @@ autotest_vector <- function (params,
         msgs <- catch_all_msgs (f, this_fn, params_v)
         ret <- add_msg_output (ret, msgs, types = "warning",
                                operation = "normal function call")
-        #warn <- not_null_and_is (msgs, "warning")
 
-        # int columns submitted as double should return different result:
         if (typeof (params_v [[v]]) == "integer" &
             !is.factor (params_v [[v]])) {
-            res1 <- suppressWarnings (do.call (this_fn, params_v))
-            params_v [[v]] <- as.numeric (params_v [[v]])
-            res2 <- suppressWarnings (do.call (this_fn, params_v))
-            if (!identical (res1, res2)) {
-                operation <- "integer vector converted to numeric"
-                content <- paste0 ("Function [",
-                                   this_fn,
-                                   "] returns different values when ",
-                                   "assumed int-valued parameter [",
-                                   names (params) [v],
-                                   "] is submitted as double. ",
-                                   "Error message: ",
-                                   "different classes when ",
-                                   "submitted as ",
-                                   names (params) [v])
-                ret <- rbind (ret,
-                              report_object (type = "diagnostic",
-                                             fn_name = this_fn,
-                                             parameter = names (params_v) [v],
-                                             parameter_type = "integer vector",
-                                             operation = operation,
-                                             content = content))
-            }
-            params_v <- params
+            ret <- rbind (ret,
+                          int_as_double (this_fn, params_v, v, test))
         }
 
-        # class definitions for vector columns should be ignored
-        if (!names (params_v) [vec_index [v]] %in% names (classes)) {
-            x <- params_v [[v]]
-            class (x) <- "different"
-            params_v [[v]] <- x
-            msgs <- catch_all_msgs (f, this_fn, params_v)
-            if (not_null_and_is (msgs, "error")) {
-                index <- which (msgs$type == "error")
-                for (e in index) {
-                    operation <- "custom class definitions for vector input"
-                    content <- paste0 ("Function [",
-                                       this_fn,
-                                       "] errors on vector columns with ",
-                                       "different classes when ",
-                                       "submitted as ",
-                                       names (params_v) [v],
-                                       " Error message: ",
-                                       msgs$content [e])
-                    ret <- rbind (ret,
-                              report_object (type = "diagnostic",
-                                             fn_name = this_fn,
-                                             parameter = names (params_v) [v],
-                                             parameter_type = "generic vector",
-                                             operation = operation,
-                                             content = content))
-                }
-            } else {
-                # TODO: Expectation - they need not be identical, because class
-                # def may be carried over to result
-                #expect_identical (res1, res3)
-            }
-            params_v <- params
-        } else {
-            # TODO: Implement check for all nominated classes
-        }
+        ret <- rbind (ret,
+                      vector_class_defs (this_fn, params_v, classes, v, test))
 
         # List-columns
         x <- params_v [[v]]
@@ -112,4 +56,49 @@ autotest_vector <- function (params,
     }
 
     return (ret)
+}
+
+# class definitions for vector columns should be ignored
+vector_class_defs <- function (this_fn, params, classes, i, test = TRUE) {
+
+    operation <- "custom class definitions for vector input"
+    res0 <- report_object (type = "dummy",
+                          fn_name = this_fn,
+                          parameter = names (params) [i],
+                          parameter_type = "generic vector",
+                          operation = operation)
+
+    if (test) {
+
+        if (!names (params) [i] %in% names (classes)) {
+            f <- tempfile (fileext = ".txt")
+            x <- params [[i]]
+            class (x) <- "different"
+            params [[i]] <- x
+            msgs <- catch_all_msgs (f, this_fn, params)
+            if (not_null_and_is (msgs, "error")) {
+                index <- which (msgs$type == "error")
+                res <- NULL
+                res0$type <- "diagnostic"
+                for (e in index) {
+                    res0$content <- paste0 ("Function [",
+                                            this_fn,
+                                            "] errors on vector columns with ",
+                                            "different classes when ",
+                                            "submitted as ",
+                                            names (params) [i],
+                                            " Error message: ",
+                                            msgs$content [e])
+
+                    res <- rbind (res, res0)
+                }
+            } else {
+                res <- NULL
+            }
+        } else {
+            res <- NULL
+        }
+    }
+
+    return (res)
 }
