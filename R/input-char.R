@@ -1,22 +1,5 @@
 
-get_Rd_metadata <- utils::getFromNamespace (".Rd_get_metadata", "tools") # nolint
-
-test_single_char <- function (pkg, this_fn, params, i) {
-
-    h <- tools::Rd_db (package = pkg)
-    is_source <- FALSE
-    if (length (h) == 0) {
-        is_source <- TRUE
-    } else {
-        index <- which (vapply (h, function (j)
-                                this_fn %in% get_Rd_metadata (j, "alias"),
-                                logical (1)))
-        if (length (index) != 1) {
-            message ("No single help topic for [", this_fn, "] found")
-            return (NULL)
-        }
-        h <- h [[index]]
-    }
+test_single_char <- function (this_fn, params, i) {
 
     # check whether vectors of 2 characters error or warn:
     p <- params
@@ -39,7 +22,6 @@ test_single_char <- function (pkg, this_fn, params, i) {
 
     if (is_source)
         return (msgs) # TODO: Remove that and process the remainder for src pkgs
-
 
     return (msgs)
 }
@@ -197,4 +179,12 @@ regex_param_descs <- function (h, params, i, msgs) {
     }
     for (k in seq (res))
         res [k] <- match_res_k (res, hc, i, j, k)
+}
+
+single_char_dummy_report <- function (this_fn, params, i) {
+    report_object (type = "dummy",
+                   fn_name = this_fn,
+                   parameter = names (params) [i],
+                   parameter_type = "single character",
+                   operation = "single character tests")
 }

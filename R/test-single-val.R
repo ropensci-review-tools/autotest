@@ -39,7 +39,7 @@ autotest_single <- function (pkg,
                 param_type <- "single character"
                 if (test)
                     res <- rbind (res,
-                                  test_single_char (pkg, this_fn, params_i, i))
+                                  test_single_char (this_fn, params_i, i))
                 else
                     res <- rbind (res,
                                   report_object (type = "dummy",
