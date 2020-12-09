@@ -1,4 +1,8 @@
-autotest_vector <- function (params, this_fn, classes, quiet) {
+autotest_vector <- function (params,
+                             param_types,
+                             this_fn,
+                             classes,
+                             quiet) {
 
     ret <- NULL
     f <- file.path (tempdir (), "junk.txt")
@@ -7,12 +11,7 @@ autotest_vector <- function (params, this_fn, classes, quiet) {
         params <- params [params != "NULL"]
     }
 
-    vec_index <- which (vapply (params, function (i)
-                                length (i) > 1 &&
-                                    is.null (dim (i)) &&
-                                    is.atomic (i) &&
-                                    !class (i) %in% c ("call", "formula"),
-                                logical (1)))
+    vec_index <- which (param_types == "vector")
     for (v in vec_index) {
         params_v <- params
         msgs <- catch_all_msgs (f, this_fn, params_v)

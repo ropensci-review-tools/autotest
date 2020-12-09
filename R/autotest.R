@@ -89,6 +89,7 @@ autotest_single_yaml <- function (yaml = NULL,
                                                 quiet))
         reports <- rbind (reports,
                           autotest_vector (params,
+                                           param_types,
                                            this_fn,
                                            classes,
                                            quiet))
