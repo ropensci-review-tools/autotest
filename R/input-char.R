@@ -1,7 +1,7 @@
 
 test_single_char <- function (this_fn, params, i, test = TRUE) {
 
-    res <- single_char_doubled (this_fn, params, i, test)
+    res <- NULL
 
     for (lower in c (TRUE, FALSE))
         res <- rbind (res,
@@ -9,38 +9,6 @@ test_single_char <- function (this_fn, params, i, test = TRUE) {
 
     res <- rbind (res,
                   chk_match_arg (params, i, this_fn, test))
-
-    return (res)
-}
-
-# check whether vectors of 2 characters error or warn:
-single_char_doubled <- function (this_fn, params, i, test = TRUE) {
-
-    operation <- "length 2 vector for length 1 parameter"
-    res <- report_object (type = "dummy",
-                          fn_name = this_fn,
-                          parameter = names (params) [i],
-                          parameter_type = "single character",
-                          operation = operation)
-
-    if (test) {
-
-        params [[i]] <- rep (params [[i]], 2)
-        f <- file.path (tempdir (), "junk.txt")
-        msgs <- catch_all_msgs (f, this_fn, params)
-
-        if (is.null (msgs)) {
-            res <- NULL
-        } else {
-            res$type <- "diagnostic"
-            res$content <- paste0 ("Parameter [",
-                                   names (params) [i],
-                                   "] of function [",
-                                   this_fn,
-                                   "] is assumed to be a single character, ",
-                                   "but responds to vectors of length > 1")
-        }
-    }
 
     return (res)
 }
