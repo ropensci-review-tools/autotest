@@ -8,91 +8,36 @@ autotest_rectangular <- function (params,
 
     classes <- classes [which (!is.na (classes))]
 
+    this_env <- new.env ()
+
     rect_index <- which (param_types == "tabular")
     for (r in rect_index) {
         x <- params [[r]]
         params_r <- params
 
-        res1 <- res2 <- res3 <- res4 <- NULL
+        ret <- rbind (ret,
+                      test_rect_as_other (this_fn,
+                                          params_r,
+                                          classes,
+                                          r,
+                                          this_env))
 
-        other <- c ("data.frame", "tibble::tibble", "data.table::data.table")
-        if (length (classes) > 0) {
-            other <- other [which (gsub (".*::", "", other) %in% names (classes))]
-        }
-
-        for (o in seq_along (other)) {
-            this_ret <- test_rect_as_other (this_fn, params_r, r, other [o])
-            ret <- rbind (ret, this_ret)
-            if (docall (this_ret, this_fn, params)) {
-                res <- suppressWarnings (do.call (this_fn, params_r))
-                assign (paste0 ("res", o), res)
-            }
-        }
-
-        if ("res1" %in% ls () & "res2" %in% ls ()) {
-            ret <- compare_rect_outputs (ret, res1, res2, this_fn, params, r)
-            if ("res3" %in% ls ()) {
-                ret <- compare_rect_outputs (ret,
-                                             res1,
-                                             res3,
-                                             this_fn,
-                                             params,
-                                             r)
-                ret <- compare_rect_outputs (ret,
-                                             res2,
-                                             res3,
-                                             this_fn,
-                                             params,
-                                             r)
-            }
-        }
+        ret <- rbind (ret,
+                      compare_rect_outputs (this_fn, params, r, this_env))
 
         # Modify class definitions for rectangular inputs if not excluded by
         # yaml class definitions
         if (!names (params_r) [r] %in% names (classes)) {
-            # extended class structure should still work:
-            params_r [[r]] <- structure (x, class = c ("newclass", class (x)))
+            ret <- rbind (ret,
+                          extend_rect_class_strut (params_r,
+                                                   this_fn,
+                                                   r,
+                                                   this_env))
 
-            f <- tempfile (fileext = ".txt")
-            msgs <- catch_all_msgs (f, this_fn, params_r)
-            if (!is.null (msgs)) {
-                msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
-                msgs$parameter_type <- "general tabular"
-            }
-            ret <- add_msg_output (ret, msgs, types = c ("warning", "error"),
-                                   operation = paste0 ("rectangular parameter ",
-                                                       "with extended ",
-                                                       "class structure"))
-            if (!"error" %in% msgs$type) {
-                o <- utils::capture.output (
-                    res4 <- suppressWarnings (do.call (this_fn, params_r))
-                    )
-            }
-
-            ret <- compare_rect_outputs (ret, res1, res4, this_fn, params, r)
-            ret <- compare_rect_outputs (ret, res2, res4, this_fn, params, r)
-            ret <- compare_rect_outputs (ret, res3, res4, this_fn, params, r)
-
-            # new class structure which exposes 'List` structure of `data.frame`
-            # and should generally fail:
-            params_r [[r]] <- structure (x, class = c ("newclass"))
-            f <- tempfile (fileext = ".txt")
-            msgs <- catch_all_msgs (f, this_fn, params_r)
-            if (!null_or_not (msgs, "error")) {
-                msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
-                operation <- "tabular structure with new class structure"
-                content <- paste0 ("Function [",
-                                   this_fn,
-                                   "] should error when class structure of ",
-                                   "`data.frame` input is removed.")
-                ret <- rbind (ret,
-                              report_object (type = "diagnostic",
-                                             fn_name = this_fn,
-                                             parameter = names (params) [r],
-                                             parameter_type = "generic tabular",
-                                             operation = operation,
-                                             content = content))
-            }
+            ret <- rbind (ret,
+                          replace_rect_class_struct (params_r,
+                                                     this_fn,
+                                                     r))
         }
     }
     return (ret)
@@ -173,6 +118,9 @@ chk_columns <- function (this_fn, params, r, res1, res2) {
     return (ret)
 }
 
+#' call fn with params if previous report was either empty or not an error
+#'
+#' @noRd
 docall <- function (ret, fn, params) {
     docall <- FALSE
     if (is.null (ret))
@@ -183,7 +131,29 @@ docall <- function (ret, fn, params) {
     return (docall)
 }
 
-test_rect_as_other <- function (fn, params, i, other = "data.frame") {
+test_rect_as_other <- function (fn, params, classes, i, this_env) {
+
+    other <- c ("data.frame", "tibble::tibble", "data.table::data.table")
+    if (length (classes) > 0) {
+        other <- other [which (gsub (".*::", "", other) %in% names (classes))]
+    }
+
+    res <- NULL
+
+    for (o in seq_along (other)) {
+        this_ret <- test_one_rect_as_other (fn, params, i, other [o])
+        res <- rbind (res, this_ret)
+        if (docall (this_ret, fn, params)) {
+            val <- suppressWarnings (do.call (fn, params, envir = this_env))
+            nm <- paste0 ("val-", gsub ("^.*::", "", other [o]))
+            assign (nm, val, envir = this_env)
+        }
+    }
+
+    return (res)
+}
+
+test_one_rect_as_other <- function (fn, params, i, other = "data.frame") {
 
     f <- file.path (tempdir (), "junk.txt")
     ret <- NULL
@@ -203,12 +173,112 @@ test_rect_as_other <- function (fn, params, i, other = "data.frame") {
     return (ret)
 }
 
-compare_rect_outputs <- function (ret, res1, res2, fn, params, i) {
-    if (!(is.null (res1) | is.null (res2))) {
-        ret <- rbind (ret, chk_dims (fn, params, i, res1, res2))
-        ret <- rbind (ret, chk_names (fn, params, i, res1, res2))
-        ret <- rbind (ret, chk_columns (fn, params, i, res1, res2))
+compare_rect_outputs <- function (fn, params, i, this_env, this_obj = NULL) {
+
+
+    nms <- c ("val-data.frame", "val-tibble", "val-data.table")
+    nms <- nms [which (nms %in% ls (envir = this_env))]
+
+    ret_now <- length (nms) == 0 # if those classes all error, they won't exist
+    if (is.null (this_obj)) {
+        if (length (nms) < 2)
+            ret_now <- TRUE
+    } else if (!this_obj %in% ls (envir = this_env)) {
+            ret_now <- TRUE
+    }
+    if (ret_now)
+        return (NULL)
+
+    if (is.null (this_obj))
+        nms <- expand.grid (nms, nms, stringsAsFactors = FALSE)
+    else
+        nms <- expand.grid (this_obj, nms, stringsAsFactors = FALSE)
+    nms <- nms [which (nms [, 1] != nms [, 2]), ]
+
+    res <- NULL
+    for (i in seq (nrow (nms))) {
+        res1 <- get (nms [i, 1], envir = this_env)
+        res2 <- get (nms [i, 2], envir = this_env)
+
+        res <- rbind (res, chk_dims (fn, params, i, res1, res2))
+        res <- rbind (res, chk_names (fn, params, i, res1, res2))
+        res <- rbind (res, chk_columns (fn, params, i, res1, res2))
+    }
+
+    return (res)
+}
+
+#' Extend class structure of tabular objects, which should still work
+#' @noRd
+extend_rect_class_strut <- function (params, this_fn, i, this_env) {
+
+    x <- params [[i]]
+
+    params [[i]] <- structure (x, class = c ("newclass", class (x)))
+
+    f <- tempfile (fileext = ".txt")
+    msgs <- catch_all_msgs (f, this_fn, params)
+    if (!is.null (msgs)) {
+        msgs$parameter <- rep (names (params) [i], nrow (msgs))
+        msgs$parameter_type <- "general tabular"
+    }
+
+    ret <- add_msg_output (NULL,
+                           msgs,
+                           types = c ("warning", "error"),
+                           operation = paste0 ("rectangular parameter ",
+                                               "with extended ",
+                                               "class structure"))
+
+    if (!"error" %in% msgs$type) {
+        o <- utils::capture.output (
+                                    temp <- suppressWarnings (do.call (this_fn,
+                                                                       params,
+                                                                       envir = this_env))
+        )
+        assign ("val-newclass", temp, envir = this_env)
+
+        ret <- rbind (ret,
+                      compare_rect_outputs (this_fn,
+                                            params,
+                                            i,
+                                            this_env,
+                                            this_obj = "val-newclass"))
     }
 
     return (ret)
+}
+
+#' Replacing class structure of tabular objects entirely should generally fail
+#' @noRd
+replace_rect_class_struct <- function (params, this_fn, i, test = TRUE) {
+
+    operation <- "replace class of tabular object with new class"
+    ret <- report_object (type = "dummy",
+                          fn_name = this_fn,
+                          parameter = names (params) [i],
+                          parameter_type = "generic tabular",
+                          operation = operation)
+
+    if (test) {
+
+        x <- params [[i]]
+        params [[i]] <- structure (x, class = c ("newclass"))
+        f <- tempfile (fileext = ".txt")
+        msgs <- catch_all_msgs (f, this_fn, params)
+
+        if (null_or_not (msgs, "error"))
+            ret <- NULL
+        else {
+            msgs$parameter <- rep (names (params) [i], nrow (msgs))
+            ret$type <- "diagnostic"
+            ret$content <- paste0 ("Function [",
+                               this_fn,
+                               "] should error when class structure of ",
+                               "`data.frame` input is removed.")
+        }
+    }
+
+    return (ret)
+
 }
