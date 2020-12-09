@@ -6,7 +6,7 @@ autotest_rectangular <- function (params,
 
     ret <- NULL
 
-    f <- file.path (tempdir (), "junk.txt")
+    classes <- classes [which (!is.na (classes))]
 
     rect_index <- which (param_types == "tabular")
     for (r in rect_index) {
@@ -17,7 +17,7 @@ autotest_rectangular <- function (params,
 
         other <- c ("data.frame", "tibble::tibble", "data.table::data.table")
         if (length (classes) > 0) {
-            other <- other [which (gsub (".*::", "", other) %in% classes)]
+            other <- other [which (gsub (".*::", "", other) %in% names (classes))]
         }
 
         for (o in seq_along (other)) {
@@ -52,6 +52,8 @@ autotest_rectangular <- function (params,
         if (!names (params_r) [r] %in% names (classes)) {
             # extended class structure should still work:
             params_r [[r]] <- structure (x, class = c ("newclass", class (x)))
+
+            f <- tempfile (fileext = ".txt")
             msgs <- catch_all_msgs (f, this_fn, params_r)
             if (!is.null (msgs)) {
                 msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
@@ -74,7 +76,7 @@ autotest_rectangular <- function (params,
             # new class structure which exposes 'List` structure of `data.frame`
             # and should generally fail:
             params_r [[r]] <- structure (x, class = c ("newclass"))
-            f <- file.path (tempdir (), "junk.txt")
+            f <- tempfile (fileext = ".txt")
             msgs <- catch_all_msgs (f, this_fn, params_r)
             if (!null_or_not (msgs, "error")) {
                 msgs$parameter <- rep (names (params_r) [r], nrow (msgs))
