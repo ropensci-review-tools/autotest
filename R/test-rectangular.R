@@ -133,7 +133,7 @@ docall <- function (ret, fn, params) {
 #' Get classes of generic rectangular objects except those explicitly restricted
 #' by class definitions/descriptions.
 #' @noRd
-other_rect_classes <- function (classes) {
+other_rect_classes <- function (classes = NULL) {
 
     other <- c ("data.frame", "tibble::tibble", "data.table::data.table")
 
@@ -213,12 +213,14 @@ get_rect_comparisons <- function (nms, this_env = NULL, this_class = NULL) {
     if (ret_now)
         return (NULL)
 
-    if (is.null (this_class))
-        nms <- expand.grid (nms, nms, stringsAsFactors = FALSE)
-    else
-        nms <- expand.grid (this_class, nms, stringsAsFactors = FALSE)
+    if (is.null (this_class)) {
+        index <- t (utils::combn (length (nms), 2))
+        nms <- matrix (nms [index], ncol = 2)
+    } else {
+        nms <- cbind (this_class, nms)
+    }
 
-    return (nms [which (nms [, 1] != nms [, 2]), ])
+    return (nms)
 }
 
 compare_rect_outputs <- function (fn, params, i, this_env, this_obj = NULL) {
