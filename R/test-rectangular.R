@@ -131,15 +131,26 @@ docall <- function (ret, fn, params) {
     return (docall)
 }
 
+#' Get classes of generic rectangular objects except those explicitly restricted
+#' by class definitions/descriptions.
+#' @noRd
+other_rect_classes <- function (classes) {
+
+    other <- c ("data.frame", "tibble::tibble", "data.table::data.table")
+
+    if (length (classes) > 0) {
+        other <- other [which (gsub (".*::", "", other) %in% names (classes))]
+    }
+
+    return (other)
+}
+
 #' Change class of params [[i]] to other rectangular classes and capture
 #' resultant return values in `this_env`
 #' @noRd
 pass_rect_as_other <- function (fn, params, classes, i, this_env) {
 
-    other <- c ("data.frame", "tibble::tibble", "data.table::data.table")
-    if (length (classes) > 0) {
-        other <- other [which (gsub (".*::", "", other) %in% names (classes))]
-    }
+    other <- other_rect_classes (classes)
 
     res <- NULL
 
