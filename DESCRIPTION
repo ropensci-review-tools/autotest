@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.0.1.446
+Version: 0.0.1.447
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -15,7 +15,6 @@ Imports:
     cli,
     data.table,
     digest,
-    here,
     magrittr,
     memoise,
     methods,
