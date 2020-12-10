@@ -192,27 +192,40 @@ pass_one_rect_as_other <- function (fn, params, i, other = "data.frame") {
     return (ret)
 }
 
+#' Return a grid of all pairwise comparisons of classes for rectangular objects,
+#' optionally with a specified target class, `this_class`.
+#' @noRd
+get_rect_comparisons <- function (nms, this_env, this_class = NULL) {
+
+    # when nms are passed as objects from environment list, they only exist if
+    # those classes do not error, so `nms` may be empty.
+    ret_now <- length (nms) == 0
+    if (is.null (this_class)) {
+        if (length (nms) < 2)
+            ret_now <- TRUE
+    } else if (!this_class %in% ls (envir = this_env)) {
+            ret_now <- TRUE
+    }
+    if (ret_now)
+        return (NULL)
+
+    if (is.null (this_class))
+        nms <- expand.grid (nms, nms, stringsAsFactors = FALSE)
+    else
+        nms <- expand.grid (this_class, nms, stringsAsFactors = FALSE)
+
+    return (nms [which (nms [, 1] != nms [, 2]), ])
+}
+
 compare_rect_outputs <- function (fn, params, i, this_env, this_obj = NULL) {
 
 
     nms <- c ("val-data.frame", "val-tibble", "val-data.table")
     nms <- nms [which (nms %in% ls (envir = this_env))]
 
-    ret_now <- length (nms) == 0 # if those classes all error, they won't exist
-    if (is.null (this_obj)) {
-        if (length (nms) < 2)
-            ret_now <- TRUE
-    } else if (!this_obj %in% ls (envir = this_env)) {
-            ret_now <- TRUE
-    }
-    if (ret_now)
+    nms <- get_rect_comparisons (nms, this_env, this_obj)
+    if (is.null (nms))
         return (NULL)
-
-    if (is.null (this_obj))
-        nms <- expand.grid (nms, nms, stringsAsFactors = FALSE)
-    else
-        nms <- expand.grid (this_obj, nms, stringsAsFactors = FALSE)
-    nms <- nms [which (nms [, 1] != nms [, 2]), ]
 
     res <- NULL
     for (i in seq (nrow (nms))) {
@@ -251,9 +264,9 @@ extend_rect_class_strut <- function (params, this_fn, i, this_env) {
 
     if (!"error" %in% msgs$type) {
         o <- utils::capture.output (
-                                    temp <- suppressWarnings (do.call (this_fn,
-                                                                       params,
-                                                                       envir = this_env))
+                temp <- suppressWarnings (do.call (this_fn,
+                                                   params,
+                                                   envir = this_env))
         )
         assign ("val-newclass", temp, envir = this_env)
 
