@@ -65,3 +65,38 @@ autotest_single <- function (pkg,
 
     return (res [which (!duplicated (res)), ])
 }
+
+#' Do input values presumed to have length one give errors when vectors of
+#' length > 1 are passed?
+#' @noRd
+single_doubled <- function (this_fn, params, i, val_type, test = TRUE) {
+
+    operation <- "length 2 vector for length 1 parameter"
+    res <- report_object (type = "dummy",
+                          fn_name = this_fn,
+                          parameter = names (params) [i],
+                          parameter_type = paste0 ("single ", val_type),
+                          operation = operation)
+
+    if (test) {
+
+        params [[i]] <- rep (params [[i]], 2)
+        f <- tempfile (fileext = ".txt")
+        msgs <- catch_all_msgs (f, this_fn, params)
+
+        if (not_null_and_is (msgs, c ("warning", "error")))
+            res <- NULL # function call should warn or error
+        else {
+            res$type <- "diagnostic"
+            res$content <- paste0 ("Parameter [",
+                                   names (params) [i],
+                                   "] of function [",
+                                   this_fn,
+                                   "] is assumed to be a single ",
+                                   val_type,
+                                   ", but responds to vectors of length > 1")
+        }
+    }
+
+    return (res)
+}
