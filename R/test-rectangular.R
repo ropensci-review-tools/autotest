@@ -16,7 +16,7 @@ autotest_rectangular <- function (params,
         params_r <- params
 
         ret <- rbind (ret,
-                      test_rect_as_other (this_fn,
+                      pass_rect_as_other (this_fn,
                                           params_r,
                                           classes,
                                           r,
@@ -131,7 +131,10 @@ docall <- function (ret, fn, params) {
     return (docall)
 }
 
-test_rect_as_other <- function (fn, params, classes, i, this_env) {
+#' Change class of params [[i]] to other rectangular classes and capture
+#' resultant return values in `this_env`
+#' @noRd
+pass_rect_as_other <- function (fn, params, classes, i, this_env) {
 
     other <- c ("data.frame", "tibble::tibble", "data.table::data.table")
     if (length (classes) > 0) {
@@ -141,7 +144,7 @@ test_rect_as_other <- function (fn, params, classes, i, this_env) {
     res <- NULL
 
     for (o in seq_along (other)) {
-        this_ret <- test_one_rect_as_other (fn, params, i, other [o])
+        this_ret <- pass_one_rect_as_other (fn, params, i, other [o])
         res <- rbind (res, this_ret)
         if (docall (this_ret, fn, params)) {
             val <- suppressWarnings (do.call (fn, params, envir = this_env))
@@ -153,7 +156,12 @@ test_rect_as_other <- function (fn, params, classes, i, this_env) {
     return (res)
 }
 
-test_one_rect_as_other <- function (fn, params, i, other = "data.frame") {
+#' The mechanism for a single conversion of `pass_rect_as_other`, converting to
+#' specified `other` class, evaluating the function call, and returning the
+#' standard `return_object` output containing any messages/warnings/errors
+#' issued.
+#' @noRd
+pass_one_rect_as_other <- function (fn, params, i, other = "data.frame") {
 
     f <- file.path (tempdir (), "junk.txt")
     ret <- NULL
