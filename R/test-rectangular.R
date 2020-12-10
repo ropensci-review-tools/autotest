@@ -12,7 +12,6 @@ autotest_rectangular <- function (params,
 
     rect_index <- which (param_types == "tabular")
     for (r in rect_index) {
-        x <- params [[r]]
         params_r <- params
 
         ret <- rbind (ret,
@@ -195,15 +194,20 @@ pass_one_rect_as_other <- function (fn, params, i, other = "data.frame") {
 #' Return a grid of all pairwise comparisons of classes for rectangular objects,
 #' optionally with a specified target class, `this_class`.
 #' @noRd
-get_rect_comparisons <- function (nms, this_env, this_class = NULL) {
+get_rect_comparisons <- function (nms, this_env = NULL, this_class = NULL) {
 
     # when nms are passed as objects from environment list, they only exist if
     # those classes do not error, so `nms` may be empty.
     ret_now <- length (nms) == 0
+
+    envobjs <- NULL
+    if (!is.null (this_env))
+        envobjs <- ls (envir = this_env)
+
     if (is.null (this_class)) {
         if (length (nms) < 2)
             ret_now <- TRUE
-    } else if (!this_class %in% ls (envir = this_env)) {
+    } else if (!this_class %in% envobjs) {
             ret_now <- TRUE
     }
     if (ret_now)
