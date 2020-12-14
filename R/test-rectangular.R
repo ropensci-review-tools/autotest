@@ -41,7 +41,7 @@ autotest_rectangular <- function (params,
             content <- c ("expect dimensions are same ",
                               "expect column names are retained ",
                               "expect all columns retain identical structure ")
-            content <- rep (content, times = 3)
+            content <- rep (content, times = length (types))
 
             ret <- rbind (this_ret,
                           report_object (type = "dummy",
