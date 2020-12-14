@@ -31,22 +31,25 @@ autotest_rectangular <- function (params,
             this_ret <- dummy_rect_as_other (this_fn, params_r, classes, r)
             par_type <- this_ret$parameter_type [1]
 
-            types <- vapply (strsplit (this_ret$operation, " as "),
+            types <- vapply (strsplit (this_ret$operation, " to \\["),
                              function (i) i [2],
                              character (1))
-            types <- rep (types, each = 3)
-            ops <- paste0 (c ("check dimensions are same ",
-                              "check column names are retained ",
-                              "check all columns retain identical structure "),
-                           "after conversion to ")
-            operations <- paste0 (rep (ops, times = 3), types)
+            operations <- paste0 ("Convert [",
+                                  par_type,
+                                  "] to ",
+                                  rep (gsub ("\\]$", "", types), each = 3))
+            content <- c ("expect dimensions are same ",
+                              "expect column names are retained ",
+                              "expect all columns retain identical structure ")
+            content <- rep (content, times = 3)
 
             ret <- rbind (this_ret,
                           report_object (type = "dummy",
                                          fn_name = this_fn,
                                          parameter = names (params) [r],
                                          parameter_type = par_type,
-                                         operation = operations))
+                                         operation = operations,
+                                         content = content))
         }
 
 
