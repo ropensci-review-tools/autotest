@@ -2,7 +2,21 @@
 # Check (1) whether return values are documented at all; and (2) If so, whether
 # they describe the class or type of return object. The latter is currently only
 # crudely tested with a simple `grep([[Cc]lass|[Oo]bject)`.
-autotest_return <- function (pkg, params, this_fn, package = NULL) {
+autotest_return <- function (pkg,
+                             params,
+                             this_fn,
+                             package = NULL,
+                             test = TRUE) {
+
+    if (test)
+        ret <- do_autotest_return (pkg, params, this_fn, package)
+    else
+        ret <- dummy_autotest_return (pkg, params, this_fn, package)
+
+    return (ret)
+}
+
+do_autotest_return <- function (pkg, params, this_fn, package = NULL) {
 
     # package is !NULL when passed as installed package location from
     # autotest_package. This is used in `get_Rd_value`
@@ -106,6 +120,19 @@ test_return_desc <- function (package, this_fn, retval) {
     }
 
     return (ret)
+}
+
+dummy_autotest_return <- function (pkg, params, this_fn, package) {
+
+    r1 <- report_object (type = "dummy",
+                         fn_name = this_fn,
+                         parameter = "(return object)",
+                         operation = "check that description has return value")
+    r2 <- r3 <- r1
+    r2$operation <- "check whether description of return value specifies class"
+    r3$operation <- "compare class of return value with class given in description"
+
+    return (rbind (r1, r2, r3))
 }
 
 test_return_classes <- function (Rd_value, retval) {

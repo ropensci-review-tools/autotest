@@ -106,7 +106,8 @@ autotest_single_yaml <- function (yaml = NULL,
                           autotest_return (res$package,
                                            params,
                                            this_fn,
-                                           attr (yaml, "package")))
+                                           attr (yaml, "package"),
+                                           test))
 
         if (!quiet)
             message (cli::col_green (cli::symbol$tick, " ", this_fn))
