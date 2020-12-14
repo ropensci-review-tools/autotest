@@ -234,7 +234,7 @@ pass_rect_as_other <- function (fn, params, classes, i, this_env) {
 #' @noRd
 pass_one_rect_as_other <- function (fn, params, i, other = "data.frame") {
 
-    f <- file.path (tempdir (), "junk.txt")
+    f <- tempfile (fileext = ".txt")
     ret <- NULL
 
     params [[i]] <- do.call (eval (parse (text = other)), params [[i]])

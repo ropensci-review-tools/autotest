@@ -10,7 +10,7 @@ autotest_return <- function (pkg, params, this_fn, package = NULL) {
         package <- pkg
 
     ret <- NULL
-    f <- file.path (tempdir (), "junk.txt")
+    f <- tempfile (fileext = ".txt")
 
     if (any (params == "NULL")) {
         params <- params [params != "NULL"]

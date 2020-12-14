@@ -9,7 +9,7 @@ autotest_single <- function (pkg,
         params <- params [params != "NULL"]
     }
 
-    f <- file.path (tempdir (), "junk.txt")
+    f <- tempfile (fileext = ".txt")
     res <- NULL
     if (test)
         res <- catch_all_msgs (f, this_fn, params)

@@ -13,7 +13,7 @@ test_that("yaml test", {
                     at_yaml_template (),
                     "yaml template") # already exists
 
-    f <- file.path (tempdir (), "junk.yaml")
+    f <- tempfile (fileext = ".yaml")
     expect_message (
                     at_yaml_template (f),
                     "template written to")

@@ -6,7 +6,7 @@ autotest_vector <- function (params,
                              quiet) {
 
     ret <- NULL
-    f <- file.path (tempdir (), "junk.txt")
+    f <- tempfile (fileext = ".txt")
 
     if (any (params == "NULL")) {
         params <- params [params != "NULL"]

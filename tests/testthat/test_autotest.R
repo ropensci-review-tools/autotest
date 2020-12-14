@@ -37,7 +37,7 @@ test_that("autotest", {
                                     "content",
                                     "yaml_hash"))
 
-    f <- file.path (tempdir (), "junk2.yaml")
+    f <- tempfile (fileext = ".yaml")
     con <- file (f)
     writeLines (yaml, con = con)
     close (con)
