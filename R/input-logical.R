@@ -28,7 +28,7 @@ negate_logical <- function (this_fn, params, i, test = TRUE) {
 
         operation <- "negate default value of logical parameter"
 
-        res <- report_object (type = "diagnostic",
+        res <- report_object (type = "dummy",
                               fn_name = this_fn,
                               parameter = names (params) [i],
                               parameter_type = "single logical",
