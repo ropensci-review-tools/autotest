@@ -40,7 +40,7 @@ test_single_int_range <- function (pkg, this_fn, params, i) {
                               fn_name = this_fn,
                               parameter = names (params) [i],
                               parameter_type = "single integer",
-                              operation = "ascertain integer range",
+                              operation = "Ascertain integer range",
                               content = content)
     } else if (!is.null (int_range)) {
         content <- paste0 ("Parameter [",
@@ -51,7 +51,7 @@ test_single_int_range <- function (pkg, this_fn, params, i) {
                               fn_name = this_fn,
                               parameter = names (params) [i],
                               parameter_type = "single integer",
-                              operation = "ascertain integer range",
+                              operation = "Ascertain integer range",
                               content = content)
 
         rd <- get_Rd_param (package = pkg,
@@ -62,7 +62,7 @@ test_single_int_range <- function (pkg, this_fn, params, i) {
 
         if (!all (range_in_rd)) {
 
-            operation <- "match integer range to documentation"
+            operation <- "Match integer range to documentation"
             content <- paste0 (" Parameter range for ",
                                names (params) [i],
                                " is NOT documented")
@@ -198,14 +198,14 @@ single_int_dummy_report <- function (this_fn, params, i) {
                    fn_name = this_fn,
                    parameter = names (params) [i],
                    parameter_type = "single integer",
-                   operation = "ascertain integer range")
+                   operation = "Ascertain integer range")
 }
 
 int_as_double <- function (this_fn, params, i,
                            vec = FALSE,
                            test = TRUE) {
 
-    operation <- "integer vector converted to numeric"
+    operation <- "Integer vector converted to numeric"
     if (vec)
         param_type <- "integer vector"
     else

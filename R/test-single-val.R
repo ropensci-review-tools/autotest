@@ -71,7 +71,7 @@ autotest_single <- function (pkg,
 #' @noRd
 single_doubled <- function (this_fn, params, i, val_type, test = TRUE) {
 
-    operation <- "length 2 vector for length 1 parameter"
+    operation <- "Length 2 vector for length 1 parameter"
     res <- report_object (type = "dummy",
                           fn_name = this_fn,
                           parameter = names (params) [i],

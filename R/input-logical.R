@@ -26,7 +26,7 @@ negate_logical <- function (this_fn, params, i, test = TRUE) {
 
     } else {
 
-        operation <- "negate default value of logical parameter"
+        operation <- "Negate default value of logical parameter"
 
         res <- report_object (type = "dummy",
                               fn_name = this_fn,
@@ -102,9 +102,9 @@ char_for_logical <- function (this_fn, params, i, test = TRUE) {
 #' @noRd
 subst_for_logical <- function (this_fn, params, i, subst = "integer") {
 
-    operation <- paste0 ("substitute ",
+    operation <- paste0 ("Substitute ",
                          subst,
-                         "values for logical parameter")
+                         " values for logical parameter")
     content <- paste0 ("Parameter ",
                        names (params) [i],
                        " of function [",

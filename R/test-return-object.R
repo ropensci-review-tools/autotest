@@ -69,7 +69,7 @@ test_return_desc <- function (package, this_fn, retval) {
 
     if (is.null (Rd_value)) {
 
-        operation <- "check that description has return value"
+        operation <- "Check that description has return value"
         content <- paste0 ("Function [",
                            this_fn,
                            "] does not specify a return value.")
@@ -87,7 +87,7 @@ test_return_desc <- function (package, this_fn, retval) {
                        logical (1))
         if (!any (chk)) {
 
-            operation <- "check that description has return value"
+            operation <- "Check that description has return value"
             content <- paste0 ("Function [",
                                this_fn,
                                "] does not specify a return value, ",
@@ -106,7 +106,7 @@ test_return_desc <- function (package, this_fn, retval) {
             txt <- test_return_classes (Rd_value, retval)
 
             if (!is.null (txt)) {
-                operation <- "compare class of return value with description"
+                operation <- "Compare class of return value with description"
                 for (i in txt) {
                     ret <- rbind (ret,
                                   report_object (type = "diagnostic",
@@ -127,10 +127,10 @@ dummy_autotest_return <- function (pkg, params, this_fn, package) {
     r1 <- report_object (type = "dummy",
                          fn_name = this_fn,
                          parameter = "(return object)",
-                         operation = "check that description has return value")
+                         operation = "Check that description has return value")
     r2 <- r3 <- r1
-    r2$operation <- "check whether description of return value specifies class"
-    r3$operation <- "compare class of return value with class given in description"
+    r2$operation <- "Check whether description of return value specifies class"
+    r3$operation <- "Compare class of return value with class given in description"
 
     return (rbind (r1, r2, r3))
 }

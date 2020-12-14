@@ -383,7 +383,7 @@ do_extend_rect_class_struct <- function (params, this_fn, i, this_env) {
 replace_rect_class_struct <- function (params, this_fn, i, test) {
 
     this_class <- class (params [[i]]) [1]
-    operation <- paste0 ("replace class [", this_class, "] with new class")
+    operation <- paste0 ("Replace class [", this_class, "] with new class")
     ret <- report_object (type = "dummy",
                           fn_name = this_fn,
                           parameter = names (params) [i],

@@ -23,7 +23,7 @@ test_single_double_noise <- function (this_fn, params, i) {
 
     if (!is.null (res0) & !is.null (res1)) {
         if (!identical (res0, res1)) {
-            op <- "add trivial noise to double parameter"
+            op <- "Add trivial noise to double parameter"
             content <- paste0 ("Parameter [",
                                names (params) [i],
                                "] yields different result when trivial ",
@@ -44,5 +44,5 @@ single_dbl_dummy_report <- function (this_fn, params, i) {
                    fn_name = this_fn,
                    parameter = names (params) [i],
                    parameter_type = "single numeric",
-                   operation = "add trivial noise")
+                   operation = "Add trivial noise")
 }

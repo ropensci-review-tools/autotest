@@ -38,7 +38,7 @@ autotest_vector <- function (params,
 # class definitions for vector columns should be ignored
 vector_class_defs <- function (this_fn, params, classes, i, test = TRUE) {
 
-    operation <- "custom class definitions for vector input"
+    operation <- "Custom class definitions for vector input"
     res0 <- report_object (type = "dummy",
                           fn_name = this_fn,
                           parameter = names (params) [i],
@@ -86,7 +86,7 @@ vector_class_defs <- function (this_fn, params, classes, i, test = TRUE) {
 
 vector_as_list <- function (this_fn, params, i, test = TRUE) {
 
-    operation <- "convert vector input to list-columns"
+    operation <- "Convert vector input to list-columns"
     res0 <- report_object (type = "dummy",
                           fn_name = this_fn,
                           parameter = names (params) [i],
