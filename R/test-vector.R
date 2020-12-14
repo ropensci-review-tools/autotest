@@ -15,14 +15,20 @@ autotest_vector <- function (params,
     vec_index <- which (param_types == "vector")
     for (v in vec_index) {
         params_v <- params
-        msgs <- catch_all_msgs (f, this_fn, params_v)
-        ret <- add_msg_output (ret, msgs, types = "warning",
-                               operation = "normal function call")
+        if (test) {
+            msgs <- catch_all_msgs (f, this_fn, params_v)
+            ret <- add_msg_output (ret, msgs, types = "warning",
+                                   operation = "normal function call")
+        }
 
         if (typeof (params_v [[v]]) == "integer" &
             !is.factor (params_v [[v]])) {
             ret <- rbind (ret,
-                          int_as_double (this_fn, params_v, v, test))
+                          int_as_double (this_fn,
+                                         params_v,
+                                         v,
+                                         vec = TRUE,
+                                         test))
         }
 
         ret <- rbind (ret,

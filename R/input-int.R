@@ -206,10 +206,12 @@ int_as_double <- function (this_fn, params, i,
                            test = TRUE) {
 
     operation <- "Integer vector converted to numeric"
+
     if (vec)
         param_type <- "integer vector"
     else
         param_type <- "single integer"
+
     res <- report_object (type = "dummy",
                           fn_name = this_fn,
                           parameter = names (params) [i],
