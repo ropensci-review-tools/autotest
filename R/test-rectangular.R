@@ -189,10 +189,12 @@ dummy_rect_as_other <- function (fn, params, classes, i) {
                    fn_name = fn,
                    parameter = names (params) [i],
                    parameter_type = par_type,
-                   operation = paste0 ("check error/warning on ",
+                   operation = paste0 ("convert [",
                                        par_type,
-                                       " as ",
-                                       other))
+                                       "] to [",
+                                       other,
+                                       "]"),
+                   content = "check for error/warning messages")
 }
 
 #' Change class of params [[i]] to other rectangular classes and capture
