@@ -386,7 +386,7 @@ replace_rect_class_struct <- function (params, this_fn, i, test) {
     ret <- report_object (type = "dummy",
                           fn_name = this_fn,
                           parameter = names (params) [i],
-                          parameter_type = "generic tabular",
+                          parameter_type = this_class,
                           operation = operation)
 
     if (test) {
