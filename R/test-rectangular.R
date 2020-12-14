@@ -36,8 +36,9 @@ autotest_rectangular <- function (params,
                              character (1))
             operations <- paste0 ("Convert [",
                                   par_type,
-                                  "] to ",
-                                  rep (gsub ("\\]$", "", types), each = 3))
+                                  "] to [",
+                                  rep (gsub ("\\]$", "", types), each = 3),
+                                  "]")
             content <- c ("expect dimensions are same ",
                               "expect column names are retained ",
                               "expect all columns retain identical structure ")
@@ -192,7 +193,7 @@ dummy_rect_as_other <- function (fn, params, classes, i) {
                    fn_name = fn,
                    parameter = names (params) [i],
                    parameter_type = par_type,
-                   operation = paste0 ("convert [",
+                   operation = paste0 ("Convert [",
                                        par_type,
                                        "] to [",
                                        other,
