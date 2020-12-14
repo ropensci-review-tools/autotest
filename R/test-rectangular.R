@@ -15,23 +15,42 @@ autotest_rectangular <- function (params,
     for (r in rect_index) {
         params_r <- params
 
-        if (test)
+        if (test) {
+
             ret <- rbind (ret,
                           pass_rect_as_other (this_fn,
                                               params_r,
                                               classes,
                                               r,
                                               this_env))
-        else
             ret <- rbind (ret,
-                          dummy_rect_as_other (this_fn,
-                                               params_r,
-                                               classes,
-                                               r))
+                          compare_rect_outputs (this_fn, params, r, this_env))
+
+        } else {
+
+            this_ret <- dummy_rect_as_other (this_fn, params_r, classes, r)
+            par_type <- this_ret$parameter_type [1]
+
+            types <- vapply (strsplit (this_ret$operation, " as "),
+                             function (i) i [2],
+                             character (1))
+            types <- rep (types, each = 3)
+            ops <- paste0 (c ("check dimensions are same ",
+                              "check column names are retained ",
+                              "check all columns retain identical structure "),
+                           "after conversion to ")
+            operations <- paste0 (rep (operations, times = 3), types)
+
+            this_ret <- report_object (type = "dummy",
+                                       fn_name = this_fn,
+                                       parameter = names (params) [r],
+                                       parameter_type = par_type,
+                                       operation = operations)
+
+            ret <- rbind (ret, this_ret)
+        }
 
 
-        ret <- rbind (ret,
-                      compare_rect_outputs (this_fn, params, r, this_env))
 
         # Modify class definitions for rectangular inputs if not excluded by
         # yaml class definitions
