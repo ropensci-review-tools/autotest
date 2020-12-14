@@ -327,9 +327,10 @@ dummy_extend_rect_class <- function (params, this_fn, i) {
                    fn_name = this_fn,
                    parameter = names (params) [i],
                    parameter_type = par_type,
-                   operation = paste0 ("Extending existent class [",
+                   operation = paste0 ("Extend existent class [",
                                        par_type,
-                                       " with new class should work"))
+                                       "] with new class"),
+                   content = "(Should yield same result)")
 }
 
 do_extend_rect_class_struct <- function (params, this_fn, i, this_env) {
