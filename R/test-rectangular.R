@@ -2,6 +2,7 @@ autotest_rectangular <- function (params,
                                   param_types,
                                   this_fn,
                                   classes,
+                                  test,
                                   quiet) {
 
     ret <- NULL
@@ -13,6 +14,20 @@ autotest_rectangular <- function (params,
     rect_index <- which (param_types == "tabular")
     for (r in rect_index) {
         params_r <- params
+
+        if (test)
+            ret <- rbind (ret,
+                          pass_rect_as_other (this_fn,
+                                              params_r,
+                                              classes,
+                                              r,
+                                              this_env))
+        else
+            ret <- rbind (ret,
+                          dummy_rect_as_other (this_fn,
+                                               params_r,
+                                               classes,
+                                               r))
 
         ret <- rbind (ret,
                       pass_rect_as_other (this_fn,
@@ -137,7 +152,8 @@ other_rect_classes <- function (classes = NULL, this_class = NULL) {
 
     other <- c ("data.frame", "tibble::tibble", "data.table::data.table")
     if (!is_null (this_class)) {
-        rm_this <- match (this_class [1], c ("data.frame", "tbl_df", "data.table"))
+        rm_this <- match (this_class [1],
+                          c ("data.frame", "tbl_df", "data.table"))
         if (!is.na (rm_this))
             other <- other [-rm_this]
     }
@@ -147,6 +163,22 @@ other_rect_classes <- function (classes = NULL, this_class = NULL) {
     }
 
     return (other)
+}
+
+dummy_rect_as_other <- function (fn, params, classes, i) {
+
+    par_type <- class (params [[i]]) [1]
+    other <- other_rect_classes (classes, par_type)
+    other <- gsub ("^.*::", "", other)
+
+    report_object (type = "dummy",
+                   fn_name = fn,
+                   parameter = names (params) [i],
+                   parameter_type = par_type,
+                   operation = paste0 ("check error/warning on ",
+                                       par_type,
+                                       " as ",
+                                       other))
 }
 
 #' Change class of params [[i]] to other rectangular classes and capture
