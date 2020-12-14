@@ -39,15 +39,14 @@ autotest_rectangular <- function (params,
                               "check column names are retained ",
                               "check all columns retain identical structure "),
                            "after conversion to ")
-            operations <- paste0 (rep (operations, times = 3), types)
+            operations <- paste0 (rep (ops, times = 3), types)
 
-            this_ret <- report_object (type = "dummy",
-                                       fn_name = this_fn,
-                                       parameter = names (params) [r],
-                                       parameter_type = par_type,
-                                       operation = operations)
-
-            ret <- rbind (ret, this_ret)
+            ret <- rbind (this_ret,
+                          report_object (type = "dummy",
+                                         fn_name = this_fn,
+                                         parameter = names (params) [r],
+                                         parameter_type = par_type,
+                                         operation = operations))
         }
 
 
@@ -59,7 +58,8 @@ autotest_rectangular <- function (params,
                           extend_rect_class_strut (params_r,
                                                    this_fn,
                                                    r,
-                                                   this_env))
+                                                   this_env,
+                                                   test))
 
             ret <- rbind (ret,
                           replace_rect_class_struct (params_r,
@@ -308,7 +308,30 @@ compare_rect_outputs <- function (fn, params, i, this_env, this_obj = NULL) {
 
 #' Extend class structure of tabular objects, which should still work
 #' @noRd
-extend_rect_class_strut <- function (params, this_fn, i, this_env) {
+extend_rect_class_strut <- function (params, this_fn, i, this_env, test) {
+
+    if (test)
+        res <- do_extend_rect_class_struct (params, this_fn, i, this_env)
+    else
+        res <- dummy_extend_rect_class (params, this_fn, i)
+
+    return (res)
+}
+
+dummy_extend_rect_class <- function (params, this_fn, i) {
+
+    par_type <- class (params [[i]]) [1]
+
+    report_object (type = "dummy",
+                   fn_name = this_fn,
+                   parameter = names (params) [i],
+                   parameter_type = par_type,
+                   operation = paste0 ("Extending existent class [",
+                                       par_type,
+                                       " with new class should work"))
+}
+
+do_extend_rect_class_struct <- function (params, this_fn, i, this_env) {
 
     x <- params [[i]]
 
