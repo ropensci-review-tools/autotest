@@ -165,7 +165,7 @@ docall <- function (ret, fn, params) {
 other_rect_classes <- function (classes = NULL, this_class = NULL) {
 
     other <- c ("data.frame", "tibble::tibble", "data.table::data.table")
-    if (!is_null (this_class)) {
+    if (!is.null (this_class)) {
         rm_this <- match (this_class [1],
                           c ("data.frame", "tbl_df", "data.table"))
         if (!is.na (rm_this))
