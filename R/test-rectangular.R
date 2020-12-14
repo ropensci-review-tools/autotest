@@ -64,7 +64,8 @@ autotest_rectangular <- function (params,
             ret <- rbind (ret,
                           replace_rect_class_struct (params_r,
                                                      this_fn,
-                                                     r))
+                                                     r,
+                                                     test))
         }
     }
     return (ret)
@@ -372,7 +373,7 @@ do_extend_rect_class_struct <- function (params, this_fn, i, this_env) {
 
 #' Replacing class structure of tabular objects entirely should generally fail
 #' @noRd
-replace_rect_class_struct <- function (params, this_fn, i, test = TRUE) {
+replace_rect_class_struct <- function (params, this_fn, i, test) {
 
     operation <- "replace class of tabular object with new class"
     ret <- report_object (type = "dummy",
