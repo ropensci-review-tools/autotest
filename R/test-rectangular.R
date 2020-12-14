@@ -29,12 +29,6 @@ autotest_rectangular <- function (params,
                                                classes,
                                                r))
 
-        ret <- rbind (ret,
-                      pass_rect_as_other (this_fn,
-                                          params_r,
-                                          classes,
-                                          r,
-                                          this_env))
 
         ret <- rbind (ret,
                       compare_rect_outputs (this_fn, params, r, this_env))
@@ -199,6 +193,16 @@ pass_rect_as_other <- function (fn, params, classes, i, this_env) {
             assign (nm, val, envir = this_env)
         }
     }
+
+    if (!is.null (res)) {
+        par_type <- class (params [[i]]) [1]
+        res$parameter_type <- par_type
+        res$operation <- paste0 ("check error/warning on ",
+                                 par_type,
+                                 " as ",
+                                 other)
+    }
+
 
     return (res)
 }
