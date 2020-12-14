@@ -378,7 +378,8 @@ do_extend_rect_class_struct <- function (params, this_fn, i, this_env) {
 #' @noRd
 replace_rect_class_struct <- function (params, this_fn, i, test) {
 
-    operation <- "replace class of tabular object with new class"
+    this_class <- class (params [[i]]) [1]
+    operation <- paste0 ("replace class [", this_class, "] with new class")
     ret <- report_object (type = "dummy",
                           fn_name = this_fn,
                           parameter = names (params) [i],
@@ -392,15 +393,15 @@ replace_rect_class_struct <- function (params, this_fn, i, test) {
         f <- tempfile (fileext = ".txt")
         msgs <- catch_all_msgs (f, this_fn, params)
 
-        if (null_or_not (msgs, "error"))
+        if (!null_or_not (msgs, "error"))
             ret <- NULL
         else {
             msgs$parameter <- rep (names (params) [i], nrow (msgs))
             ret$type <- "diagnostic"
             ret$content <- paste0 ("Function [",
                                this_fn,
-                               "] should error when class structure of ",
-                               "`data.frame` input is removed.")
+                               "] does not error when class structure of [",
+                               this_class, "] is removed.")
         }
     }
 
