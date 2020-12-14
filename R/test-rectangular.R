@@ -180,7 +180,7 @@ other_rect_classes <- function (classes = NULL, this_class = NULL) {
     }
 
     if (length (classes) > 0) {
-        other <- other [which (gsub (".*::", "", other) %in% names (classes))]
+        other <- other [which (!gsub (".*::", "", other) %in% classes)]
     }
 
     return (other)
