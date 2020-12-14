@@ -13,6 +13,9 @@ autotest_rectangular <- function (params,
 
     rect_index <- which (param_types == "tabular")
     for (r in rect_index) {
+        class_r <- NULL
+        if (names (params) [r] %in% names (classes))
+            class_r <- classes [[match (names (params) [r], names (classes))]]
         params_r <- params
 
         if (test) {
@@ -20,7 +23,7 @@ autotest_rectangular <- function (params,
             ret <- rbind (ret,
                           pass_rect_as_other (this_fn,
                                               params_r,
-                                              classes,
+                                              class_r,
                                               r,
                                               this_env))
             ret <- rbind (ret,
@@ -28,7 +31,7 @@ autotest_rectangular <- function (params,
 
         } else {
 
-            this_ret <- dummy_rect_as_other (this_fn, params_r, classes, r)
+            this_ret <- dummy_rect_as_other (this_fn, params_r, class_r, r)
             par_type <- this_ret$parameter_type [1]
 
             types <- vapply (strsplit (this_ret$operation, " to \\["),
