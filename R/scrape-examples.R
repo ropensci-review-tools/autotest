@@ -213,6 +213,7 @@ clean_example_lines <- function (ex) {
     for (double_quote in c (TRUE, FALSE))
         ex <- multi_line_quotes (ex, double_quote = double_quote)
     ex <- join_function_lines (ex)
+    ex <- rm_not_parseable (ex)
     ex <- rm_plot_lines (ex)
 
     return (ex)
@@ -462,6 +463,18 @@ rm_dontrun_lines <- function (x, is_source = TRUE, dontrun = TRUE,
 
     return (x)
 }
+
+rm_not_parseable <- function (x) {
+    parseable <- vapply (x, function (i) {
+                             i <- gsub ("\\%", "%", i, fixed = TRUE)
+                             p <- tryCatch (
+                                        utils::getParseData (parse (text = i)),
+                                        error = function (e) NULL)
+                             return (!is.null (p))
+                           }, logical (1), USE.NAMES = FALSE)
+    return (x [which (parseable)])
+}
+
 
 # find and remove any lines for which first function call is some kind of
 # "plot" or "summary"
