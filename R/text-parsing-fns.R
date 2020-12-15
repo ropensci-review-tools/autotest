@@ -108,11 +108,9 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
                        as.integer (i [i >= 0]))
     br_closed <- lapply (gregexpr (close_sym, x), function (i)
                        as.integer (i [i >= 0]))
-    br_both <- lapply (gregexpr (both_sym, x), function (i)
-                       as.integer (i [i >= 0]))
 
     # remove any that are inside quotations, like L#44 in stats::spline
-    quotes <- gregexpr ("\"", x)
+    quotes <- gregexpr ("\"|\'", x)
     for (i in seq (x)) {
         if (any (quotes [[i]] > 0)) {
             index <- seq (length (quotes [[i]]) / 2) * 2
@@ -122,7 +120,6 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
                                       qstart [i]:qend [i]))
             br_open [[i]] <- br_open [[i]] [!br_open [[i]] %in% qindex]
             br_closed [[i]] <- br_closed [[i]] [!br_closed [[i]] %in% qindex]
-            br_both [[i]] <- br_both [[i]] [!br_both [[i]] %in% qindex]
         }
     }
 
@@ -134,17 +131,14 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
 
     # Remove all instances of matched brackets on one line
     for (i in seq (x)) {
-        while (any (br_both [[i]] > 0)) {
-            index <- which (br_open [[i]] == br_both [[i]])
-            index2 <- which (br_closed [[i]] > br_open [[i]] [index]) [1]
-            br_closed [[i]] <- br_closed [[i]] [-index2]
+        len <- min (c (length (br_open [[i]]), length (br_closed [[i]])))
+        index <- which (br_open [[i]] [seq (len)] < br_closed [[i]] [seq (len)])
+        if (length (index) > 0) {
             br_open [[i]] <- br_open [[i]] [-index]
-            br_both [[i]] <- br_both [[i]] [-1]
-
-            if (length (br_open [[i]]) > 0 & length (br_closed [[i]]) > 0)
-                br_both [[i]] <- br_open [[i]] [1]
+            br_closed [[i]] <- br_closed [[i]] [-index]
         }
     }
+
     # convert to sequences of line numbers where brackets close, noting that
     # there may be multiple matched closing brackets on one line, hence the
     # `length` function here. There may also be values of -1 from the initial
