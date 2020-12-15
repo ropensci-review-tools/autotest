@@ -170,8 +170,16 @@ bracket_sequences_one_line <- function (x) {
                        as.integer (i [i >= 0])) [[1]]
     br_closed <- lapply (gregexpr (close_sym, x), function (i)
                        as.integer (i [i >= 0])) [[1]]
+    if (length (br_open) > 1 & length (br_closed) > 1) {
+        while (br_open [2] < br_closed [1]) {
+            br_open <- br_open [-2]
+            br_closed <- br_closed [-1]
+            if (length (br_open) < 2)
+                break
+        }
+    }
 
-    return (c (br_open [1], br_closed [length (br_closed)]))
+    return (c (br_open [1], br_closed [1]))
 }
 
 # check for nesting where another bracket opens before current one has
