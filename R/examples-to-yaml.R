@@ -451,19 +451,26 @@ chk_fn_calls_are_primary <- function (x, fn, fn_short, aliases) {
 #' contains a string representing the content of the primary call.
 #' @noRd
 extract_primary_call_content <- function (x, aliases) {
+
+    for (a in aliases)
+        x <- gsub (paste0 (a, "\\s?"), a, x)
+
+    # find break points of primary function calls, and extend up to first
+    # enclosing bracket
     br1 <- lapply (aliases, function (a) {
-                       x <- gsub (paste0 (a, "\\s?"), a, x)
                        g <- paste0 (a, "\\(")
-                       vapply (gregexpr (g, x), function (i) i [1], integer (1))
+                       f <- vapply (gregexpr (g, x), function (i)
+                                    i [1],
+                                    integer (1))
+                       f [f < 0] <- .Machine$integer.max
+                       b <- gregexpr ("\\(", x)
+                       vapply (seq_along (b), function (i)
+                               b [[i]] [which (b [[i]] > f [i]) [1]],
+                               integer (1))
                        })
-    nchars <- rep (NA, length (x))
-    for (i in seq (br1)) {
-        nchars [which (br1 [[i]] > 0)] <- i
-    }
-    nchars <- nchar (aliases) [nchars]
 
     br1 <- apply (do.call (rbind, br1), 2, function (i)
-                  min (i [i > 0])) + nchars
+                  min (i [which (!is.na (i))]))
     # those may still include assignment operators or similar, so extract actual
     # fn calls by parsing expressions
     fn_calls <- vapply (seq_along (br1), function (i) {
