@@ -403,6 +403,7 @@ single_clause <- function (x) {
 
 # join lines which break within a single quotation
 # example: curl::send_mail
+# example of non-matched quotes: stats::influence.measure
 multi_line_quotes <- function (x, double_quote = TRUE) {
 
     if (double_quote)
@@ -412,8 +413,12 @@ multi_line_quotes <- function (x, double_quote = TRUE) {
 
     index <- vapply (gregexpr (q, x), function (i)
                      length (which (i > 0)), integer (1))
+    # check that single quotes are not possessive apostrophes
+    chk <- grepl ("[[:alpha:]]\'s", x [which (index > 0)])
+    index <- index [which (!chk)]
+
     index <- rev (which (index %% 2 != 0)) # unmatched quotes
-    if (length (index) > 0) {
+    if (length (index) > 1) {
         index2 <- rep (seq (length (index) / 2), each = 2)
         # un-reverse the individual entries so they are increasing pairs of
         # [start, end] of quotes
