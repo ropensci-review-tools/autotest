@@ -569,16 +569,26 @@ split_args_at_equals <- function (x) {
     lapply (x, function (i) {
                 res <- lapply (i, function (j) {
                                    if (!grepl ("=", j) | grepl ("^\"", j))
-                                       c (NA_character_, j)
+                                       ret <- c (NA_character_, j)
                                    else {
                                        #strsplit (j, "=") [[1]]   })
                                        # split at first "=", presume all
                                        # others to be internal list items
                                        # or the like
                                        indx <- regexpr ("=", j)
-                                       c (substring (j, 1, indx - 1),
-                                          substring (j, indx + 1, nchar (j)))
+                                       # check that it's not an "=" contained
+                                       # within a parenthetical expression:
+                                       br <- regexpr ("\\((.+)?\\)", j)
+                                       br <- seq (as.integer (br [[1]]),
+                                                  as.integer (br [[1]]) +
+                                                      attr (br, "match.length"))
+                                       if (as.integer (indx) %in% br)
+                                           ret <- c (NA_character_, j)
+                                       else
+                                           ret <- c (substring (j, 1, indx - 1),
+                                                     substring (j, indx + 1, nchar (j)))
                                    }
+                                return (ret)
                             })
                 do.call (rbind, res)  })
 }
