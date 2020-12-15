@@ -586,7 +586,7 @@ split_args_at_equals <- function (x) {
                                            ret <- c (NA_character_, j)
                                        else
                                            ret <- c (substring (j, 1, indx - 1),
-                                                     substring (j, indx + 1, nchar (j)))
+                                             substring (j, indx + 1, nchar (j)))
                                    }
                                 return (ret)
                             })
@@ -701,7 +701,7 @@ assign_names_to_params <- function (x, pkg) {
             # other_nms will be NULL for fns which have no args
             if (!all (is.null (other_nms))) {
                 index <- which (is.na (x [[i]] [, 1]))
-                x [[i]] [index, 1] <- other_nms [seq (index)]
+                x [[i]] [index, 1] <- other_nms [seq_along (index)]
             }
         }
     }
