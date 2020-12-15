@@ -202,9 +202,11 @@ yaml_param_classes <- function (yaml) {
     index <- which (grepl ("\\\\%", yaml_pre))
     if (length (index) > 0)
         yaml_pre [index] <- gsub ("\\\\%", "%", yaml_pre [index])
-    e <- new.env ()
+    newenv <- new.env ()
     junk <- utils::capture.output (
-        x <- tryCatch (eval (parse (text = yaml_pre), envir = e)) # nolint
+        x <- tryCatch (
+                       eval (parse (text = yaml_pre), envir = newenv),
+                       error = function (e) NULL)
         )
 
     yaml_pars <- gsub ("^\\s*\\-\\s*", "", yaml [par_index])
@@ -219,7 +221,7 @@ yaml_param_classes <- function (yaml) {
     classes <- lapply (seq_along (objs), function (i) {
                            res <- tryCatch (
                                      class (eval (parse (text = objs [i]),
-                                                  envir = e)),
+                                                  envir = newenv)),
                                      error = function (z) "error")
                            if (i > 1 & "error" %in% res) {
                                iprev <- i - 1
