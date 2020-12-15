@@ -31,10 +31,10 @@ get_all_examples <- function (package, is_source, exclude = NULL) {
     return (ret)
 }
 
-get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
+get_fn_exs <- function (package, rd_name, topic, rm_seed = TRUE,
                         exclude_not_run = TRUE, is_source = FALSE) {
 
-    ex <- get_example_lines (pkg, rd_name)
+    ex <- get_example_lines (package, rd_name)
 
     if (length (ex) == 0)
         return (NULL)
@@ -46,7 +46,7 @@ get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
 
     ex <- clean_example_lines (ex)
 
-    fns <- find_fn_call_points (topic, pkg)
+    fns <- find_fn_call_points (topic, package)
     is_dispatch <- attr (fns, "is_dispatch")
 
     fn_calls <- process_fn_calls (fns, ex)
@@ -60,7 +60,7 @@ get_fn_exs <- function (pkg, rd_name, topic, rm_seed = TRUE,
     # concatenate any example lines which do not call the actual function or
     # it's aliases into effective preprocessing lines for subsequent function
     # calls.
-    aliases <- paste0 (get_fn_aliases (pkg, rd_name), collapse = "|")
+    aliases <- paste0 (get_fn_aliases (package, rd_name), collapse = "|")
     index <- vapply (exs, function (i) any (grepl (aliases, i)), logical (1))
     if (length (fns) == 2) { # when it's a dispatch method
         index2 <- vapply (exs, function (i)
