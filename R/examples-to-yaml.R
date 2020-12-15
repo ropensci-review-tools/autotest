@@ -229,6 +229,10 @@ find_function_calls <- function (x, fn, aliases) {
         any (grepl ("[[:alpha:]]\\.[[:alpha:]]", fn))) {
             fn_short <- gsub ("\\..*$", "", fn)
             fn_calls <- grep (paste0 (fn, "|", fn_short), x)
+            if (!is.null (aliases)) {
+                fn_here <- paste0 (fn, "|", paste0 (aliases, collapse = "|"))
+                fn_calls <- unique (c (fn_calls, grep (fn_here, x)))
+            }
     } else {
         fn_here <- fn
         if (!is.null (aliases))
