@@ -163,6 +163,8 @@ one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x,
 
     x_content <- extract_primary_call_content (x,
                                         unique (c (fn, fn_short, aliases)))
+    if (length (x_content) == 0)
+        return (NULL)
 
     x_content <- rm_assignment_operators (x_content, fn)
     x_content <- split_args_at_equals (x_content)
@@ -475,7 +477,11 @@ extract_primary_call_content <- function (x, aliases) {
     # fn calls by parsing expressions
     fn_calls <- vapply (seq_along (br1), function (i) {
                             this_x <- substring (x [i], 1, br1 [i] - 1)
-                            xp <- utils::getParseData (parse (text = this_x))
+                            xp <- tryCatch (
+                                    utils::getParseData (parse (text = this_x)),
+                                    error = function (e) NULL)
+                            if (is.null (xp))
+                                return ("")
                             syms <- which (xp$token == "SYMBOL")
                             # last symbol must be function call:
                             xp$text [syms [length (syms)]] },
@@ -494,6 +500,9 @@ extract_primary_call_content <- function (x, aliases) {
     x <- x [which (vapply (x, length, integer (1), USE.NAMES = FALSE) > 0)]
 
     names (x) <- fn_calls
+
+    # any failied getParseData from above is rejected here:
+    x <- x [which (!names (x) == "")]
 
     return (split_content_at_commas (x))
 }
