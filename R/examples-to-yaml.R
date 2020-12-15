@@ -424,9 +424,13 @@ terminal_prepro_to_yaml <- function (xpre, yaml, has_prepro) {
 #' @noRd
 chk_fn_calls_are_primary <- function (x, fn, fn_short, aliases) {
     chk <- vapply (x, function (i) {
-                       p <- utils::getParseData (parse (text = i))
+                       p <- tryCatch (
+                                utils::getParseData (parse (text = i)),
+                                error = function (e) NULL)
                        ret <- FALSE
-                       index <- which (p$token == "SYMBOL_FUNCTION_CALL")
+                       index <- NULL
+                       if (!is.null (p))
+                           index <- which (p$token == "SYMBOL_FUNCTION_CALL")
                        if (length (index) > 0) {
                            ret <- (p$text [index [1]] %in% aliases |
                                    p$text [index [1]] == fn_short)
