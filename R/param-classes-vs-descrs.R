@@ -224,16 +224,23 @@ yaml_param_classes <- function (yaml) {
                                                   envir = newenv)),
                                      error = function (z) "error")
                            if (i > 1 & "error" %in% res) {
+                               itemp <- i
                                iprev <- i - 1
                                while (res == "error") {
-                   res <- tryCatch (class (eval (parse (text = objs [i]),
+                   res <- tryCatch (class (eval (parse (text = objs [itemp]),
                                                  envir = get (objs [iprev]))),
                                     error = function (z) "error")
+                                itemp <- itemp - 1
+                                iprev <- iprev - 1
+                               if (itemp == 1)
+                                   break
                                }
                            }
                            return (res)
                            })
     names (classes) <- params
+
+    classes <- classes [which (!classes == "error")]
 
     return (classes)
 }
