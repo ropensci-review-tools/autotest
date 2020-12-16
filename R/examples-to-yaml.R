@@ -67,6 +67,9 @@ examples_to_yaml <- function (package = NULL,
         if (!quiet)
             utils::setTxtProgressBar (pb, i / length (exs))
     }
+
+    ret <- rm_prepro_only (ret)
+
     if (!quiet) {
         close (pb)
         message (cli::col_green (cli::symbol$tick,
@@ -914,4 +917,19 @@ add_class_descriptions <- function (yaml, package) {
     attr (yaml, "package") <- package
 
     return (yaml)
+}
+
+#' Some yamls have only preprocessing stages, with no actual function call, yet
+#' this can not be ascertained until subsequent ones have been processed,
+#' because the preprocessing may be necessary for subsequent steps. Once they've
+#' all been constructed, any individual items with preprocessing only can be
+#' removed
+#'
+#' @noRd
+rm_prepro_only <- function (x) {
+    has_params <- vapply (x, function (i)
+                          any (grepl ("- parameters:$", i)),
+                          logical (1),
+                          USE.NAMES = FALSE)
+    return (x [has_params])
 }
