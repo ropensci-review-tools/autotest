@@ -4,7 +4,12 @@
 \alias{examples_to_yaml}
 \title{examples_to_yaml}
 \usage{
-examples_to_yaml(package = NULL, functions = NULL, exclude = NULL)
+examples_to_yaml(
+  package = NULL,
+  functions = NULL,
+  exclude = NULL,
+  quiet = FALSE
+)
 }
 \arguments{
 \item{package}{Name of package for which 'yaml' is to be generated.}
@@ -13,6 +18,8 @@ examples_to_yaml(package = NULL, functions = NULL, exclude = NULL)
 be obtained.}
 
 \item{exclude}{Names of functions to exclude from 'yaml' template}
+
+\item{quiet}{If 'FALSE', provide printed output on screen.}
 }
 \description{
 Convert examples for a specified package, optionally restricted to one or
