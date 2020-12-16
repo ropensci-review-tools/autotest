@@ -21,7 +21,7 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
 
         pars <- NA_character_
         if (any (grepl ("- parameters:$", yaml)))
-            pars <- pars_one_fn (x, f, yaml)
+            pars <- parse_one_fn (x, f, yaml)
         parameters [[length (parameters) + 1]] <- pars
 
         preprocess <- add_yaml_prepro (preprocess, x, f)
@@ -83,7 +83,7 @@ rm_no_param_fns <- function (x) {
     return (x)
 }
 
-pars_one_fn <- function (x, f, yaml) {
+parse_one_fn <- function (x, f, yaml) {
 
     i <- x$functions [[f]] [[1]]
     nms <- get_fn_names (x, f)
@@ -113,8 +113,15 @@ pars_one_fn <- function (x, f, yaml) {
             if (!grepl ("\"|\'", yaml_version)) {
                 if (grepl ("formula", names (pars [[p]]),
                            ignore.case = TRUE)) {
-                    pars [[p]] [[1]] <- stats::formula (pars [[p]] [[1]])
-                    attr (pars [[p]] [[1]], ".Environment") <- NULL
+                    # an argument named "formula" may be something else, as in
+                    # ?stats::aov, where it is the result of `terms()`, so only
+                    # replace by formula if coercion does not error:
+                    ptemp <- tryCatch (stats::formula (pars [[p]] [[1]]),
+                                       error = function (e) NULL)
+                    if (!is.null (ptemp)) {
+                        attr (ptemp, ".Environment") <- NULL
+                        pars [[p]] [[1]] <- ptemp
+                    }
                 } else
                     pars [[p]] [[1]] <- as.name (pars [[p]] [[1]])
             }
@@ -175,6 +182,9 @@ load_libraries <- function (x, quiet = FALSE) {
     # then main package
     this_lib <- gsub ("package:\\s", "", x [grep ("package:", x)])
     libraries <- unique (c (libraries, this_lib))
+    # these can pre pre-pended with a single `'` when part of pre-processing,
+    # so:
+    libraries <- gsub ("^\\'", "", libraries)
     libraries <- libraries [which (!libraries %in% loadedNamespaces ())]
     if (!quiet & length (libraries) > 0) {
         message (cli::col_green (cli::symbol$star,
