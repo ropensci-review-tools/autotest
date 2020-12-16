@@ -45,6 +45,7 @@ get_fn_exs <- function (package, rd_name, topic, rm_seed = TRUE,
         return (NULL)
 
     ex <- clean_example_lines (ex)
+    ex <- transform_single_quotes (ex)
 
     fns <- find_fn_call_points (topic, package)
     is_dispatch <- attr (fns, "is_dispatch")
@@ -509,8 +510,6 @@ rm_plot_lines <- function (x) {
 
 #' Remove enclosing brackets from example lines
 #'
-#' Also replace any single quotes with esacped double versions (because
-#' yaml::yaml.load fails on the former)
 #' @param Extracted and cleaned list of examples for each function in a package.
 #' @noRd
 rm_enclosing_brackets <- function (x) {
@@ -524,8 +523,55 @@ rm_enclosing_brackets <- function (x) {
                                            gsub ("\\)$", "",
                                                  gsub ("^\\(", "", j [index]))
                                    }
-                                   j <- gsub ("'", "\"", j, fixed = TRUE)
                                    return (j)   })
                 attributes (out) <- a
                 return (out) })
+}
+
+#' yaml does not parse single quotes, so these are converted to double quotes,
+#' but this requires first checking whether they are embedded within double
+#' quotes in which case they are simply removed. (Example ?D under "higher
+#' derivatives"). Once that's been done, the remainder are converted.
+#' @noRd
+transform_single_quotes <- function (x) {
+    res <- vapply (x, function (i) {
+        quotes2 <- gregexpr ("\"", i) [[1]]
+        if (quotes2 [1] < 1)
+            return (i)
+
+        index <- 2 * seq (length (quotes2) / 2)
+        index <- cbind (quotes2 [index - 1], quotes2 [index])
+        index <- apply (index, 1, function (i) i [1]:i [2])
+        # apply returns a matrix if all i[1]:i[2] sequences are
+        # same length, otherwise it is a list
+        if (is.list (index)) {
+            index <- do.call (c, index)
+        } else {
+            index <- as.vector (index)
+        }
+
+        quotes1 <- gregexpr ("\'", i) [[1]]
+        quotes1 <- quotes1 [which (quotes1 %in% index)]
+
+        ret <- i
+
+        if (length (quotes1) > 0) {
+            index <- seq (nchar (i)) [which (!seq (nchar (i)) %in% quotes1)]
+
+            qts <- sort (c (1, quotes1 - 1, quotes1 + 1, nchar (i)))
+            qts <- matrix (qts, ncol = 2, byrow = TRUE)
+            txt <- apply (qts, 1, function (j)
+                          substring (i, j [1], j [2]))
+            ret <- paste0 (txt, collapse = "")
+        }
+
+        # final replacement of other single quotes not enclosed in double
+        ret <- gsub ("'", "\"", ret, fixed = TRUE)
+
+        return (ret)
+                           },
+        character (1),
+        USE.NAMES = FALSE)
+
+    return (res)
 }
