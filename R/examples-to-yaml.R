@@ -42,13 +42,17 @@ examples_to_yaml <- function (package = NULL,
 
                 y <- add_class_descriptions (y, package)
 
-                ret [[length (ret) + 1]] <-
-                    prev_fns [[length (prev_fns) + 1]] <- y
-                names (ret) [length (ret)] <- this_fn
+                add_y <- (length (prev_fns) == 0)
+                if (!add_y)
+                    add_y <- !identical (y, prev_fns [[length (prev_fns)]])
 
+                if (add_y) {
+                    ret [[length (ret) + 1]] <-
+                        prev_fns [[length (prev_fns) + 1]] <- y
+                    names (ret) [length (ret)] <- this_fn
+                }
             }
         }
-
     }
 
     return (ret)
@@ -144,8 +148,8 @@ one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x,
 
     x <- unlist (lapply (x, function (i) strip_if_cond (i)))
     x <- chk_fn_calls_are_primary (x, fn, fn_short, aliases)
-    if (length (x) == 0)
-        return (NULL)
+    if (length (x) == 0) # yaml may still have prepro lines, so return those
+        return (yaml)
 
     x <- split_piped_lines (x)
     # Then add any lines prior to main function call to pre-processing:
@@ -690,6 +694,9 @@ get_preprocess_lines <- function (x) {
     ret <- lapply (x, function (i) {
                        pre_index <- grep ("preprocess:", i)
                        par_index <- grep ("parameters:", i)
+                       # prev_fns can have only pre-pro without parameters, so:
+                       if (length (par_index) == 0)
+                           par_index <- rep (length (i) + 1, length (pre_index))
                        res <- NULL
                        for (j in seq_along (pre_index)) {
                            index <- (pre_index [j] + 1):(par_index [j] - 1)
