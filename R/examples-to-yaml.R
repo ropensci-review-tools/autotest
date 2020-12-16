@@ -622,6 +622,8 @@ split_args_at_equals <- function (x) {
                                        idx2 <- regexpr ("==", j)
                                        idx <- idx [which (!idx %in%
                                                           idx2 [idx2 > 0])]
+                                       if (length (idx) == 0)
+                                           idx <- -1L
                                        # and check that it's not an "="
                                        # contained within a parenthetical
                                        # expression:
@@ -629,7 +631,7 @@ split_args_at_equals <- function (x) {
                                        br <- seq (as.integer (br [[1]]),
                                                   as.integer (br [[1]]) +
                                                       attr (br, "match.length"))
-                                       if (length (idx) == 0 |
+                                       if (idx [1] < 0 |
                                            (as.integer (idx) %in% br))
                                            ret <- c (NA_character_, j)
                                        else
