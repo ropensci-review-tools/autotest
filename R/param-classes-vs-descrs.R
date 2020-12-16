@@ -208,10 +208,12 @@ yaml_param_classes <- function (yaml) {
 
     newenv <- new.env ()
     junk <- utils::capture.output (
+                suppressMessages (
         x <- tryCatch (
                        eval (parse (text = yaml_pre), envir = newenv),
-                       error = function (e) NULL)
-        )
+                       error = function (e) NULL,
+                       warning = function (w) NULL)
+        ))
 
     yaml_pars <- gsub ("^\\s*\\-\\s*", "", yaml [par_index])
     objs <- vapply (yaml_pars, function (i)
