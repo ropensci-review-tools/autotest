@@ -19,7 +19,9 @@ get_all_examples <- function (package,
         quiet <- TRUE
     if (!quiet) {
         message (cli::col_green (cli::symbol$star,
-                                 " Extracting example code"))
+                                 " Extracting example code from ",
+                                 length (rdnames),
+                                 " .Rd files"))
         pb <- utils::txtProgressBar (style = 3)
     }
 

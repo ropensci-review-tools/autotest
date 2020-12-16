@@ -145,16 +145,7 @@ autotest_package <- function (package,
                               test = FALSE,
                               quiet = FALSE) {
 
-    if (!quiet)
-        message (cli::col_yellow (cli::symbol$line),
-                 cli::col_green (" parsing all package examples"),
-                 appendLF = FALSE)
-
     exs <- examples_to_yaml (package, exclude = exclude, quiet = quiet)
-
-    if (!quiet)
-        message ("\r", cli::col_green (cli::symbol$tick,
-                 " parsed all package examples"))
 
     res <- NULL
     for (i in seq_along (exs)) {
