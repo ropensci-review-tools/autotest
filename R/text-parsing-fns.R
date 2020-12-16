@@ -162,14 +162,19 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
           br_closed = br_closed)
 }
 
-# return positions of first and last matching brackets on one line
-bracket_sequences_one_line <- function (x) {
-    open_sym <- "\\("
-    close_sym <- "\\)"
+# return positions of paris of outer matching brackets on one line, as [open1,
+# close1, open2, close2, ...]. Matching brackets enclosed within others are
+# removed, and can be found by iterating over the inner portion once the outer
+# brakcets have been identified.
+bracket_sequences_one_line <- function (x,
+                                        open_sym = "\\(",
+                                        close_sym = "\\)") {
+
     br_open <- lapply (gregexpr (open_sym, x), function (i)
                        as.integer (i [i >= 0])) [[1]]
     br_closed <- lapply (gregexpr (close_sym, x), function (i)
                        as.integer (i [i >= 0])) [[1]]
+
     if (length (br_open) > 1 & length (br_closed) > 1) {
         while (br_open [2] < br_closed [1]) {
             br_open <- br_open [-2]
@@ -179,7 +184,14 @@ bracket_sequences_one_line <- function (x) {
         }
     }
 
-    return (c (br_open [1], br_closed [1]))
+    # unparseable junk lines need not have matching brackets:
+    if (length (br_open) != length (br_closed)) {
+        len <- min (c (length (br_open), length (br_closed)))
+        br_open <- br_open [seq (len)]
+        br_closed <- br_closed [seq (len)]
+    }
+
+    return (as.vector (rbind (br_open, br_closed)))
 }
 
 # check for nesting where another bracket opens before current one has

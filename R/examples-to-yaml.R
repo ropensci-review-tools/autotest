@@ -503,7 +503,7 @@ extract_primary_call_content <- function (x, aliases) {
     # That reduces expressions down to everything after opening parenthesis of
     # first function call to one of the alias names. Now find the matching
     # closing bracket for each line
-    brackets <- lapply (x, bracket_sequences_one_line)
+    brackets <- lapply (x, function (i) bracket_sequences_one_line (i))
     for (i in seq_along (brackets)) {
         x [i] <- substring (x [i], brackets [[i]] [1],
                             brackets [[i]] [2])
@@ -534,6 +534,29 @@ split_content_at_commas <- function (x) {
                      index1 <- gregexpr ("\\(", i) [[1]]
                      index2 <- gregexpr ("\\)", i) [[1]]
                      commas <- gregexpr (",", i) [[1]]
+                     # but not selection commas in square brackets like `x[, 1]`
+                     br <- bracket_sequences_one_line (i,
+                                                       open_sym = "\\[",
+                                                       close_sym = "\\]")
+                     # that has [open1, close1, open2, close2, ...], so convert
+                     # to sequences of all characters within square brackets:
+                     if (length (br) == 2) {
+                         index_br <- (br [1]:br [2])
+                     } else if (length (br > 2)) {
+                         index_br <- 2 * seq (length (br) / 2)
+                         index_br <- cbind (br [index_br - 1], br [index_br])
+                         index_br <- apply (index_br, 1, function (i)
+                                            i [1]:i [2])
+                         # apply returns a matrix if all i[1]:i[2] sequences are
+                         # same length, otherwise it is a list
+                         if (is.list (index_br))
+                             index_br <- do.call (c, index_br)
+                         else
+                             index_br <- as.vector (index_br)
+
+                         commas <- commas [which (!commas %in% index_br)]
+                     }
+
                      index1 <- index1 [index1 > 0]
                      index2 <- index2 [index2 > 0]
                      commas <- commas [commas > 0]
