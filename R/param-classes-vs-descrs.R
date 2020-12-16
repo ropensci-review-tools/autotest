@@ -202,6 +202,10 @@ yaml_param_classes <- function (yaml) {
     index <- which (grepl ("\\\\%", yaml_pre))
     if (length (index) > 0)
         yaml_pre [index] <- gsub ("\\\\%", "%", yaml_pre [index])
+
+    dev <- options()$"device"
+    options (device = NULL) # suppress plot output
+
     newenv <- new.env ()
     junk <- utils::capture.output (
         x <- tryCatch (
@@ -238,6 +242,7 @@ yaml_param_classes <- function (yaml) {
                            }
                            return (res)
                            })
+    options (device = dev)
     names (classes) <- params
 
     classes <- classes [which (!classes == "error")]
