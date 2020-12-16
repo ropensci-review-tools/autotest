@@ -8,18 +8,28 @@
 #' @param functions If specified, names of functions from which examples are to
 #' be obtained.
 #' @param exclude Names of functions to exclude from 'yaml' template
+#' @inheritParams autotest_package
 #' @export
 examples_to_yaml <- function (package = NULL,
                               functions = NULL,
-                              exclude = NULL) {
+                              exclude = NULL,
+                              quiet = FALSE) {
 
     pkg_name <- preload_package (package)
 
     exclude <- exclude_functions (package, functions, exclude)
 
-    exs <- get_all_examples (package, pkg_is_source (package), exclude)
+    exs <- get_all_examples (package, pkg_is_source (package), exclude, quiet = quiet)
 
     ret <- list ()
+
+    if (length (exs) < 10)
+        quiet <- TRUE
+    if (!quiet) {
+        message (cli::col_green (cli::symbol$star,
+                                 " converting examples to yaml"))
+        pb <- utils::txtProgressBar (style = 3)
+    }
 
     for (i in seq (exs)) {
 
@@ -53,6 +63,14 @@ examples_to_yaml <- function (package = NULL,
                 }
             }
         }
+
+        if (!quiet)
+            utils::setTxtProgressBar (pb, i / length (exs))
+    }
+    if (!quiet) {
+        close (pb)
+        message (cli::col_green (cli::symbol$tick,
+                                 " converted examples to yaml"))
     }
 
     return (ret)

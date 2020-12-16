@@ -1,6 +1,9 @@
 # no export fns here
 
-get_all_examples <- function (package, is_source, exclude = NULL) {
+get_all_examples <- function (package,
+                              is_source,
+                              exclude = NULL,
+                              quiet = FALSE) {
 
     fns <- m_get_pkg_functions (package)
     if (!is.null (exclude))
@@ -12,6 +15,14 @@ get_all_examples <- function (package, is_source, exclude = NULL) {
     rdnames <- gsub ("\\.Rd$", "", topics$name [index])
     fns <- fns [index]
 
+    if (length (rdnames) < 10)
+        quiet <- TRUE
+    if (!quiet) {
+        message (cli::col_green (cli::symbol$star,
+                                 " extracting example code"))
+        pb <- utils::txtProgressBar (style = 3)
+    }
+
     exs <- list ()
     for (i in seq (rdnames)) {
         exi <- get_fn_exs (package, rdnames [i], topic [i],
@@ -21,6 +32,14 @@ get_all_examples <- function (package, is_source, exclude = NULL) {
             exs [[length (exs) + 1]] <- exi
             names (exs) [length (exs)] <- fns [i]
         }
+
+        if (!quiet)
+            utils::setTxtProgressBar (pb, i / length (rdnames))
+    }
+    if (!quiet) {
+        close (pb)
+        message (cli::col_green (cli::symbol$tick,
+                                 " extracted example code"))
     }
 
     not_null <- vapply (exs, function (i) length (i) > 0, logical (1))

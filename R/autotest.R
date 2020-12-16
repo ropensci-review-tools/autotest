@@ -150,7 +150,7 @@ autotest_package <- function (package,
                  cli::col_green (" parsing all package examples"),
                  appendLF = FALSE)
 
-    exs <- examples_to_yaml (package, exclude = exclude)
+    exs <- examples_to_yaml (package, exclude = exclude, quiet = quiet)
 
     if (!quiet)
         message ("\r", cli::col_green (cli::symbol$tick,
