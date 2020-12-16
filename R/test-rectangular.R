@@ -217,7 +217,13 @@ pass_rect_as_other <- function (fn, params, classes, i, this_env) {
         this_ret <- pass_one_rect_as_other (fn, params, i, other [o])
         res <- rbind (res, this_ret)
         if (docall (this_ret, fn, params)) {
-            val <- suppressWarnings (do.call (fn, params, envir = this_env))
+            
+            junk <- capture.output (
+                val <- suppressWarnings (
+                            suppressMessages (
+                                do.call (fn, params, envir = this_env)
+                                ))
+            )
             nm <- paste0 ("val-", gsub ("^.*::", "", other [o]))
             assign (nm, val, envir = this_env)
         }

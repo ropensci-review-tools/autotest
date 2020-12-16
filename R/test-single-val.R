@@ -30,7 +30,6 @@ autotest_single <- function (pkg,
                 res <- rbind (res,
                               int_as_double (this_fn, params_i, i,
                                              vec = FALSE, test))
-
             } else if (methods::is (p_i, "numeric")) {
                 val_type <- "numeric"
                 res <- rbind (res,
