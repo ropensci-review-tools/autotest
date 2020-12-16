@@ -65,10 +65,18 @@ match_brackets <- function (x, curly = FALSE) {
 
         x [br_closed [i]] <- paste0 (xmid, collapse = collapse_sym)
     }
-    # then remove all of the intervening lines:
+    # then remove all of the intervening lines, making sure to remove any
+    # pipes into ggplot2 expression from preceding lines:
     if (length (br_open) > 0) {
         index <- unlist (lapply (seq_along (br_open), function (i)
                                  br_open [i]:(br_closed [i] - 1)))
+        index2 <- (index - 1) [index > 1]
+        pipe_sym <- "\\\\%>\\\\%$"
+        terminal_pipe <- grep (pipe_sym, x [index2])
+        if (length (terminal_pipe) > 0) {
+            terminal_pipe <- index2 [terminal_pipe]
+            x [terminal_pipe] <- gsub (pipe_sym, "", x [terminal_pipe])
+        }
         x <- x [-index]
     }
 
