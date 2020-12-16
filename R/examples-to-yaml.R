@@ -615,22 +615,26 @@ split_args_at_equals <- function (x) {
                                    if (!grepl ("=", j) | grepl ("^\"", j))
                                        ret <- c (NA_character_, j)
                                    else {
-                                       #strsplit (j, "=") [[1]]   })
-                                       # split at first "=", presume all
-                                       # others to be internal list items
-                                       # or the like
-                                       indx <- regexpr ("=", j)
-                                       # check that it's not an "=" contained
-                                       # within a parenthetical expression:
+                                       # split at first "=", presume all others
+                                       # to be internal list items or the like
+                                       idx <- regexpr ("=", j)
+                                       # but exclude "==":
+                                       idx2 <- regexpr ("==", j)
+                                       idx <- idx [which (!idx %in%
+                                                          idx2 [idx2 > 0])]
+                                       # and check that it's not an "="
+                                       # contained within a parenthetical
+                                       # expression:
                                        br <- regexpr ("\\((.+)?\\)", j)
                                        br <- seq (as.integer (br [[1]]),
                                                   as.integer (br [[1]]) +
                                                       attr (br, "match.length"))
-                                       if (as.integer (indx) %in% br)
+                                       if (length (idx) == 0 |
+                                           (as.integer (idx) %in% br))
                                            ret <- c (NA_character_, j)
                                        else
-                                           ret <- c (substring (j, 1, indx - 1),
-                                             substring (j, indx + 1, nchar (j)))
+                                           ret <- c (substring (j, 1, idx - 1),
+                                             substring (j, idx + 1, nchar (j)))
                                    }
                                 return (ret)
                             })
