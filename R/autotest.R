@@ -70,6 +70,10 @@ autotest_single_yaml <- function (yaml = NULL,
                                   test = TRUE,
                                   quiet = FALSE) {
 
+    # yaml templates can be preprocessing only, with no direct function calls:
+    if (!any (grepl ("- parameters:$", yaml)))
+        return (NULL)
+
     res <- parse_yaml_template (yaml = yaml, filename = filename)
 
     reports <- NULL
