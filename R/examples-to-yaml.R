@@ -27,7 +27,7 @@ examples_to_yaml <- function (package = NULL,
         quiet <- TRUE
     if (!quiet) {
         message (cli::col_green (cli::symbol$star,
-                                 " converting examples to yaml"))
+                                 " Converting examples to yaml"))
         pb <- utils::txtProgressBar (style = 3)
     }
 
@@ -73,7 +73,7 @@ examples_to_yaml <- function (package = NULL,
     if (!quiet) {
         close (pb)
         message (cli::col_green (cli::symbol$tick,
-                                 " converted examples to yaml"))
+                                 " Converted examples to yaml"))
     }
 
     return (ret)

@@ -19,7 +19,7 @@ get_all_examples <- function (package,
         quiet <- TRUE
     if (!quiet) {
         message (cli::col_green (cli::symbol$star,
-                                 " extracting example code"))
+                                 " Extracting example code"))
         pb <- utils::txtProgressBar (style = 3)
     }
 
@@ -39,7 +39,7 @@ get_all_examples <- function (package,
     if (!quiet) {
         close (pb)
         message (cli::col_green (cli::symbol$tick,
-                                 " extracted example code"))
+                                 " Extracted example code"))
     }
 
     not_null <- vapply (exs, function (i) length (i) > 0, logical (1))
