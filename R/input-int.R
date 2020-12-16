@@ -219,20 +219,31 @@ int_as_double <- function (this_fn, params, i,
                           operation = operation)
 
     if (test) {
-        out1 <- suppressWarnings (do.call (this_fn, params))
-        params [[i]] <- as.numeric (params [[i]])
-        out2 <- suppressWarnings (do.call (this_fn, params))
+        f <- tempfile (fileext = ".txt")
+        out1 <- catch_all_msgs (f, this_fn, params)
+        if (length (out1) == 0) {
+            out1 <- suppressWarnings (do.call (this_fn, params))
+            params [[i]] <- as.numeric (params [[i]])
+            out2 <- catch_all_msgs (f, this_fn, params)
+            if (length (out2) == 0) {
+                out2 <- suppressWarnings (do.call (this_fn, params))
 
-        if (identical (out1, out2))
-            res <- NULL
-        else {
-            res$type <- "diagnostic"
-            res$content <- paste0 ("Function [",
-                                   this_fn,
-                                   "] returns different values when ",
-                                   "assumed int-valued parameter [",
-                                   names (params) [i],
-                                   "] is submitted as double.")
+                if (identical (out1, out2))
+                    res <- NULL
+                else {
+                    res$type <- "diagnostic"
+                    res$content <- paste0 ("Function [",
+                                           this_fn,
+                                           "] returns different values when ",
+                                           "assumed int-valued parameter [",
+                                           names (params) [i],
+                                           "] is submitted as double.")
+                }
+            } else {
+                res <- out2
+            }
+        } else {
+            res <- out1
         }
     }
 
