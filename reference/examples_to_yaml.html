@@ -74,7 +74,7 @@ automatically test package." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.499</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.503</span>
       </span>
     </div>
 
@@ -115,7 +115,12 @@ more specified functions, to a list of 'autotest' 'yaml' objects to use to
 automatically test package.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>examples_to_yaml</span><span class='op'>(</span>package <span class='op'>=</span> <span class='cn'>NULL</span>, functions <span class='op'>=</span> <span class='cn'>NULL</span>, exclude <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>examples_to_yaml</span><span class='op'>(</span>
+  package <span class='op'>=</span> <span class='cn'>NULL</span>,
+  functions <span class='op'>=</span> <span class='cn'>NULL</span>,
+  exclude <span class='op'>=</span> <span class='cn'>NULL</span>,
+  quiet <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -132,6 +137,10 @@ be obtained.</p></td>
     <tr>
       <th>exclude</th>
       <td><p>Names of functions to exclude from 'yaml' template</p></td>
+    </tr>
+    <tr>
+      <th>quiet</th>
+      <td><p>If 'FALSE', provide printed output on screen.</p></td>
     </tr>
     </table>
 
