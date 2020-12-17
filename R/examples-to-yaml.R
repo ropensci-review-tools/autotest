@@ -93,7 +93,8 @@ preload_package <- function (package) {
         # TODO: Use g to get hash of HEAD
         #g <- rprojroot::find_root (rprojroot::is_git_root, path = package)
     } else {
-        ip <- data.frame (utils::installed.packages ())
+        ip <- data.frame (utils::installed.packages (),
+                          stringsAsFactors = FALSE)
         if (!package %in% ip$Package) {
             stop ("package [", package, "] does not appear to be installed.")
         }

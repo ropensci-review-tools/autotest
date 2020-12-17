@@ -88,7 +88,8 @@ get_pkg_deps <- function (pkg, suggests = FALSE) {
         if (suggests)
             deps <- c (deps, get_deps (desc, "Suggests"))
     } else {
-        ip <- data.frame (utils::installed.packages ())
+        ip <- data.frame (utils::installed.packages (),
+                          stringsAsFactors = FALSE)
         deps <- strsplit (ip$Depends [ip$Package == pkg], ", ") [[1]]
         deps <- gsub ("\\s*\\(.*$", "", deps [!is.na (deps)])
         imports <- strsplit (ip$Imports [ip$Package == pkg], ", ") [[1]]

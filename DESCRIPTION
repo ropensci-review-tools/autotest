@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.0.1.513
+Version: 0.0.1.514
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",

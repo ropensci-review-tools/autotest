@@ -59,7 +59,8 @@ get_example_objs <- function (package,
                                               times = length (o$aliases))
                         o$aliases <- rep (o$aliases, each = len)
                         return (cbind (o$aliases, o$objects))   })
-    objs <- data.frame (do.call (rbind, objs))
+    objs <- data.frame (do.call (rbind, objs),
+                        stringsAsFactors = FALSE)
 
     if (nrow (objs) == 0) {
         objs <- NULL
