@@ -21,9 +21,18 @@ test_that("stats", {
               topic <- topics$topic
               expect_length (topic, 1)
               expect_is (topic, "character")
-              fns <- find_fn_call_points (topic, package)
+
+              #fns <- find_fn_call_points (topic, package)
+              #expect_is (fns, "character")
+              #expect_true (length (fns) > 1)
+
+              fns <- topic_to_fns (topic, package = package)
               expect_is (fns, "character")
               expect_true (length (fns) > 1)
+              dispatches <- dispatched_fns (package)
+              expect_is (dispatches, "character")
+              expect_true (length (dispatches) > 1)
+              expect_true (length (dispatches) > length (fns))
 
               #exs <- get_all_examples (package, is_source, exclude)
 
