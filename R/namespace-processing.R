@@ -134,7 +134,7 @@ fns_to_topics <- function (x = NULL, package) {
     if (!is.null (x))
         index <- match (x, alias_topic [, 1])
     res <- data.frame (alias_topic [index, , drop = FALSE],
-                       stringsAsFActors = FALSE)
+                       stringsAsFactors = FALSE)
     names (res) <- c ("alias", "topic", "name")
     return (res)
 }
