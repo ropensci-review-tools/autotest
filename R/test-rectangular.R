@@ -218,7 +218,7 @@ pass_rect_as_other <- function (fn, params, classes, i, this_env) {
         res <- rbind (res, this_ret)
         if (docall (this_ret, fn, params)) {
             
-            junk <- capture.output (
+            junk <- utils::capture.output (
                 val <- suppressWarnings (
                             suppressMessages (
                                 do.call (fn, params, envir = this_env)

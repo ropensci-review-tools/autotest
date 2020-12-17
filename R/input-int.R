@@ -222,13 +222,13 @@ int_as_double <- function (this_fn, params, i,
         f <- tempfile (fileext = ".txt")
         out1 <- catch_all_msgs (f, this_fn, params)
         if (length (out1) == 0) {
-            junk <- capture.output (
+            junk <- utils::capture.output (
                 out1 <- suppressWarnings (do.call (this_fn, params))
                 )
             params [[i]] <- as.numeric (params [[i]])
             out2 <- catch_all_msgs (f, this_fn, params)
             if (length (out2) == 0) {
-                junk <- capture.output (
+                junk <- utils::capture.output (
                     out2 <- suppressWarnings (do.call (this_fn, params))
                     )
 
