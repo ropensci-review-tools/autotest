@@ -45,8 +45,7 @@ autotest <- function (yaml = NULL,
         stop (msg)
 
     # Ensure anything passed as list represents valid yaml input:
-    chk <- is.character (yaml [[1]]) & !is.null (attr (yaml [[1]], "package"))
-    if (!chk)
+    if (!is.character (yaml [[1]]) & !is.null (attr (yaml [[1]], "package")))
         stop (msg)
 
     reports <- lapply (yaml, function (i)
