@@ -11,9 +11,11 @@ get_all_examples <- function (package,
     topics <- m_fns_to_topics (fns, package)
 
     index <- which (!duplicated (topics$topic))
-    topic <- topics$topic [index]
-    rdnames <- gsub ("\\.Rd$", "", topics$name [index])
+    topics <- topics [index, ]
     fns <- fns [index]
+
+    topic <- topics$topic
+    rdnames <- gsub ("\\.Rd$", "", topics$name)
 
     if (length (rdnames) < 10)
         quiet <- TRUE
