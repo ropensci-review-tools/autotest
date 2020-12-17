@@ -45,11 +45,11 @@ test_that("stats", {
               #expect_true (length (exs [[1]]) > 1)
 
         ex <- examples_to_yaml (package = package, functions = functions)
-        #expect_is (ex, "list")
-        #expect_true (length (ex) > 1)
+        expect_is (ex, "list")
+        expect_true (length (ex) >= 1)
 
-        x <- autotest (yaml = ex, test = FALSE)
-        expect_is (x, "tbl_df")
+        #x <- autotest (yaml = ex, test = FALSE)
+        #expect_is (x, "tbl_df")
         #expect_true (all (x$type == "dummy"))
         #expect_false (all (x$fn_name == functions))
         #expect_true (all (unique (x$fn_name) %in% c ("cov", "cor", "var")))
