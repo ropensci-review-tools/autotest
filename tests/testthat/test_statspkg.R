@@ -34,6 +34,10 @@ test_that("stats", {
               expect_true (length (dispatches) > 1)
               expect_true (length (dispatches) > length (fns))
 
+        fns_short <- vapply (fns, function (i) strsplit (i, "\\.") [[1]] [1],
+                             character (1), USE.NAMES = FALSE)
+        expect_is (fns_short, "character")
+        expect_equal (length (fns_short), length (fns))
               #exs <- get_all_examples (package, is_source, exclude)
 
               #expect_is (exs, "list")
