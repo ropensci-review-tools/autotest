@@ -7,10 +7,10 @@
   "identifier": "autotest",
   "description": "Automatic testing of R packages via a simple YAML\n    schema.",
   "name": "autotest: Automatic Package Testing",
-  "codeRepository": "https://github.com/mpadge/autotest",
-  "issueTracker": "https://github.com/mpadge/autotest/issues",
+  "codeRepository": "https://github.com/ropenscilabs/autotest",
+  "issueTracker": "\n    https://github.com/mpadge/ropenscilabs/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.1.516",
+  "version": "0.0.1.517",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -213,7 +213,7 @@
       "sameAs": "https://CRAN.R-project.org/package=yaml"
     }
   ],
-  "fileSize": "306.519KB",
+  "fileSize": "262.484KB",
   "contIntegration": "https://codecov.io/gh/ropenscilabs/autotest",
   "developmentStatus": "https://www.repostatus.org/#concept",
   "readme": "https://github.com/ropenscilabs/autotest/blob/master/README.md"

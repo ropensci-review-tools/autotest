@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.0.1.516
+Version: 0.0.1.517
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -10,7 +10,8 @@ Description: Automatic testing of R packages via a simple YAML
     schema.
 License: GPL-3
 URL: https://github.com/ropenscilabs/autotest
-BugReports: https://github.com/mpadge/ropenscilabs/issues
+BugReports: 
+    https://github.com/mpadge/ropenscilabs/autotest/issues
 Imports:
     cli,
     data.table,
