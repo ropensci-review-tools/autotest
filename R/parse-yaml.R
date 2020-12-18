@@ -111,19 +111,10 @@ parse_one_fn <- function (x, f, yaml) {
                                   strsplit (yaml2 [grep (ystr, yaml2)],
                                             ystr) [[1]] [2])
             if (!grepl ("\"|\'", yaml_version)) {
-                if (grepl ("formula", names (pars [[p]]),
-                           ignore.case = TRUE)) {
-                    # an argument named "formula" may be something else, as in
-                    # ?stats::aov, where it is the result of `terms()`, so only
-                    # replace by formula if coercion does not error:
-                    ptemp <- tryCatch (stats::formula (pars [[p]] [[1]]),
-                                       error = function (e) NULL)
-                    if (!is.null (ptemp)) {
-                        attr (ptemp, ".Environment") <- NULL
-                        pars [[p]] [[1]] <- ptemp
-                    }
-                } else
+                if (!grepl ("formula", names (pars [[p]]),
+                            ignore.case = TRUE)) {
                     pars [[p]] [[1]] <- as.name (pars [[p]] [[1]])
+                }
             }
         }
     }

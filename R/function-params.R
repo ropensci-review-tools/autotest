@@ -136,15 +136,14 @@ fill_param_vals <- function (p_keys, p_vals, e, package) {
         if (is.null (this_val))
             next
 
-        if (!methods::is (this_val, "formula")) {
-
-            this_val <- get_non_formula_val (this_val,
-                                             e,
-                                             package,
-                                             p_vals,
-                                             p)
-
-        }
+        this_val <- get_non_formula_val (this_val,
+                                         e,
+                                         package,
+                                         p_vals,
+                                         p)
+        # leave formulae as strings:
+        if (methods::is (this_val, "formula"))
+            this_val <- p_vals [[p]]
 
         params [[length (params) + 1]] <- this_val
         names (params) [length (params)] <- p_keys [p]
