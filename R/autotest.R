@@ -146,6 +146,11 @@ autotest_package <- function (package,
 
     exs <- examples_to_yaml (package, exclude = exclude, quiet = quiet)
 
+    if (!quiet) {
+        txt <- paste0 ("autotesting ", get_package_name (package))
+        cli::cli_h2 (cli::col_green (txt))
+    }
+
     res <- NULL
     for (i in seq_along (exs)) {
         yaml <- exs [[i]]
