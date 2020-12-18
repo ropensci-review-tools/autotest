@@ -44,9 +44,9 @@ test_that("stats", {
               #expect_equal (length (exs), 1)
               #expect_true (length (exs [[1]]) > 1)
 
-        ex <- examples_to_yaml (package = package, functions = functions)
-        expect_is (ex, "list")
-        expect_true (length (ex) >= 1)
+        #ex <- examples_to_yaml (package = package, functions = functions)
+        #expect_is (ex, "list")
+        #expect_true (length (ex) >= 1)
 
         #x <- autotest (yaml = ex, test = FALSE)
         #expect_is (x, "tbl_df")
