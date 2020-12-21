@@ -1,5 +1,6 @@
 #' @keywords internal
 #' @importFrom magrittr %>%
+#' @importFrom memoise memoise
 #' @aliases autotest-package
 "_PACKAGE"
 
