@@ -934,5 +934,5 @@ rm_prepro_only <- function (x) {
                           any (grepl ("- parameters:$", i)),
                           logical (1),
                           USE.NAMES = FALSE)
-    return (x [has_params])
+    return (x [which (has_params)])
 }
