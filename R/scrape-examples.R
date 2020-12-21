@@ -493,13 +493,24 @@ rm_dontrun_lines <- function (x, is_source = TRUE, dontrun = TRUE,
     return (x)
 }
 
+#' non-parseable expressions are simply defined as those which fail with `eval`.
+#' These are caught via `tryCatch`, but that means expressions can not
+#' themselves be wrapped in `try`, because `try` within `tryCatch` does not work
+#' as expected.
+#' @noRd
 rm_not_parseable <- function (x) {
-    e <- new.env ()
+
+    index <- grep ("^\\s?try\\s?\\(", x)
+    if (any (index)) {
+        x [index] <- gsub ("^\\s?try\\s?\\(|\\)$", "", x [index])
+    }
+
+    this_env <- new.env ()
     parseable <- vapply (x, function (i) {
                              i <- gsub ("\\%", "%", i, fixed = TRUE)
                              p <- tryCatch (
-                                       # utils::getParseData (parse (text = i)),
-                                        eval (parse (text = i), envir = e),
+                                        eval (parse (text = i),
+                                              envir = this_env),
                                         error = function (err) NULL)
                              return (!is.null (p))
                            }, logical (1), USE.NAMES = FALSE)
