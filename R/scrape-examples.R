@@ -494,11 +494,13 @@ rm_dontrun_lines <- function (x, is_source = TRUE, dontrun = TRUE,
 }
 
 rm_not_parseable <- function (x) {
+    e <- new.env ()
     parseable <- vapply (x, function (i) {
                              i <- gsub ("\\%", "%", i, fixed = TRUE)
                              p <- tryCatch (
-                                        utils::getParseData (parse (text = i)),
-                                        error = function (e) NULL)
+                                       # utils::getParseData (parse (text = i)),
+                                        eval (parse (text = i), envir = e),
+                                        error = function (err) NULL)
                              return (!is.null (p))
                            }, logical (1), USE.NAMES = FALSE)
     return (x [which (parseable)])
