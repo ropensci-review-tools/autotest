@@ -1,6 +1,8 @@
 # nocov start
 .onLoad <- function (libname, pkgname) { # nolint
 
+    options (keep.source = TRUE) # otherwise getParseData does not work
+
     op <- options ()
 
     op.autotest <- list (autotest_yaml_indent = 4) # nolint
