@@ -361,25 +361,28 @@ library_calls_to_yaml <- function (x, has_prepro, yaml) {
 #' `x` as they do not call primary functions or aliases.
 #' @noRd
 parse_primary_fn_calls <- function (x, yaml, aliases, has_prepro) {
+
     rm_lines <- NULL
     rm_fns <- c ("stopifnot")
+
     for (xi in x) {
         p <- utils::getParseData (parse (text = xi))
         syms <- which (p$token == "SYMBOL_FUNCTION_CALL")
         if (any (syms)) {
+            index <- which (p$token %in% c ("LEFT_ASSIGN", "EQ_ASSIGN"))
             if (!p$text [syms [1]] %in% aliases &
                 p$text [syms [1]] %in% rm_fns) {
+
                 rm_lines <- c (rm_lines, xi)
-            } else if (any (p$token %in% c ("LEFT_ASSIGN", "EQ_ASSIGN"))) {
-                if (which (p$token %in% c ("LEFT_ASSIGN", "EQ_ASSIGN")) [1] <
-                    syms [1]) {
+
+            } else if (length (index) > 0) {
+                if (index [1] < syms [1]) {
+
                     if (!has_prepro) {
                         yaml <- c (yaml,
                                    paste0 (yaml_indent (2), "- preprocess:"))
                         has_prepro <- TRUE
                     }
-                    #if (p$text [syms [1]] != fn)
-                    #    rm_lines <- c (rm_lines, xi)
                     yaml <- c (yaml,
                                paste0 (yaml_indent (3), "- '", xi, "'"))
                 }
