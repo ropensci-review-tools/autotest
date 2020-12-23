@@ -28,6 +28,11 @@ parse_one_params <- function (p) {
 
 #' @return List of data frames, one for each Rd file, containing parameter
 #' names, descriptions, and name of Rd file.
+#'
+#' Note that get_Rd_metadata is an alias for tools:::.Rd_get_metadata, which
+#' changed from R3.6 which returned a matrix of 1 column and one row for each
+#' line to R4.0 returning a single character string. The `paste0` converts any
+#' all to single characters regardless.
 #' @noRd
 get_param_lists <- function (package) {
 
@@ -38,8 +43,9 @@ get_param_lists <- function (package) {
                         list.files (f, full.names = FALSE, pattern = "*\\.Rd$"))
         suppressWarnings (
             params <- lapply (flist, function (i)
-                              get_Rd_metadata (tools::parse_Rd (i),
-                                               "arguments"))
+                              paste0 (get_Rd_metadata (tools::parse_Rd (i),
+                                                       "arguments"),
+                                      collapse = "\n "))
             )
         names (params) <- rdnames
         suppressWarnings (
@@ -51,7 +57,9 @@ get_param_lists <- function (package) {
     } else {
         r <- tools::Rd_db (package)
         rdnames <- gsub ("\\.Rd$", "", names (r))
-        params <- lapply (r, function (i) get_Rd_metadata (i, "arguments"))
+        params <- lapply (r, function (i)
+                          paste0 (get_Rd_metadata (i, "arguments"),
+                                  collapse = "\n "))
         names (params) <- rdnames
         fn_names <- unname (unlist (lapply (r, function (i)
                                             get_Rd_metadata (i, "alias") [1])))
