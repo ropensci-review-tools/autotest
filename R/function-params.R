@@ -152,13 +152,16 @@ fill_param_vals <- function (p_keys, p_vals, e, package) {
     return (params)
 }
 
+# stats::var is a good example where param, `x`, is passed as a formula and
+# evaluated here via !can_get but can_eval.
 get_non_formula_val <- function (this_val, e, package, p_vals, p) {
     if (is.name (this_val)) {
         temp_val <- paste0 (this_val)
         can_get <- !is.null (tryCatch (get (temp_val),
                                        error = function (e) NULL))
-        can_eval <- !is.null (tryCatch (eval (parse (text = this_val)),
-                                        error = function (e) NULL))
+        can_eval <- !is.null (tryCatch (eval (parse (text = this_val),
+                                              env = e),
+                                        error = function (err) NULL))
         if (can_get) {
             this_val <- get (temp_val, envir = e)
         } else if (can_eval) {
