@@ -62,7 +62,7 @@ The `autotest_package()` function returns the results of implementing
 all tests on a given package. These results only indicate any divergence
 from expected behaviour, whether unexpected errors, warnings, or other
 behaviour. An ideal result is that `autotest_package()` returns nothing
-(strictly, `NULL`), indicating that all test passed successfully. To see
+(strictly, `NULL`), indicating that all tests passed successfully. To see
 which tests were performed, or to see which tests would be performed
 prior to actually running them, the function has a `test` parameter with
 a default value of `TRUE`. Setting this to `FALSE` returns a (generally
