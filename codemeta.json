@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/ropenscilabs/autotest",
   "issueTracker": "\n    https://github.com/mpadge/ropenscilabs/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.1.535",
+  "version": "0.0.1.536",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -51,18 +51,6 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "ISLR",
-      "name": "ISLR",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=ISLR"
-    },
-    {
-      "@type": "SoftwareApplication",
       "identifier": "knitr",
       "name": "knitr",
       "provider": {
@@ -84,18 +72,6 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=rmarkdown"
-    },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "SmartEDA",
-      "name": "SmartEDA",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=SmartEDA"
     },
     {
       "@type": "SoftwareApplication",
@@ -213,7 +189,7 @@
       "sameAs": "https://CRAN.R-project.org/package=yaml"
     }
   ],
-  "fileSize": "260.742KB",
+  "fileSize": "275.017KB",
   "contIntegration": "https://codecov.io/gh/ropenscilabs/autotest",
   "developmentStatus": "https://www.repostatus.org/#concept",
   "readme": "https://github.com/ropenscilabs/autotest/blob/master/README.md"
