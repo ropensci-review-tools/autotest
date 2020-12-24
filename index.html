@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.536</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.539</span>
       </span>
     </div>
 
@@ -131,20 +131,20 @@
 <span class="co">#&gt; ✔ [2 / 4]: cor</span>
 <span class="co">#&gt; ✔ [3 / 4]: cov</span>
 <span class="co">#&gt; ✔ [4 / 4]: cov</span>
-<span class="co">#&gt; # A tibble: 48 x 7</span>
-<span class="co">#&gt;    type   fn_name parameter  parameter_type  operation   content      yaml_hash </span>
-<span class="co">#&gt;    &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt;        &lt;chr&gt;     </span>
-<span class="co">#&gt;  1 diagn… var     x          generic vector  Convert ve… "Function [… bcf42b882…</span>
-<span class="co">#&gt;  2 diagn… var     y          generic vector  Convert ve… "Function [… bcf42b882…</span>
-<span class="co">#&gt;  3 diagn… cor     x          generic vector  Convert ve… "Function [… bcf42b882…</span>
-<span class="co">#&gt;  4 diagn… cor     y          generic vector  Convert ve… "Function [… bcf42b882…</span>
-<span class="co">#&gt;  5 diagn… cor     use        single charact… upper-case… "is case de… bcf42b882…</span>
-<span class="co">#&gt;  6 error  cor     &lt;NA&gt;       &lt;NA&gt;            normal fun… "object 'cb… 4e21cddac…</span>
-<span class="co">#&gt;  7 diagn… cor     use        single charact… lower-case… "is case de… 4e21cddac…</span>
-<span class="co">#&gt;  8 diagn… cor     use        single charact… upper-case… "is case de… 4e21cddac…</span>
-<span class="co">#&gt;  9 error  cor     (return o… &lt;NA&gt;            error from… "object 'cb… 4e21cddac…</span>
-<span class="co">#&gt; 10 diagn… cov     use        single charact… upper-case… "is case de… 4e21cddac…</span>
-<span class="co">#&gt; # … with 38 more rows</span></code></pre></div>
+<span class="co">#&gt; # A tibble: 45 x 7</span>
+<span class="co">#&gt;    type   fn_name parameter parameter_type  operation   content       yaml_hash </span>
+<span class="co">#&gt;    &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;     </span>
+<span class="co">#&gt;  1 diagn… var     x         generic vector  Convert ve… "Function [v… bcf42b882…</span>
+<span class="co">#&gt;  2 diagn… var     y         generic vector  Convert ve… "Function [v… bcf42b882…</span>
+<span class="co">#&gt;  3 diagn… cor     x         generic vector  Convert ve… "Function [c… bcf42b882…</span>
+<span class="co">#&gt;  4 diagn… cor     y         generic vector  Convert ve… "Function [c… bcf42b882…</span>
+<span class="co">#&gt;  5 diagn… cor     use       single charact… upper-case… "is case dep… bcf42b882…</span>
+<span class="co">#&gt;  6 diagn… cor     use       single charact… upper-case… "is case dep… 4e21cddac…</span>
+<span class="co">#&gt;  7 diagn… cov     use       single charact… upper-case… "is case dep… 4e21cddac…</span>
+<span class="co">#&gt;  8 diagn… cov     use       single charact… upper-case… "is case dep… 8dc19144c…</span>
+<span class="co">#&gt;  9 diagn… cov     use       single charact… upper-case… "is case dep… 87d5da3d7…</span>
+<span class="co">#&gt; 10 warni… anova   &lt;NA&gt;      &lt;NA&gt;            &lt;see conte… "This functi… &lt;NA&gt;      </span>
+<span class="co">#&gt; # … with 35 more rows</span></code></pre></div>
 </div>
 <div id="how-does-it-work-part-2" class="section level2">
 <h2 class="hasAnchor">
@@ -218,21 +218,18 @@
 <span class="co">#&gt; ✔ cov</span>
 <span class="co">#&gt; ✔ cov</span>
 <span class="co">#&gt; ✔ cov</span>
-<span class="co">#&gt; # A tibble: 12 x 7</span>
-<span class="co">#&gt;    type   fn_name parameter  parameter_type  operation   content      yaml_hash </span>
-<span class="co">#&gt;    &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt;        &lt;chr&gt;     </span>
-<span class="co">#&gt;  1 diagn… var     x          generic vector  Convert ve… "Function [… bcf42b882…</span>
-<span class="co">#&gt;  2 diagn… var     y          generic vector  Convert ve… "Function [… bcf42b882…</span>
-<span class="co">#&gt;  3 diagn… cor     x          generic vector  Convert ve… "Function [… bcf42b882…</span>
-<span class="co">#&gt;  4 diagn… cor     y          generic vector  Convert ve… "Function [… bcf42b882…</span>
-<span class="co">#&gt;  5 diagn… cor     use        single charact… upper-case… "is case de… bcf42b882…</span>
-<span class="co">#&gt;  6 error  cor     &lt;NA&gt;       &lt;NA&gt;            normal fun… "object 'cb… 4e21cddac…</span>
-<span class="co">#&gt;  7 diagn… cor     use        single charact… lower-case… "is case de… 4e21cddac…</span>
-<span class="co">#&gt;  8 diagn… cor     use        single charact… upper-case… "is case de… 4e21cddac…</span>
-<span class="co">#&gt;  9 error  cor     (return o… &lt;NA&gt;            error from… "object 'cb… 4e21cddac…</span>
-<span class="co">#&gt; 10 diagn… cov     use        single charact… upper-case… "is case de… 4e21cddac…</span>
-<span class="co">#&gt; 11 diagn… cov     use        single charact… upper-case… "is case de… 8dc19144c…</span>
-<span class="co">#&gt; 12 diagn… cov     use        single charact… upper-case… "is case de… 87d5da3d7…</span></code></pre></div>
+<span class="co">#&gt; # A tibble: 9 x 7</span>
+<span class="co">#&gt;   type   fn_name parameter parameter_type  operation   content       yaml_hash  </span>
+<span class="co">#&gt;   &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;      </span>
+<span class="co">#&gt; 1 diagn… var     x         generic vector  Convert ve… "Function [v… bcf42b882b…</span>
+<span class="co">#&gt; 2 diagn… var     y         generic vector  Convert ve… "Function [v… bcf42b882b…</span>
+<span class="co">#&gt; 3 diagn… cor     x         generic vector  Convert ve… "Function [c… bcf42b882b…</span>
+<span class="co">#&gt; 4 diagn… cor     y         generic vector  Convert ve… "Function [c… bcf42b882b…</span>
+<span class="co">#&gt; 5 diagn… cor     use       single charact… upper-case… "is case dep… bcf42b882b…</span>
+<span class="co">#&gt; 6 diagn… cor     use       single charact… upper-case… "is case dep… 4e21cddacf…</span>
+<span class="co">#&gt; 7 diagn… cov     use       single charact… upper-case… "is case dep… 4e21cddacf…</span>
+<span class="co">#&gt; 8 diagn… cov     use       single charact… upper-case… "is case dep… 8dc19144c4…</span>
+<span class="co">#&gt; 9 diagn… cov     use       single charact… upper-case… "is case dep… 87d5da3d7a…</span></code></pre></div>
 </div>
 <div id="prior-work" class="section level2">
 <h2 class="hasAnchor">
