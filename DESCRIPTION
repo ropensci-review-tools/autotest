@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.0.1.533
+Version: 0.0.1.535
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -24,10 +24,8 @@ Imports:
     yaml
 Suggests: 
     devtools,
-    ISLR,
     knitr,
     rmarkdown,
-    SmartEDA,
     testthat
 VignetteBuilder: 
     knitr

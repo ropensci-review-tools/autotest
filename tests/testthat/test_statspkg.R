@@ -24,4 +24,30 @@ test_that("stats", {
     expect_is (exs, "list")
     expect_length (exs, 4)
     expect_true (all (names (exs) == "var"))
+
+
+    yaml <- exs [[1]]
+    expect_message (
+        x <- autotest (yaml)
+        )
+    expect_is (x, "data.frame")
+    expect_equal (ncol (x), 7)
+    expect_identical (names (x), c ("type",
+                                    "fn_name",
+                                    "parameter",
+                                    "parameter_type",
+                                    "operation",
+                                    "content",
+                                    "yaml_hash"))
+
+    f <- tempfile (fileext = ".yaml")
+    con <- file (f)
+    writeLines (yaml, con = con)
+    close (con)
+    expect_true (file.exists (f))
+
+    expect_silent (
+        x2 <- autotest (filename = f, quiet = TRUE)
+        )
+    expect_identical (x, x2)
 })
