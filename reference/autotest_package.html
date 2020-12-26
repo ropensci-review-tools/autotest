@@ -73,7 +73,7 @@ and submitting each to the autotest function." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.541</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.543</span>
       </span>
     </div>
 
@@ -113,7 +113,13 @@ and submitting each to the autotest function." />
 and submitting each to the <a href='autotest.html'>autotest</a> function.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>autotest_package</span><span class='op'>(</span><span class='va'>package</span>, exclude <span class='op'>=</span> <span class='cn'>NULL</span>, test <span class='op'>=</span> <span class='cn'>FALSE</span>, quiet <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>autotest_package</span><span class='op'>(</span>
+  <span class='va'>package</span>,
+  functions <span class='op'>=</span> <span class='cn'>NULL</span>,
+  exclude <span class='op'>=</span> <span class='cn'>NULL</span>,
+  test <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  quiet <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -123,9 +129,14 @@ and submitting each to the <a href='autotest.html'>autotest</a> function.</p>
       <td><p>Name of package to be 'autotested'</p></td>
     </tr>
     <tr>
+      <th>functions</th>
+      <td><p>Optional character vector containing names of functions of
+nominated package to be included in 'autotesting'.</p></td>
+    </tr>
+    <tr>
       <th>exclude</th>
-      <td><p>Character vector containing names of any functions to be
-excluded from 'autotesting'</p></td>
+      <td><p>Optional character vector containing names of any functions of
+nominated package to be excluded from 'autotesting'.</p></td>
     </tr>
     <tr>
       <th>test</th>
