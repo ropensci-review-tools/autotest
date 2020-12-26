@@ -4,13 +4,22 @@
 \alias{autotest_package}
 \title{autotest_package}
 \usage{
-autotest_package(package, exclude = NULL, test = FALSE, quiet = FALSE)
+autotest_package(
+  package,
+  functions = NULL,
+  exclude = NULL,
+  test = FALSE,
+  quiet = FALSE
+)
 }
 \arguments{
 \item{package}{Name of package to be 'autotested'}
 
-\item{exclude}{Character vector containing names of any functions to be
-excluded from 'autotesting'}
+\item{functions}{Optional character vector containing names of functions of
+nominated package to be included in 'autotesting'.}
+
+\item{exclude}{Optional character vector containing names of any functions of
+nominated package to be excluded from 'autotesting'.}
 
 \item{test}{If \code{FALSE}, return only descriptions of tests which would be run
 with \code{test = TRUE}, without actually running them.}

@@ -135,14 +135,19 @@ autotest_single_yaml <- function (yaml = NULL,
 #' and submitting each to the \link{autotest} function.
 #'
 #' @param package Name of package to be 'autotested'
-#' @param exclude Character vector containing names of any functions to be
-#' excluded from 'autotesting'
+#' @param functions Optional character vector containing names of functions of
+#' nominated package to be included in 'autotesting'.
+#' @param exclude Optional character vector containing names of any functions of
+#' nominated package to be excluded from 'autotesting'.
 #' @inheritParams autotest
 #' @export
 autotest_package <- function (package,
+                              functions = NULL,
                               exclude = NULL,
                               test = FALSE,
                               quiet = FALSE) {
+
+    exclude <- exclude_functions (package, functions, exclude)
 
     exs <- examples_to_yaml (package, exclude = exclude, quiet = quiet)
 
