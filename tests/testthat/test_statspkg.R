@@ -1,6 +1,6 @@
 context("stats-package")
 
-test_that("stats", {
+test_that("get-examples", {
 
     package <- "stats"
     functions <- "var"
@@ -19,26 +19,55 @@ test_that("stats", {
     expect_true (length (exs [[1]]) > 1)
     expect_length (exs [[1]], 6)
     expect_length (exs [[1]] [[6]], 4)
+})
 
+test_that ("examples_to_yaml", {
+
+    package <- "stats"
+    functions <- "var"
+    exclude <- NULL
+
+    exclude <- exclude_functions (package, functions, exclude)
     exs <- examples_to_yaml (package, exclude = exclude)
     expect_is (exs, "list")
     expect_length (exs, 4)
     expect_true (all (names (exs) == "var"))
+})
 
+test_that ("autotest", {
+
+    package <- "stats"
+    functions <- "var"
+    exclude <- NULL
+
+    exclude <- exclude_functions (package, functions, exclude)
+    exs <- examples_to_yaml (package, exclude = exclude)
 
     yaml <- exs [[1]]
-    expect_message (
-        x <- autotest (yaml)
+    expect_silent (
+        x0 <- autotest (yaml, quiet = TRUE)
         )
-    expect_is (x, "data.frame")
-    expect_equal (ncol (x), 7)
-    expect_identical (names (x), c ("type",
-                                    "fn_name",
-                                    "parameter",
-                                    "parameter_type",
-                                    "operation",
-                                    "content",
-                                    "yaml_hash"))
+    expect_message (
+        x_t <- autotest (yaml, test = TRUE)
+        )
+    expect_identical (x0, x_t)
+
+    expect_message (
+        x_f <- autotest (yaml, test = FALSE)
+        )
+    expect_true (nrow (x_f) > nrow (x_t))
+
+    for (x in list (x_f, x_f)) {
+        expect_is (x, "data.frame")
+        expect_equal (ncol (x), 7)
+        expect_identical (names (x), c ("type",
+                                        "fn_name",
+                                        "parameter",
+                                        "parameter_type",
+                                        "operation",
+                                        "content",
+                                        "yaml_hash"))
+    }
 
     f <- tempfile (fileext = ".yaml")
     con <- file (f)
@@ -46,8 +75,12 @@ test_that("stats", {
     close (con)
     expect_true (file.exists (f))
 
-    expect_silent (
-        x2 <- autotest (filename = f, quiet = TRUE)
+    expect_message (
+        x_f_file <- autotest (filename = f, test = FALSE)
         )
-    expect_identical (x, x2)
+    expect_message (
+        x_t_file <- autotest (filename = f, test = TRUE)
+        )
+    expect_identical (x_f, x_f_file)
+    expect_identical (x_t, x_t_file)
 })
