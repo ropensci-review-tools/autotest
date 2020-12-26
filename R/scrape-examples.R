@@ -509,14 +509,19 @@ rm_not_parseable <- function (x) {
     options (device = NULL) # suppress plot output
 
     this_env <- new.env ()
-    parseable <- vapply (x, function (i) {
-                             i <- gsub ("\\%", "%", i, fixed = TRUE)
-                             p <- tryCatch (
-                                        eval (parse (text = i),
-                                              envir = this_env),
-                                        error = function (err) NULL)
-                             return (!is.null (p))
-                           }, logical (1), USE.NAMES = FALSE)
+
+    junk <- utils::capture.output (
+                suppressMessages (
+                suppressWarnings (
+        parseable <- vapply (x, function (i) {
+                                 i <- gsub ("\\%", "%", i, fixed = TRUE)
+                                 p <- tryCatch (
+                                            eval (parse (text = i),
+                                                  envir = this_env),
+                                            error = function (err) NULL)
+                                 return (!is.null (p))
+                               }, logical (1), USE.NAMES = FALSE)
+    ))) # end capture.output and suppressMessages/Warnings
 
     options (device = dev)
 
