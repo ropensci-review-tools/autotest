@@ -505,6 +505,9 @@ rm_not_parseable <- function (x) {
         x [index] <- gsub ("^\\s?try\\s?\\(|\\)$", "", x [index])
     }
 
+    dev <- options()$"device"
+    options (device = NULL) # suppress plot output
+
     this_env <- new.env ()
     parseable <- vapply (x, function (i) {
                              i <- gsub ("\\%", "%", i, fixed = TRUE)
@@ -514,6 +517,9 @@ rm_not_parseable <- function (x) {
                                         error = function (err) NULL)
                              return (!is.null (p))
                            }, logical (1), USE.NAMES = FALSE)
+
+    options (device = dev)
+
     return (x [which (parseable)])
 }
 
