@@ -160,7 +160,7 @@ get_non_formula_val <- function (this_val, e, package, p_vals, p) {
         can_get <- !is.null (tryCatch (get (temp_val),
                                        error = function (e) NULL))
         can_eval <- !is.null (tryCatch (eval (parse (text = this_val),
-                                              env = e),
+                                              envir = e),
                                         error = function (err) NULL))
         if (can_get) {
             this_val <- get (temp_val, envir = e)
