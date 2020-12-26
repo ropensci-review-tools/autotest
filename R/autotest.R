@@ -170,6 +170,7 @@ autotest_package <- function (package,
     res <- res [which (!duplicated (res)), ]
 
     no_examples <- fns_without_examples (package)
+    no_examples <- no_examples [no_examples %in% unique (res$fn_name)]
     if (length (no_examples) > 0) {
         cnt <- "This function has no documented example"
         for (i in no_examples) {
