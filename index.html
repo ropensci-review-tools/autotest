@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.539</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.541</span>
       </span>
     </div>
 
@@ -93,7 +93,7 @@
 <div id="how-does-it-work-part-1" class="section level2">
 <h2 class="hasAnchor">
 <a href="#how-does-it-work-part-1" class="anchor"></a>How Does It Work? (Part 1)</h2>
-<p>The <code><a href="reference/autotest_package.html">autotest_package()</a></code> function returns the results of implementing all tests on a given package. These results only indicate any divergence from expected behaviour, whether unexpected errors, warnings, or other behaviour. An ideal result is that <code><a href="reference/autotest_package.html">autotest_package()</a></code> returns nothing (strictly, <code>NULL</code>), indicating that all test passed successfully. To see which tests were performed, or to see which tests would be performed prior to actually running them, the function has a <code>test</code> parameter with a default value of <code>TRUE</code>. Setting this to <code>FALSE</code> returns a (generally much larger) <code>data.frame</code> of all tests which would be conducted on the nominated package.</p>
+<p>The <code><a href="reference/autotest_package.html">autotest_package()</a></code> function returns the results of implementing all tests on a given package. These results only indicate any divergence from expected behaviour, whether unexpected errors, warnings, or other behaviour. An ideal result is that <code><a href="reference/autotest_package.html">autotest_package()</a></code> returns nothing (strictly, <code>NULL</code>), indicating that all tests passed successfully. To see which tests were performed, or to see which tests would be performed prior to actually running them, the function has a <code>test</code> parameter with a default value of <code>TRUE</code>. Setting this to <code>FALSE</code> returns a (generally much larger) <code>data.frame</code> of all tests which would be conducted on the nominated package.</p>
 <p>Tests can also be selectively specified through an <code>exclude</code> parameter, used to nominate functions to exclude from tests. The following code illustrates, starting by excluding all functions except one.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ls.html">ls</a></span> <span class="op">(</span><span class="st">"package:stats"</span><span class="op">)</span>
