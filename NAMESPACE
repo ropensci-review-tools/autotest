@@ -2,8 +2,8 @@
 
 S3method(summary,autotest_package)
 export(at_yaml_template)
-export(autotest)
 export(autotest_package)
+export(autotest_yaml)
 export(examples_to_yaml)
 importFrom(magrittr,"%>%")
 importFrom(memoise,memoise)

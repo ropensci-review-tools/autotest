@@ -1,4 +1,4 @@
-#' autotest
+#' autotest_yaml
 #'
 #' Automatically test inputs to functions specified in a 'yaml' template.
 #'
@@ -17,13 +17,13 @@
 #' @examples
 #' \dontrun{
 #' exs <- examples_to_yaml (package = "stats", functions = "reshape")
-#' res <- autotest (yaml = exs)
+#' res <- autotest_yaml (yaml = exs)
 #' }
 #' @export
-autotest <- function (yaml = NULL,
-                      filename = NULL,
-                      test = TRUE,
-                      quiet = FALSE) {
+autotest_yaml <- function (yaml = NULL,
+                           filename = NULL,
+                           test = TRUE,
+                           quiet = FALSE) {
 
     if (is.null (yaml) & is.null (filename)) {
         stop ("either yaml or filename must be given")
@@ -62,7 +62,7 @@ autotest <- function (yaml = NULL,
 
 #' Test one 'yaml' input file
 #'
-#' @inheritParams autotest
+#' @inheritParams autotest_yaml
 #' @noRd
 autotest_single_yaml <- function (yaml = NULL,
                                   filename = NULL,
@@ -132,14 +132,14 @@ autotest_single_yaml <- function (yaml = NULL,
 #' autotest_package
 #'
 #' Automatically test an entire package by converting examples to `yaml` format
-#' and submitting each to the \link{autotest} function.
+#' and submitting each to the \link{autotest_yaml} function.
 #'
 #' @param package Name of package to be 'autotested'
 #' @param functions Optional character vector containing names of functions of
 #' nominated package to be included in 'autotesting'.
 #' @param exclude Optional character vector containing names of any functions of
 #' nominated package to be excluded from 'autotesting'.
-#' @inheritParams autotest
+#' @inheritParams autotest_yaml
 #' @export
 autotest_package <- function (package,
                               functions = NULL,
@@ -161,7 +161,7 @@ autotest_package <- function (package,
         yaml <- exs [[i]]
         attr (yaml, "package") <- package
         fn_name <- fn_from_yaml (yaml)
-        res <- rbind (res, autotest (yaml = yaml, test = test, quiet = TRUE))
+        res <- rbind (res, autotest_yaml (yaml = yaml, test = test, quiet = TRUE))
         if (!quiet)
             message (cli::col_green (cli::symbol$tick, " [",
                                      i, " / ", length (exs),

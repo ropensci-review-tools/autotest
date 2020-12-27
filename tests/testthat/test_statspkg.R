@@ -45,15 +45,15 @@ test_that ("autotest", {
 
     yaml <- exs [[1]]
     expect_silent (
-        x0 <- autotest (yaml, quiet = TRUE)
+        x0 <- autotest_yaml (yaml, quiet = TRUE)
         )
     expect_message (
-        x_t <- autotest (yaml, test = TRUE)
+        x_t <- autotest_yaml (yaml, test = TRUE)
         )
     expect_identical (x0, x_t)
 
     expect_message (
-        x_f <- autotest (yaml, test = FALSE)
+        x_f <- autotest_yaml (yaml, test = FALSE)
         )
     expect_true (nrow (x_f) > nrow (x_t))
 
@@ -76,10 +76,10 @@ test_that ("autotest", {
     expect_true (file.exists (f))
 
     expect_message (
-        x_f_file <- autotest (filename = f, test = FALSE)
+        x_f_file <- autotest_yaml (filename = f, test = FALSE)
         )
     expect_message (
-        x_t_file <- autotest (filename = f, test = TRUE)
+        x_t_file <- autotest_yaml (filename = f, test = TRUE)
         )
     expect_identical (x_f, x_f_file)
     expect_identical (x_t, x_t_file)

@@ -28,5 +28,5 @@ with \code{test = TRUE}, without actually running them.}
 }
 \description{
 Automatically test an entire package by converting examples to \code{yaml} format
-and submitting each to the \link{autotest} function.
+and submitting each to the \link{autotest_yaml} function.
 }
