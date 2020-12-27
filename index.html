@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.544</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.549</span>
       </span>
     </div>
 
@@ -94,11 +94,9 @@
 <h2 class="hasAnchor">
 <a href="#how-does-it-work-part-1" class="anchor"></a>How Does It Work? (Part 1)</h2>
 <p>The <code><a href="reference/autotest_package.html">autotest_package()</a></code> function returns the results of implementing all tests on a given package. These results only indicate any divergence from expected behaviour, whether unexpected errors, warnings, or other behaviour. An ideal result is that <code><a href="reference/autotest_package.html">autotest_package()</a></code> returns nothing (strictly, <code>NULL</code>), indicating that all tests passed successfully. To see which tests were performed, or to see which tests would be performed prior to actually running them, the function has a <code>test</code> parameter with a default value of <code>TRUE</code>. Setting this to <code>FALSE</code> returns a (generally much larger) <code>data.frame</code> of all tests which would be conducted on the nominated package.</p>
-<p>Tests can also be selectively specified through an <code>exclude</code> parameter, used to nominate functions to exclude from tests. The following code illustrates, starting by excluding all functions except one.</p>
+<p>Tests can also be selectively specified through the parameters <code>functions</code>, used to nominate functions to include in tests, or <code>exclude</code>, used to nominate functions to exclude from tests. The following code illustrates.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ls.html">ls</a></span> <span class="op">(</span><span class="st">"package:stats"</span><span class="op">)</span>
-<span class="va">exclude</span> <span class="op">&lt;-</span> <span class="va">fns</span> <span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span> <span class="op">(</span><span class="op">!</span><span class="va">fns</span> <span class="op">==</span> <span class="st">"var"</span><span class="op">)</span><span class="op">]</span>
-<span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>, exclude <span class="op">=</span> <span class="va">exclude</span>, test <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>, functions <span class="op">=</span> <span class="st">"var"</span>, test <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">#&gt; </span></span>
 <span id="cb5-2"><a href="#cb5-2"></a><span class="co">#&gt; ── autotesting stats ──</span></span>
 <span id="cb5-3"><a href="#cb5-3"></a><span class="co">#&gt; </span></span>
@@ -107,44 +105,41 @@
 <span id="cb5-6"><a href="#cb5-6"></a><span class="co">#&gt; ✔ [3 / 4]: cov</span></span>
 <span id="cb5-7"><a href="#cb5-7"></a><span class="co">#&gt; ✔ [4 / 4]: cov</span></span>
 <span id="cb5-8"><a href="#cb5-8"></a></span>
-<span id="cb5-9"><a href="#cb5-9"></a></span>
-<span id="cb5-10"><a href="#cb5-10"></a><span class="co">#&gt; # A tibble: 130 x 7</span></span>
-<span id="cb5-11"><a href="#cb5-11"></a><span class="co">#&gt;    type  fn_name parameter  parameter_type operation        content yaml_hash   </span></span>
-<span id="cb5-12"><a href="#cb5-12"></a><span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;       </span></span>
-<span id="cb5-13"><a href="#cb5-13"></a><span class="co">#&gt;  1 dummy var     x          integer vector Integer vector … &lt;NA&gt;    bcf42b882bb…</span></span>
-<span id="cb5-14"><a href="#cb5-14"></a><span class="co">#&gt;  2 dummy var     x          generic vector Custom class de… &lt;NA&gt;    bcf42b882bb…</span></span>
-<span id="cb5-15"><a href="#cb5-15"></a><span class="co">#&gt;  3 dummy var     x          generic vector Convert vector … &lt;NA&gt;    bcf42b882bb…</span></span>
-<span id="cb5-16"><a href="#cb5-16"></a><span class="co">#&gt;  4 dummy var     na.rm      single logical Negate default … &lt;NA&gt;    bcf42b882bb…</span></span>
-<span id="cb5-17"><a href="#cb5-17"></a><span class="co">#&gt;  5 dummy var     na.rm      single logical Substitute inte… &lt;NA&gt;    bcf42b882bb…</span></span>
-<span id="cb5-18"><a href="#cb5-18"></a><span class="co">#&gt;  6 dummy var     na.rm      single logical Substitute char… &lt;NA&gt;    bcf42b882bb…</span></span>
-<span id="cb5-19"><a href="#cb5-19"></a><span class="co">#&gt;  7 dummy var     na.rm      single logical Length 2 vector… &lt;NA&gt;    bcf42b882bb…</span></span>
-<span id="cb5-20"><a href="#cb5-20"></a><span class="co">#&gt;  8 dummy var     (return o… &lt;NA&gt;           Check that desc… &lt;NA&gt;    bcf42b882bb…</span></span>
-<span id="cb5-21"><a href="#cb5-21"></a><span class="co">#&gt;  9 dummy var     (return o… &lt;NA&gt;           Check whether d… &lt;NA&gt;    bcf42b882bb…</span></span>
-<span id="cb5-22"><a href="#cb5-22"></a><span class="co">#&gt; 10 dummy var     (return o… &lt;NA&gt;           Compare class o… &lt;NA&gt;    bcf42b882bb…</span></span>
-<span id="cb5-23"><a href="#cb5-23"></a><span class="co">#&gt; # … with 120 more rows</span></span></code></pre></div>
+<span id="cb5-9"><a href="#cb5-9"></a><span class="co">#&gt; # A tibble: 94 x 7</span></span>
+<span id="cb5-10"><a href="#cb5-10"></a><span class="co">#&gt;    type  fn_name parameter  parameter_type operation        content yaml_hash   </span></span>
+<span id="cb5-11"><a href="#cb5-11"></a><span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;       </span></span>
+<span id="cb5-12"><a href="#cb5-12"></a><span class="co">#&gt;  1 dummy var     x          integer vector Integer vector … &lt;NA&gt;    bcf42b882bb…</span></span>
+<span id="cb5-13"><a href="#cb5-13"></a><span class="co">#&gt;  2 dummy var     x          generic vector Custom class de… &lt;NA&gt;    bcf42b882bb…</span></span>
+<span id="cb5-14"><a href="#cb5-14"></a><span class="co">#&gt;  3 dummy var     x          generic vector Convert vector … &lt;NA&gt;    bcf42b882bb…</span></span>
+<span id="cb5-15"><a href="#cb5-15"></a><span class="co">#&gt;  4 dummy var     na.rm      single logical Negate default … &lt;NA&gt;    bcf42b882bb…</span></span>
+<span id="cb5-16"><a href="#cb5-16"></a><span class="co">#&gt;  5 dummy var     na.rm      single logical Substitute inte… &lt;NA&gt;    bcf42b882bb…</span></span>
+<span id="cb5-17"><a href="#cb5-17"></a><span class="co">#&gt;  6 dummy var     na.rm      single logical Substitute char… &lt;NA&gt;    bcf42b882bb…</span></span>
+<span id="cb5-18"><a href="#cb5-18"></a><span class="co">#&gt;  7 dummy var     na.rm      single logical Length 2 vector… &lt;NA&gt;    bcf42b882bb…</span></span>
+<span id="cb5-19"><a href="#cb5-19"></a><span class="co">#&gt;  8 dummy var     (return o… &lt;NA&gt;           Check that desc… &lt;NA&gt;    bcf42b882bb…</span></span>
+<span id="cb5-20"><a href="#cb5-20"></a><span class="co">#&gt;  9 dummy var     (return o… &lt;NA&gt;           Check whether d… &lt;NA&gt;    bcf42b882bb…</span></span>
+<span id="cb5-21"><a href="#cb5-21"></a><span class="co">#&gt; 10 dummy var     (return o… &lt;NA&gt;           Compare class o… &lt;NA&gt;    bcf42b882bb…</span></span>
+<span id="cb5-22"><a href="#cb5-22"></a><span class="co">#&gt; # … with 84 more rows</span></span></code></pre></div>
 <p>That result details the 130 tests which would be applied to the <code>var</code> function from the <code>stats</code> package. These 130 tests yield the following results:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>, exclude <span class="op">=</span> <span class="va">exclude</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>, functions <span class="op">=</span> <span class="st">"var"</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; ── autotesting stats ──</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ✔ [1 / 4]: var</span>
 <span class="co">#&gt; ✔ [2 / 4]: cor</span>
 <span class="co">#&gt; ✔ [3 / 4]: cov</span>
 <span class="co">#&gt; ✔ [4 / 4]: cov</span>
-<span class="co">#&gt; # A tibble: 45 x 7</span>
-<span class="co">#&gt;    type   fn_name parameter parameter_type  operation   content       yaml_hash </span>
-<span class="co">#&gt;    &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;     </span>
-<span class="co">#&gt;  1 diagn… var     x         generic vector  Convert ve… "Function [v… bcf42b882…</span>
-<span class="co">#&gt;  2 diagn… var     y         generic vector  Convert ve… "Function [v… bcf42b882…</span>
-<span class="co">#&gt;  3 diagn… cor     x         generic vector  Convert ve… "Function [c… bcf42b882…</span>
-<span class="co">#&gt;  4 diagn… cor     y         generic vector  Convert ve… "Function [c… bcf42b882…</span>
-<span class="co">#&gt;  5 diagn… cor     use       single charact… upper-case… "is case dep… bcf42b882…</span>
-<span class="co">#&gt;  6 diagn… cor     use       single charact… upper-case… "is case dep… 4e21cddac…</span>
-<span class="co">#&gt;  7 diagn… cov     use       single charact… upper-case… "is case dep… 4e21cddac…</span>
-<span class="co">#&gt;  8 diagn… cov     use       single charact… upper-case… "is case dep… 8dc19144c…</span>
-<span class="co">#&gt;  9 diagn… cov     use       single charact… upper-case… "is case dep… 87d5da3d7…</span>
-<span class="co">#&gt; 10 warni… anova   &lt;NA&gt;      &lt;NA&gt;            &lt;see conte… "This functi… &lt;NA&gt;      </span>
-<span class="co">#&gt; # … with 35 more rows</span></code></pre></div>
+<span class="co">#&gt; # A tibble: 9 x 7</span>
+<span class="co">#&gt;   type   fn_name parameter parameter_type  operation   content       yaml_hash  </span>
+<span class="co">#&gt;   &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;      </span>
+<span class="co">#&gt; 1 diagn… var     x         generic vector  Convert ve… "Function [v… bcf42b882b…</span>
+<span class="co">#&gt; 2 diagn… var     y         generic vector  Convert ve… "Function [v… bcf42b882b…</span>
+<span class="co">#&gt; 3 diagn… cor     x         generic vector  Convert ve… "Function [c… bcf42b882b…</span>
+<span class="co">#&gt; 4 diagn… cor     y         generic vector  Convert ve… "Function [c… bcf42b882b…</span>
+<span class="co">#&gt; 5 diagn… cor     use       single charact… upper-case… "is case dep… bcf42b882b…</span>
+<span class="co">#&gt; 6 diagn… cor     use       single charact… upper-case… "is case dep… 4e21cddacf…</span>
+<span class="co">#&gt; 7 diagn… cov     use       single charact… upper-case… "is case dep… 4e21cddacf…</span>
+<span class="co">#&gt; 8 diagn… cov     use       single charact… upper-case… "is case dep… 8dc19144c4…</span>
+<span class="co">#&gt; 9 diagn… cov     use       single charact… upper-case… "is case dep… 87d5da3d7a…</span></code></pre></div>
 </div>
 <div id="how-does-it-work-part-2" class="section level2">
 <h2 class="hasAnchor">
@@ -182,9 +177,9 @@
 <span class="co">#&gt; attr(,"package")</span>
 <span class="co">#&gt; [1] "stats"</span></code></pre></div>
 <p>That <code>yaml</code> contains the values of all parameters used in one function call within the documented example code. Only explicitly specified values are declared, with all other parameters assuming default values. All parameters of a function are then mutated, whether explicitly specified or default.</p>
-<p>The “preprocess” lines of the <code>yaml</code> include any lines which assign values to named objects, and which may be used in any subsequent line of a given <code>yaml</code>. That <code>yaml</code> can also be used to generate lists of tests (with <code>test = FALSE</code>), or results of applying those tests (with <code>test = TRUE</code>), using the function, <code><a href="reference/autotest.html">autotest()</a></code>:</p>
+<p>The “preprocess” lines of the <code>yaml</code> include any lines which assign values to named objects, and which may be used in any subsequent line of a given <code>yaml</code>. That <code>yaml</code> can also be used to generate lists of tests (with <code>test = FALSE</code>), or results of applying those tests (with <code>test = TRUE</code>), using the function, <code><a href="reference/autotest_yaml.html">autotest_yaml()</a></code>:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/autotest.html">autotest</a></span> <span class="op">(</span>yaml <span class="op">=</span> <span class="va">yaml</span>, test <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="reference/autotest_yaml.html">autotest_yaml</a></span> <span class="op">(</span>yaml <span class="op">=</span> <span class="va">yaml</span>, test <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="co">#&gt; ✔ var</span>
 <span class="co">#&gt; ✔ var</span>
 <span class="co">#&gt; ✔ cor</span>
@@ -208,7 +203,7 @@
 <span class="co">#&gt;  9 dummy var     (return o… &lt;NA&gt;           Check whether d… &lt;NA&gt;    bcf42b882bb…</span>
 <span class="co">#&gt; 10 dummy var     (return o… &lt;NA&gt;           Compare class o… &lt;NA&gt;    bcf42b882bb…</span>
 <span class="co">#&gt; # … with 84 more rows</span>
-<span class="fu"><a href="reference/autotest.html">autotest</a></span> <span class="op">(</span>yaml <span class="op">=</span> <span class="va">yaml</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="reference/autotest_yaml.html">autotest_yaml</a></span> <span class="op">(</span>yaml <span class="op">=</span> <span class="va">yaml</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; ✔ var</span>
 <span class="co">#&gt; ✔ var</span>
 <span class="co">#&gt; ✔ cor</span>
