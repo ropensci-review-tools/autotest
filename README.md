@@ -62,22 +62,22 @@ The `autotest_package()` function returns the results of implementing
 all tests on a given package. These results only indicate any divergence
 from expected behaviour, whether unexpected errors, warnings, or other
 behaviour. An ideal result is that `autotest_package()` returns nothing
-(strictly, `NULL`), indicating that all tests passed successfully. To see
-which tests were performed, or to see which tests would be performed
+(strictly, `NULL`), indicating that all tests passed successfully. To
+see which tests were performed, or to see which tests would be performed
 prior to actually running them, the function has a `test` parameter with
 a default value of `TRUE`. Setting this to `FALSE` returns a (generally
 much larger) `data.frame` of all tests which would be conducted on the
 nominated package.
 
-Tests can also be selectively specified through an `exclude` parameter,
-used to nominate functions to exclude from tests. The following code
-illustrates, starting by excluding all functions except one.
+Tests can also be selectively specified through the parameters
+`functions`, used to nominate functions to include in tests, or
+`exclude`, used to nominate functions to exclude from tests. The
+following code illustrates.
 
 ``` r
-fns <- ls ("package:stats")
-exclude <- fns [which (!fns == "var")]
-autotest_package (package = "stats", exclude = exclude, test = FALSE)
+autotest_package (package = "stats", functions = "var", test = FALSE)
 ```
+
 
     #> 
     #> ── autotesting stats ──
@@ -87,8 +87,7 @@ autotest_package (package = "stats", exclude = exclude, test = FALSE)
     #> ✔ [3 / 4]: cov
     #> ✔ [4 / 4]: cov
 
-
-    #> # A tibble: 130 x 7
+    #> # A tibble: 94 x 7
     #>    type  fn_name parameter  parameter_type operation        content yaml_hash   
     #>    <chr> <chr>   <chr>      <chr>          <chr>            <chr>   <chr>       
     #>  1 dummy var     x          integer vector Integer vector … <NA>    bcf42b882bb…
@@ -101,34 +100,32 @@ autotest_package (package = "stats", exclude = exclude, test = FALSE)
     #>  8 dummy var     (return o… <NA>           Check that desc… <NA>    bcf42b882bb…
     #>  9 dummy var     (return o… <NA>           Check whether d… <NA>    bcf42b882bb…
     #> 10 dummy var     (return o… <NA>           Compare class o… <NA>    bcf42b882bb…
-    #> # … with 120 more rows
+    #> # … with 84 more rows
 
 That result details the 130 tests which would be applied to the `var`
 function from the `stats` package. These 130 tests yield the following
 results:
 
 ``` r
-autotest_package (package = "stats", exclude = exclude, test = TRUE)
+autotest_package (package = "stats", functions = "var", test = TRUE)
 #> ── autotesting stats ──
 #> 
 #> ✔ [1 / 4]: var
 #> ✔ [2 / 4]: cor
 #> ✔ [3 / 4]: cov
 #> ✔ [4 / 4]: cov
-#> # A tibble: 45 x 7
-#>    type   fn_name parameter parameter_type  operation   content       yaml_hash 
-#>    <chr>  <chr>   <chr>     <chr>           <chr>       <chr>         <chr>     
-#>  1 diagn… var     x         generic vector  Convert ve… "Function [v… bcf42b882…
-#>  2 diagn… var     y         generic vector  Convert ve… "Function [v… bcf42b882…
-#>  3 diagn… cor     x         generic vector  Convert ve… "Function [c… bcf42b882…
-#>  4 diagn… cor     y         generic vector  Convert ve… "Function [c… bcf42b882…
-#>  5 diagn… cor     use       single charact… upper-case… "is case dep… bcf42b882…
-#>  6 diagn… cor     use       single charact… upper-case… "is case dep… 4e21cddac…
-#>  7 diagn… cov     use       single charact… upper-case… "is case dep… 4e21cddac…
-#>  8 diagn… cov     use       single charact… upper-case… "is case dep… 8dc19144c…
-#>  9 diagn… cov     use       single charact… upper-case… "is case dep… 87d5da3d7…
-#> 10 warni… anova   <NA>      <NA>            <see conte… "This functi… <NA>      
-#> # … with 35 more rows
+#> # A tibble: 9 x 7
+#>   type   fn_name parameter parameter_type  operation   content       yaml_hash  
+#>   <chr>  <chr>   <chr>     <chr>           <chr>       <chr>         <chr>      
+#> 1 diagn… var     x         generic vector  Convert ve… "Function [v… bcf42b882b…
+#> 2 diagn… var     y         generic vector  Convert ve… "Function [v… bcf42b882b…
+#> 3 diagn… cor     x         generic vector  Convert ve… "Function [c… bcf42b882b…
+#> 4 diagn… cor     y         generic vector  Convert ve… "Function [c… bcf42b882b…
+#> 5 diagn… cor     use       single charact… upper-case… "is case dep… bcf42b882b…
+#> 6 diagn… cor     use       single charact… upper-case… "is case dep… 4e21cddacf…
+#> 7 diagn… cov     use       single charact… upper-case… "is case dep… 4e21cddacf…
+#> 8 diagn… cov     use       single charact… upper-case… "is case dep… 8dc19144c4…
+#> 9 diagn… cov     use       single charact… upper-case… "is case dep… 87d5da3d7a…
 ```
 
 How Does It Work (Part 2)

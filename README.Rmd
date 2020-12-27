@@ -87,21 +87,19 @@ them, the function has a `test` parameter with a default value of `TRUE`.
 Setting this to `FALSE` returns a (generally much larger) `data.frame` of all
 tests which would be conducted on the nominated package.
 
-Tests can also be selectively specified through an `exclude` parameter, used to
-nominate functions to exclude from tests. The following code illustrates,
-starting by excluding all functions except one.
+Tests can also be selectively specified through the parameters `functions`,
+used to nominate functions to include in tests, or `exclude`, used to nominate
+functions to exclude from tests. The following code illustrates.
 
 ```{r stats-var1}
-fns <- ls ("package:stats")
-exclude <- fns [which (!fns == "var")]
-autotest_package (package = "stats", exclude = exclude, test = FALSE)
+autotest_package (package = "stats", functions = "var", test = FALSE)
 ```
 
 That result details the 130 tests which would be applied to the `var` function
 from the `stats` package. These 130 tests yield the following results:
 
 ```{r stats-var-test}
-autotest_package (package = "stats", exclude = exclude, test = TRUE)
+autotest_package (package = "stats", functions = "var", test = TRUE)
 ```
 
 ## How Does It Work (Part 2)
