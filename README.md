@@ -78,7 +78,6 @@ following code illustrates.
 autotest_package (package = "stats", functions = "var", test = FALSE)
 ```
 
-
     #> 
     #> ── autotesting stats ──
     #> 
@@ -180,10 +179,10 @@ The “preprocess” lines of the `yaml` include any lines which assign
 values to named objects, and which may be used in any subsequent line of
 a given `yaml`. That `yaml` can also be used to generate lists of tests
 (with `test = FALSE`), or results of applying those tests (with
-`test = TRUE`), using the function, `autotest()`:
+`test = TRUE`), using the function, `autotest_yaml()`:
 
 ``` r
-autotest (yaml = yaml, test = FALSE)
+autotest_yaml (yaml = yaml, test = FALSE)
 #> ✔ var
 #> ✔ var
 #> ✔ cor
@@ -207,7 +206,7 @@ autotest (yaml = yaml, test = FALSE)
 #>  9 dummy var     (return o… <NA>           Check whether d… <NA>    bcf42b882bb…
 #> 10 dummy var     (return o… <NA>           Compare class o… <NA>    bcf42b882bb…
 #> # … with 84 more rows
-autotest (yaml = yaml, test = TRUE)
+autotest_yaml (yaml = yaml, test = TRUE)
 #> ✔ var
 #> ✔ var
 #> ✔ cor

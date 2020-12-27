@@ -124,11 +124,11 @@ The "preprocess" lines of the `yaml` include any lines which assign values to
 named objects, and which may be used in any subsequent line of a given `yaml`.
 That `yaml` can also be used to generate lists of tests (with `test = FALSE`),
 or results of applying those tests (with `test = TRUE`), using the function,
-`autotest()`:
+`autotest_yaml()`:
 
 ```{r yaml-test}
-autotest (yaml = yaml, test = FALSE)
-autotest (yaml = yaml, test = TRUE)
+autotest_yaml (yaml = yaml, test = FALSE)
+autotest_yaml (yaml = yaml, test = TRUE)
 ```
 
 
