@@ -90,13 +90,13 @@ test_that ("autotest rnorm", {
     package <- "stats"
     functions <- "rnorm"
 
-    expect_message (
-        x0 <- autotest_package (package = package, functions = functions,
-                                test = FALSE)
-    )
-    expect_message (
-        x <- autotest_package (package = package, functions = functions,
-                               test = TRUE)
-    )
-    expect_true (nrow (x0) > nrow (x))
+    #expect_message (
+    #    x0 <- autotest_package (package = package, functions = functions,
+    #                            test = FALSE)
+    #)
+    #expect_message (
+    #    x <- autotest_package (package = package, functions = functions,
+    #                           test = TRUE)
+    #)
+    #expect_true (nrow (x0) > nrow (x))
 })
