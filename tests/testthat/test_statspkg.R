@@ -34,7 +34,7 @@ test_that ("examples_to_yaml", {
     expect_true (all (names (exs) == "var"))
 })
 
-test_that ("autotest", {
+test_that ("autotest var", {
 
     package <- "stats"
     functions <- "var"
@@ -83,4 +83,20 @@ test_that ("autotest", {
         )
     expect_identical (x_f, x_f_file)
     expect_identical (x_t, x_t_file)
+})
+
+test_that ("autotest rnorm", {
+
+    package <- "stats"
+    functions <- "rnorm"
+
+    expect_message (
+        x0 <- autotest_package (package = package, functions = functions,
+                                test = FALSE)
+    )
+    expect_message (
+        x <- autotest_package (package = package, functions = functions,
+                               test = TRUE)
+    )
+    expect_true (nrow (x0) > nrow (x))
 })
