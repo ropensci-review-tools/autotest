@@ -526,6 +526,19 @@ extract_primary_call_content <- function (x, aliases) {
                             xp$text [syms [length (syms)]] },
                             character (1))
 
+    # check whether any function calls are parts of other functions (like in
+    # ?Normal for erf), and replace nominated fn variable with 1.
+    is_fn <- regexpr ("function\\s?\\(", x)
+    fn_index <- which (is_fn > 0 & is_fn < br1)
+    if (length (fn_index) > 0) {
+        br2 <- gregexpr ("\\)", x)
+        br2 <- vapply (seq_along (br2), function (i)
+                       br2 [[i]] [which (br2 [[1]] > is_fn [1]) [1]],
+                       integer (1)) [fn_index]
+        pos1 <- is_fn [fn_index] + attr (is_fn, "match.length") [fn_index]
+        fn_pars <- strsplit (substring (x [fn_index], pos1, br2 - 1), ",")
+    }
+
     x <- substring (x, br1, nchar (x))
     # That reduces expressions down to everything after opening parenthesis of
     # first function call to one of the alias names. Now find the matching
@@ -543,7 +556,17 @@ extract_primary_call_content <- function (x, aliases) {
     # any failied getParseData from above is rejected here:
     x <- x [which (!names (x) == "")]
 
-    return (split_content_at_commas (x))
+    x <- split_content_at_commas (x)
+
+    # then replace any variables defined in functions with default values of 1
+    if (length (fn_index) > 0) {
+        x [fn_index] <- lapply (seq_along (fn_index), function (i) {
+                                    gsub (fn_pars [[i]],
+                                          "1",
+                                          x [[fn_index [i] ]])  })
+    }
+
+    return (x)
 }
 
 #' Split the content of primary calls at any primary dividing commas (if such
