@@ -53,9 +53,15 @@ fns_without_examples <- function (package) {
                                   aliases = get_Rd_metadata (i, "alias")))
     }
 
+    # tools:::.Rd_get_metadata returned a character vector up to R4.0, with each
+    # line as separate element; from R4.0 all lines are collapsed to a
+    # single-value string.
     index <- which (vapply (ex_alias, function (i) {
+                                if (length (i$ex) > 1)
+                                    i$ex <- paste0 (i$ex, collapse = "\n")
                                 res <- nchar (i$ex)
-                                if (length (res) == 0) res <- 0L
+                                if (length (res) == 0)
+                                    res <- 0L
                                 return (res)    },
                                 integer (1)) == 0)
     fns <- lapply (ex_alias [index], function (i) i$alias)
