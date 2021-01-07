@@ -77,7 +77,8 @@ single_doubled <- function (this_fn, params, i, val_type, test = TRUE) {
                           fn_name = this_fn,
                           parameter = names (params) [i],
                           parameter_type = paste0 ("single ", val_type),
-                          operation = operation)
+                          operation = operation,
+                          content = "Should trigger message, warning, or error")
 
     if (test) {
 
