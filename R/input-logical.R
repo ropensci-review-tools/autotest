@@ -32,7 +32,8 @@ negate_logical <- function (this_fn, params, i, test = TRUE) {
                               fn_name = this_fn,
                               parameter = names (params) [i],
                               parameter_type = "single logical",
-                              operation = operation)
+                              operation = operation,
+                              content = "(Function call should still work)")
 
 
     }
@@ -68,7 +69,7 @@ int_for_logical <- function (this_fn, params, i, test = TRUE) {
         else
             res$type <- "diagnostic"
     } else {
-        res$content <- NA_character_
+        res$content <- "(Function call should still work unless explicitly prevented)"
     }
 
     return (res)
@@ -91,7 +92,7 @@ char_for_logical <- function (this_fn, params, i, test = TRUE) {
             res <- NULL
         }
     } else {
-        res$content <- NA_character_
+        res$content <- "Should trigger warning or error"
     }
 
     return (res)
