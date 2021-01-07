@@ -216,7 +216,8 @@ int_as_double <- function (this_fn, params, i,
                           fn_name = this_fn,
                           parameter = names (params) [i],
                           parameter_type = param_type,
-                          operation = operation)
+                          operation = operation,
+                          content = "(Should yield same result)")
 
     if (test) {
         f <- tempfile (fileext = ".txt")
