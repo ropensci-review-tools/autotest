@@ -49,7 +49,8 @@ vector_class_defs <- function (this_fn, params, classes, i, test = TRUE) {
                           fn_name = this_fn,
                           parameter = names (params) [i],
                           parameter_type = "generic vector",
-                          operation = operation)
+                          operation = operation,
+                          content = "(Should yield same result)")
 
     if (test) {
 
@@ -97,7 +98,8 @@ vector_as_list <- function (this_fn, params, i, test = TRUE) {
                           fn_name = this_fn,
                           parameter = names (params) [i],
                           parameter_type = "generic vector",
-                          operation = operation)
+                          operation = operation,
+                          content = "(Should yield same result)")
 
     if (test) {
 
