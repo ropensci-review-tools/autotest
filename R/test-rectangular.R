@@ -217,7 +217,7 @@ pass_rect_as_other <- function (fn, params, classes, i, this_env) {
         this_ret <- pass_one_rect_as_other (fn, params, i, other [o])
         res <- rbind (res, this_ret)
         if (docall (this_ret, fn, params)) {
-            
+
             junk <- utils::capture.output (
                 val <- suppressWarnings (
                             suppressMessages (
@@ -397,7 +397,8 @@ replace_rect_class_struct <- function (params, this_fn, i, test) {
                           fn_name = this_fn,
                           parameter = names (params) [i],
                           parameter_type = this_class,
-                          operation = operation)
+                          operation = operation,
+                          content = "(Should yield same result)")
 
     if (test) {
 
