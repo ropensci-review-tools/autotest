@@ -24,7 +24,8 @@ case_dependency <- function (params,
                           fn_name = this_fn,
                           parameter = names (params) [i],
                           parameter_type = "single character",
-                          operation = op)
+                          operation = op,
+                          content = "(Should yield same result)")
 
     if (test) {
 
@@ -51,7 +52,8 @@ chk_match_arg <- function (params, i, this_fn, test = TRUE) {
                           fn_name = this_fn,
                           parameter = names (params) [i],
                           parameter_type = "single character",
-                          operation = "random character string as parameter")
+                          operation = "random character string as parameter",
+                          content = "Should error")
 
     params [[i]] <- paste0 (sample (c (letters, LETTERS), size = 10), collapse = "")
 
