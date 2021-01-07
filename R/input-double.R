@@ -44,5 +44,6 @@ single_dbl_dummy_report <- function (this_fn, params, i) {
                    fn_name = this_fn,
                    parameter = names (params) [i],
                    parameter_type = "single numeric",
-                   operation = "Add trivial noise")
+                   operation = "Add trivial noise",
+                   content = "(Should yield same result)")
 }
