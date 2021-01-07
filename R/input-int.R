@@ -198,7 +198,8 @@ single_int_dummy_report <- function (this_fn, params, i) {
                    fn_name = this_fn,
                    parameter = names (params) [i],
                    parameter_type = "single integer",
-                   operation = "Ascertain integer range")
+                   operation = "Ascertain integer range",
+                   content = "Should accord with documented range if given, or not error otherwise")
 }
 
 int_as_double <- function (this_fn, params, i,
