@@ -100,12 +100,7 @@ autotest_single_yaml <- function (yaml = NULL,
 
         reports <- rbind (reports, autotest_single (test_obj))
 
-        reports <- rbind (reports,
-                          autotest_return (res$package,
-                                           params,
-                                           this_fn,
-                                           attr (yaml, "package"),
-                                           test))
+        reports <- rbind (reports, autotest_return (test_obj))
 
         if (!quiet)
             message (cli::col_green (cli::symbol$tick, " ", this_fn))

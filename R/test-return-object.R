@@ -2,40 +2,31 @@
 # Check (1) whether return values are documented at all; and (2) If so, whether
 # they describe the class or type of return object. The latter is currently only
 # crudely tested with a simple `grep([[Cc]lass|[Oo]bject)`.
-autotest_return <- function (pkg,
-                             params,
-                             this_fn,
-                             package = NULL,
-                             test = TRUE) {
+autotest_return <- function (x) {
 
-    if (test)
-        ret <- do_autotest_return (pkg, params, this_fn, package)
+    if (x$test)
+        ret <- do_autotest_return (x)
     else
-        ret <- dummy_autotest_return (pkg, params, this_fn, package)
+        ret <- dummy_autotest_return (x)
 
     return (ret)
 }
 
-do_autotest_return <- function (pkg, params, this_fn, package = NULL) {
-
-    # package is !NULL when passed as installed package location from
-    # autotest_package. This is used in `get_Rd_value`
-    if (is.null (package))
-        package <- pkg
+do_autotest_return <- function (x) {
 
     ret <- NULL
     f <- tempfile (fileext = ".txt")
 
-    if (any (params == "NULL")) {
-        params <- params [params != "NULL"]
+    if (any (x$params == "NULL")) {
+        x$params <- x$params [x$params != "NULL"]
     }
 
-    msgs <- catch_all_msgs (f, this_fn, params)
+    msgs <- catch_all_msgs (f, x$fn, x$params)
     ret <- add_msg_output (ret, msgs, types = "warning",
                            operation = "normal function call")
 
     o <- utils::capture.output (
-        retval <- tryCatch (do.call (this_fn, params),
+        retval <- tryCatch (do.call (x$fn, x$params),
                             warning = function (w) w,
                             error = function (e) e)
         )
@@ -43,7 +34,7 @@ do_autotest_return <- function (pkg, params, this_fn, package = NULL) {
     if (methods::is (retval, "error")) {
         ret <- rbind (ret,
                       report_object (type = "error",
-                                     fn_name = this_fn,
+                                     fn_name = x$fn,
                                      parameter = "(return object)",
                                      operation = "error from normal operation",
                                      content = retval$message))
@@ -51,19 +42,17 @@ do_autotest_return <- function (pkg, params, this_fn, package = NULL) {
     }
 
     if (!is.null (attr (retval, "class"))) {
-        #params <- m_get_param_lists (package)
-        #classes <- pkg_param_classes (package)
-        ret <- test_return_desc (package, this_fn, retval)
+        ret <- test_return_desc (x, retval)
     }
 
     return (ret)
 }
 
-test_return_desc <- function (package, this_fn, retval) {
+test_return_desc <- function (x, retval) {
 
-    aliases <- m_fns_to_topics (package = package)
-    rdname <- gsub ("\\.Rd$", "", aliases$name [aliases$alias == this_fn])
-    Rd_value <- get_Rd_value (package = package, fn_name = rdname) # nolint
+    aliases <- m_fns_to_topics (package = x$package)
+    rdname <- gsub ("\\.Rd$", "", aliases$name [aliases$alias == x$fn])
+    Rd_value <- get_Rd_value (package = x$package, fn_name = rdname) # nolint
 
     ret <- NULL
 
@@ -71,11 +60,11 @@ test_return_desc <- function (package, this_fn, retval) {
 
         operation <- "Check that description has return value"
         content <- paste0 ("Function [",
-                           this_fn,
+                           x$fn,
                            "] does not specify a return value.")
         ret <- rbind (ret,
                       report_object (type = "warning",
-                                     fn_name = this_fn,
+                                     fn_name = x$fn,
                                      parameter = "(return object)",
                                      operation = operation,
                                      content = content))
@@ -89,14 +78,14 @@ test_return_desc <- function (package, this_fn, retval) {
 
             operation <- "Check that description has return value"
             content <- paste0 ("Function [",
-                               this_fn,
+                               x$fn,
                                "] does not specify a return value, ",
                                "yet returns a value of class [",
                                paste0 (attr (retval, "class"), collapse = ", "),
                                "]")
             ret <- rbind (ret,
                           report_object (type = "diagnostic",
-                                         fn_name = this_fn,
+                                         fn_name = x$fn,
                                          parameter = "(return object)",
                                          operation = operation,
                                          content = content))
@@ -110,7 +99,7 @@ test_return_desc <- function (package, this_fn, retval) {
                 for (i in txt) {
                     ret <- rbind (ret,
                                   report_object (type = "diagnostic",
-                                                 fn_name = this_fn,
+                                                 fn_name = x$fn,
                                                  parameter = "(return object)",
                                                  operation = operation,
                                                  content = i))
@@ -122,10 +111,10 @@ test_return_desc <- function (package, this_fn, retval) {
     return (ret)
 }
 
-dummy_autotest_return <- function (pkg, params, this_fn, package) {
+dummy_autotest_return <- function (x) {
 
     r1 <- report_object (type = "dummy",
-                         fn_name = this_fn,
+                         fn_name = x$fn,
                          parameter = "(return object)",
                          operation = "Check that description has return value")
     r2 <- r3 <- r1
