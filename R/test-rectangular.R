@@ -18,26 +18,21 @@ autotest_rectangular <- function (params,
         if (names (params) [r] %in% names (classes))
             class_r <- classes [[match (names (params) [r], names (classes))]]
 
-        if (test) {
+        ret <- rbind (ret,
+                      test_rect_as_other (this_fn,
+                                          params,
+                                          class_r,
+                                          r,
+                                          this_env,
+                                          test))
 
-            ret <- rbind (ret,
-                          pass_rect_as_other (this_fn,
-                                              params,
-                                              class_r,
-                                              r,
-                                              this_env))
-            ret <- rbind (ret,
-                          compare_rect_outputs (this_fn, params, r, this_env))
-
-        } else {
-
-            ret <- rbind (ret,
-                          dummy_rect_as_other (this_fn, params, class_r, r))
-            ret <- rbind (ret,
-                          dummy_compare_rect_outputs (this_fn, params, class_r, r))
-        }
-
-
+        ret <- rbind (ret,
+                      test_compare_rect_outputs (this_fn,
+                                                 params,
+                                                 class_r,
+                                                 r,
+                                                 this_env,
+                                                 test))
 
         # Modify class definitions for rectangular inputs if not excluded by
         # yaml class definitions
@@ -56,6 +51,27 @@ autotest_rectangular <- function (params,
                                                      test))
         }
     }
+    return (ret)
+}
+
+test_rect_as_other <- function (fn, params, this_class, i, this_env, test) {
+
+    if (test)
+        ret <- pass_rect_as_other (fn, params, this_class, i, this_env)
+    else
+        ret <- dummy_rect_as_other (fn, params, this_class, i)
+
+    return (ret)
+}
+
+test_compare_rect_outputs <- function (fn, params, this_class, i,
+                                       this_env, test) {
+
+    if (test)
+        ret <- compare_rect_outputs (fn, params, i, this_env)
+    else
+        ret <- dummy_compare_rect_outputs (fn, params, this_class, i)
+
     return (ret)
 }
 
@@ -167,10 +183,10 @@ other_rect_classes <- function (classes = NULL, this_class = NULL) {
     return (other)
 }
 
-dummy_rect_as_other <- function (fn, params, classes, i) {
+dummy_rect_as_other <- function (fn, params, this_class, i) {
 
     par_type <- class (params [[i]]) [1]
-    other <- other_rect_classes (classes, par_type)
+    other <- other_rect_classes (this_class, par_type)
     other <- gsub ("^.*::", "", other)
 
     report_object (type = "dummy",
@@ -185,10 +201,10 @@ dummy_rect_as_other <- function (fn, params, classes, i) {
                    content = "check for error/warning messages")
 }
 
-dummy_compare_rect_outputs <- function (fn, params, classes, i) {
+dummy_compare_rect_outputs <- function (fn, params, this_class, i) {
 
     par_type <- class (params [[i]]) [1]
-    other <- other_rect_classes (classes, par_type)
+    other <- other_rect_classes (this_class, par_type)
     other <- gsub ("^.*::", "", other)
 
     operations <- paste0 ("Convert [",
@@ -212,9 +228,9 @@ dummy_compare_rect_outputs <- function (fn, params, classes, i) {
 #' Change class of params [[i]] to other rectangular classes and capture
 #' resultant return values in `this_env`
 #' @noRd
-pass_rect_as_other <- function (fn, params, classes, i, this_env) {
+pass_rect_as_other <- function (fn, params, this_class, i, this_env) {
 
-    other <- other_rect_classes (classes, class (params [[i]]))
+    other <- other_rect_classes (this_class, class (params [[i]]))
 
     res <- NULL
 
