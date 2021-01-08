@@ -9,30 +9,27 @@ autotest_rectangular <- function (params,
 
     classes <- classes [which (!is.na (classes))]
 
-    this_env <- new.env ()
-
     rect_index <- which (param_types == "tabular")
 
+    x <- structure (list (fn = this_fn,
+                          params = params,
+                          class = NULL,
+                          i = NULL,
+                          env = new.env (),
+                          test = test),
+                    class = "rect_test")
+
     for (r in rect_index) {
-        class_r <- NULL
+
+        x$i <- r
+
+        x$class <- NULL
         if (names (params) [r] %in% names (classes))
-            class_r <- classes [[match (names (params) [r], names (classes))]]
+            x$class <- classes [[match (names (params) [r], names (classes))]]
 
-        ret <- rbind (ret,
-                      test_rect_as_other (this_fn,
-                                          params,
-                                          class_r,
-                                          r,
-                                          this_env,
-                                          test))
+        ret <- rbind (ret, test_rect_as_other (x))
 
-        ret <- rbind (ret,
-                      test_compare_rect_outputs (this_fn,
-                                                 params,
-                                                 class_r,
-                                                 r,
-                                                 this_env,
-                                                 test))
+        ret <- rbind (ret, test_compare_rect_outputs (x))
 
         # Modify class definitions for rectangular inputs if not excluded by
         # yaml class definitions
@@ -54,23 +51,29 @@ autotest_rectangular <- function (params,
     return (ret)
 }
 
-test_rect_as_other <- function (fn, params, this_class, i, this_env, test) {
+test_rect_as_other <- function (x) {
+    UseMethod ("test_rect_as_other")
+}
 
-    if (test)
-        ret <- pass_rect_as_other (fn, params, this_class, i, this_env)
+test_rect_as_other.default <- function (x) {
+}
+
+test_rect_as_other.rect_test <- function (x) {
+
+    if (x$test)
+        ret <- pass_rect_as_other (x$fn, x$params, x$class, x$i, x$this_env)
     else
-        ret <- dummy_rect_as_other (fn, params, this_class, i)
+        ret <- dummy_rect_as_other (x$fn, x$params, x$class, x$i)
 
     return (ret)
 }
 
-test_compare_rect_outputs <- function (fn, params, this_class, i,
-                                       this_env, test) {
+test_compare_rect_outputs <- function (x) {
 
-    if (test)
-        ret <- compare_rect_outputs (fn, params, i, this_env)
+    if (x$test)
+        ret <- compare_rect_outputs (x$fn, x$params, x$i, x$this_env)
     else
-        ret <- dummy_compare_rect_outputs (fn, params, this_class, i)
+        ret <- dummy_compare_rect_outputs (x$fn, x$params, x$class, x$i)
 
     return (ret)
 }
