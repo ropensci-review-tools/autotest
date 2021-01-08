@@ -1,17 +1,19 @@
-autotest_vector <- function (test_obj) {
+autotest_vector <- function (x) {
 
     ret <- NULL
     f <- tempfile (fileext = ".txt")
 
-    if (any (test_obj$params == "NULL")) {
-        test_obj$params <- test_obj$params [test_obj$params != "NULL"]
+    if (any (x$params == "NULL")) {
+        x$params <- x$params [x$params != "NULL"]
     }
 
-    vec_index <- which (test_obj$param_types == "vector")
+    vec_index <- which (x$param_types == "vector")
     for (v in vec_index) {
-        params_v <- test_obj$params
-        if (test_obj$test) {
-            msgs <- catch_all_msgs (f, test_obj$fn, params_v)
+        x$i <- v
+
+        params_v <- x$params
+        if (x$test) {
+            msgs <- catch_all_msgs (f, x$fn, params_v)
             ret <- add_msg_output (ret, msgs, types = "warning",
                                    operation = "normal function call")
         }
@@ -19,50 +21,41 @@ autotest_vector <- function (test_obj) {
         if (typeof (params_v [[v]]) == "integer" &
             !is.factor (params_v [[v]])) {
             ret <- rbind (ret,
-                          int_as_double (test_obj$fn,
+                          int_as_double (x$fn,
                                          params_v,
                                          v,
                                          vec = TRUE,
-                                         test_obj$test))
+                                         x$test))
         }
 
-        ret <- rbind (ret,
-                      vector_class_defs (test_obj$fn,
-                                         params_v,
-                                         test_obj$classes,
-                                         v,
-                                         test_obj$test))
+        ret <- rbind (ret, vector_class_defs (x))
 
-        ret <- rbind (ret,
-                      vector_as_list (test_obj$fn,
-                                      params_v,
-                                      v,
-                                      test_obj$test))
+        ret <- rbind (ret, vector_as_list (x))
     }
 
     return (ret)
 }
 
 # class definitions for vector columns should be ignored
-vector_class_defs <- function (this_fn, params, classes, i, test = TRUE) {
+vector_class_defs <- function (x) {
 
     operation <- "Custom class definitions for vector input"
     res0 <- report_object (type = "dummy",
-                          fn_name = this_fn,
-                          parameter = names (params) [i],
-                          parameter_type = "generic vector",
-                          operation = operation,
-                          content = "(Should yield same result)")
+                           fn_name = x$fn,
+                           parameter = names (x$params) [x$i],
+                           parameter_type = "generic vector",
+                           operation = operation,
+                           content = "(Should yield same result)")
 
-    if (test) {
+    if (x$test) {
 
-        if (!names (params) [i] %in% names (classes)) {
-            x <- params [[i]]
-            class (x) <- "different"
-            params [[i]] <- x
+        if (!names (x$params) [x$i] %in% names (x$classes)) {
+            p <- x$params [[x$i]]
+            class (p) <- "different"
+            x$params [[x$i]] <- p
 
             f <- tempfile (fileext = ".txt")
-            msgs <- catch_all_msgs (f, this_fn, params)
+            msgs <- catch_all_msgs (f, x$fn, params)
 
             if (not_null_and_is (msgs, "error")) {
                 index <- which (msgs$type == "error")
@@ -70,11 +63,11 @@ vector_class_defs <- function (this_fn, params, classes, i, test = TRUE) {
                 res0$type <- "diagnostic"
                 for (e in index) {
                     res0$content <- paste0 ("Function [",
-                                            this_fn,
+                                            x$fn,
                                             "] errors on vector columns with ",
                                             "different classes when ",
                                             "submitted as ",
-                                            names (params) [i],
+                                            names (params) [x$i],
                                             " Error message: ",
                                             msgs$content [e])
 
@@ -93,24 +86,24 @@ vector_class_defs <- function (this_fn, params, classes, i, test = TRUE) {
     return (res)
 }
 
-vector_as_list <- function (this_fn, params, i, test = TRUE) {
+vector_as_list <- function (x) {
 
     operation <- "Convert vector input to list-columns"
     res0 <- report_object (type = "dummy",
-                          fn_name = this_fn,
-                          parameter = names (params) [i],
-                          parameter_type = "generic vector",
-                          operation = operation,
-                          content = "(Should yield same result)")
+                           fn_name = x$fn,
+                           parameter = names (x$params) [x$i],
+                           parameter_type = "generic vector",
+                           operation = operation,
+                           content = "(Should yield same result)")
 
-    if (test) {
+    if (x$test) {
 
-        x <- params [[i]]
-        x <- I (as.list (x))
-        params [[i]] <- x
+        p <- x$params [[x$i]]
+        p <- I (as.list (p))
+        x$params [[x$i]] <- p
 
         f <- tempfile (fileext = ".txt")
-        msgs <- catch_all_msgs (f, this_fn, params)
+        msgs <- catch_all_msgs (f, x$fn, x$params)
 
         if (not_null_and_is (msgs, "error")) {
             index <- which (msgs$type == "error")
@@ -118,10 +111,10 @@ vector_as_list <- function (this_fn, params, i, test = TRUE) {
             res0$type <- "diagnostic"
             for (e in index) {
                 res0$content <- paste0 ("Function [",
-                                        this_fn,
+                                        x$fn,
                                         "] errors on list-columns ",
                                         "when submitted as ",
-                                        names (params) [i],
+                                        names (x$params) [x$i],
                                         " Error message: ",
                                         msgs$content [e])
                 res <- rbind (res, res0)
