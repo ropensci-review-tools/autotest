@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.0.1.573
+Version: 0.0.1.575
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -19,6 +19,7 @@ Imports:
     magrittr,
     memoise,
     methods,
+    pkgload,
     rlang,
     tibble,
     yaml

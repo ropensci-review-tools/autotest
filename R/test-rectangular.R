@@ -160,7 +160,7 @@ test_rect_replace_class.rect_test <- function (x, ...) { # nolint
             msgs$parameter <- rep (names (x$params) [x$i], nrow (msgs))
             ret$type <- "diagnostic"
             ret$content <- paste0 ("Function [",
-                               this_fn,
+                               x$fn,
                                "] does not error when class structure of [",
                                this_class, "] is removed.")
         }
