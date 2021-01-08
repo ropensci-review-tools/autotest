@@ -83,7 +83,8 @@ autotest_single_yaml <- function (yaml = NULL,
         params <- params [which (params != "NULL")]
         param_types <- get_param_types (params)
 
-        test_obj <- list (params = params,
+        test_obj <- list (package = res$package,
+                          params = params,
                           param_types = param_types,
                           fn = names (res$parameters) [i],
                           class = NULL,
