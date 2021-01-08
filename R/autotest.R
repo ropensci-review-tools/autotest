@@ -164,7 +164,8 @@ autotest_package <- function (package,
         yaml <- exs [[i]]
         attr (yaml, "package") <- package
         fn_name <- fn_from_yaml (yaml)
-        res <- rbind (res, autotest_yaml (yaml = yaml, test = test, quiet = TRUE))
+        res <- rbind (res,
+                      autotest_yaml (yaml = yaml, test = test, quiet = TRUE))
         if (!quiet)
             message (cli::col_green (cli::symbol$tick, " [",
                                      i, " / ", length (exs),
