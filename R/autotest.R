@@ -79,38 +79,23 @@ autotest_single_yaml <- function (yaml = NULL,
 
     for (i in seq_along (res$parameters)) {
         this_fn <- names (res$parameters) [i]
-        params <- get_params (res, i, this_fn)
-        params <- params [which (params != "NULL")]
-        param_types <- get_param_types (params)
+        pars <- get_params (res, i, this_fn)
+        pars <- pars [which (pars != "NULL")]
+        p_types <- get_param_types (pars)
         classes <- res$classes [[i]]
 
-        reports <- rbind (reports,
-                          autotest_rectangular (params,
-                                                param_types,
-                                                this_fn,
-                                                classes,
-                                                test,
-                                                quiet))
-        reports <- rbind (reports,
-                          autotest_vector (params,
-                                           param_types,
-                                           this_fn,
-                                           classes,
-                                           test,
-                                           quiet))
-        reports <- rbind (reports,
-                          autotest_single (res$package,
-                                           params,
-                                           param_types,
-                                           this_fn,
-                                           test,
-                                           quiet))
-        reports <- rbind (reports,
-                          autotest_return (res$package,
-                                           params,
-                                           this_fn,
-                                           attr (yaml, "package"),
-                                           test))
+        r <- autotest_rectangular (pars, p_types, this_fn, classes, test, quiet)
+        reports <- rbind (reports, r)
+
+        v <- autotest_vector (pars, p_types, this_fn, classes, test, quiet)
+        reports <- rbind (reports, v)
+
+        s <- autotest_single (res$package, pars, p_types, this_fn, test, quiet)
+        reports <- rbind (reports, s)
+
+        p <- attr (yaml, "package")
+        r <- autotest_return (res$package, pars, this_fn, p, test)
+        reports <- rbind (reports, r)
 
         if (!quiet)
             message (cli::col_green (cli::symbol$tick, " ", this_fn))
