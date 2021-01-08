@@ -46,16 +46,17 @@ autotest_single <- function (test_obj) {
 
         } else if (methods::is (p_i, "name") |
                    methods::is (p_i, "formula")) {
+
             val_type <- class (p_i) [1]
-            res <- rbind (res,
-                          test_single_name (test_obj$package,
-                                            test_obj$fn,
-                                            test_obj$params,
-                                            test_obj$i,
-                                            test_obj$test))
+
+            res <- rbind (res, test_single_name (test_obj))
+
             check_vec <- FALSE
+
         } else {
+
             check_vec <- FALSE
+
         }
 
         # check response to vector input:
