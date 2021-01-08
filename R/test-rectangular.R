@@ -42,6 +42,21 @@ autotest_rectangular <- function (params,
     return (ret)
 }
 
+autotest_rectangular.NULL <- function (package = ".") {
+
+    env <- pkgload::ns_env ("autotest")
+    all_names <- ls (env, all.names = TRUE)
+    tests <- all_names [grep ("^test\\_", all_names)]
+    tests <- tests [which (!grepl ("^.*\\.(default|rect_test|NULL)$", tests))]
+
+    tests <- grep ("^test\\_rect\\_", tests, value = TRUE)
+
+    res <- lapply (tests, function (i)
+                   do.call (paste0 (i, ".NULL"), list (NULL)))
+
+    return (do.call (rbind, res))
+}
+
 # -----------   START S3 Methods for tests   ------------
 
 test_rect_as_other <- function (x = NULL, ...) {
