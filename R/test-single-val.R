@@ -1,55 +1,55 @@
-autotest_single <- function (test_obj) {
+autotest_single <- function (x) {
 
-    if (any (test_obj$params == "NULL")) {
-        test_obj$params <- test_obj$params [test_obj$params != "NULL"]
+    if (any (x$params == "NULL")) {
+        x$params <- x$params [x$params != "NULL"]
     }
 
     f <- tempfile (fileext = ".txt")
     res <- NULL
-    if (test_obj$test)
-        res <- catch_all_msgs (f, test_obj$fn, test_objparams)
+    if (x$test)
+        res <- catch_all_msgs (f, x$fn, x)
     if (!is.null (res))
         res$operation <- "normal function call"
 
-    index <- which (test_obj$param_types == "single")
+    index <- which (x$param_types == "single")
     for (i in index) {
 
-        test_obj$i <- i
+        x$i <- i
 
-        p_i <- test_obj$params [[i]]
+        p_i <- x$params [[i]]
         val_type <- NULL
         check_vec <- TRUE
         if (is_int (p_i)) {
 
             val_type <- "integer"
 
-            res <- rbind (res, test_single_int (test_obj))
-            res <- rbind (res, int_as_double (test_obj, vec = FALSE))
+            res <- rbind (res, test_single_int (x))
+            res <- rbind (res, int_as_double (x, vec = FALSE))
 
         } else if (methods::is (p_i, "numeric")) {
 
             val_type <- "numeric"
 
-            res <- rbind (res, test_single_double (test_obj))
+            res <- rbind (res, test_single_double (x))
 
         } else if (is.character (p_i)) {
 
             val_type <- "character"
 
-            res <- rbind (res, test_single_char (test_obj))
+            res <- rbind (res, test_single_char (x))
 
         } else if (is.logical (p_i)) {
 
             val_type <- "logical"
 
-            res <- rbind (res, test_single_logical (test_obj))
+            res <- rbind (res, test_single_logical (x))
 
         } else if (methods::is (p_i, "name") |
                    methods::is (p_i, "formula")) {
 
             val_type <- class (p_i) [1]
 
-            res <- rbind (res, test_single_name (test_obj))
+            res <- rbind (res, test_single_name (x))
 
             check_vec <- FALSE
 
@@ -61,7 +61,7 @@ autotest_single <- function (test_obj) {
 
         # check response to vector input:
         if (check_vec) {
-            res <- rbind (res, single_doubled (test_obj, val_type))
+            res <- rbind (res, single_doubled (x, val_type))
         }
     }
 
