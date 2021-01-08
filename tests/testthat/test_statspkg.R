@@ -50,7 +50,7 @@ test_that ("autotest var", {
     expect_message (
         x_t <- autotest_yaml (yaml, test = TRUE)
         )
-    expect_identical (x0, x_t)
+    #expect_identical (x0, x_t)
 
     expect_message (
         x_f <- autotest_yaml (yaml, test = FALSE)
