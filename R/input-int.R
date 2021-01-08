@@ -202,9 +202,7 @@ single_int_dummy_report <- function (x) {
                    content = "Should accord with documented range if given, or not error otherwise")
 }
 
-int_as_double <- function (this_fn, params, i,
-                           vec = FALSE,
-                           test = TRUE) {
+int_as_double <- function (x, vec = FALSE) {
 
     operation <- "Integer vector converted to numeric"
 
@@ -214,24 +212,24 @@ int_as_double <- function (this_fn, params, i,
         param_type <- "single integer"
 
     res <- report_object (type = "dummy",
-                          fn_name = this_fn,
-                          parameter = names (params) [i],
+                          fn_name = x$fn,
+                          parameter = names (x$params) [x$i],
                           parameter_type = param_type,
                           operation = operation,
                           content = "(Should yield same result)")
 
-    if (test) {
+    if (x$test) {
         f <- tempfile (fileext = ".txt")
-        out1 <- catch_all_msgs (f, this_fn, params)
+        out1 <- catch_all_msgs (f, x$fn, x$params)
         if (length (out1) == 0) {
             junk <- utils::capture.output (
-                out1 <- suppressWarnings (do.call (this_fn, params))
+                out1 <- suppressWarnings (do.call (x$fn, x$params))
                 )
-            params [[i]] <- as.numeric (params [[i]])
-            out2 <- catch_all_msgs (f, this_fn, params)
+            x$params [[x$i]] <- as.numeric (x$params [[x$i]])
+            out2 <- catch_all_msgs (f, x$fn, x$params)
             if (length (out2) == 0) {
                 junk <- utils::capture.output (
-                    out2 <- suppressWarnings (do.call (this_fn, params))
+                    out2 <- suppressWarnings (do.call (x$fn, x$params))
                     )
 
                 if (identical (out1, out2))
@@ -239,10 +237,10 @@ int_as_double <- function (this_fn, params, i,
                 else {
                     res$type <- "diagnostic"
                     res$content <- paste0 ("Function [",
-                                           this_fn,
+                                           x$fn,
                                            "] returns different values when ",
                                            "assumed int-valued parameter [",
-                                           names (params) [i],
+                                           names (x$params) [x$i],
                                            "] is submitted as double.")
                 }
             } else {
