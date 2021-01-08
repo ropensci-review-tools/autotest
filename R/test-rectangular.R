@@ -29,14 +29,14 @@ autotest_rectangular <- function (params,
 
         ret <- rbind (ret, test_rect_as_other (x))
 
-        ret <- rbind (ret, test_compare_rect_outputs (x))
+        ret <- rbind (ret, test_rect_compare_outputs (x))
 
         # Modify class definitions for rectangular inputs if not excluded by
         # yaml class definitions
         if (!names (params) [r] %in% names (classes)) {
-            ret <- rbind (ret, test_extend_rect_class (x))
+            ret <- rbind (ret, test_rect_extend_class (x))
 
-            ret <- rbind (ret, test_replace_rect_class (x))
+            ret <- rbind (ret, test_rect_replace_class (x))
         }
     }
     return (ret)
@@ -61,14 +61,14 @@ test_rect_as_other.rect_test <- function (x) {
     return (ret)
 }
 
-test_compare_rect_outputs <- function (x) {
-    UseMethod ("test_compare_rect_outputs")
+test_rect_compare_outputs <- function (x) {
+    UseMethod ("test_rect_compare_outputs")
 }
 
-test_compare_rect_outputs.default <- function (x) { # nolint
+test_rect_compare_outputs.default <- function (x) { # nolint
 }
 
-test_compare_rect_outputs.rect_test <- function (x) { # nolint
+test_rect_compare_outputs.rect_test <- function (x) { # nolint
 
     if (x$test)
         ret <- compare_rect_outputs (x$fn, x$params, x$i, x$env)
@@ -80,14 +80,14 @@ test_compare_rect_outputs.rect_test <- function (x) { # nolint
 
 #' Extend class structure of tabular objects, which should still work
 #' @noRd
-test_extend_rect_class <- function (x) {
-    UseMethod ("test_extend_rect_class")
+test_rect_extend_class <- function (x) {
+    UseMethod ("test_rect_extend_class")
 }
 
-test_extend_rect_class.default <- function (x) {
+test_rect_extend_class.default <- function (x) {
 }
 
-test_extend_rect_class.rect_test <- function (x) { # nolint
+test_rect_extend_class.rect_test <- function (x) { # nolint
 
     if (x$test)
         res <- do_extend_rect_class_struct (x$params, x$fn, x$i, x$env)
@@ -99,14 +99,14 @@ test_extend_rect_class.rect_test <- function (x) { # nolint
 
 #' Replacing class structure of tabular objects entirely should generally fail
 #' @noRd
-test_replace_rect_class <- function (x) {
-    UseMethod ("test_replace_rect_class")
+test_rect_replace_class <- function (x) {
+    UseMethod ("test_rect_replace_class")
 }
 
-test_replace_rect_class.default <- function (x) { # nolint
+test_rect_replace_class.default <- function (x) { # nolint
 }
 
-test_replace_rect_class.rect_test <- function (x) { # nolint
+test_rect_replace_class.rect_test <- function (x) { # nolint
 
     this_class <- class (x$params [[x$i]]) [1]
     operation <- paste0 ("Replace class [", this_class, "] with new class")
