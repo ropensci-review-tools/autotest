@@ -34,22 +34,15 @@ autotest_rectangular <- function (params,
         # Modify class definitions for rectangular inputs if not excluded by
         # yaml class definitions
         if (!names (params) [r] %in% names (classes)) {
-            ret <- rbind (ret,
-                          extend_rect_class_strut (params,
-                                                   this_fn,
-                                                   r,
-                                                   this_env,
-                                                   test))
+            ret <- rbind (ret, test_extend_rect_class (x))
 
-            ret <- rbind (ret,
-                          replace_rect_class_struct (params,
-                                                     this_fn,
-                                                     r,
-                                                     test))
+            ret <- rbind (ret, test_replace_rect_class (x))
         }
     }
     return (ret)
 }
+
+# -----------   START S3 Methods for tests   ------------
 
 test_rect_as_other <- function (x) {
     UseMethod ("test_rect_as_other")
@@ -61,7 +54,7 @@ test_rect_as_other.default <- function (x) {
 test_rect_as_other.rect_test <- function (x) {
 
     if (x$test)
-        ret <- pass_rect_as_other (x$fn, x$params, x$class, x$i, x$this_env)
+        ret <- pass_rect_as_other (x$fn, x$params, x$class, x$i, x$env)
     else
         ret <- dummy_rect_as_other (x$fn, x$params, x$class, x$i)
 
@@ -69,14 +62,85 @@ test_rect_as_other.rect_test <- function (x) {
 }
 
 test_compare_rect_outputs <- function (x) {
+    UseMethod ("test_compare_rect_outputs")
+}
+
+test_compare_rect_outputs.default <- function (x) { # nolint
+}
+
+test_compare_rect_outputs.rect_test <- function (x) { # nolint
 
     if (x$test)
-        ret <- compare_rect_outputs (x$fn, x$params, x$i, x$this_env)
+        ret <- compare_rect_outputs (x$fn, x$params, x$i, x$env)
     else
         ret <- dummy_compare_rect_outputs (x$fn, x$params, x$class, x$i)
 
     return (ret)
 }
+
+#' Extend class structure of tabular objects, which should still work
+#' @noRd
+test_extend_rect_class <- function (x) {
+    UseMethod ("test_extend_rect_class")
+}
+
+test_extend_rect_class.default <- function (x) {
+}
+
+test_extend_rect_class.rect_test <- function (x) { # nolint
+
+    if (x$test)
+        res <- do_extend_rect_class_struct (x$params, x$fn, x$i, x$env)
+    else
+        res <- dummy_extend_rect_class (x$params, x$fn, x$i)
+
+    return (res)
+}
+
+#' Replacing class structure of tabular objects entirely should generally fail
+#' @noRd
+test_replace_rect_class <- function (x) {
+    UseMethod ("test_replace_rect_class")
+}
+
+test_replace_rect_class.default <- function (x) { # nolint
+}
+
+test_replace_rect_class.rect_test <- function (x) { # nolint
+
+    this_class <- class (x$params [[x$i]]) [1]
+    operation <- paste0 ("Replace class [", this_class, "] with new class")
+    ret <- report_object (type = "dummy",
+                          fn_name = x$fn,
+                          parameter = names (x$params) [x$i],
+                          parameter_type = this_class,
+                          operation = operation,
+                          content = "(Should yield same result)")
+
+    if (x$test) {
+
+        p <- x$params [[x$i]]
+        x$params [[x$i]] <- structure (p, class = c ("newclass"))
+        f <- tempfile (fileext = ".txt")
+        msgs <- catch_all_msgs (f, x$fn, x$params)
+
+        if (!null_or_not (msgs, "error"))
+            ret <- NULL
+        else {
+            msgs$parameter <- rep (names (x$params) [x$i], nrow (msgs))
+            ret$type <- "diagnostic"
+            ret$content <- paste0 ("Function [",
+                               this_fn,
+                               "] does not error when class structure of [",
+                               this_class, "] is removed.")
+        }
+    }
+
+    return (ret)
+
+}
+
+# -----------   END S3 Methods for tests   ------------
 
 chk_dims <- function (this_fn, params, r, res1, res2) {
     ret <- NULL
@@ -346,18 +410,6 @@ compare_rect_outputs <- function (fn, params, i, this_env, this_obj = NULL) {
     return (res)
 }
 
-#' Extend class structure of tabular objects, which should still work
-#' @noRd
-extend_rect_class_strut <- function (params, this_fn, i, this_env, test) {
-
-    if (test)
-        res <- do_extend_rect_class_struct (params, this_fn, i, this_env)
-    else
-        res <- dummy_extend_rect_class (params, this_fn, i)
-
-    return (res)
-}
-
 dummy_extend_rect_class <- function (params, this_fn, i) {
 
     par_type <- class (params [[i]]) [1]
@@ -409,40 +461,4 @@ do_extend_rect_class_struct <- function (params, this_fn, i, this_env) {
     }
 
     return (ret)
-}
-
-#' Replacing class structure of tabular objects entirely should generally fail
-#' @noRd
-replace_rect_class_struct <- function (params, this_fn, i, test) {
-
-    this_class <- class (params [[i]]) [1]
-    operation <- paste0 ("Replace class [", this_class, "] with new class")
-    ret <- report_object (type = "dummy",
-                          fn_name = this_fn,
-                          parameter = names (params) [i],
-                          parameter_type = this_class,
-                          operation = operation,
-                          content = "(Should yield same result)")
-
-    if (test) {
-
-        x <- params [[i]]
-        params [[i]] <- structure (x, class = c ("newclass"))
-        f <- tempfile (fileext = ".txt")
-        msgs <- catch_all_msgs (f, this_fn, params)
-
-        if (!null_or_not (msgs, "error"))
-            ret <- NULL
-        else {
-            msgs$parameter <- rep (names (params) [i], nrow (msgs))
-            ret$type <- "diagnostic"
-            ret$content <- paste0 ("Function [",
-                               this_fn,
-                               "] does not error when class structure of [",
-                               this_class, "] is removed.")
-        }
-    }
-
-    return (ret)
-
 }
