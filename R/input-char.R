@@ -160,7 +160,7 @@ regex_param_descs <- function (h, params, i, msgs) {
 single_char_dummy_report <- function (x) {
     report_object (type = "dummy",
                    fn_name = x$fn,
-                   parameter = names (params) [x$i],
+                   parameter = names (x$params) [x$i],
                    parameter_type = "single character",
                    operation = "single character tests")
 }

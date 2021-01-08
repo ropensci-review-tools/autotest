@@ -10,7 +10,7 @@ test_single_name <- function (x) {
                           parameter_type = "single formula or name",
                           operation = operation)
 
-    if (test) {
+    if (x$test) {
 
         f <- tempfile (fileext = ".txt")
 

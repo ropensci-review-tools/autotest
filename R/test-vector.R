@@ -50,7 +50,7 @@ vector_class_defs <- function (x) {
             x$params [[x$i]] <- p
 
             f <- tempfile (fileext = ".txt")
-            msgs <- catch_all_msgs (f, x$fn, params)
+            msgs <- catch_all_msgs (f, x$fn, x$params)
 
             if (not_null_and_is (msgs, "error")) {
                 index <- which (msgs$type == "error")
@@ -62,7 +62,7 @@ vector_class_defs <- function (x) {
                                             "] errors on vector columns with ",
                                             "different classes when ",
                                             "submitted as ",
-                                            names (params) [x$i],
+                                            names (x$params) [x$i],
                                             " Error message: ",
                                             msgs$content [e])
 
