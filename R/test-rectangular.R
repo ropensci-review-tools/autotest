@@ -12,17 +12,17 @@ autotest_rectangular <- function (params,
     this_env <- new.env ()
 
     rect_index <- which (param_types == "tabular")
+
     for (r in rect_index) {
         class_r <- NULL
         if (names (params) [r] %in% names (classes))
             class_r <- classes [[match (names (params) [r], names (classes))]]
-        params_r <- params
 
         if (test) {
 
             ret <- rbind (ret,
                           pass_rect_as_other (this_fn,
-                                              params_r,
+                                              params,
                                               class_r,
                                               r,
                                               this_env))
@@ -32,25 +32,25 @@ autotest_rectangular <- function (params,
         } else {
 
             ret <- rbind (ret,
-                          dummy_rect_as_other (this_fn, params_r, class_r, r))
+                          dummy_rect_as_other (this_fn, params, class_r, r))
             ret <- rbind (ret,
-                          dummy_compare_rect_outputs (this_fn, params_r, class_r, r))
+                          dummy_compare_rect_outputs (this_fn, params, class_r, r))
         }
 
 
 
         # Modify class definitions for rectangular inputs if not excluded by
         # yaml class definitions
-        if (!names (params_r) [r] %in% names (classes)) {
+        if (!names (params) [r] %in% names (classes)) {
             ret <- rbind (ret,
-                          extend_rect_class_strut (params_r,
+                          extend_rect_class_strut (params,
                                                    this_fn,
                                                    r,
                                                    this_env,
                                                    test))
 
             ret <- rbind (ret,
-                          replace_rect_class_struct (params_r,
+                          replace_rect_class_struct (params,
                                                      this_fn,
                                                      r,
                                                      test))
