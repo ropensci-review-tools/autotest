@@ -79,22 +79,22 @@ autotest_single_yaml <- function (yaml = NULL,
 
     for (i in seq_along (res$parameters)) {
         this_fn <- names (res$parameters) [i]
-        pars <- get_params (res, i, this_fn)
-        pars <- pars [which (pars != "NULL")]
-        p_types <- get_param_types (pars)
+        params <- get_params (res, i, this_fn)
+        params <- params [which (params != "NULL")]
+        param_types <- get_param_types (params)
         classes <- res$classes [[i]]
 
         reports <- rbind (reports,
-                          autotest_rectangular (pars,
-                                                p_types,
+                          autotest_rectangular (params,
+                                                param_types,
                                                 this_fn,
                                                 classes,
                                                 test,
                                                 quiet))
 
         reports <- rbind (reports,
-                          autotest_vector (pars,
-                                           p_types,
+                          autotest_vector (params,
+                                           param_types,
                                            this_fn,
                                            classes,
                                            test,
@@ -102,15 +102,15 @@ autotest_single_yaml <- function (yaml = NULL,
 
         reports <- rbind (reports,
                           autotest_single (res$package,
-                                           pars,
-                                           p_types,
+                                           params,
+                                           param_types,
                                            this_fn,
                                            test,
                                            quiet))
 
         reports <- rbind (reports,
                           autotest_return (res$package,
-                                           pars,
+                                           params,
                                            this_fn,
                                            attr (yaml, "package"),
                                            test))
