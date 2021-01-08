@@ -31,29 +31,10 @@ autotest_rectangular <- function (params,
 
         } else {
 
-            this_ret <- dummy_rect_as_other (this_fn, params_r, class_r, r)
-            par_type <- this_ret$parameter_type [1]
-
-            types <- vapply (strsplit (this_ret$operation, " to \\["),
-                             function (i) i [2],
-                             character (1))
-            operations <- paste0 ("Convert [",
-                                  par_type,
-                                  "] to [",
-                                  rep (gsub ("\\]$", "", types), each = 3),
-                                  "]")
-            content <- c ("expect dimensions are same ",
-                              "expect column names are retained ",
-                              "expect all columns retain identical structure ")
-            content <- rep (content, times = length (types))
-
-            ret <- rbind (this_ret,
-                          report_object (type = "dummy",
-                                         fn_name = this_fn,
-                                         parameter = names (params) [r],
-                                         parameter_type = par_type,
-                                         operation = operations,
-                                         content = content))
+            ret <- rbind (ret,
+                          dummy_rect_as_other (this_fn, params_r, class_r, r))
+            ret <- rbind (ret,
+                          dummy_compare_rect_outputs (this_fn, params_r, class_r, r))
         }
 
 
@@ -202,6 +183,30 @@ dummy_rect_as_other <- function (fn, params, classes, i) {
                                        other,
                                        "]"),
                    content = "check for error/warning messages")
+}
+
+dummy_compare_rect_outputs <- function (fn, params, classes, i) {
+
+    par_type <- class (params [[i]]) [1]
+    other <- other_rect_classes (classes, par_type)
+    other <- gsub ("^.*::", "", other)
+
+    operations <- paste0 ("Convert [",
+                          par_type,
+                          "] to [",
+                          other,
+                          "]")
+    content <- c ("expect dimensions are same ",
+                  "expect column names are retained ",
+                  "expect all columns retain identical structure ")
+    content <- rep (content, each = length (other))
+
+    report_object (type = "dummy",
+                   fn_name = fn,
+                   parameter = names (params) [i],
+                   parameter_type = par_type,
+                   operation = operations,
+                   content = content)
 }
 
 #' Change class of params [[i]] to other rectangular classes and capture
