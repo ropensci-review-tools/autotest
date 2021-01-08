@@ -61,12 +61,7 @@ autotest_single <- function (test_obj) {
 
         # check response to vector input:
         if (check_vec) {
-            res <- rbind (res,
-                          single_doubled (test_obj$fn,
-                                          test_obj$params,
-                                          test_obj$i,
-                                          val_type,
-                                          test_obj$test))
+            res <- rbind (res, single_doubled (test_obj, val_type))
         }
     }
 
@@ -76,30 +71,30 @@ autotest_single <- function (test_obj) {
 #' Do input values presumed to have length one give errors when vectors of
 #' length > 1 are passed?
 #' @noRd
-single_doubled <- function (this_fn, params, i, val_type, test = TRUE) {
+single_doubled <- function (x, val_type) {
 
     operation <- "Length 2 vector for length 1 parameter"
     res <- report_object (type = "dummy",
-                          fn_name = this_fn,
-                          parameter = names (params) [i],
+                          fn_name = x$fn,
+                          parameter = names (x$params) [x$i],
                           parameter_type = paste0 ("single ", val_type),
                           operation = operation,
                           content = "Should trigger message, warning, or error")
 
-    if (test) {
+    if (x$test) {
 
-        params [[i]] <- rep (params [[i]], 2)
+        x$params [[x$i]] <- rep (x$params [[x$i]], 2)
         f <- tempfile (fileext = ".txt")
-        msgs <- catch_all_msgs (f, this_fn, params)
+        msgs <- catch_all_msgs (f, x$fn, x$params)
 
         if (not_null_and_is (msgs, c ("warning", "error")))
             res <- NULL # function call should warn or error
         else {
             res$type <- "diagnostic"
             res$content <- paste0 ("Parameter [",
-                                   names (params) [i],
+                                   names (x$params) [x$i],
                                    "] of function [",
-                                   this_fn,
+                                   x$fn,
                                    "] is assumed to be a single ",
                                    val_type,
                                    ", but responds to vectors of length > 1")
