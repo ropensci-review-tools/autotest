@@ -44,14 +44,18 @@ autotest_rectangular <- function (params,
 
 # -----------   START S3 Methods for tests   ------------
 
-test_rect_as_other <- function (x) {
-    UseMethod ("test_rect_as_other")
+test_rect_as_other <- function (x = NULL, ...) {
+    UseMethod ("test_rect_as_other", x)
 }
 
-test_rect_as_other.default <- function (x) {
+test_rect_as_other.NULL <- function (x = NULL, ...) {
+    report_object (type = "dummy",
+                   operation = "Convert one rectangular class to another",
+                   content = "check for error/warning messages")
 }
 
-test_rect_as_other.rect_test <- function (x) {
+
+test_rect_as_other.rect_test <- function (x, ...) {
 
     if (x$test)
         ret <- pass_rect_as_other (x$fn, x$params, x$class, x$i, x$env)
@@ -61,11 +65,16 @@ test_rect_as_other.rect_test <- function (x) {
     return (ret)
 }
 
-test_rect_compare_outputs <- function (x) {
-    UseMethod ("test_rect_compare_outputs")
+test_rect_compare_outputs <- function (x = NULL) {
+    UseMethod ("test_rect_compare_outputs", x)
 }
 
-test_rect_compare_outputs.default <- function (x) { # nolint
+test_rect_compare_outputs.NULL <- function (x = NULL, ...) {
+    report_object (type = "dummy",
+               operation = "Convert one rectangular class to another",
+               content = c ("expect dimensions are same ",
+                            "expect column names are retained ",
+                            "expect all columns retain identical structure "))
 }
 
 test_rect_compare_outputs.rect_test <- function (x) { # nolint
@@ -80,14 +89,17 @@ test_rect_compare_outputs.rect_test <- function (x) { # nolint
 
 #' Extend class structure of tabular objects, which should still work
 #' @noRd
-test_rect_extend_class <- function (x) {
-    UseMethod ("test_rect_extend_class")
+test_rect_extend_class <- function (x = NULL, ...) {
+    UseMethod ("test_rect_extend_class", x)
 }
 
-test_rect_extend_class.default <- function (x) {
+test_rect_extend_class.NULL <- function (x = NULL, ...) {
+    report_object (type = "dummy",
+                   operation = "Extend existent class with new class",
+                   content = "(Should yield same result)")
 }
 
-test_rect_extend_class.rect_test <- function (x) { # nolint
+test_rect_extend_class.rect_test <- function (x, ...) { # nolint
 
     if (x$test)
         res <- do_extend_rect_class_struct (x$params, x$fn, x$i, x$env)
@@ -99,14 +111,17 @@ test_rect_extend_class.rect_test <- function (x) { # nolint
 
 #' Replacing class structure of tabular objects entirely should generally fail
 #' @noRd
-test_rect_replace_class <- function (x) {
-    UseMethod ("test_rect_replace_class")
+test_rect_replace_class <- function (x = NULL, ...) {
+    UseMethod ("test_rect_replace_class", x)
 }
 
-test_rect_replace_class.default <- function (x) { # nolint
+test_rect_replace_class.NULL <- function (x = NULL, ...) { # nolint
+    report_object (type = "dummy",
+                   operation = "Replace class with new class",
+                   content = "(Should yield same result)")
 }
 
-test_rect_replace_class.rect_test <- function (x) { # nolint
+test_rect_replace_class.rect_test <- function (x, ...) { # nolint
 
     this_class <- class (x$params [[x$i]]) [1]
     operation <- paste0 ("Replace class [", this_class, "] with new class")
