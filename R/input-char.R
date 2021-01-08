@@ -1,40 +1,34 @@
 
-test_single_char <- function (this_fn, params, i, test = TRUE) {
+test_single_char <- function (x) {
 
     res <- NULL
 
     for (lower in c (TRUE, FALSE))
-        res <- rbind (res,
-                      case_dependency (params, i, this_fn, lower = lower, test))
+        res <- rbind (res, case_dependency (x, lower = lower))
 
-    res <- rbind (res,
-                  chk_match_arg (params, i, this_fn, test))
+    res <- rbind (res, chk_match_arg (x))
 
     return (res)
 }
 
-case_dependency <- function (params,
-                             i,
-                             this_fn,
-                             lower = TRUE,
-                             test = TRUE) {
+case_dependency <- function (x, lower = TRUE) {
 
     op <- paste0 (ifelse (lower, "lower", "upper"), "-case character parameter")
     res <- report_object (type = "dummy",
-                          fn_name = this_fn,
-                          parameter = names (params) [i],
+                          fn_name = x$fn,
+                          parameter = names (x$params) [x$i],
                           parameter_type = "single character",
                           operation = op,
                           content = "(Should yield same result)")
 
-    if (test) {
+    if (x$test) {
 
-        params [[i]] <- ifelse (lower,
-                                tolower (params [[i]]),
-                                toupper (params [[i]]))
+        x$params [[x$i]] <- ifelse (lower,
+                                    tolower (x$params [[x$i]]),
+                                    toupper (x$params [[x$i]]))
 
         f <- tempfile ()
-        msgs <- catch_all_msgs (f, this_fn, params)
+        msgs <- catch_all_msgs (f, x$fn, x$params)
         if (is.null (msgs)) {
             res <- NULL
         } else {
@@ -46,21 +40,21 @@ case_dependency <- function (params,
     return (res)
 }
 
-chk_match_arg <- function (params, i, this_fn, test = TRUE) {
+chk_match_arg <- function (x) {
 
     res <- report_object (type = "dummy",
-                          fn_name = this_fn,
-                          parameter = names (params) [i],
+                          fn_name = x$fn,
+                          parameter = names (x$params) [x$i],
                           parameter_type = "single character",
                           operation = "random character string as parameter",
                           content = "Should error")
 
-    params [[i]] <- paste0 (sample (c (letters, LETTERS), size = 10), collapse = "")
+    x$params [[x$i]] <- paste0 (sample (c (letters, LETTERS), size = 10), collapse = "")
 
-    if (test) {
+    if (x$test) {
 
         f <- tempfile ()
-        msgs <- catch_all_msgs (f, this_fn, params)
+        msgs <- catch_all_msgs (f, x$fn, x$params)
 
         if (!"error" %in% msgs$type) {
             res$type <- "diagnostic"
@@ -163,10 +157,10 @@ regex_param_descs <- function (h, params, i, msgs) {
         res [k] <- match_res_k (res, hc, i, j, k)
 }
 
-single_char_dummy_report <- function (this_fn, params, i) {
+single_char_dummy_report <- function (x) {
     report_object (type = "dummy",
-                   fn_name = this_fn,
-                   parameter = names (params) [i],
+                   fn_name = x$fn,
+                   parameter = names (params) [x$i],
                    parameter_type = "single character",
                    operation = "single character tests")
 }

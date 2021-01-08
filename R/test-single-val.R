@@ -33,12 +33,11 @@ autotest_single <- function (test_obj) {
             res <- rbind (res, test_single_double (test_obj))
 
         } else if (is.character (p_i)) {
+
             val_type <- "character"
-            res <- rbind (res,
-                          test_single_char (test_obj$fn,
-                                            test_obj$params,
-                                            test_obj$i,
-                                            test_obj$test))
+
+            res <- rbind (res, test_single_char (test_obj))
+
         } else if (is.logical (p_i)) {
             val_type <- "logical"
             res <- rbind (res,
