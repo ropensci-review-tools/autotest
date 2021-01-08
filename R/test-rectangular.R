@@ -1,22 +1,17 @@
-autotest_rectangular <- function (params,
-                                  param_types,
-                                  this_fn,
-                                  classes,
-                                  test,
-                                  quiet) {
+autotest_rectangular <- function (test_obj) {
 
     ret <- NULL
 
-    classes <- classes [which (!is.na (classes))]
+    test_obj$classes <- test_obj$classes [which (!is.na (test_obj$classes))]
 
-    rect_index <- which (param_types == "tabular")
+    rect_index <- which (test_obj$param_types == "tabular")
 
-    x <- structure (list (fn = this_fn,
-                          params = params,
+    x <- structure (list (fn = test_obj$fn,
+                          params = test_obj$params,
                           class = NULL,
                           i = NULL,
                           env = new.env (),
-                          test = test),
+                          test = test_obj$test),
                     class = "rect_test")
 
     for (r in rect_index) {
@@ -24,8 +19,9 @@ autotest_rectangular <- function (params,
         x$i <- r
 
         x$class <- NULL
-        if (names (params) [r] %in% names (classes))
-            x$class <- classes [[match (names (params) [r], names (classes))]]
+        if (names (test_obj$params) [r] %in% names (test_obj$classes))
+            x$class <- test_obj$classes [[match (names (test_obj$params) [r],
+                                                 names (test_obj$classes))]]
 
         ret <- rbind (ret, test_rect_as_other (x))
 
@@ -33,7 +29,7 @@ autotest_rectangular <- function (params,
 
         # Modify class definitions for rectangular inputs if not excluded by
         # yaml class definitions
-        if (!names (params) [r] %in% names (classes)) {
+        if (!names (test_obj$params) [r] %in% names (test_obj$classes)) {
             ret <- rbind (ret, test_rect_extend_class (x))
 
             ret <- rbind (ret, test_rect_replace_class (x))
@@ -440,12 +436,12 @@ compare_rect_outputs <- function (fn, params, i, this_env, this_obj = NULL) {
     return (res)
 }
 
-dummy_extend_rect_class <- function (params, this_fn, i) {
+dummy_extend_rect_class <- function (params, fn, i) {
 
     par_type <- class (params [[i]]) [1]
 
     report_object (type = "dummy",
-                   fn_name = this_fn,
+                   fn_name = fn,
                    parameter = names (params) [i],
                    parameter_type = par_type,
                    operation = paste0 ("Extend existent class [",
@@ -454,14 +450,14 @@ dummy_extend_rect_class <- function (params, this_fn, i) {
                    content = "(Should yield same result)")
 }
 
-do_extend_rect_class_struct <- function (params, this_fn, i, this_env) {
+do_extend_rect_class_struct <- function (params, fn, i, this_env) {
 
     x <- params [[i]]
 
     params [[i]] <- structure (x, class = c ("newclass", class (x)))
 
     f <- tempfile (fileext = ".txt")
-    msgs <- catch_all_msgs (f, this_fn, params)
+    msgs <- catch_all_msgs (f, fn, params)
     if (!is.null (msgs)) {
         msgs$parameter <- rep (names (params) [i], nrow (msgs))
         msgs$parameter_type <- "general tabular"
@@ -476,14 +472,14 @@ do_extend_rect_class_struct <- function (params, this_fn, i, this_env) {
 
     if (!"error" %in% msgs$type) {
         o <- utils::capture.output (
-                temp <- suppressWarnings (do.call (this_fn,
+                temp <- suppressWarnings (do.call (fn,
                                                    params,
                                                    envir = this_env))
         )
         assign ("val-newclass", temp, envir = this_env)
 
         ret <- rbind (ret,
-                      compare_rect_outputs (this_fn,
+                      compare_rect_outputs (fn,
                                             params,
                                             i,
                                             this_env,
