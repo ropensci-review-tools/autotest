@@ -84,18 +84,36 @@ autotest_single_yaml <- function (yaml = NULL,
         p_types <- get_param_types (pars)
         classes <- res$classes [[i]]
 
-        r <- autotest_rectangular (pars, p_types, this_fn, classes, test, quiet)
-        reports <- rbind (reports, r)
+        reports <- rbind (reports,
+                          autotest_rectangular (pars,
+                                                p_types,
+                                                this_fn,
+                                                classes,
+                                                test,
+                                                quiet))
 
-        v <- autotest_vector (pars, p_types, this_fn, classes, test, quiet)
-        reports <- rbind (reports, v)
+        reports <- rbind (reports,
+                          autotest_vector (pars,
+                                           p_types,
+                                           this_fn,
+                                           classes,
+                                           test,
+                                           quiet))
 
-        s <- autotest_single (res$package, pars, p_types, this_fn, test, quiet)
-        reports <- rbind (reports, s)
+        reports <- rbind (reports,
+                          autotest_single (res$package,
+                                           pars,
+                                           p_types,
+                                           this_fn,
+                                           test,
+                                           quiet))
 
-        p <- attr (yaml, "package")
-        r <- autotest_return (res$package, pars, this_fn, p, test)
-        reports <- rbind (reports, r)
+        reports <- rbind (reports,
+                          autotest_return (res$package,
+                                           pars,
+                                           this_fn,
+                                           attr (yaml, "package"),
+                                           test))
 
         if (!quiet)
             message (cli::col_green (cli::symbol$tick, " ", this_fn))
