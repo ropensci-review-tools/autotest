@@ -1,67 +1,82 @@
-autotest_single <- function (pkg,
-                             params,
-                             param_types,
-                             this_fn,
-                             test,
-                             quiet) {
+autotest_single <- function (test_obj) {
 
-    if (any (params == "NULL")) {
-        params <- params [params != "NULL"]
+    if (any (test_obj$params == "NULL")) {
+        test_obj$params <- test_obj$params [test_obj$params != "NULL"]
     }
 
     f <- tempfile (fileext = ".txt")
     res <- NULL
-    if (test)
-        res <- catch_all_msgs (f, this_fn, params)
+    if (test_obj$test)
+        res <- catch_all_msgs (f, test_obj$fn, test_objparams)
     if (!is.null (res))
         res$operation <- "normal function call"
 
-    index <- which (param_types == "single")
+    index <- which (test_obj$param_types == "single")
     for (i in index) {
-            params_i <- params
 
-            p_i <- params_i [[i]]
-            val_type <- NULL
-            check_vec <- TRUE
-            if (is_int (p_i)) {
-                val_type <- "integer"
-                res <- rbind (res,
-                              test_single_int (pkg, this_fn, params_i, i, test))
-                res <- rbind (res,
-                              int_as_double (this_fn, params_i, i,
-                                             vec = FALSE, test))
-            } else if (methods::is (p_i, "numeric")) {
-                val_type <- "numeric"
-                res <- rbind (res,
-                              test_single_double (this_fn, params_i, i, test))
-            } else if (is.character (p_i)) {
-                val_type <- "character"
-                res <- rbind (res,
-                              test_single_char (this_fn, params_i, i, test))
-            } else if (is.logical (p_i)) {
-                val_type <- "logical"
-                res <- rbind (res,
-                              test_single_logical (this_fn, params_i, i, test))
-            } else if (methods::is (p_i, "name") |
-                       methods::is (p_i, "formula")) {
-                val_type <- class (p_i) [1]
-                res <- rbind (res,
-                              test_single_name (pkg, this_fn, params_i, i,
-                                                test))
-                check_vec <- FALSE
-            } else {
-                check_vec <- FALSE
-            }
+        test_obj$i <- i
 
-            # check response to vector input:
-            if (check_vec) {
-                res <- rbind (res,
-                              single_doubled (this_fn,
-                                              params_i,
-                                              i,
-                                              val_type,
-                                              test))
-            }
+        p_i <- test_obj$params [[i]]
+        val_type <- NULL
+        check_vec <- TRUE
+        if (is_int (p_i)) {
+            val_type <- "integer"
+            res <- rbind (res,
+                          test_single_int (test_obj$package,
+                                           test_obj$fn,
+                                           test_obj$params,
+                                           test_obj$i,
+                                           test_obj$test))
+            res <- rbind (res,
+                          int_as_double (test_obj$fn,
+                                         test_obj$params,
+                                         test_obj$i,
+                                         vec = FALSE,
+                                         test_obj$test))
+        } else if (methods::is (p_i, "numeric")) {
+            val_type <- "numeric"
+            res <- rbind (res,
+                          test_single_double (test_obj$fn,
+                                              test_obj$params,
+                                              test_obj$i,
+                                              test_obj$test))
+        } else if (is.character (p_i)) {
+            val_type <- "character"
+            res <- rbind (res,
+                          test_single_char (test_obj$fn,
+                                            test_obj$params,
+                                            test_obj$i,
+                                            test_obj$test))
+        } else if (is.logical (p_i)) {
+            val_type <- "logical"
+            res <- rbind (res,
+                          test_single_logical (test_obj$fn,
+                                               test_obj$params,
+                                               test_obj$i,
+                                               test_obj$test))
+        } else if (methods::is (p_i, "name") |
+                   methods::is (p_i, "formula")) {
+            val_type <- class (p_i) [1]
+            res <- rbind (res,
+                          test_single_name (test_obj$package,
+                                            test_obj$fn,
+                                            test_obj$params,
+                                            test_obj$i,
+                                            test_obj$test))
+            check_vec <- FALSE
+        } else {
+            check_vec <- FALSE
+        }
+
+        # check response to vector input:
+        if (check_vec) {
+            res <- rbind (res,
+                          single_doubled (test_obj$fn,
+                                          test_obj$params,
+                                          test_obj$i,
+                                          val_type,
+                                          test_obj$test))
+        }
     }
 
     return (res [which (!duplicated (res)), ])
