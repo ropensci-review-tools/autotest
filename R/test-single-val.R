@@ -20,18 +20,18 @@ autotest_single <- function (test_obj) {
         val_type <- NULL
         check_vec <- TRUE
         if (is_int (p_i)) {
+
             val_type <- "integer"
 
             res <- rbind (res, test_single_int (test_obj))
             res <- rbind (res, int_as_double (test_obj, vec = FALSE))
 
         } else if (methods::is (p_i, "numeric")) {
+
             val_type <- "numeric"
-            res <- rbind (res,
-                          test_single_double (test_obj$fn,
-                                              test_obj$params,
-                                              test_obj$i,
-                                              test_obj$test))
+
+            res <- rbind (res, test_single_double (test_obj))
+
         } else if (is.character (p_i)) {
             val_type <- "character"
             res <- rbind (res,
