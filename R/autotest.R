@@ -86,9 +86,12 @@ autotest_single_yaml <- function (yaml = NULL,
         test_obj <- list (params = params,
                           param_types = param_types,
                           fn = names (res$parameters) [i],
+                          class = NULL,
                           classes = res$classes [[i]],
+                          env = new.env (),
                           test = test,
                           quiet = quiet)
+        class (test_obj) <- "autotest_obj"
 
         reports <- rbind (reports, autotest_rectangular (test_obj))
 

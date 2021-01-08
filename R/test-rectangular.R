@@ -1,27 +1,19 @@
-autotest_rectangular <- function (test_obj) {
+autotest_rectangular <- function (x) {
 
     ret <- NULL
 
-    test_obj$classes <- test_obj$classes [which (!is.na (test_obj$classes))]
+    x$classes <- x$classes [which (!is.na (x$classes))]
 
-    rect_index <- which (test_obj$param_types == "tabular")
-
-    x <- structure (list (fn = test_obj$fn,
-                          params = test_obj$params,
-                          class = NULL,
-                          i = NULL,
-                          env = new.env (),
-                          test = test_obj$test),
-                    class = "rect_test")
+    rect_index <- which (x$param_types == "tabular")
 
     for (r in rect_index) {
 
         x$i <- r
 
         x$class <- NULL
-        if (names (test_obj$params) [r] %in% names (test_obj$classes))
-            x$class <- test_obj$classes [[match (names (test_obj$params) [r],
-                                                 names (test_obj$classes))]]
+        if (names (x$params) [r] %in% names (x$classes))
+            x$class <- x$classes [[match (names (x$params) [r],
+                                          names (x$classes))]]
 
         ret <- rbind (ret, test_rect_as_other (x))
 
@@ -29,7 +21,7 @@ autotest_rectangular <- function (test_obj) {
 
         # Modify class definitions for rectangular inputs if not excluded by
         # yaml class definitions
-        if (!names (test_obj$params) [r] %in% names (test_obj$classes)) {
+        if (!names (x$params) [r] %in% names (x$classes)) {
             ret <- rbind (ret, test_rect_extend_class (x))
 
             ret <- rbind (ret, test_rect_replace_class (x))
@@ -66,7 +58,7 @@ test_rect_as_other.NULL <- function (x = NULL, ...) {
 }
 
 
-test_rect_as_other.rect_test <- function (x, ...) {
+test_rect_as_other.autotest_obj <- function (x, ...) {
 
     if (x$test)
         ret <- pass_rect_as_other (x$fn, x$params, x$class, x$i, x$env)
@@ -88,7 +80,7 @@ test_rect_compare_outputs.NULL <- function (x = NULL, ...) {
                             "expect all columns retain identical structure "))
 }
 
-test_rect_compare_outputs.rect_test <- function (x) { # nolint
+test_rect_compare_outputs.autotest_obj <- function (x) { # nolint
 
     if (x$test)
         ret <- compare_rect_outputs (x$fn, x$params, x$i, x$env)
@@ -110,7 +102,7 @@ test_rect_extend_class.NULL <- function (x = NULL, ...) {
                    content = "(Should yield same result)")
 }
 
-test_rect_extend_class.rect_test <- function (x, ...) { # nolint
+test_rect_extend_class.autotest_obj <- function (x, ...) { # nolint
 
     if (x$test)
         res <- do_extend_rect_class_struct (x$params, x$fn, x$i, x$env)
@@ -132,7 +124,7 @@ test_rect_replace_class.NULL <- function (x = NULL, ...) { # nolint
                    content = "(Should yield same result)")
 }
 
-test_rect_replace_class.rect_test <- function (x, ...) { # nolint
+test_rect_replace_class.autotest_obj <- function (x, ...) { # nolint
 
     this_class <- class (x$params [[x$i]]) [1]
     operation <- paste0 ("Replace class [", this_class, "] with new class")
