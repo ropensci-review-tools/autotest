@@ -11,21 +11,21 @@ is_int <- function (p) {
     return (p_is_int)
 }
 
-test_single_int <- function (pkg, this_fn, params, i, test = TRUE) {
+test_single_int <- function (x) {
 
     res <- NULL
 
-    if (test)
-        res <- test_single_int_range (pkg, this_fn, params, i)
+    if (x$test)
+        res <- test_single_int_range (x)
     else
-        res <- single_int_dummy_report (this_fn, params, i)
+        res <- single_int_dummy_report (x)
 
     return (res)
 }
 
-test_single_int_range <- function (pkg, this_fn, params, i) {
+test_single_int_range <- function (x) {
 
-    int_range <- get_int_range (this_fn, params, i)
+    int_range <- get_int_range (x$fn, x$params, x$i)
 
     if (!is.numeric (int_range)) # call with default parameters errored
         return (int_range)
@@ -34,29 +34,29 @@ test_single_int_range <- function (pkg, this_fn, params, i) {
 
     if (!any (is.finite (int_range))) {
         content <- paste0 ("Parameter [",
-                           names (params) [i],
+                           names (x$params) [x$i],
                            "] permits unrestricted integer inputs")
         res <- report_object (type = "diagnostic",
-                              fn_name = this_fn,
-                              parameter = names (params) [i],
+                              fn_name = x$fn,
+                              parameter = names (x$params) [x$i],
                               parameter_type = "single integer",
                               operation = "Ascertain integer range",
                               content = content)
     } else if (!is.null (int_range)) {
         content <- paste0 ("Parameter [",
-                           names (params) [i],
+                           names (x$params) [x$i],
                            "] responds to integer values in [",
                            paste0 (int_range, collapse = ", "), "]")
         res <- report_object (type = "diagnostic",
-                              fn_name = this_fn,
-                              parameter = names (params) [i],
+                              fn_name = x$fn,
+                              parameter = names (x$params) [x$i],
                               parameter_type = "single integer",
                               operation = "Ascertain integer range",
                               content = content)
 
-        rd <- get_Rd_param (package = pkg,
-                            fn_name = this_fn,
-                            param_name = names (params) [i])
+        rd <- get_Rd_param (package = x$package,
+                            fn_name = x$fn,
+                            param_name = names (x$params) [x$i])
         range_in_rd <- vapply (int_range, function (j)
                                grepl (j, rd), logical (1))
 
@@ -64,12 +64,12 @@ test_single_int_range <- function (pkg, this_fn, params, i) {
 
             operation <- "Match integer range to documentation"
             content <- paste0 (" Parameter range for ",
-                               names (params) [i],
+                               names (x$params) [x$i],
                                " is NOT documented")
             res <- rbind (res,
                           report_object (type = "diagnostic",
-                                         fn_name = this_fn,
-                                         parameter = names (params) [i],
+                                         fn_name = x$fn,
+                                         parameter = names (x$params) [x$i],
                                          parameter_type = "single integer",
                                          operation = operation,
                                          content = content))
@@ -193,10 +193,10 @@ int_lower_limit <- function (this_fn, params, i) {
     return (p_i)
 }
 
-single_int_dummy_report <- function (this_fn, params, i) {
+single_int_dummy_report <- function (x) {
     report_object (type = "dummy",
-                   fn_name = this_fn,
-                   parameter = names (params) [i],
+                   fn_name = x$fn,
+                   parameter = names (x$params) [x$i],
                    parameter_type = "single integer",
                    operation = "Ascertain integer range",
                    content = "Should accord with documented range if given, or not error otherwise")

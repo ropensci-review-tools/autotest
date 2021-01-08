@@ -21,12 +21,9 @@ autotest_single <- function (test_obj) {
         check_vec <- TRUE
         if (is_int (p_i)) {
             val_type <- "integer"
-            res <- rbind (res,
-                          test_single_int (test_obj$package,
-                                           test_obj$fn,
-                                           test_obj$params,
-                                           test_obj$i,
-                                           test_obj$test))
+
+            res <- rbind (res, test_single_int (test_obj))
+
             res <- rbind (res,
                           int_as_double (test_obj$fn,
                                          test_obj$params,
