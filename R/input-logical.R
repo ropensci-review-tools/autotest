@@ -1,36 +1,36 @@
 
-test_single_logical <- function (this_fn, params, i, test = TRUE) {
+test_single_logical <- function (x) {
 
     res <- NULL
 
-    res <- rbind (res, negate_logical (this_fn, params, i, test))
+    res <- rbind (res, negate_logical (x))
 
-    res <- rbind (res, int_for_logical (this_fn, params, i, test))
+    res <- rbind (res, int_for_logical (x))
 
-    res <- rbind (res, char_for_logical (this_fn, params, i, test))
+    res <- rbind (res, char_for_logical (x))
 
     return (res)
 }
 
-negate_logical <- function (this_fn, params, i, test = TRUE) {
+negate_logical <- function (x) {
 
-    if (test) {
+    if (x$test) {
 
         res <- NULL
         f <- tempfile (fileext = ".txt")
         res <- rbind (res,
-                      catch_all_msgs (f, this_fn, params))
-        params [[i]] <- !params [[i]]
+                      catch_all_msgs (f, x$fn, x$params))
+        x$params [[x$i]] <- !x$params [[x$i]]
         res <- rbind (res,
-                      catch_all_msgs (f, this_fn, params))
+                      catch_all_msgs (f, x$fn, x$params))
 
     } else {
 
         operation <- "Negate default value of logical parameter"
 
         res <- report_object (type = "dummy",
-                              fn_name = this_fn,
-                              parameter = names (params) [i],
+                              fn_name = x$fn,
+                              parameter = names (x$params) [x$i],
                               parameter_type = "single logical",
                               operation = operation,
                               content = "(Function call should still work)")
@@ -41,23 +41,24 @@ negate_logical <- function (this_fn, params, i, test = TRUE) {
     return (res)
 }
 
-int_for_logical <- function (this_fn, params, i, test = TRUE) {
+int_for_logical <- function (x) {
 
-    res <- subst_for_logical (this_fn, params, i, subst = "integer")
+    res <- subst_for_logical (x, subst = "integer")
 
-    if (test) {
+    if (x$test) {
         f <- tempfile (fileext = ".txt")
         # expect substituion by int values to give warnings or errors,
         # and return FALSE otherwise
         chk <- vapply (0L:2L, function (j) {
-                           p <- params
-                           p [[i]] <- j
-                           msgs <- catch_all_msgs (f, this_fn, p)
+                           p <- x$params
+                           p [[x$i]] <- j
+                           msgs <- catch_all_msgs (f, x$fn, p)
                            val <- TRUE
                            if (is.null (msgs)) {
                                # no errors or warnings
                                val <- FALSE
-                           } else if (!any (msgs$type %in% c ("warning", "error"))) {
+                           } else if (!any (msgs$type %in%
+                                            c ("warning", "error"))) {
                                val <- FALSE
                            }
                            return (val) },
@@ -69,21 +70,22 @@ int_for_logical <- function (this_fn, params, i, test = TRUE) {
         else
             res$type <- "diagnostic"
     } else {
-        res$content <- "(Function call should still work unless explicitly prevented)"
+        res$content <- paste0 ("(Function call should still work ",
+                               "unless explicitly prevented)")
     }
 
     return (res)
 }
 
-char_for_logical <- function (this_fn, params, i, test = TRUE) {
+char_for_logical <- function (x) {
 
-    res <- subst_for_logical (this_fn, params, i, subst = "character")
+    res <- subst_for_logical (x, subst = "character")
 
-    if (test) {
+    if (x$test) {
 
         f <- tempfile (fileext = ".txt")
-        params [[i]] <- "a"
-        msgs <- catch_all_msgs (f, this_fn, params)
+        x$params [[x$i]] <- "a"
+        msgs <- catch_all_msgs (f, x$fn, x$params)
         res$type <- "diagnostic"
         if (is.null (msgs)) {
             # function returns with char as logical, so keep res_tmp
@@ -101,23 +103,23 @@ char_for_logical <- function (this_fn, params, i, test = TRUE) {
 #' Construt report object from results of subsituting other kinds of parameters
 #' for assumed logical parameters
 #' @noRd
-subst_for_logical <- function (this_fn, params, i, subst = "integer") {
+subst_for_logical <- function (x, subst = "integer") {
 
     operation <- paste0 ("Substitute ",
                          subst,
                          " values for logical parameter")
     content <- paste0 ("Parameter ",
-                       names (params) [i],
+                       names (x$params) [x$i],
                        " of function [",
-                       this_fn,
+                       x$fn,
                        "] is assumed to be logical, ",
                        "but responds to ",
                        subst,
                        " input")
 
     return (report_object (type = "dummy",
-                           fn_name = this_fn,
-                           parameter = names (params) [i],
+                           fn_name = x$fn,
+                           parameter = names (x$params) [x$i],
                            parameter_type = "single logical",
                            operation = operation,
                            content = content))

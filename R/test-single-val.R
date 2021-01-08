@@ -39,12 +39,11 @@ autotest_single <- function (test_obj) {
             res <- rbind (res, test_single_char (test_obj))
 
         } else if (is.logical (p_i)) {
+
             val_type <- "logical"
-            res <- rbind (res,
-                          test_single_logical (test_obj$fn,
-                                               test_obj$params,
-                                               test_obj$i,
-                                               test_obj$test))
+
+            res <- rbind (res, test_single_logical (test_obj))
+
         } else if (methods::is (p_i, "name") |
                    methods::is (p_i, "formula")) {
             val_type <- class (p_i) [1]
