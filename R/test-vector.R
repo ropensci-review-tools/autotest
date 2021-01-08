@@ -1,22 +1,17 @@
-autotest_vector <- function (params,
-                             param_types,
-                             this_fn,
-                             classes,
-                             test = TRUE,
-                             quiet) {
+autotest_vector <- function (test_obj) {
 
     ret <- NULL
     f <- tempfile (fileext = ".txt")
 
-    if (any (params == "NULL")) {
-        params <- params [params != "NULL"]
+    if (any (test_obj$params == "NULL")) {
+        test_obj$params <- test_obj$params [test_obj$params != "NULL"]
     }
 
-    vec_index <- which (param_types == "vector")
+    vec_index <- which (test_obj$param_types == "vector")
     for (v in vec_index) {
-        params_v <- params
-        if (test) {
-            msgs <- catch_all_msgs (f, this_fn, params_v)
+        params_v <- test_obj$params
+        if (test_obj$test) {
+            msgs <- catch_all_msgs (f, test_obj$fn, params_v)
             ret <- add_msg_output (ret, msgs, types = "warning",
                                    operation = "normal function call")
         }
@@ -24,18 +19,25 @@ autotest_vector <- function (params,
         if (typeof (params_v [[v]]) == "integer" &
             !is.factor (params_v [[v]])) {
             ret <- rbind (ret,
-                          int_as_double (this_fn,
+                          int_as_double (test_obj$fn,
                                          params_v,
                                          v,
                                          vec = TRUE,
-                                         test))
+                                         test_obj$test))
         }
 
         ret <- rbind (ret,
-                      vector_class_defs (this_fn, params_v, classes, v, test))
+                      vector_class_defs (test_obj$fn,
+                                         params_v,
+                                         test_obj$classes,
+                                         v,
+                                         test_obj$test))
 
         ret <- rbind (ret,
-                      vector_as_list (this_fn, params_v, v, test))
+                      vector_as_list (test_obj$fn,
+                                      params_v,
+                                      v,
+                                      test_obj$test))
     }
 
     return (ret)
