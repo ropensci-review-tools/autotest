@@ -51,7 +51,7 @@ get_params <- function (res, i, this_fn) {
 }
 
 # Get the 'value' field from an Rd entry for a given package function:
-get_Rd_value <- function (package, fn_name) {
+get_Rd_value <- function (package, fn_name) { # nolint
     val <- NULL
 
     if (pkg_is_source (package)) {

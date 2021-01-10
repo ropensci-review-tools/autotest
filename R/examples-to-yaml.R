@@ -19,7 +19,10 @@ examples_to_yaml <- function (package = NULL,
 
     exclude <- exclude_functions (package, functions, exclude)
 
-    exs <- get_all_examples (package, pkg_is_source (package), exclude, quiet = quiet)
+    exs <- get_all_examples (package,
+                             pkg_is_source (package),
+                             exclude,
+                             quiet = quiet)
 
     ret <- list ()
 
@@ -563,7 +566,7 @@ extract_primary_call_content <- function (x, aliases) {
         x [fn_index] <- lapply (seq_along (fn_index), function (i) {
                                     gsub (fn_pars [[i]],
                                           "1",
-                                          x [[fn_index [i] ]])  })
+                                          x [[fn_index [i] ]])  }) # nolint
     }
 
     return (x)

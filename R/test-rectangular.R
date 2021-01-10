@@ -30,7 +30,7 @@ autotest_rectangular <- function (x) {
     return (ret)
 }
 
-autotest_rectangular.NULL <- function (package = ".") {
+autotest_rectangular.NULL <- function (package = ".") { # nolint
 
     env <- pkgload::ns_env ("autotest")
     all_names <- ls (env, all.names = TRUE)
@@ -58,7 +58,7 @@ test_rect_as_other.NULL <- function (x = NULL, ...) {
 }
 
 
-test_rect_as_other.autotest_obj <- function (x, ...) {
+test_rect_as_other.autotest_obj <- function (x, ...) { # nolint
 
     if (x$test)
         ret <- pass_rect_as_other (x$fn, x$params, x$class, x$i, x$env)

@@ -199,7 +199,8 @@ single_int_dummy_report <- function (x) {
                    parameter = names (x$params) [x$i],
                    parameter_type = "single integer",
                    operation = "Ascertain integer range",
-                   content = "Should accord with documented range if given, or not error otherwise")
+                   content = paste0 ("Should accord with documented range ",
+                                     "if given, or not error otherwise"))
 }
 
 int_as_double <- function (x, vec = FALSE) {

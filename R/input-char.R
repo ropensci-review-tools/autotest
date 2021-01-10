@@ -49,7 +49,9 @@ chk_match_arg <- function (x) {
                           operation = "random character string as parameter",
                           content = "Should error")
 
-    x$params [[x$i]] <- paste0 (sample (c (letters, LETTERS), size = 10), collapse = "")
+    x$params [[x$i]] <- paste0 (sample (c (letters, LETTERS),
+                                        size = 10),
+                                collapse = "")
 
     if (x$test) {
 

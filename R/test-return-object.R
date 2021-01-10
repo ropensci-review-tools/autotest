@@ -119,12 +119,13 @@ dummy_autotest_return <- function (x) {
                          operation = "Check that description has return value")
     r2 <- r3 <- r1
     r2$operation <- "Check whether description of return value specifies class"
-    r3$operation <- "Compare class of return value with class given in description"
+    r3$operation <- paste0 ("Compare class of return value with ",
+                            "class given in description")
 
     return (rbind (r1, r2, r3))
 }
 
-test_return_classes <- function (Rd_value, retval) {
+test_return_classes <- function (Rd_value, retval) { # nolint
 
     txt <- NULL
     # Get class of returned object, along with matched value from man
