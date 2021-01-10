@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>autotest: Automatic Package Testing — autotest-package • autotest</title>
+<title>autotest_obj class definition — autotest_obj • autotest</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,8 @@
 
 
 
-<meta property="og:title" content="autotest: Automatic Package Testing — autotest-package" />
-<meta property="og:description" content="Automatic testing of R packages via a simple YAML
-    schema." />
+<meta property="og:title" content="autotest_obj class definition — autotest_obj" />
+<meta property="og:description" content="autotest_obj class definition" />
 
 
 
@@ -105,29 +104,70 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>autotest: Automatic Package Testing</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mpadge/ropenscilabs/blob/master/R/autotest-package.R'><code>R/autotest-package.R</code></a></small>
-    <div class="hidden name"><code>autotest-package.Rd</code></div>
+    <h1>autotest_obj class definition</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mpadge/ropenscilabs/blob/master/R/autotest-class.R'><code>R/autotest-class.R</code></a></small>
+    <div class="hidden name"><code>autotest_obj.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Automatic testing of R packages via a simple YAML
-    schema.</p>
+    <p>autotest_obj class definition</p>
     </div>
 
+    <pre class="usage"><span class='fu'>autotest_obj</span><span class='op'>(</span>
+  <span class='va'>package</span>,
+  <span class='va'>fn_name</span>,
+  <span class='va'>parameters</span>,
+  <span class='va'>parameter_types</span>,
+  class <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>classes</span>,
+  env <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/environment.html'>new.env</a></span><span class='op'>(</span><span class='op'>)</span>,
+  test <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  quiet <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>package</th>
+      <td><p>Name of package for which object is to be constructed.</p></td>
+    </tr>
+    <tr>
+      <th>fn_name</th>
+      <td><p>Name of function to be tested.</p></td>
+    </tr>
+    <tr>
+      <th>parameters</th>
+      <td><p>Names of all parameters for that function.</p></td>
+    </tr>
+    <tr>
+      <th>parameter_types</th>
+      <td><p>Types of input parameters.</p></td>
+    </tr>
+    <tr>
+      <th>class</th>
+      <td><p>Class of an individual parameter.</p></td>
+    </tr>
+    <tr>
+      <th>classes</th>
+      <td><p>Classes of all parameters.</p></td>
+    </tr>
+    <tr>
+      <th>env</th>
+      <td><p>Environment in which tests are to be run.</p></td>
+    </tr>
+    <tr>
+      <th>test</th>
+      <td><p>If <code>FALSE</code>, return only descriptions of tests which would be run
+with <code>test = TRUE</code>, without actually running them.</p></td>
+    </tr>
+    <tr>
+      <th>quiet</th>
+      <td><p>If <code>FALSE</code>, issue progress and other messages during testing of
+object.</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>Useful links:</p><ul>
-<li><p><a href='https://github.com/ropenscilabs/autotest'>https://github.com/ropenscilabs/autotest</a></p></li>
-<li><p>Report bugs at <a href='https://github.com/mpadge/ropenscilabs/autotest/issues'>https://github.com/mpadge/ropenscilabs/autotest/issues</a></p></li>
-</ul>
-
-</div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
-    <p><strong>Maintainer</strong>: Mark Padgham <a href='mailto:mark.padgham@email.com'>mark.padgham@email.com</a></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
