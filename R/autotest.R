@@ -12,12 +12,13 @@
 #' @param test If `FALSE`, return only descriptions of tests which would be run
 #' with `test = TRUE`, without actually running them.
 #' @param quiet If 'FALSE', provide printed output on screen.
-#' @return Nothing
+#' @return An `autotest_pkg` object, derived from a \pkg{tibble}, detailing
+#' instances of unexpected behaviour for every parameter of every function.
 #'
 #' @examples
 #' \dontrun{
-#' exs <- examples_to_yaml (package = "stats", functions = "reshape")
-#' res <- autotest_yaml (yaml = exs)
+#' yaml_list <- examples_to_yaml (package = "stats", functions = "reshape")
+#' res <- autotest_yaml (yaml = yaml_list)
 #' }
 #' @export
 autotest_yaml <- function (yaml = NULL,

@@ -22,14 +22,15 @@ with \code{test = TRUE}, without actually running them.}
 \item{quiet}{If 'FALSE', provide printed output on screen.}
 }
 \value{
-Nothing
+An \code{autotest_pkg} object, derived from a \pkg{tibble}, detailing
+instances of unexpected behaviour for every parameter of every function.
 }
 \description{
 Automatically test inputs to functions specified in a 'yaml' template.
 }
 \examples{
 \dontrun{
-exs <- examples_to_yaml (package = "stats", functions = "reshape")
-res <- autotest_yaml (yaml = exs)
+yaml_list <- examples_to_yaml (package = "stats", functions = "reshape")
+res <- autotest_yaml (yaml = yaml_list)
 }
 }
