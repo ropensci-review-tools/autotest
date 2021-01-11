@@ -1,4 +1,27 @@
-autotest_single <- function (x) {
+
+autotest_single <- function (x = NULL, ...) {
+    UseMethod ("autotest_single", x)
+}
+
+autotest_single.NULL <- function (x = NULL, ...) {
+
+    env <- pkgload::ns_env ("autotest")
+    all_names <- ls (env, all.names = TRUE)
+    tests <- all_names [grep ("^test\\_", all_names)]
+    tests <- tests [which (!grepl ("^.*\\.(default|NULL)$", tests))]
+
+    tests <- grep ("^test\\_single\\_", tests, value = TRUE)
+    tests <- unique (gsub ("\\..*$", "", tests))
+
+    tests <- tests [grep ("int", tests)]
+
+    res <- lapply (tests, function (i)
+                   do.call (paste0 (i, ".NULL"), list (NULL)))
+
+    return (do.call (rbind, res))
+}
+
+autotest_single.autotest_obj <- function (x, ...) {
 
     if (any (x$params == "NULL")) {
         x$params <- x$params [x$params != "NULL"]

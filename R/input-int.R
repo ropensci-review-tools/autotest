@@ -11,7 +11,18 @@ is_int <- function (p) {
     return (p_is_int)
 }
 
-test_single_int_range <- function (x) {
+test_single_int_range <- function (x = NULL, ...) {
+    UseMethod ("test_single_int_range", x)
+}
+
+test_single_int_range.NULL <- function (x = NULL, ...) {
+    report_object (type = "dummy",
+                   parameter_type = "single integer",
+                   operation = "Ascertain permissible range",
+                   content = "Should either be unrestricted or correspond with documentation")
+}
+
+test_single_int_range.autotest_obj <- function (x, ...) {
 
     res <- NULL
 
