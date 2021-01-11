@@ -1,4 +1,16 @@
-test_single_name <- function (x) {
+
+test_single_name <- function (x = NULL, ...) {
+    UseMethod ("test_single_name", x)
+}
+
+test_single_name.NULL <- function (x = NULL, ...) {
+    report_object (type = "dummy",
+                   parameter_type = "single name or formula",
+                   operation = "Unquoted name/formula as quoted character",
+                   content = "Capture any warnings or errors issued")
+}
+
+test_single_name.autotest_obj <- function (x) {
 
     this_class <- class (x$params [[x$i]]) [1]
     operation <- paste0 ("(unquoted) ",

@@ -1,5 +1,16 @@
 
-test_single_char <- function (x) {
+test_single_char <- function (x = NULL, ...) {
+    UseMethod ("test_single_char", x)
+}
+
+test_single_char.NULL <- function (x) {
+    report_object (type = "dummy",
+                   parameter_type = "single character",
+                   operation = "Change case",
+                   content = "(Should yield same result)")
+}
+
+test_single_char.autotest_obj <- function (x) {
 
     res <- NULL
 

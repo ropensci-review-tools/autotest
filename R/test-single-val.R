@@ -13,8 +13,6 @@ autotest_single.NULL <- function (x = NULL, ...) {
     tests <- grep ("^test\\_(single|double|int)\\_", tests, value = TRUE)
     tests <- unique (gsub ("\\..*$", "", tests))
 
-    tests <- tests [which (!grepl ("(logical|char|name)$", tests))]
-
     res <- lapply (tests, function (i)
                    do.call (paste0 (i, ".NULL"), list (NULL)))
 

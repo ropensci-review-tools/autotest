@@ -1,5 +1,16 @@
 
-test_single_logical <- function (x) {
+test_single_logical <- function (x = NULL, ...) {
+    UseMethod ("test_single_logical", x)
+}
+
+test_single_logical.NULL <- function (x = NULL, ...) {
+    report_object (type = "dummy",
+                   parameter_type = "single logical",
+                   operation = "Negate default value of logical parameter",
+                   content = "(Function call should still work)")
+}
+
+test_single_logical.autotest_obj <- function (x) {
 
     res <- NULL
 
