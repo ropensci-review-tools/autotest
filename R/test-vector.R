@@ -1,4 +1,25 @@
-autotest_vector <- function (x) {
+
+autotest_vector <- function (x = NULL, ...) {
+    UseMethod ("autotest_vector", x)
+}
+
+autotest_vector.NULL <- function (x = NULL, ...) {
+
+    env <- pkgload::ns_env ("autotest")
+    all_names <- ls (env, all.names = TRUE)
+    tests <- all_names [grep ("^test\\_", all_names)]
+    tests <- tests [which (!grepl ("^.*\\.(default|NULL)$", tests))]
+
+    tests <- grep ("^test\\_vec\\_", tests, value = TRUE)
+    tests <- unique (gsub ("\\..*$", "", tests))
+
+    res <- lapply (tests, function (i)
+                   do.call (paste0 (i, ".NULL"), list (NULL)))
+
+    return (do.call (rbind, res))
+}
+
+autotest_vector.autotest_obj <- function (x) {
 
     ret <- NULL
     f <- tempfile (fileext = ".txt")
@@ -23,16 +44,26 @@ autotest_vector <- function (x) {
             ret <- rbind (ret, int_as_double (x, vec = TRUE))
         }
 
-        ret <- rbind (ret, vector_class_defs (x))
+        ret <- rbind (ret, test_vec_class_defs (x))
 
-        ret <- rbind (ret, vector_as_list (x))
+        ret <- rbind (ret, test_vec_as_list (x))
     }
 
     return (ret)
 }
 
-# class definitions for vector columns should be ignored
-test_vec_class_defs <- function (x) {
+test_vec_class_defs <- function (x = NULL, ...) {
+    UseMethod ("test_vec_class_defs", x)
+}
+
+test_vec_class_defs.NULL <- function (x = NULL, ...) {
+    report_object (type = "dummy",
+                   operation = "Custom class definitions for vector input",
+                   content = "(Should yield same result)")
+}
+
+
+test_vec_class_defs.autotest_obj <- function (x) {
 
     operation <- "Custom class definitions for vector input"
     res0 <- report_object (type = "dummy",
@@ -81,7 +112,17 @@ test_vec_class_defs <- function (x) {
     return (res)
 }
 
-test_vec_as_list <- function (x) {
+test_vec_as_list <- function (x = NULL, ...) {
+    UseMethod ("test_vec_as_list", x)
+}
+
+test_vec_as_list.NULL <- function (x = NULL, ...) {
+    report_object (type = "dummy",
+                   operation = "Convert vector input to list-columns",
+                   content = "(Should yield same result)")
+}
+
+test_vec_as_list.autotest_obj <- function (x) {
 
     operation <- "Convert vector input to list-columns"
     res0 <- report_object (type = "dummy",

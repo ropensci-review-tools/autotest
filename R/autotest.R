@@ -216,5 +216,6 @@ fn_from_yaml <- function (yaml) {
 #'
 #' @export
 autotest_types <- function () {
-    autotest_rectangular ()
+    rbind (autotest_rectangular (),
+           autotest_vector ())
 }
