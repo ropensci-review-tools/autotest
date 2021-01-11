@@ -29,7 +29,7 @@ double_noise <- function (x) {
     res0 <- tryCatch (do.call (x$fn, x$params),
                       error = function (e) NULL)
     x$params [[x$i]] <- x$params [[x$i]] +
-        runif (length (x$params [[x$i]])) * 10 * .Machine$double.eps
+        stats::runif (length (x$params [[x$i]])) * 10 * .Machine$double.eps
     res1 <- tryCatch (do.call (x$fn, x$params),
                      error = function (e) NULL)
 
