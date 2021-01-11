@@ -41,7 +41,7 @@ autotest_vector.autotest_obj <- function (x) {
 
         if (typeof (params_v [[v]]) == "integer" &
             !is.factor (params_v [[v]])) {
-            ret <- rbind (ret, int_as_double (x, vec = TRUE))
+            ret <- rbind (ret, test_int_as_dbl (x, vec = TRUE))
         }
 
         ret <- rbind (ret, test_vec_class_defs (x))

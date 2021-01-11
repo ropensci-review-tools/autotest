@@ -46,7 +46,7 @@ autotest_single.autotest_obj <- function (x, ...) {
 
             res <- rbind (res,
                           test_single_int_range (x),
-                          test_single_int_as_dbl (x, vec = FALSE))
+                          test_int_as_dbl (x, vec = FALSE))
 
         } else if (val_type == "numeric") {
 

@@ -215,18 +215,18 @@ single_int_dummy_report <- function (x) {
                                      "if given, or not error otherwise"))
 }
 
-test_single_int_as_dbl <- function (x = NULL, ...) {
-    UseMethod ("test_single_int_as_dbl", x, ...)
+test_int_as_dbl <- function (x = NULL, ...) {
+    UseMethod ("test_int_as_dbl", x)
 }
 
-test_single_int_as_dbl.NULL <- function (x = NULL, ...) {
+test_int_as_dbl.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
                    parameter_type = "single integer",
                    operation = "Integer value converted to numeric",
                    content = "(Should yield same result)")
 }
 
-test_single_int_as_dbl.autotest_obj <- function (x, vec = FALSE) { # nolint
+test_int_as_dbl.autotest_obj <- function (x, vec = FALSE) { # nolint
 
     operation <- "Integer vector converted to numeric"
 
