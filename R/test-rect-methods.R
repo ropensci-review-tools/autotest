@@ -9,7 +9,7 @@ autotest_rectangular.NULL <- function (x = NULL, ...) { # nolint
     env <- pkgload::ns_env ("autotest")
     all_names <- ls (env, all.names = TRUE)
     tests <- all_names [grep ("^test\\_", all_names)]
-    tests <- tests [which (!grepl ("^.*\\.(default|rect_test|NULL)$", tests))]
+    tests <- tests [which (!grepl ("^.*\\.(default|NULL)$", tests))]
 
     tests <- grep ("^test\\_rect\\_", tests, value = TRUE)
     tests <- unique (gsub ("\\..*$", "", tests))
