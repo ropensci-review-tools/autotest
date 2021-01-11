@@ -205,3 +205,16 @@ fn_from_yaml <- function (yaml) {
     return (unique (nms))
 
 }
+
+#' autotest_types
+#'
+#' List all types of 'autotests' currently implmenented.
+#'
+#' @return An `autotest` object with each row listing one unique type of test
+#' which can be applied to every parameter (of the appropriate class) of each
+#' function.
+#'
+#' @export
+autotest_types <- function () {
+    autotest_rectangular ()
+}

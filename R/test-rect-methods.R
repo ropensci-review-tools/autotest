@@ -1,18 +1,5 @@
 # S3 dispatch methods for autotest_rectangular class objects.
 
-#' autotest_types
-#'
-#' List all types of 'autotests' currently implmenented.
-#'
-#' @return An `autotest` object with each row listing one unique type of test
-#' which can be applied to every parameter (of the appropriate class) of each
-#' function.
-#'
-#' @export
-autotest_types <- function () {
-    autotest_rectangular ()
-}
-
 autotest_rectangular <- function (x = NULL, ...) {
     UseMethod ("autotest_rectangular", x)
 }
