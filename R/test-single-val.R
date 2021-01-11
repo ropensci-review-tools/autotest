@@ -46,7 +46,7 @@ autotest_single <- function (x) {
 
         # check response to vector input:
         if (check_vec) {
-            res <- rbind (res, single_doubled (x, val_type))
+            res <- rbind (res, test_single_length (x, val_type))
         }
     }
 
@@ -74,7 +74,7 @@ single_val_type <- function (x) {
 #' Do input values presumed to have length one give errors when vectors of
 #' length > 1 are passed?
 #' @noRd
-single_doubled <- function (x, val_type) {
+test_single_length <- function (x, val_type) {
 
     operation <- "Length 2 vector for length 1 parameter"
     res <- report_object (type = "dummy",
