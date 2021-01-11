@@ -10,10 +10,10 @@ autotest_single.NULL <- function (x = NULL, ...) {
     tests <- all_names [grep ("^test\\_", all_names)]
     tests <- tests [which (!grepl ("^.*\\.(default|NULL)$", tests))]
 
-    tests <- grep ("^test\\_single\\_", tests, value = TRUE)
+    tests <- grep ("^test\\_(single|double|int)\\_", tests, value = TRUE)
     tests <- unique (gsub ("\\..*$", "", tests))
 
-    tests <- tests [grep ("int", tests)]
+    tests <- tests [which (!grepl ("(logical|char|name)$", tests))]
 
     res <- lapply (tests, function (i)
                    do.call (paste0 (i, ".NULL"), list (NULL)))
@@ -50,7 +50,7 @@ autotest_single.autotest_obj <- function (x, ...) {
 
         } else if (val_type == "numeric") {
 
-            res <- rbind (res, test_single_double_noise (x))
+            res <- rbind (res, test_double_noise (x))
 
         } else if (val_type == "character") {
 
@@ -97,7 +97,18 @@ single_val_type <- function (x) {
 #' Do input values presumed to have length one give errors when vectors of
 #' length > 1 are passed?
 #' @noRd
-test_single_length <- function (x, val_type) {
+test_single_length <- function (x = NULL, ...) {
+    UseMethod ("test_single_length", x)
+}
+
+test_single_length.NULL <- function (x = NULL, ...) {
+    report_object (type = "dummy",
+                   parameter_type = "single integer",
+                   operation = "Length 2 vector for length 1 parameter",
+                   content = "Should trigger message, warning, or error")
+}
+
+test_single_length.autotest_obj <- function (x, val_type) {
 
     operation <- "Length 2 vector for length 1 parameter"
     res <- report_object (type = "dummy",
