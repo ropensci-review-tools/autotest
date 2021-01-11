@@ -1,17 +1,17 @@
 
-test_single_double <- function (x) {
+test_single_double_noise <- function (x) {
 
     res <- NULL
 
     if (x$test)
-        res <- test_single_double_noise (x)
+        res <- single_double_noise (x)
     else
         res <- single_dbl_dummy_report (x)
 
     return (res)
 }
 
-test_single_double_noise <- function (x) {
+single_double_noise <- function (x) {
 
     res <- NULL
 

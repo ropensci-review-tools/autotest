@@ -27,7 +27,7 @@ autotest_single <- function (x) {
 
         } else if (val_type == "numeric") {
 
-            res <- rbind (res, test_single_double (x))
+            res <- rbind (res, test_single_double_noise (x))
 
         } else if (val_type == "character") {
 
