@@ -59,6 +59,7 @@ test_rect_as_other <- function (x = NULL, ...) {
 
 test_rect_as_other.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
+                   parameter_type = "rectangular",
                    operation = "Convert one rectangular class to another",
                    content = "check for error/warning messages")
 }
@@ -80,6 +81,7 @@ test_rect_compare_outputs <- function (x = NULL) {
 
 test_rect_compare_outputs.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
+               parameter_type = "rectangular",
                operation = "Convert one rectangular class to another",
                content = c ("expect dimensions are same ",
                             "expect column names are retained ",
@@ -104,6 +106,7 @@ test_rect_extend_class <- function (x = NULL, ...) {
 
 test_rect_extend_class.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
+                   parameter_type = "rectangular",
                    operation = "Extend existent class with new class",
                    content = "(Should yield same result)")
 }
@@ -126,6 +129,7 @@ test_rect_replace_class <- function (x = NULL, ...) {
 
 test_rect_replace_class.NULL <- function (x = NULL, ...) { # nolint
     report_object (type = "dummy",
+                   parameter_type = "rectangular",
                    operation = "Replace class with new class",
                    content = "(Should yield same result)")
 }
