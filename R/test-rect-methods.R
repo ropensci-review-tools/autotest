@@ -1,7 +1,23 @@
 # S3 dispatch methods for autotest_rectangular class objects.
 
+#' autotest_types
+#'
+#' List all types of 'autotests' currently implmenented.
+#'
+#' @return An `autotest` object with each row listing one unique type of test
+#' which can be applied to every parameter (of the appropriate class) of each
+#' function.
+#'
+#' @export
+autotest_types <- function () {
+    autotest_rectangular ()
+}
 
-autotest_rectangular.NULL <- function (package = ".") { # nolint
+autotest_rectangular <- function (x = NULL, ...) {
+    UseMethod ("autotest_rectangular", x)
+}
+
+autotest_rectangular.NULL <- function (x = NULL, ...) { # nolint
 
     env <- pkgload::ns_env ("autotest")
     all_names <- ls (env, all.names = TRUE)
@@ -9,12 +25,46 @@ autotest_rectangular.NULL <- function (package = ".") { # nolint
     tests <- tests [which (!grepl ("^.*\\.(default|rect_test|NULL)$", tests))]
 
     tests <- grep ("^test\\_rect\\_", tests, value = TRUE)
+    tests <- unique (gsub ("\\..*$", "", tests))
 
     res <- lapply (tests, function (i)
                    do.call (paste0 (i, ".NULL"), list (NULL)))
 
     return (do.call (rbind, res))
 }
+
+autotest_rectangular.autotest_obj <- function (x, ...) {
+
+    ret <- NULL
+
+    x$classes <- x$classes [which (!is.na (x$classes))]
+
+    rect_index <- which (x$param_types == "tabular")
+
+    for (r in rect_index) {
+
+        x$i <- r
+
+        x$class <- NULL
+        if (names (x$params) [r] %in% names (x$classes))
+            x$class <- x$classes [[match (names (x$params) [r],
+                                          names (x$classes))]]
+
+        ret <- rbind (ret, test_rect_as_other (x))
+
+        ret <- rbind (ret, test_rect_compare_outputs (x))
+
+        # Modify class definitions for rectangular inputs if not excluded by
+        # yaml class definitions
+        if (!names (x$params) [r] %in% names (x$classes)) {
+            ret <- rbind (ret, test_rect_extend_class (x))
+
+            ret <- rbind (ret, test_rect_replace_class (x))
+        }
+    }
+    return (ret)
+}
+
 
 test_rect_as_other <- function (x = NULL, ...) {
     UseMethod ("test_rect_as_other", x)

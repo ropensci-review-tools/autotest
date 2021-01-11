@@ -1,34 +1,3 @@
-autotest_rectangular <- function (x) {
-
-    ret <- NULL
-
-    x$classes <- x$classes [which (!is.na (x$classes))]
-
-    rect_index <- which (x$param_types == "tabular")
-
-    for (r in rect_index) {
-
-        x$i <- r
-
-        x$class <- NULL
-        if (names (x$params) [r] %in% names (x$classes))
-            x$class <- x$classes [[match (names (x$params) [r],
-                                          names (x$classes))]]
-
-        ret <- rbind (ret, test_rect_as_other (x))
-
-        ret <- rbind (ret, test_rect_compare_outputs (x))
-
-        # Modify class definitions for rectangular inputs if not excluded by
-        # yaml class definitions
-        if (!names (x$params) [r] %in% names (x$classes)) {
-            ret <- rbind (ret, test_rect_extend_class (x))
-
-            ret <- rbind (ret, test_rect_replace_class (x))
-        }
-    }
-    return (ret)
-}
 
 #  ----------------------------------------------------------------------
 # NOTE that these tests primarily rely on the S3 methods dispatched on
