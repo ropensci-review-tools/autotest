@@ -58,6 +58,7 @@ test_vec_class_defs <- function (x = NULL, ...) {
 
 test_vec_class_defs.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
+                   parameter_type = "vector",
                    operation = "Custom class definitions for vector input",
                    content = "(Should yield same result)")
 }
@@ -118,6 +119,7 @@ test_vec_as_list <- function (x = NULL, ...) {
 
 test_vec_as_list.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
+                   parameter_type = "vector",
                    operation = "Convert vector input to list-columns",
                    content = "(Should yield same result)")
 }
