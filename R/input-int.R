@@ -19,10 +19,11 @@ test_single_int_range.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
                    parameter_type = "single integer",
                    operation = "Ascertain permissible range",
-                   content = "Should either be unrestricted or correspond with documentation")
+                   content = paste0 ("Should either be unrestricted or ",
+                                     "correspond with documentation"))
 }
 
-test_single_int_range.autotest_obj <- function (x, ...) {
+test_single_int_range.autotest_obj <- function (x, ...) { # nolint
 
     res <- NULL
 
@@ -214,7 +215,18 @@ single_int_dummy_report <- function (x) {
                                      "if given, or not error otherwise"))
 }
 
-int_as_double <- function (x, vec = FALSE) {
+test_single_int_as_dbl <- function (x = NULL, ...) {
+    UseMethod ("test_single_int_as_dbl", x, ...)
+}
+
+test_single_int_as_dbl.NULL <- function (x = NULL, ...) {
+    report_object (type = "dummy",
+                   parameter_type = "single integer",
+                   operation = "Integer value converted to numeric",
+                   content = "(Should yield same result)")
+}
+
+test_single_int_as_dbl.autotest_obj <- function (x, vec = FALSE) { # nolint
 
     operation <- "Integer vector converted to numeric"
 
