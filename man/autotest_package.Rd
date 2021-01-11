@@ -9,6 +9,7 @@ autotest_package(
   functions = NULL,
   exclude = NULL,
   test = FALSE,
+  test_data = NULL,
   quiet = FALSE
 )
 }
@@ -23,6 +24,12 @@ nominated package to be excluded from 'autotesting'.}
 
 \item{test}{If \code{FALSE}, return only descriptions of tests which would be run
 with \code{test = TRUE}, without actually running them.}
+
+\item{test_data}{Result returned from calling either \link{autotest_types} or
+\link{autotest_package} with \code{test = FALSE} that contains a list of all tests
+which would be conducted. These tests have an additional flag, \code{test}, which
+defaults to \code{TRUE}. Setting any tests to \code{FALSE} will avoid running them when
+\code{test = TRUE}.}
 
 \item{quiet}{If 'FALSE', provide printed output on screen.}
 }

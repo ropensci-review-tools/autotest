@@ -159,11 +159,27 @@ dummy_compare_rect_outputs <- function (fn, params, this_class, i) {
 #' Change class of params [[i]] to other rectangular classes and capture
 #' resultant return values in `this_env`
 #' @noRd
-pass_rect_as_other <- function (fn, params, this_class, i, this_env) {
-
-    other <- other_rect_classes (this_class, class (params [[i]]))
+pass_rect_as_other <- function (fn,
+                                params,
+                                this_class,
+                                i,
+                                this_env,
+                                test_data = NULL) {
 
     res <- NULL
+
+    if (!is.null (test_data)) {
+        op <- "Convert one rectangular class to another"
+        cnt <- "check for error/warning messages"
+        index <- which (test_data$operation == op &
+                        test_data$content == cnt)
+        if (length (index) > 0)
+            test_this <- test_data$test [index]
+        if (!any (test_this))
+            return (test_data [index, ])
+    }
+
+    other <- other_rect_classes (this_class, class (params [[i]]))
 
     for (o in seq_along (other)) {
         this_ret <- pass_one_rect_as_other (fn, params, i, other [o])
@@ -199,7 +215,11 @@ pass_rect_as_other <- function (fn, params, this_class, i, this_env) {
 #' standard `return_object` output containing any messages/warnings/errors
 #' issued.
 #' @noRd
-pass_one_rect_as_other <- function (fn, params, i, other = "data.frame") {
+pass_one_rect_as_other <- function (fn,
+                                    params,
+                                    i,
+                                    other = "data.frame",
+                                    test_data = NULL) {
 
     f <- tempfile (fileext = ".txt")
     ret <- NULL

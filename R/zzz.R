@@ -43,13 +43,15 @@ report_object <- function (type = "diagnostic",
                            parameter = NA_character_,
                            parameter_type = NA_character_,
                            operation = NA_character_,
-                           content = NA_character_) {
+                           content = NA_character_,
+                           test = TRUE) {
     data.frame (type = type,
                 fn_name = fn_name,
                 parameter = parameter,
                 parameter_type = parameter_type,
                 operation = operation,
                 content = content,
+                test = test,
                 stringsAsFactors = FALSE)
 }
 

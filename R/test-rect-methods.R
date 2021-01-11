@@ -1,6 +1,6 @@
 # S3 dispatch methods for autotest_rectangular class objects.
 
-autotest_rectangular <- function (x = NULL, ...) {
+autotest_rectangular <- function (x = NULL, test_data = NULL, ...) {
     UseMethod ("autotest_rectangular", x)
 }
 
@@ -20,7 +20,7 @@ autotest_rectangular.NULL <- function (x = NULL, ...) { # nolint
     return (do.call (rbind, res))
 }
 
-autotest_rectangular.autotest_obj <- function (x, ...) {
+autotest_rectangular.autotest_obj <- function (x, test_data, ...) {
 
     ret <- NULL
 
@@ -37,23 +37,23 @@ autotest_rectangular.autotest_obj <- function (x, ...) {
             x$class <- x$classes [[match (names (x$params) [r],
                                           names (x$classes))]]
 
-        ret <- rbind (ret, test_rect_as_other (x))
+        ret <- rbind (ret, test_rect_as_other (x, test_data))
 
-        ret <- rbind (ret, test_rect_compare_outputs (x))
+        ret <- rbind (ret, test_rect_compare_outputs (x, test_data))
 
         # Modify class definitions for rectangular inputs if not excluded by
         # yaml class definitions
         if (!names (x$params) [r] %in% names (x$classes)) {
-            ret <- rbind (ret, test_rect_extend_class (x))
+            ret <- rbind (ret, test_rect_extend_class (x, test_data))
 
-            ret <- rbind (ret, test_rect_replace_class (x))
+            ret <- rbind (ret, test_rect_replace_class (x, test_data))
         }
     }
     return (ret)
 }
 
 
-test_rect_as_other <- function (x = NULL, ...) {
+test_rect_as_other <- function (x = NULL, test_data = NULL, ...) {
     UseMethod ("test_rect_as_other", x)
 }
 
@@ -65,7 +65,7 @@ test_rect_as_other.NULL <- function (x = NULL, ...) {
 }
 
 
-test_rect_as_other.autotest_obj <- function (x, ...) { # nolint
+test_rect_as_other.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     if (x$test)
         ret <- pass_rect_as_other (x$fn, x$params, x$class, x$i, x$env)
@@ -75,7 +75,7 @@ test_rect_as_other.autotest_obj <- function (x, ...) { # nolint
     return (ret)
 }
 
-test_rect_compare_outputs <- function (x = NULL) {
+test_rect_compare_outputs <- function (x = NULL, test_data = NULL, ...) {
     UseMethod ("test_rect_compare_outputs", x)
 }
 
@@ -88,7 +88,7 @@ test_rect_compare_outputs.NULL <- function (x = NULL, ...) {
                             "expect all columns retain identical structure "))
 }
 
-test_rect_compare_outputs.autotest_obj <- function (x) { # nolint
+test_rect_compare_outputs.autotest_obj <- function (x, test_data = NULL) { # nolint
 
     if (x$test)
         ret <- compare_rect_outputs (x$fn, x$params, x$i, x$env)
@@ -100,7 +100,7 @@ test_rect_compare_outputs.autotest_obj <- function (x) { # nolint
 
 #' Extend class structure of tabular objects, which should still work
 #' @noRd
-test_rect_extend_class <- function (x = NULL, ...) {
+test_rect_extend_class <- function (x = NULL, test_data = NULL, ...) {
     UseMethod ("test_rect_extend_class", x)
 }
 
@@ -111,7 +111,7 @@ test_rect_extend_class.NULL <- function (x = NULL, ...) {
                    content = "(Should yield same result)")
 }
 
-test_rect_extend_class.autotest_obj <- function (x, ...) { # nolint
+test_rect_extend_class.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     if (x$test)
         res <- do_extend_rect_class_struct (x$params, x$fn, x$i, x$env)
@@ -123,7 +123,7 @@ test_rect_extend_class.autotest_obj <- function (x, ...) { # nolint
 
 #' Replacing class structure of tabular objects entirely should generally fail
 #' @noRd
-test_rect_replace_class <- function (x = NULL, ...) {
+test_rect_replace_class <- function (x = NULL, test_data = NULL, ...) {
     UseMethod ("test_rect_replace_class", x)
 }
 
@@ -134,7 +134,7 @@ test_rect_replace_class.NULL <- function (x = NULL, ...) { # nolint
                    content = "(Should yield same result)")
 }
 
-test_rect_replace_class.autotest_obj <- function (x, ...) { # nolint
+test_rect_replace_class.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     this_class <- class (x$params [[x$i]]) [1]
     operation <- paste0 ("Replace class [", this_class, "] with new class")
