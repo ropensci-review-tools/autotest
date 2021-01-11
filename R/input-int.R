@@ -11,19 +11,19 @@ is_int <- function (p) {
     return (p_is_int)
 }
 
-test_single_int <- function (x) {
+test_single_int_range <- function (x) {
 
     res <- NULL
 
     if (x$test)
-        res <- test_single_int_range (x)
+        res <- single_int_range (x)
     else
         res <- single_int_dummy_report (x)
 
     return (res)
 }
 
-test_single_int_range <- function (x) {
+single_int_range <- function (x) {
 
     int_range <- get_int_range (x$fn, x$params, x$i)
 

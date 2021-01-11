@@ -22,7 +22,7 @@ autotest_single <- function (x) {
         if (val_type == "integer") {
 
             res <- rbind (res,
-                          test_single_int (x),
+                          test_single_int_range (x),
                           int_as_double (x, vec = FALSE))
 
         } else if (val_type == "numeric") {
