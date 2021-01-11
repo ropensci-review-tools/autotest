@@ -32,7 +32,7 @@ autotest_vector <- function (x) {
 }
 
 # class definitions for vector columns should be ignored
-vector_class_defs <- function (x) {
+test_vec_class_defs <- function (x) {
 
     operation <- "Custom class definitions for vector input"
     res0 <- report_object (type = "dummy",
@@ -81,7 +81,7 @@ vector_class_defs <- function (x) {
     return (res)
 }
 
-vector_as_list <- function (x) {
+test_vec_as_list <- function (x) {
 
     operation <- "Convert vector input to list-columns"
     res0 <- report_object (type = "dummy",
