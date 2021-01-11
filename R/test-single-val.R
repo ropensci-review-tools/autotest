@@ -16,47 +16,32 @@ autotest_single <- function (x) {
 
         x$i <- i
 
-        p_i <- x$params [[i]]
-        val_type <- NULL
+        val_type <- single_val_type (x$params [[i]])
         check_vec <- TRUE
-        if (is_int (p_i)) {
 
-            val_type <- "integer"
+        if (val_type == "integer") {
 
-            res <- rbind (res, test_single_int (x))
-            res <- rbind (res, int_as_double (x, vec = FALSE))
+            res <- rbind (res,
+                          test_single_int (x),
+                          int_as_double (x, vec = FALSE))
 
-        } else if (methods::is (p_i, "numeric")) {
-
-            val_type <- "numeric"
+        } else if (val_type == "numeric") {
 
             res <- rbind (res, test_single_double (x))
 
-        } else if (is.character (p_i)) {
-
-            val_type <- "character"
+        } else if (val_type == "character") {
 
             res <- rbind (res, test_single_char (x))
 
-        } else if (is.logical (p_i)) {
-
-            val_type <- "logical"
+        } else if (val_type == "logical") {
 
             res <- rbind (res, test_single_logical (x))
 
-        } else if (methods::is (p_i, "name") |
-                   methods::is (p_i, "formula")) {
-
-            val_type <- class (p_i) [1]
+        } else if (val_type %in% c ("name", "formula")) {
 
             res <- rbind (res, test_single_name (x))
-
-            check_vec <- FALSE
-
-        } else {
-
-            check_vec <- FALSE
-
+            if (val_type %in% c ("name", "formula"))
+                check_vec <- FALSE
         }
 
         # check response to vector input:
@@ -66,6 +51,24 @@ autotest_single <- function (x) {
     }
 
     return (res [which (!duplicated (res)), ])
+}
+
+single_val_type <- function (x) {
+
+    res <- ""
+
+    if (is_int (x))
+        res <- "integer"
+    else if (methods::is (x, "numeric"))
+        res <- "numeric"
+    else if (is.character (x))
+        res <- "character"
+    else if (is.logical (x))
+        res <- "logical"
+    else if ((methods::is (x, "name") | methods::is (x, "formula")))
+        res <- class (x) [1]
+
+    return (res)
 }
 
 #' Do input values presumed to have length one give errors when vectors of
