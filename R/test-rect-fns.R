@@ -114,25 +114,34 @@ other_rect_classes <- function (classes = NULL, this_class = NULL) {
     return (other)
 }
 
-dummy_rect_as_other <- function (fn, params, this_class, i) {
+dummy_rect_as_other <- function (fn, params, this_class, i, test_data = NULL) {
 
     par_type <- class (params [[i]]) [1]
     other <- other_rect_classes (this_class, par_type)
     other <- gsub ("^.*::", "", other)
 
-    report_object (type = "dummy",
-                   fn_name = fn,
-                   parameter = names (params) [i],
-                   parameter_type = par_type,
-                   operation = paste0 ("Convert [",
-                                       par_type,
-                                       "] to [",
-                                       other,
-                                       "]"),
-                   content = "check for error/warning messages")
+    content <- "check for error/warning messages"
+    res <- report_object (type = "dummy",
+                          fn_name = fn,
+                          parameter = names (params) [i],
+                          parameter_type = par_type,
+                          operation = paste0 ("Convert [",
+                                              par_type,
+                                              "] to [",
+                                              other,
+                                              "]"),
+                          content = content)
+
+    if (!is.null (test_data)) {
+        if (content %in% test_data$content) {
+            res$test <- test_data$test [test_data$content == content]
+        }
+    }
+
+    return (res)
 }
 
-dummy_compare_rect_outputs <- function (fn, params, this_class, i) {
+dummy_compare_rect_outputs <- function (fn, params, this_class, i, test_data) {
 
     par_type <- class (params [[i]]) [1]
     other <- other_rect_classes (this_class, par_type)
@@ -148,12 +157,21 @@ dummy_compare_rect_outputs <- function (fn, params, this_class, i) {
                   "expect all columns retain identical structure ")
     content <- rep (content, each = length (other))
 
-    report_object (type = "dummy",
-                   fn_name = fn,
-                   parameter = names (params) [i],
-                   parameter_type = par_type,
-                   operation = operations,
-                   content = content)
+    res <- report_object (type = "dummy",
+                          fn_name = fn,
+                          parameter = names (params) [i],
+                          parameter_type = par_type,
+                          operation = operations,
+                          content = content)
+
+    if (!is.null (test_data)) {
+        for (i in unique (res$content)) {
+            index <- which (res$content == i)
+            res$test [index] <- test_data$test [match (i, test_data$content)]
+        }
+    }
+
+    return (res)
 }
 
 #' Change class of params [[i]] to other rectangular classes and capture

@@ -57,15 +57,16 @@ test_that ("autotest var", {
         )
     expect_true (nrow (x_f) > nrow (x_t))
 
-    for (x in list (x_f, x_f)) {
+    for (x in list (x_t, x_f)) {
         expect_is (x, "data.frame")
-        expect_equal (ncol (x), 7)
+        expect_equal (ncol (x), 8)
         expect_identical (names (x), c ("type",
                                         "fn_name",
                                         "parameter",
                                         "parameter_type",
                                         "operation",
                                         "content",
+                                        "test",
                                         "yaml_hash"))
     }
 
