@@ -67,23 +67,34 @@ test_rect_as_other.NULL <- function (x = NULL, ...) {
 
 test_rect_as_other.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
+    ret <- NULL
+
     if (!is.null (test_data)) {
         these_tests <- test_data [test_data$operation ==
                                   "Convert one rectangular class to another", ]
-        do_not_test <- these_tests [which (!these_tests$test), ]
+        ret <- these_tests [which (!these_tests$test), ]
         these_tests <- these_tests [which (these_tests$test), ]
+
+        if (nrow (these_tests) > 0) {
+            if (x$test) {
+                this_ret <- pass_rect_as_other (x$fn,
+                                                x$params,
+                                                x$class,
+                                                x$i,
+                                                x$env,
+                                                these_tests)
+            } else {
+                this_ret <- dummy_rect_as_other (x$fn,
+                                                 x$params,
+                                                 x$class,
+                                                 x$i,
+                                                 these_tests)
+            }
+            ret <- rbind (ret, this_ret)
+        }
     }
 
-    if (nrow (these_tests) > 0) {
-        if (x$test)
-            ret <- pass_rect_as_other (x$fn, x$params, x$class, x$i, x$env,
-                                       these_tests)
-        else
-            ret <- dummy_rect_as_other (x$fn, x$params, x$class, x$i,
-                                        these_tests)
-    }
-
-    return (rbind (do_not_test, ret))
+    return (ret)
 }
 
 test_rect_compare_outputs <- function (x = NULL, test_data = NULL, ...) {
