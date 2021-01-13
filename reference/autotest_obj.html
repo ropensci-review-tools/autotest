@@ -74,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.616</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.630</span>
       </span>
     </div>
 
@@ -115,6 +115,7 @@
 
     <pre class="usage"><span class='fu'>autotest_obj</span><span class='op'>(</span>
   <span class='va'>package</span>,
+  package_loc <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>fn_name</span>,
   <span class='va'>parameters</span>,
   <span class='va'>parameter_types</span>,
@@ -131,6 +132,11 @@
     <tr>
       <th>package</th>
       <td><p>Name of package for which object is to be constructed.</p></td>
+    </tr>
+    <tr>
+      <th>package_loc</th>
+      <td><p>Location of package on local system (for source packages
+only)</p></td>
     </tr>
     <tr>
       <th>fn_name</th>

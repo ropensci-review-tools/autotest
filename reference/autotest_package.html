@@ -75,7 +75,7 @@ and submitting each to the autotest_yaml function." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.616</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.630</span>
       </span>
     </div>
 
@@ -120,6 +120,7 @@ and submitting each to the <a href='autotest_yaml.html'>autotest_yaml</a> functi
   functions <span class='op'>=</span> <span class='cn'>NULL</span>,
   exclude <span class='op'>=</span> <span class='cn'>NULL</span>,
   test <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  test_data <span class='op'>=</span> <span class='cn'>NULL</span>,
   quiet <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></pre>
 
@@ -144,6 +145,14 @@ nominated package to be excluded from 'autotesting'.</p></td>
       <th>test</th>
       <td><p>If <code>FALSE</code>, return only descriptions of tests which would be run
 with <code>test = TRUE</code>, without actually running them.</p></td>
+    </tr>
+    <tr>
+      <th>test_data</th>
+      <td><p>Result returned from calling either <a href='autotest_types.html'>autotest_types</a> or
+autotest_package with <code>test = FALSE</code> that contains a list of all tests
+which would be conducted. These tests have an additional flag, <code>test</code>, which
+defaults to <code>TRUE</code>. Setting any tests to <code>FALSE</code> will avoid running them when
+<code>test = TRUE</code>.</p></td>
     </tr>
     <tr>
       <th>quiet</th>
