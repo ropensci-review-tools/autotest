@@ -237,7 +237,8 @@ autotest_types <- function () {
 
     res <- rbind (autotest_rectangular (),
                   autotest_vector (),
-                  autotest_single ())
+                  autotest_single (),
+                  autotest_return ())
     res <- tibble::tibble (res)
 
     class (res) <- c ("autotest_package", class (res))

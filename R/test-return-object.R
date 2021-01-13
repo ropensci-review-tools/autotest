@@ -1,15 +1,31 @@
 
-# Check (1) whether return values are documented at all; and (2) If so, whether
-# they describe the class or type of return object. The latter is currently only
-# crudely tested with a simple `grep([[Cc]lass|[Oo]bject)`.
-autotest_return <- function (x) {
-
-    ret <- test_return_object (x)
-
-    return (ret)
+#' Check (1) whether return values are documented at all; and (2) If so, whether
+#' they describe the class or type of return object. The latter is currently
+#' only crudely tested with a simple `grep([[Cc]lass|[Oo]bject)`.
+#' @noRd
+autotest_return <- function (x = NULL, ...) {
+    UseMethod ("autotest_return", x)
 }
 
-test_return_object <- function (x) {
+autotest_return.NULL <- function (x = NULL, ...) {
+
+    # The NULL dispatch here is different from all others, because no parameters
+    # are actually tested, so results are identical to test = F, and can be
+    # triggered with a dummy `autotest_obj`:
+    x <- autotest_obj (package = "",
+                       parameters = list (),
+                       parameter_types = list (),
+                       fn_name = "",
+                       classes = NULL,
+                       test = FALSE)
+
+    rbind (test_return_success (x),
+           test_return_is_described (x),
+           test_return_has_class (x),
+           test_return_primary_val_matches_desc (x))
+}
+
+autotest_return.autotest_obj <- function (x) {
 
     rbind (test_return_success (x),
            test_return_is_described (x),
@@ -20,6 +36,7 @@ test_return_object <- function (x) {
 test_return_success <- function (x, ...) {
     UseMethod ("test_return_success", x)
 }
+
 
 test_return_success.autotest_obj <- function (x, ...) { # nolint
 

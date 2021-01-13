@@ -6,6 +6,7 @@
 \usage{
 autotest_obj(
   package,
+  package_loc = NULL,
   fn_name,
   parameters,
   parameter_types,
@@ -18,6 +19,9 @@ autotest_obj(
 }
 \arguments{
 \item{package}{Name of package for which object is to be constructed.}
+
+\item{package_loc}{Location of package on local system (for source packages
+only)}
 
 \item{fn_name}{Name of function to be tested.}
 
