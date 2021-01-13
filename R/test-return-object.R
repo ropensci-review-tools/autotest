@@ -57,7 +57,7 @@ do_test_return_object <- function (x) {
 
 test_return_desc <- function (x, retval) {
 
-    aliases <- m_fns_to_topics (package = x$package)
+    aliases <- m_fns_to_topics (package = x$package_loc)
     rdname <- gsub ("\\.Rd$", "", aliases$name [aliases$alias == x$fn])
     Rd_value <- get_Rd_value (package = x$package, fn_name = rdname) # nolint
 
