@@ -191,10 +191,11 @@ pass_rect_as_other <- function (fn,
         cnt <- "check for error/warning messages"
         index <- which (test_data$operation == op &
                         test_data$content == cnt)
-        if (length (index) > 0)
+        if (length (index) > 0) {
             test_this <- test_data$test [index]
-        if (!any (test_this))
-            return (test_data [index, ])
+            if (!any (test_this))
+                return (test_data [index, ])
+        }
     }
 
     other <- other_rect_classes (this_class, class (params [[i]]))
@@ -273,7 +274,7 @@ get_rect_comparisons <- function (nms, this_env = NULL, this_class = NULL) {
     if (is.null (this_class)) {
         if (length (nms) < 2)
             ret_now <- TRUE
-    } else if (!this_class %in% envobjs) {
+    } else if (!this_class [1] %in% envobjs) {
             ret_now <- TRUE
     }
     if (ret_now)
