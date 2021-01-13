@@ -1,6 +1,8 @@
 #' autotest_obj class definition
 #'
 #' @param package Name of package for which object is to be constructed.
+#' @param package_loc Location of package on local system (for source packages
+#' only)
 #' @param fn_name Name of function to be tested.
 #' @param parameters Names of all parameters for that function.
 #' @param parameter_types Types of input parameters.
@@ -14,6 +16,7 @@
 #'
 #' @export
 autotest_obj <- function (package,
+                          package_loc = NULL,
                           fn_name,
                           parameters,
                           parameter_types,
@@ -24,6 +27,7 @@ autotest_obj <- function (package,
                           quiet = FALSE) {
 
     x <- list (package = package,
+               package_loc = package_loc,
                params = parameters,
                param_types = parameter_types,
                fn = fn_name,
@@ -32,6 +36,9 @@ autotest_obj <- function (package,
                env = env,
                test = test,
                quiet = quiet)
+
+    if (is.null (x$package_loc))
+        x$package_loc <- x$package
 
     class (x) <- "autotest_obj"
 
