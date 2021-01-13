@@ -19,7 +19,7 @@ test_return_object <- function (x) {
     return (ret)
 }
 
-do_test_return_object <- function (x) {
+capture_return_object <- function (x) {
 
     ret <- NULL
     f <- tempfile (fileext = ".txt")
@@ -33,23 +33,30 @@ do_test_return_object <- function (x) {
                            operation = "normal function call")
 
     o <- utils::capture.output (
-        retval <- tryCatch (do.call (x$fn, x$params),
+        retobj <- tryCatch (do.call (x$fn, x$params),
                             warning = function (w) w,
                             error = function (e) e)
         )
 
-    if (methods::is (retval, "error")) {
+    return (retobj)
+}
+
+do_test_return_object <- function (x) {
+
+    retobj <- capture_return_object (x)
+
+    if (methods::is (retobj, "error")) {
         ret <- rbind (ret,
                       report_object (type = "error",
                                      fn_name = x$fn,
                                      parameter = "(return object)",
                                      operation = "error from normal operation",
-                                     content = retval$message))
+                                     content = retobj$message))
         return (ret)
     }
 
-    if (!is.null (attr (retval, "class"))) {
-        ret <- test_return_desc (x, retval)
+    if (!is.null (attr (retobj, "class"))) {
+        ret <- test_return_desc (x, retobj)
     }
 
     return (ret)
