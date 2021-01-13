@@ -28,7 +28,7 @@ autotest_single.autotest_obj <- function (x, ...) {
     f <- tempfile (fileext = ".txt")
     res <- NULL
     if (x$test)
-        res <- catch_all_msgs (f, x$fn, x)
+        res <- catch_all_msgs (f, x$fn, x$params)
     if (!is.null (res))
         res$operation <- "normal function call"
 
