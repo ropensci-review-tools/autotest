@@ -4,15 +4,22 @@
 # crudely tested with a simple `grep([[Cc]lass|[Oo]bject)`.
 autotest_return <- function (x) {
 
-    if (x$test)
-        ret <- do_autotest_return (x)
-    else
-        ret <- dummy_autotest_return (x)
+    ret <- test_return_object (x)
 
     return (ret)
 }
 
-do_autotest_return <- function (x) {
+test_return_object <- function (x) {
+
+    if (x$test)
+        ret <- do_test_return_object (x)
+    else
+        ret <- dummy_test_return_object (x)
+
+    return (ret)
+}
+
+do_test_return_object <- function (x) {
 
     ret <- NULL
     f <- tempfile (fileext = ".txt")
@@ -111,7 +118,7 @@ test_return_desc <- function (x, retval) {
     return (ret)
 }
 
-dummy_autotest_return <- function (x) {
+dummy_test_return_object <- function (x) {
 
     r1 <- report_object (type = "dummy",
                          fn_name = x$fn,
