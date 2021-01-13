@@ -11,15 +11,36 @@ autotest_return <- function (x) {
 
 test_return_object <- function (x) {
 
-    ret <- test_return_success (x)
-    ret <- rbind (ret,
-                  test_return_class (x))
-    ret <- rbind (ret,
-                  test_return_is_described (x))
-    ret <- rbind (ret,
-                  test_return_val_matches_desc (x))
-    ret <- rbind (ret,
-                  test_return_primary_val_matches_desc (x))
+    rbind (test_return_success (x),
+           test_return_is_described (x),
+           test_return_has_class (x),
+           test_return_primary_val_matches_desc (x))
+}
+
+test_return_success <- function (x, ...) {
+    UseMethod ("test_return_success", x)
+}
+
+test_return_success.autotest_obj <- function (x, ...) { # nolint
+
+    op <- "Check that function successfully returns an object"
+    ret <- report_object (type = "dummy",
+                          fn_name = x$fn,
+                          parameter = "(return object)",
+                          operation = op)
+
+    if (x$test) {
+
+        retobj <- m_capture_return_object (x)
+
+        if (methods::is (retobj, "error")) {
+            ret$type <- "error"
+            ret$operation <- "error from normal operation"
+            ret$content <- retobj$message
+        } else {
+            ret <- NULL
+        }
+    }
 
     return (ret)
 }
@@ -47,131 +68,73 @@ capture_return_object <- function (x) {
 }
 m_capture_return_object <- memoise::memoise (capture_return_object)
 
-test_return_success <- function (x = NULL, ...) {
-    UseMethod ("test_return_success", x)
-}
-
-test_return_success.NULL <- function (x = NULL) {
-
-    report_object (type = "dummy",
-                   fn_name = x$fn,
-                   parameter = "(return object)",
-                   operation = paste0 ("Check that function successfully ",
-                                       "returns an object"))
-}
-
-test_return_success.autotest_obj <- function (x, ...) { # nolint
-
-    ret <- NULL
-
-    retobj <- m_capture_return_object (x)
-
-    if (methods::is (retobj, "error")) {
-        ret <- report_object (type = "error",
-                              fn_name = x$fn,
-                              parameter = "(return object)",
-                              operation = "error from normal operation",
-                              content = retobj$message)
-    }
-
-    return (ret)
-}
-
-test_return_class <- function (x = NULL, ...) {
-    UseMethod ("test_return_class", x)
-}
-
-test_return_class.NULL <- function (x = NULL) {
-    report_object (type = "dummy",
-                   fn_name = x$fn,
-                   parameter = "(return object)",
-                   operation = "Check that description has return value")
-}
-
-test_return_class.autotest_obj <- function (x, ...) {
-
-    ret <- NULL
-
-    retobj <- m_capture_return_object (x)
-
-    if (!is.null (attr (retobj, "class"))) {
-        ret <- test_return_is_described (x, retobj)
-    }
-
-    return (ret)
-}
-
-test_return_is_described <- function (x = NULL, ...) {
+test_return_is_described <- function (x, ...) {
     UseMethod ("test_return_is_described", x)
 }
 
-test_return_is_described.NULL <- function (x = NULL, ...) {
+test_return_is_described.autotest_obj <- function (x, ...) { # nolint
 
-    op1 <- "Check whether description of return value specifies class"
-    op2 <- "Compare class of return value with class given in description"
+    ret <- report_object (type = "dummy",
+                          fn_name = x$fn,
+                          parameter = "(return object)",
+                          operation = "Check that description has return value")
 
-    report_object (type = "dummy",
-                   fn_name = x$fn,
-                   parameter = "(return object)",
-                   operation = c (op1, op2))
-}
+    if (x$test) {
 
-test_return_is_described.autotest_obj <- function (x = NULL, retobj, ...) { # nolint
+        aliases <- m_fns_to_topics (package = x$package_loc)
+        rdname <- gsub ("\\.Rd$", "", aliases$name [aliases$alias == x$fn])
+        Rd_value <- get_Rd_value (package = x$package_loc, fn_name = rdname) # nolint
 
-    aliases <- m_fns_to_topics (package = x$package_loc)
-    rdname <- gsub ("\\.Rd$", "", aliases$name [aliases$alias == x$fn])
-    Rd_value <- get_Rd_value (package = x$package_loc, fn_name = rdname) # nolint
-
-    ret <- NULL
-
-    if (is.null (Rd_value)) {
-
-        operation <- "Check that description has return value"
-        content <- paste0 ("Function [",
-                           x$fn,
-                           "] does not specify a return value.")
-        ret <- report_object (type = "warning",
-                              fn_name = x$fn,
-                              parameter = "(return object)",
-                              operation = operation,
-                              content = content)
+        if (is.null (Rd_value)) {
+            ret$type <- "diagnostic"
+            ret$content <- paste0 ("Function [",
+                                   x$fn,
+                                   "] does not specify a return value.")
+        } else {
+            ret <- NULL
+        }
     }
 
     return (ret)
 }
 
-test_return_val_matches_desc <- function (x, ...) {
-    UseMethod ("test_return_val_matches_desc", x)
+test_return_has_class <- function (x, ...) {
+    UseMethod ("test_return_has_class", x)
 }
 
-test_return_val_matches_desc.autotest_obj <- function (x) { # nolint
+test_return_has_class.autotest_obj <- function (x) { # nolint
 
-    ret <- NULL
+    op <- "Check whether description of return value specifies class"
+    ret <- report_object (type = "dummy",
+                          fn_name = x$fn,
+                          parameter = "(return object)",
+                          operation = op)
 
-    aliases <- m_fns_to_topics (package = x$package_loc)
-    rdname <- gsub ("\\.Rd$", "", aliases$name [aliases$alias == x$fn])
-    Rd_value <- get_Rd_value (package = x$package_loc, fn_name = rdname) # nolint
+    if (x$test) {
 
-    retobj <- m_capture_return_object (x)
+        aliases <- m_fns_to_topics (package = x$package_loc)
+        rdname <- gsub ("\\.Rd$", "", aliases$name [aliases$alias == x$fn])
+        Rd_value <- get_Rd_value (package = x$package_loc, fn_name = rdname) # nolint
 
-    chk <- vapply (attr (retobj, "class"), function (i)
-                   grepl (i, Rd_value),
-                   logical (1))
+        retobj <- m_capture_return_object (x)
 
-    if (!any (chk)) {
+        chk <- vapply (attr (retobj, "class"), function (i)
+                       grepl (i, Rd_value),
+                       logical (1))
 
-        operation <- "Check that description has return value"
-        content <- paste0 ("Function [",
-                           x$fn,
-                           "] returns a value of class [",
-                           paste0 (attr (retobj, "class"), collapse = ", "),
-                           "], which differs from the value ",
-                           "provided in the description")
-        ret <- report_object (type = "diagnostic",
-                              fn_name = x$fn,
-                              parameter = "(return object)",
-                              operation = operation,
-                              content = content)
+        if (!any (chk)) {
+
+            ret$type <- "diagnostic"
+            ret$content <- paste0 ("Function [",
+                                   x$fn,
+                                   "] returns a value of class [",
+                                   paste0 (attr (retobj, "class"),
+                                           collapse = ", "),
+                                   "], which differs from the value ",
+                                   "provided in the description")
+        } else {
+            ret <- NULL
+        }
     }
 
     return (ret)
@@ -183,36 +146,46 @@ test_return_primary_val_matches_desc <- function (x, ...) { # nolint
 
 test_return_primary_val_matches_desc.autotest_obj <- function (x) { # nolint
 
-    ret <- NULL
+    op <- "Compare class of return value with description"
+    ret <- report_object (type = "dummy",
+                          fn_name = x$fn,
+                          parameter = "(return object)",
+                          operation = op)
 
-    retobj <- m_capture_return_object (x)
+    if (x$test) {
 
-    aliases <- m_fns_to_topics (package = x$package_loc)
-    rdname <- gsub ("\\.Rd$", "", aliases$name [aliases$alias == x$fn])
-    Rd_value <- get_Rd_value (package = x$package_loc, fn_name = rdname) # nolint
+        aliases <- m_fns_to_topics (package = x$package_loc)
+        rdname <- gsub ("\\.Rd$", "", aliases$name [aliases$alias == x$fn])
+        Rd_value <- get_Rd_value (package = x$package_loc, fn_name = rdname) # nolint
 
-    retobj <- m_capture_return_object (x)
+        retobj <- m_capture_return_object (x)
 
-    chk <- vapply (attr (retobj, "class"), function (i)
-                   grepl (i, Rd_value),
-                   logical (1))
-
-    if (any (chk)) {
-
-        txt <- compare_return_classes (Rd_value, retobj)
-
-        if (!is.null (txt)) {
-            operation <- "Compare class of return value with description"
-            for (i in txt) {
-                ret <- rbind (ret,
-                              report_object (type = "diagnostic",
-                                             fn_name = x$fn,
-                                             parameter = "(return object)",
-                                             operation = operation,
-                                             content = i))
-            }
+        chk <- TRUE
+        if (!is.null (attr (retobj, "class"))) {
+            chk <- vapply (attr (retobj, "class"), function (i)
+                           grepl (i, Rd_value),
+                           logical (1))
         }
-    }
+
+        if (!any (chk)) {
+
+            txt <- compare_return_classes (Rd_value, retobj)
+
+            if (!is.null (txt)) {
+                ret$type <- "diagnostic"
+                ret_tmp <- NULL
+                for (i in txt) {
+                    ret$content <- i
+                    ret_tmp <- rbind (ret_tmp, ret)
+                }
+                ret <- ret_tmp
+            } else {
+                ret <- NULL
+            }
+        } else {
+            ret <- NULL
+        }
+    } # end if x$test
 
     return (ret)
 }
