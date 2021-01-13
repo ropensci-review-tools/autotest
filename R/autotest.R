@@ -56,7 +56,11 @@ autotest_yaml <- function (yaml = NULL,
         stop (msg)
 
     reports <- lapply (yaml, function (i)
-                      autotest_single_yaml (i, filename, test, test_data, quiet))
+                      autotest_single_yaml (i,
+                                            filename,
+                                            test,
+                                            test_data,
+                                            quiet))
     reports <- do.call (rbind, reports)
 
     if (!is.null (reports)) {
