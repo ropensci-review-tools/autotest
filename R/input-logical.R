@@ -5,12 +5,13 @@ test_single_logical <- function (x = NULL, ...) {
 
 test_single_logical.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
+                   test_name = "negate_logical",
                    parameter_type = "single logical",
                    operation = "Negate default value of logical parameter",
                    content = "(Function call should still work)")
 }
 
-test_single_logical.autotest_obj <- function (x) {
+test_single_logical.autotest_obj <- function (x) { # nolint
 
     res <- NULL
 
@@ -29,23 +30,32 @@ negate_logical <- function (x) {
 
         res <- NULL
         f <- tempfile (fileext = ".txt")
-        res <- rbind (res,
-                      catch_all_msgs (f, x$fn, x$params))
+        m <- catch_all_msgs (f, x$fn, x$params)
+        if (!is.null (m)) {
+            res <- test_single_logical.NULL ()
+            res$type <- m$type
+            res$fn_name <- x$fn
+            res$parameter <- names (x$params) [x$i]
+            res$content <- m$content
+        }
+
         x$params [[x$i]] <- !x$params [[x$i]]
-        res <- rbind (res,
-                      catch_all_msgs (f, x$fn, x$params))
+        m <- catch_all_msgs (f, x$fn, x$params)
+        if (!is.null (m)) {
+            res_n <- test_single_logical.NULL ()
+            res_n$type <- m$type
+            res_n$fn_name <- x$fn
+            res_n$parameter <- names (x$params) [x$i]
+            res_n$content <- m$content
+            res <- rbind (res, res_n)
+        }
 
     } else {
 
-        operation <- "Negate default value of logical parameter"
+        res <- test_single_logical.NULL ()
 
-        res <- report_object (type = "dummy",
-                              fn_name = x$fn,
-                              parameter = names (x$params) [x$i],
-                              parameter_type = "single logical",
-                              operation = operation,
-                              content = "(Function call should still work)")
-
+        res$fn_name <- x$fn
+        res$parameter <- names (x$params) [x$i]
 
     }
 
@@ -116,6 +126,8 @@ char_for_logical <- function (x) {
 #' @noRd
 subst_for_logical <- function (x, subst = "integer") {
 
+    subst <- match.arg (subst, c ("integer", "character"))
+
     operation <- paste0 ("Substitute ",
                          subst,
                          " values for logical parameter")
@@ -128,7 +140,13 @@ subst_for_logical <- function (x, subst = "integer") {
                        subst,
                        " input")
 
+    subst <- switch (EXPR = subst,
+                     "integer" = "int",
+                     "character" = "char")
+    test_name <- paste0 ("subst_", subst, "_for_logical")
+
     return (report_object (type = "dummy",
+                           test_name = test_name,
                            fn_name = x$fn,
                            parameter = names (x$params) [x$i],
                            parameter_type = "single logical",
