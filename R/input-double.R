@@ -5,6 +5,7 @@ test_double_noise <- function (x = NULL, ...) {
 
 test_double_noise.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
+                   test_name = "trivial_noise",
                    parameter_type = "numeric",
                    operation = "Add trivial noise to numeric parameter",
                    content = "(Should yield same result)")
@@ -35,27 +36,26 @@ double_noise <- function (x) {
 
     if (!is.null (res0) & !is.null (res1)) {
         if (!identical (res0, res1)) {
-            op <- "Add trivial noise to numeric parameter"
-            content <- paste0 ("Parameter [",
-                               names (x$params) [x$i],
-                               "] yields different result when trivial ",
-                               "noise is added")
-            res <- rbind (res,
-                          report_object (type = "diagnostic",
-                                         fn_name = x$fn,
-                                         parameter = names (x$params) [x$i],
-                                         parameter_type = "single numeric",
-                                         operation = op,
-                                         content = content))
+            res <- test_double_noise.NULL ()
+            res$type <- "diagnostic"
+            res$fn_name <- x$fn
+            res$parameter <- names (x$params) [x$i]
+            res$content <- paste0 ("Parameter [",
+                                   names (x$params) [x$i],
+                                   "] yields different result when trivial ",
+                                   "noise is added")
         }
     }
+
+    return (res)
 }
 
 dbl_noise_dummy_report <- function (x) {
-    report_object (type = "dummy",
-                   fn_name = x$fn,
-                   parameter = names (x$params) [x$i],
-                   parameter_type = "single numeric",
-                   operation = "Add trivial noise",
-                   content = "(Should yield same result)")
+
+    res <- test_double_noise.NULL ()
+
+    res$fn_name <- x$fn
+    res$parameter <- names (x$params) [x$i]
+
+    return (res)
 }
