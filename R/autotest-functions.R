@@ -108,7 +108,7 @@ autotest_single_yaml <- function (yaml = NULL,
 
         reports <- rbind (reports, autotest_rectangular (test_obj, test_data))
 
-        reports <- rbind (reports, autotest_vector (test_obj))
+        reports <- rbind (reports, autotest_vector (test_obj, test_data))
 
         reports <- rbind (reports, autotest_single (test_obj))
 

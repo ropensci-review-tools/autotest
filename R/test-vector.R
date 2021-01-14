@@ -19,7 +19,7 @@ autotest_vector.NULL <- function (x = NULL, ...) {
     return (do.call (rbind, res))
 }
 
-autotest_vector.autotest_obj <- function (x) {
+autotest_vector.autotest_obj <- function (x, test_data = NULL, ...) {
 
     ret <- NULL
     f <- tempfile (fileext = ".txt")
@@ -41,7 +41,7 @@ autotest_vector.autotest_obj <- function (x) {
 
         if (typeof (params_v [[v]]) == "integer" &
             !is.factor (params_v [[v]])) {
-            ret <- rbind (ret, test_int_as_dbl (x, vec = TRUE))
+            ret <- rbind (ret, test_int_as_dbl (x, vec = TRUE, test_data = test_data))
         }
 
         ret <- rbind (ret, test_vec_class_defs (x))

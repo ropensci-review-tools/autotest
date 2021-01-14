@@ -226,7 +226,7 @@ test_int_as_dbl.NULL <- function (x = NULL, ...) {
                    content = "(Should yield same result)")
 }
 
-test_int_as_dbl.autotest_obj <- function (x, vec = FALSE) { # nolint
+test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # nolint
 
     if (vec)
         param_type <- "integer vector"
@@ -238,7 +238,12 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE) { # nolint
     res$parameter <- names (x$params) [x$i]
     res$parameter_type <- param_type
 
-    if (x$test) {
+    if (is.null (test_data))
+        res$test <- x$test
+    else
+        res$test <- test_data$test [test_data$test_name == res$test_name]
+
+    if (res$test) {
         f <- tempfile (fileext = ".txt")
         out1 <- catch_all_msgs (f, x$fn, x$params)
         if (length (out1) == 0) {
