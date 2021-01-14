@@ -42,6 +42,7 @@ test_return_success.autotest_obj <- function (x, ...) { # nolint
 
     op <- "Check that function successfully returns an object"
     ret <- report_object (type = "dummy",
+                          test_name = "return successful",
                           fn_name = x$fn,
                           parameter = "(return object)",
                           operation = op)
@@ -92,6 +93,7 @@ test_return_is_described <- function (x, ...) {
 test_return_is_described.autotest_obj <- function (x, ...) { # nolint
 
     ret <- report_object (type = "dummy",
+                          test_name = "return_val_described",
                           fn_name = x$fn,
                           parameter = "(return object)",
                           operation = "Check that description has return value")
@@ -123,6 +125,7 @@ test_return_has_class.autotest_obj <- function (x) { # nolint
 
     op <- "Check whether description of return value specifies class"
     ret <- report_object (type = "dummy",
+                          test_name = "return_desc_includes_class",
                           fn_name = x$fn,
                           parameter = "(return object)",
                           operation = op)
@@ -165,6 +168,7 @@ test_return_primary_val_matches_desc.autotest_obj <- function (x) { # nolint
 
     op <- "Compare class of return value with description"
     ret <- report_object (type = "dummy",
+                          test_name = "return_class_matches_desc",
                           fn_name = x$fn,
                           parameter = "(return object)",
                           operation = op)
