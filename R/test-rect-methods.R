@@ -133,6 +133,7 @@ test_rect_extend_class <- function (x = NULL, test_data = NULL, ...) {
 
 test_rect_extend_class.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
+                   test_name = "extend_rect_class",
                    parameter_type = "rectangular",
                    operation = "Extend existent class with new class",
                    content = "(Should yield same result)")
@@ -156,6 +157,7 @@ test_rect_replace_class <- function (x = NULL, test_data = NULL, ...) {
 
 test_rect_replace_class.NULL <- function (x = NULL, ...) { # nolint
     report_object (type = "dummy",
+                   test_name = "replace_rect_class",
                    parameter_type = "rectangular",
                    operation = "Replace class with new class",
                    content = "(Should yield same result)")
@@ -163,14 +165,13 @@ test_rect_replace_class.NULL <- function (x = NULL, ...) { # nolint
 
 test_rect_replace_class.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
+    ret <- test_rect_replace_class.NULL ()
+
+    ret$fn_name <- x$fn
+    ret$parameter <- names (x$params) [x$i]
     this_class <- class (x$params [[x$i]]) [1]
-    operation <- paste0 ("Replace class [", this_class, "] with new class")
-    ret <- report_object (type = "dummy",
-                          fn_name = x$fn,
-                          parameter = names (x$params) [x$i],
-                          parameter_type = this_class,
-                          operation = operation,
-                          content = "(Should yield same result)")
+    ret$parameter_type <- this_class
+    ret$operation <- paste0 ("Replace class [", this_class, "] with new class")
 
     if (x$test) {
 

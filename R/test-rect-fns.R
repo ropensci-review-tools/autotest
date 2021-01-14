@@ -320,16 +320,16 @@ compare_rect_outputs <- function (fn, params, i, this_env, this_obj = NULL) {
 
 dummy_extend_rect_class <- function (params, fn, i) {
 
-    par_type <- class (params [[i]]) [1]
+    ret <- test_rect_extend_class.NULL ()
 
-    report_object (type = "dummy",
-                   fn_name = fn,
-                   parameter = names (params) [i],
-                   parameter_type = par_type,
-                   operation = paste0 ("Extend existent class [",
-                                       par_type,
-                                       "] with new class"),
-                   content = "(Should yield same result)")
+    ret$fn_name <- fn
+    ret$parameter <- names (params) [i]
+    ret$parameter_type <- class (params [[i]]) [1]
+    ret$operation <- paste0 ("Extend existent class [",
+                             class (params [[i]]) [1],
+                             "] with new class")
+
+    return (ret)
 }
 
 do_extend_rect_class_struct <- function (params, fn, i, this_env) {
@@ -345,12 +345,15 @@ do_extend_rect_class_struct <- function (params, fn, i, this_env) {
         msgs$parameter_type <- "general tabular"
     }
 
-    ret <- add_msg_output (NULL,
-                           msgs,
-                           types = c ("warning", "error"),
-                           operation = paste0 ("rectangular parameter ",
-                                               "with extended ",
-                                               "class structure"))
+    msg_out <- add_msg_output (NULL,
+                               msgs,
+                               types = c ("warning", "error"))
+
+    ret <- test_rect_extend_class.NULL ()
+    ret$fn_name <- msg_out$fn_name
+    ret$parameter <- msg_out$parameter
+    ret$parameter_type <- msg_out$parameter_type
+    ret$content <- msg_out$content
 
     if (!"error" %in% msgs$type) {
         o <- utils::capture.output (
