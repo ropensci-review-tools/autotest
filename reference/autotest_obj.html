@@ -74,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.648</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.649</span>
       </span>
     </div>
 
@@ -114,13 +114,14 @@
     </div>
 
     <pre class="usage"><span class='fu'>autotest_obj</span><span class='op'>(</span>
-  <span class='va'>package</span>,
+  package <span class='op'>=</span> <span class='cn'>NA_character_</span>,
   package_loc <span class='op'>=</span> <span class='cn'>NULL</span>,
-  <span class='va'>fn_name</span>,
-  <span class='va'>parameters</span>,
-  <span class='va'>parameter_types</span>,
+  test_name <span class='op'>=</span> <span class='cn'>NA_character_</span>,
+  fn_name <span class='op'>=</span> <span class='cn'>NA_character_</span>,
+  parameters <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  parameter_types <span class='op'>=</span> <span class='cn'>NA_character_</span>,
   class <span class='op'>=</span> <span class='cn'>NULL</span>,
-  <span class='va'>classes</span>,
+  classes <span class='op'>=</span> <span class='cn'>NULL</span>,
   env <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/environment.html'>new.env</a></span><span class='op'>(</span><span class='op'>)</span>,
   test <span class='op'>=</span> <span class='cn'>FALSE</span>,
   quiet <span class='op'>=</span> <span class='cn'>FALSE</span>
@@ -137,6 +138,11 @@
       <th>package_loc</th>
       <td><p>Location of package on local system (for source packages
 only)</p></td>
+    </tr>
+    <tr>
+      <th>test_name</th>
+      <td><p>Name of test (use <a href='autotest_types.html'>autotest_types</a> to get all test
+names).</p></td>
     </tr>
     <tr>
       <th>fn_name</th>
