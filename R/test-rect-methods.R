@@ -70,29 +70,33 @@ test_rect_as_other.autotest_obj <- function (x, test_data = NULL, ...) { # nolin
 
     ret <- NULL
 
-    if (!is.null (test_data)) {
-        these_tests <- test_data [test_data$operation ==
-                                  "Convert one rectangular class to another", ]
+    these_tests <- test_rect_as_other.NULL ()
+    this_op <- these_tests$operation
+
+    if (is.null (test_data)) {
+        these_tests$test <- x$test
+    } else {
+        these_tests <- test_data [test_data$operation == this_op, ]
         ret <- these_tests [which (!these_tests$test), ]
         these_tests <- these_tests [which (these_tests$test), ]
+    }
 
-        if (nrow (these_tests) > 0) {
-            if (x$test) {
-                this_ret <- pass_rect_as_other (x$fn,
-                                                x$params,
-                                                x$class,
-                                                x$i,
-                                                x$env,
-                                                these_tests)
-            } else {
-                this_ret <- dummy_rect_as_other (x$fn,
-                                                 x$params,
-                                                 x$class,
-                                                 x$i,
-                                                 these_tests)
-            }
-            ret <- rbind (ret, this_ret)
+    if (nrow (these_tests) > 0) {
+        if (x$test) {
+            this_ret <- pass_rect_as_other (x$fn,
+                                            x$params,
+                                            x$class,
+                                            x$i,
+                                            x$env,
+                                            these_tests)
+        } else {
+            this_ret <- dummy_rect_as_other (x$fn,
+                                             x$params,
+                                             x$class,
+                                             x$i,
+                                             these_tests)
         }
+        ret <- rbind (ret, this_ret)
     }
 
     return (ret)
