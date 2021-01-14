@@ -17,6 +17,8 @@ test_single_int_range <- function (x = NULL, ...) {
 
 test_single_int_range.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
+                   test_name = c ("int_range",
+                                  "match_int_range_to_docs"),
                    parameter_type = "single integer",
                    operation = "Ascertain permissible range",
                    content = paste0 ("Should either be unrestricted or ",
@@ -44,27 +46,28 @@ single_int_range <- function (x) {
 
     res <- NULL
 
+    res_out <- test_single_int_range.NULL ()
+    res_out <- res_out [res_out$test_name == "int_range", ]
+    res_out$type <- "diagnostic"
+    res_out$fn_name <- x$fn
+    res_out$parameter <- names (x$params) [x$i]
+
     if (!any (is.finite (int_range))) {
+
         content <- paste0 ("Parameter [",
                            names (x$params) [x$i],
                            "] permits unrestricted integer inputs")
-        res <- report_object (type = "diagnostic",
-                              fn_name = x$fn,
-                              parameter = names (x$params) [x$i],
-                              parameter_type = "single integer",
-                              operation = "Ascertain integer range",
-                              content = content)
+        res <- res_out
+        res$content <- content
+
     } else if (!is.null (int_range)) {
+
         content <- paste0 ("Parameter [",
                            names (x$params) [x$i],
                            "] responds to integer values in [",
                            paste0 (int_range, collapse = ", "), "]")
-        res <- report_object (type = "diagnostic",
-                              fn_name = x$fn,
-                              parameter = names (x$params) [x$i],
-                              parameter_type = "single integer",
-                              operation = "Ascertain integer range",
-                              content = content)
+        res <- res_out
+        res$content <- content
 
         rd <- get_Rd_param (package = x$package,
                             fn_name = x$fn,
@@ -74,17 +77,12 @@ single_int_range <- function (x) {
 
         if (!all (range_in_rd)) {
 
-            operation <- "Match integer range to documentation"
-            content <- paste0 (" Parameter range for ",
-                               names (x$params) [x$i],
-                               " is NOT documented")
-            res <- rbind (res,
-                          report_object (type = "diagnostic",
-                                         fn_name = x$fn,
-                                         parameter = names (x$params) [x$i],
-                                         parameter_type = "single integer",
-                                         operation = operation,
-                                         content = content))
+            res_out <- test_single_int_range.NULL ()
+            res_out <- res_out [grep ("match_int_range", res_out$test_name), ]
+            res_out$content <- paste0 (" Parameter range for ",
+                                       names (x$params) [x$i],
+                                       " is NOT documented")
+            res <- rbind (res, res_out)
         }
     }
 
@@ -130,11 +128,12 @@ get_int_range <- function (this_fn, params, i) {
                            "specified/default input [",
                            names (params) [i], " = ",
                            params [[i]], "]")
-        ret <- report_object (type = "diagnostic",
-                              fn_name = this_fn,
-                              parameter = names (params) [i],
-                              parameter_type = "single integer",
-                              content = content)
+        ret <- test_single_int_range.NULL ()
+        ret$type <- "diagnostic"
+        res$fn_name <- this_fn
+        res$parameter <- names (params) [i]
+        res$content <- content
+
         return (ret)
     }
 
@@ -206,13 +205,13 @@ int_lower_limit <- function (this_fn, params, i) {
 }
 
 single_int_dummy_report <- function (x) {
-    report_object (type = "dummy",
-                   fn_name = x$fn,
-                   parameter = names (x$params) [x$i],
-                   parameter_type = "single integer",
-                   operation = "Ascertain integer range",
-                   content = paste0 ("Should accord with documented range ",
-                                     "if given, or not error otherwise"))
+
+    res <- test_single_int_range.NULL ()
+
+    res$fn_name <- x$fn
+    res$parameter <- names (x$params) [x$i]
+
+    return (res)
 }
 
 test_int_as_dbl <- function (x = NULL, ...) {
@@ -221,6 +220,7 @@ test_int_as_dbl <- function (x = NULL, ...) {
 
 test_int_as_dbl.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
+                   test_name = "int_as_numeric",
                    parameter_type = "single integer",
                    operation = "Integer value converted to numeric",
                    content = "(Should yield same result)")
@@ -228,19 +228,15 @@ test_int_as_dbl.NULL <- function (x = NULL, ...) {
 
 test_int_as_dbl.autotest_obj <- function (x, vec = FALSE) { # nolint
 
-    operation <- "Integer vector converted to numeric"
-
     if (vec)
         param_type <- "integer vector"
     else
         param_type <- "single integer"
 
-    res <- report_object (type = "dummy",
-                          fn_name = x$fn,
-                          parameter = names (x$params) [x$i],
-                          parameter_type = param_type,
-                          operation = operation,
-                          content = "(Should yield same result)")
+    res <- test_int_as_dbl.NULL ()
+    res$fn_name <- x$fn
+    res$parameter <- names (x$params) [x$i]
+    res$parameter_type <- param_type
 
     if (x$test) {
         f <- tempfile (fileext = ".txt")
