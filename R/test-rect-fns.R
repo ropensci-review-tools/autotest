@@ -120,8 +120,9 @@ dummy_rect_as_other <- function (fn, params, this_class, i, test_data = NULL) {
     other <- other_rect_classes (this_class, par_type)
     other <- gsub ("^.*::", "", other)
 
-    content <- "check for error/warning messages"
+    template <- test_rect_as_other.NULL ()
     res <- report_object (type = "dummy",
+                          test_name = template$test_name,
                           fn_name = fn,
                           parameter = names (params) [i],
                           parameter_type = par_type,
@@ -130,11 +131,11 @@ dummy_rect_as_other <- function (fn, params, this_class, i, test_data = NULL) {
                                               "] to [",
                                               other,
                                               "]"),
-                          content = content)
+                          content = template$content)
 
     if (!is.null (test_data)) {
-        if (content %in% test_data$content) {
-            res$test <- test_data$test [test_data$content == content]
+        if (template$content %in% test_data$content) {
+            res$test <- test_data$test [test_data$content == template$content]
         }
     }
 
@@ -147,18 +148,19 @@ dummy_compare_rect_outputs <- function (fn, params, this_class, i, test_data) {
     other <- other_rect_classes (this_class, par_type)
     other <- gsub ("^.*::", "", other)
 
+    template <- test_rect_compare_outputs.NULL ()
+    # that template has 3 rows for 3 different contents
     operations <- paste0 ("Convert [",
                           par_type,
                           "] to [",
                           other,
                           "]")
-    content <- c ("expect dimensions are same ",
-                  "expect column names are retained ",
-                  "expect all columns retain identical structure ")
-    content <- rep (content, each = length (other))
+    content <- rep (template$content, each = length (other))
     operations <- rep (operations, times = 3)
+    test_names <- rep (template$test_name, each = length (other))
 
     res <- report_object (type = "dummy",
+                          test_name = test_names,
                           fn_name = fn,
                           parameter = names (params) [i],
                           parameter_type = par_type,
@@ -188,10 +190,9 @@ pass_rect_as_other <- function (fn,
     res <- NULL
 
     if (!is.null (test_data)) {
-        op <- "Convert one rectangular class to another"
-        cnt <- "check for error/warning messages"
-        index <- which (test_data$operation == op &
-                        test_data$content == cnt)
+        template <- test_rect_as_other.NULL ()
+        index <- which (test_data$operation == template$operation &
+                        test_data$content == template$content)
         if (length (index) > 0) {
             test_this <- test_data$test [index]
             if (!any (test_this))
@@ -255,6 +256,9 @@ pass_one_rect_as_other <- function (fn,
         ret <- add_msg_output (NULL, msgs, types = c ("warning", "error"),
                                operation = paste0 ("tabular as ", other))
     }
+
+    template <- test_rect_as_other.NULL ()
+    ret$test_name <- template$test_name
 
     return (ret)
 }

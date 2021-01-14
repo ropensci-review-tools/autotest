@@ -59,6 +59,7 @@ test_rect_as_other <- function (x = NULL, test_data = NULL, ...) {
 
 test_rect_as_other.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
+                   test_name = "rect_as_other",
                    parameter_type = "rectangular",
                    operation = "Convert one rectangular class to another",
                    content = "check for error/warning messages")
@@ -103,11 +104,14 @@ test_rect_compare_outputs <- function (x = NULL, test_data = NULL, ...) {
 
 test_rect_compare_outputs.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
-               parameter_type = "rectangular",
-               operation = "Convert one rectangular class to another",
-               content = c ("expect dimensions are same ",
-                            "expect column names are retained ",
-                            "expect all columns retain identical structure "))
+            test_name = c ("rect_compare_dims",
+                           "rect_compare_col_names",
+                           "rect_compare_col_structure"),
+            parameter_type = "rectangular",
+            operation = "Convert one rectangular class to another",
+            content = c ("expect dimensions are same ",
+                         "expect column names are retained ",
+                         "expect all columns retain identical structure "))
 }
 
 test_rect_compare_outputs.autotest_obj <- function (x, test_data = NULL) { # nolint
