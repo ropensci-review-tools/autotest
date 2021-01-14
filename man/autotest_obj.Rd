@@ -5,13 +5,14 @@
 \title{autotest_obj class definition}
 \usage{
 autotest_obj(
-  package,
+  package = NA_character_,
   package_loc = NULL,
-  fn_name,
-  parameters,
-  parameter_types,
+  test_name = NA_character_,
+  fn_name = NA_character_,
+  parameters = list(),
+  parameter_types = NA_character_,
   class = NULL,
-  classes,
+  classes = NULL,
   env = new.env(),
   test = FALSE,
   quiet = FALSE
@@ -22,6 +23,9 @@ autotest_obj(
 
 \item{package_loc}{Location of package on local system (for source packages
 only)}
+
+\item{test_name}{Name of test (use \link{autotest_types} to get all test
+names).}
 
 \item{fn_name}{Name of function to be tested.}
 
