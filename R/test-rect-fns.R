@@ -199,7 +199,7 @@ pass_rect_as_other <- function (x, test_data = NULL) {
     other <- other_rect_classes (x$class, class (x$params [[x$i]]))
 
     for (o in seq_along (other)) {
-        this_ret <- pass_one_rect_as_other (x$fn, x$params, x$i, other [o])
+        this_ret <- pass_one_rect_as_other (x, other [o])
         res <- rbind (res, this_ret)
         if (docall (this_ret, x$fn, x$params)) {
 
@@ -232,29 +232,29 @@ pass_rect_as_other <- function (x, test_data = NULL) {
 #' standard `return_object` output containing any messages/warnings/errors
 #' issued.
 #' @noRd
-pass_one_rect_as_other <- function (fn,
-                                    params,
-                                    i,
+pass_one_rect_as_other <- function (x,
                                     other = "data.frame",
                                     test_data = NULL) {
 
-    f <- tempfile (fileext = ".txt")
     ret <- NULL
 
-    params [[i]] <- do.call (eval (parse (text = other)), params [[i]])
-    msgs <- catch_all_msgs (f, fn, params)
+    x$params [[x$i]] <- do.call (eval (parse (text = other)),
+                                 x$params [[x$i]])
+    msgs <- catch_all_msgs (x$f, x$fn, x$params)
 
     if (!is.null (msgs)) {
-        msgs$parameter <- rep (names (params) [i], nrow (msgs))
+        msgs$parameter <- rep (names (x$params) [x$i], nrow (msgs))
 
         if (grepl ("::", other))
             other <- strsplit (other, "::") [[1]] [2]
-        ret <- add_msg_output (NULL, msgs, types = c ("warning", "error"),
+        ret <- add_msg_output (NULL,
+                               msgs,
+                               types = c ("warning", "error"),
                                operation = paste0 ("tabular as ", other))
-    }
 
-    template <- test_rect_as_other.NULL ()
-    ret$test_name <- template$test_name
+        template <- test_rect_as_other.NULL ()
+        ret$test_name <- template$test_name
+    }
 
     return (ret)
 }
@@ -291,55 +291,54 @@ get_rect_comparisons <- function (nms, this_env = NULL, this_class = NULL) {
     return (nms)
 }
 
-compare_rect_outputs <- function (fn, params, i, this_env, this_obj = NULL) {
+compare_rect_outputs <- function (x, this_obj = NULL) {
 
 
     nms <- c ("val-data.frame", "val-tibble", "val-data.table")
-    nms <- nms [which (nms %in% ls (envir = this_env))]
+    nms <- nms [which (nms %in% ls (envir = x$env))]
 
-    nms <- get_rect_comparisons (nms, this_env, this_obj)
+    nms <- get_rect_comparisons (nms, x$env, this_obj)
     if (is.null (nms))
         return (NULL)
 
     res <- NULL
     for (i in seq (nrow (nms))) {
-        res1 <- get (nms [i, 1], envir = this_env)
-        res2 <- get (nms [i, 2], envir = this_env)
+        res1 <- get (nms [i, 1], envir = x$env)
+        res2 <- get (nms [i, 2], envir = x$env)
 
-        res <- rbind (res, chk_dims (fn, params, i, res1, res2))
-        res <- rbind (res, chk_names (fn, params, i, res1, res2))
-        res <- rbind (res, chk_columns (fn, params, i, res1, res2))
+        res <- rbind (res, chk_dims (x$fn, x$params, x$i, res1, res2))
+        res <- rbind (res, chk_names (x$fn, x$params, x$i, res1, res2))
+        res <- rbind (res, chk_columns (x$fn, x$params, x$i, res1, res2))
     }
 
     return (res)
 }
 
-dummy_extend_rect_class <- function (params, fn, i) {
+dummy_extend_rect_class <- function (x) {
 
     ret <- test_rect_extend_class.NULL ()
 
-    ret$fn_name <- fn
-    ret$parameter <- names (params) [i]
-    ret$parameter_type <- class (params [[i]]) [1]
+    ret$fn_name <- x$fn
+    ret$parameter <- names (x$params) [x$i]
+    ret$parameter_type <- class (x$params [[x$i]]) [1]
     ret$operation <- paste0 ("Extend existent class [",
-                             class (params [[i]]) [1],
+                             class (x$params [[x$i]]) [1],
                              "] with new class")
 
     return (ret)
 }
 
-do_extend_rect_class_struct <- function (params, fn, i, this_env) {
+do_extend_rect_class_struct <- function (x) {
 
     ret <- NULL
 
-    x <- params [[i]]
+    p_i <- x$params [[x$i]]
 
-    params [[i]] <- structure (x, class = c ("newclass", class (x)))
+    x$params [[x$i]] <- structure (p_i, class = c ("newclass", class (p_i)))
 
-    f <- tempfile (fileext = ".txt")
-    msgs <- catch_all_msgs (f, fn, params)
+    msgs <- catch_all_msgs (x$f, x$fn, x$params)
     if (!is.null (msgs)) {
-        msgs$parameter <- rep (names (params) [i], nrow (msgs))
+        msgs$parameter <- rep (names (x$params) [x$i], nrow (msgs))
         msgs$parameter_type <- "general tabular"
 
         msg_out <- add_msg_output (NULL,
@@ -355,18 +354,14 @@ do_extend_rect_class_struct <- function (params, fn, i, this_env) {
 
     if (!"error" %in% msgs$type) {
         o <- utils::capture.output (
-                temp <- suppressWarnings (do.call (fn,
-                                                   params,
-                                                   envir = this_env))
+                temp <- suppressWarnings (do.call (x$fn,
+                                                   x$params,
+                                                   envir = x$env))
         )
-        assign ("val-newclass", temp, envir = this_env)
+        assign ("val-newclass", temp, envir = x$env)
 
         ret <- rbind (ret,
-                      compare_rect_outputs (fn,
-                                            params,
-                                            i,
-                                            this_env,
-                                            this_obj = "val-newclass"))
+                      compare_rect_outputs (x, this_obj = "val-newclass"))
     }
 
     return (ret)

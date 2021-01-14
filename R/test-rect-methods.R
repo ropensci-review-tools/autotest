@@ -83,12 +83,7 @@ test_rect_as_other.autotest_obj <- function (x, test_data = NULL, ...) { # nolin
     these_tests <- these_tests [which (these_tests$test), ]
 
     if (x$test) {
-        this_ret <- pass_rect_as_other (x$fn,
-                                        x$params,
-                                        x$class,
-                                        x$i,
-                                        x$env,
-                                        these_tests)
+        this_ret <- pass_rect_as_other (x, these_tests)
     } else {
         this_ret <- dummy_rect_as_other (x, these_tests)
     }
@@ -139,9 +134,9 @@ test_rect_extend_class.NULL <- function (x = NULL, ...) {
 test_rect_extend_class.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     if (x$test)
-        res <- do_extend_rect_class_struct (x$params, x$fn, x$i, x$env)
+        res <- do_extend_rect_class_struct (x)
     else
-        res <- dummy_extend_rect_class (x$params, x$fn, x$i)
+        res <- dummy_extend_rect_class (x)
 
     return (res)
 }
