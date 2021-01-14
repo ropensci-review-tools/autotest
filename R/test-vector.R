@@ -41,12 +41,14 @@ autotest_vector.autotest_obj <- function (x, test_data = NULL, ...) {
 
         if (typeof (params_v [[v]]) == "integer" &
             !is.factor (params_v [[v]])) {
-            ret <- rbind (ret, test_int_as_dbl (x, vec = TRUE, test_data = test_data))
+            ret <- rbind (ret, test_int_as_dbl (x,
+                                                vec = TRUE,
+                                                test_data = test_data))
         }
 
-        ret <- rbind (ret, test_vec_class_defs (x))
+        ret <- rbind (ret, test_vec_class_defs (x, test_data = test_data))
 
-        ret <- rbind (ret, test_vec_as_list (x))
+        ret <- rbind (ret, test_vec_as_list (x, test_data = test_data))
     }
 
     return (ret)
@@ -65,13 +67,15 @@ test_vec_class_defs.NULL <- function (x = NULL, ...) {
 }
 
 
-test_vec_class_defs.autotest_obj <- function (x) { # nolint
+test_vec_class_defs.autotest_obj <- function (x, test_data = NULL) { # nolint
 
     res0 <- test_vec_class_defs.NULL ()
     res0$fn_name <- x$fn
     res0$parameter <- names (x$params) [x$i]
+    if (!is.null (test_data))
+        res0$test <- test_data$test [test_data$test_name == res0$test_name]
 
-    if (x$test) {
+    if (res0$test) {
 
         if (!names (x$params) [x$i] %in% names (x$classes)) {
             p <- x$params [[x$i]]
@@ -122,13 +126,15 @@ test_vec_as_list.NULL <- function (x = NULL, ...) {
                    content = "(Should yield same result)")
 }
 
-test_vec_as_list.autotest_obj <- function (x) {
+test_vec_as_list.autotest_obj <- function (x, test_data = NULL) {
 
     res0 <- test_vec_as_list.NULL ()
     res0$fn_name <- x$fn
     res0$parameter <- names (x$params) [x$i]
+    if (!is.null (test_data))
+        res0$test <- test_data$test [test_data$test_name == res0$test_name]
 
-    if (x$test) {
+    if (res0$test) {
 
         p <- x$params [[x$i]]
         p <- I (as.list (p))
