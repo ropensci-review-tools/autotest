@@ -1,5 +1,6 @@
 
 report_object <- function (type = "diagnostic",
+                           test_name = NA_character_,
                            fn_name = NA_character_,
                            parameter = NA_character_,
                            parameter_type = NA_character_,
@@ -8,6 +9,7 @@ report_object <- function (type = "diagnostic",
                            test = TRUE) {
 
     res <- tibble::tibble (type = type,
+                           test_name = test_name,
                            fn_name = fn_name,
                            parameter = parameter,
                            parameter_type = parameter_type,

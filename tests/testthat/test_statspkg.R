@@ -59,8 +59,9 @@ test_that ("autotest var", {
 
     for (x in list (x_t, x_f)) {
         expect_is (x, "data.frame")
-        expect_equal (ncol (x), 8)
+        expect_equal (ncol (x), 9)
         expect_identical (names (x), c ("type",
+                                        "test_name",
                                         "fn_name",
                                         "parameter",
                                         "parameter_type",
