@@ -20,7 +20,7 @@ autotest_rectangular.NULL <- function (x = NULL, ...) { # nolint
     return (do.call (rbind, res))
 }
 
-autotest_rectangular.autotest_obj <- function (x, test_data, ...) { # nolint
+autotest_rectangular.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     ret <- NULL
 
