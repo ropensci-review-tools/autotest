@@ -101,20 +101,18 @@ test_single_length <- function (x = NULL, ...) {
 
 test_single_length.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
+                   test_name = "single_par_as_length_2",
                    parameter_type = "single integer",
                    operation = "Length 2 vector for length 1 parameter",
                    content = "Should trigger message, warning, or error")
 }
 
-test_single_length.autotest_obj <- function (x, val_type) {
+test_single_length.autotest_obj <- function (x, val_type) { # nolint
 
-    operation <- "Length 2 vector for length 1 parameter"
-    res <- report_object (type = "dummy",
-                          fn_name = x$fn,
-                          parameter = names (x$params) [x$i],
-                          parameter_type = paste0 ("single ", val_type),
-                          operation = operation,
-                          content = "Should trigger message, warning, or error")
+    res <- test_single_length.NULL ()
+    res$fn_name <- x$fn
+    res$parameter <- names (x$params) [x$i]
+    res$parameter_type <- paste0 ("single ", val_type)
 
     if (x$test) {
 
