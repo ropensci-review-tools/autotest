@@ -334,6 +334,8 @@ dummy_extend_rect_class <- function (params, fn, i) {
 
 do_extend_rect_class_struct <- function (params, fn, i, this_env) {
 
+    ret <- NULL
+
     x <- params [[i]]
 
     params [[i]] <- structure (x, class = c ("newclass", class (x)))
@@ -343,17 +345,17 @@ do_extend_rect_class_struct <- function (params, fn, i, this_env) {
     if (!is.null (msgs)) {
         msgs$parameter <- rep (names (params) [i], nrow (msgs))
         msgs$parameter_type <- "general tabular"
+
+        msg_out <- add_msg_output (NULL,
+                                   msgs,
+                                   types = c ("warning", "error"))
+
+        ret <- test_rect_extend_class.NULL ()
+        ret$fn_name <- msg_out$fn_name
+        ret$parameter <- msg_out$parameter
+        ret$parameter_type <- msg_out$parameter_type
+        ret$content <- msg_out$content
     }
-
-    msg_out <- add_msg_output (NULL,
-                               msgs,
-                               types = c ("warning", "error"))
-
-    ret <- test_rect_extend_class.NULL ()
-    ret$fn_name <- msg_out$fn_name
-    ret$parameter <- msg_out$parameter
-    ret$parameter_type <- msg_out$parameter_type
-    ret$content <- msg_out$content
 
     if (!"error" %in% msgs$type) {
         o <- utils::capture.output (
