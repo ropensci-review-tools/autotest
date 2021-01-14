@@ -13,8 +13,7 @@ report_object <- function (type = "diagnostic",
                            parameter_type = parameter_type,
                            operation = operation,
                            content = content,
-                           test = test,
-                           stringsAsFactors = FALSE)
+                           test = test)
 
     class (res) <- c ("autotest_package", class (res))
 
