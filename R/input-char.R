@@ -1,9 +1,10 @@
 
-test_single_char <- function (x = NULL, ...) {
-    UseMethod ("test_single_char", x)
+test_single_char_case_dep <- function (x = NULL, ...) {
+    UseMethod ("test_single_char_case_dep", x)
 }
 
-test_single_char.NULL <- function (x) {
+test_single_char_case_dep.NULL <- function (x) {
+
     report_object (type = "dummy",
                    test_name = "single_char_case",
                    parameter_type = "single character",
@@ -11,19 +12,17 @@ test_single_char.NULL <- function (x) {
                    content = "(Should yield same result)")
 }
 
-test_single_char.autotest_obj <- function (x, test_data = NULL) {
+test_single_char_case_dep.autotest_obj <- function (x, test_data = NULL) { # nolint
 
     res <- NULL
 
     if (!is.null (test_data)) {
-        r <- test_single_char.NULL ()
+        r <- test_single_char_case_dep.NULL ()
         x$test <- test_data$test [test_data$test_name == r$test_name]
     }
 
     for (lower in c (TRUE, FALSE))
         res <- rbind (res, case_dependency (x, lower = lower))
-
-    res <- rbind (res, chk_match_arg (x))
 
     return (res)
 }
@@ -31,7 +30,7 @@ test_single_char.autotest_obj <- function (x, test_data = NULL) {
 case_dependency <- function (x, lower = TRUE) {
 
     op <- paste0 (ifelse (lower, "lower", "upper"), "-case character parameter")
-    res <- test_single_char.NULL ()
+    res <- test_single_char_case_dep.NULL ()
     res$fn_name <- x$fn
     res$parameter <- names (x$params) [x$i]
     res$operation <- op
@@ -55,15 +54,29 @@ case_dependency <- function (x, lower = TRUE) {
     return (res)
 }
 
-chk_match_arg <- function (x) {
+test_single_char_as_random <- function (x = NULL, ...) {
+    UseMethod ("test_single_char_as_random", x)
+}
 
-    res <- report_object (type = "dummy",
-                          test_name = "random_char_string",
-                          fn_name = x$fn,
-                          parameter = names (x$params) [x$i],
-                          parameter_type = "single character",
-                          operation = "random character string as parameter",
-                          content = "Should error")
+test_single_char_as_random.NULL <- function (x = NULL) { # nolint
+
+    report_object (type = "dummy",
+                   test_name = "random_char_string",
+                   parameter_type = "single character",
+                   operation = "random character string as parameter",
+                   content = "Should error")
+}
+
+test_single_char_as_random.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
+
+    res <- test_single_char_as_random.NULL ()
+    res$fn_name <- x$fn
+    res$parameter <- names (x$params) [x$i]
+
+    if (!is.null (test_data)) {
+        r <- test_single_char_as_random.NULL ()
+        x$test <- test_data$test [test_data$test_name == r$test_name]
+    }
 
     x$params [[x$i]] <- paste0 (sample (c (letters, LETTERS),
                                         size = 10),

@@ -52,7 +52,9 @@ autotest_single.autotest_obj <- function (x, test_data = NULL, ...) {
 
         } else if (val_type == "character") {
 
-            res <- rbind (res, test_single_char (x, test_data))
+            res <- rbind (res,
+                          test_single_char_case_dep (x, test_data),
+                          test_single_char_as_random (x, test_data))
 
         } else if (val_type == "logical") {
 
