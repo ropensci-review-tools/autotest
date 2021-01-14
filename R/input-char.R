@@ -11,9 +11,14 @@ test_single_char.NULL <- function (x) {
                    content = "(Should yield same result)")
 }
 
-test_single_char.autotest_obj <- function (x) {
+test_single_char.autotest_obj <- function (x, test_data = NULL) {
 
     res <- NULL
+
+    if (!is.null (test_data)) {
+        r <- test_single_char.NULL ()
+        x$test <- test_data$test [test_data$test_name == r$test_name]
+    }
 
     for (lower in c (TRUE, FALSE))
         res <- rbind (res, case_dependency (x, lower = lower))
