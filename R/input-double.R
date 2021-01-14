@@ -11,9 +11,14 @@ test_double_noise.NULL <- function (x = NULL, ...) {
                    content = "(Should yield same result)")
 }
 
-test_double_noise.autotest_obj <- function (x, ...) {
+test_double_noise.autotest_obj <- function (x, test_data = NULL, ...) {
 
     res <- NULL
+
+    if (!is.null (test_data)) {
+        r <- test_double_noise.NULL ()
+        x$test <- test_data$test [test_data$test_name == r$test_name]
+    }
 
     if (x$test)
         res <- double_noise (x)
