@@ -156,6 +156,7 @@ dummy_compare_rect_outputs <- function (fn, params, this_class, i, test_data) {
                   "expect column names are retained ",
                   "expect all columns retain identical structure ")
     content <- rep (content, each = length (other))
+    operations <- rep (operations, times = 3)
 
     res <- report_object (type = "dummy",
                           fn_name = fn,
