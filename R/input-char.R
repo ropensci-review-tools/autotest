@@ -81,6 +81,7 @@ chk_match_arg <- function (x) {
 }
 
 # currently not used
+# nocov start
 regex_param_descs <- function (h, params, i, msgs) {
 
     # The following lines are used just to test whether params[[i]] corresponds
@@ -169,11 +170,4 @@ regex_param_descs <- function (h, params, i, msgs) {
     for (k in seq (res))
         res [k] <- match_res_k (res, hc, i, j, k)
 }
-
-single_char_dummy_report <- function (x) {
-    report_object (type = "dummy",
-                   fn_name = x$fn,
-                   parameter = names (x$params) [x$i],
-                   parameter_type = "single character",
-                   operation = "single character tests")
-}
+# nocov end
