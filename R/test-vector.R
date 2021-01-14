@@ -58,21 +58,18 @@ test_vec_class_defs <- function (x = NULL, ...) {
 
 test_vec_class_defs.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
+                   test_name = "vector_custom_class",
                    parameter_type = "vector",
                    operation = "Custom class definitions for vector input",
                    content = "(Should yield same result)")
 }
 
 
-test_vec_class_defs.autotest_obj <- function (x) {
+test_vec_class_defs.autotest_obj <- function (x) { # nolint
 
-    operation <- "Custom class definitions for vector input"
-    res0 <- report_object (type = "dummy",
-                           fn_name = x$fn,
-                           parameter = names (x$params) [x$i],
-                           parameter_type = "generic vector",
-                           operation = operation,
-                           content = "(Should yield same result)")
+    res0 <- test_vec_class_defs.NULL ()
+    res0$fn_name <- x$fn
+    res0$parameter <- names (x$params) [x$i]
 
     if (x$test) {
 
@@ -119,6 +116,7 @@ test_vec_as_list <- function (x = NULL, ...) {
 
 test_vec_as_list.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
+                   test_name = "vector_to_list_col",
                    parameter_type = "vector",
                    operation = "Convert vector input to list-columns",
                    content = "(Should yield same result)")
@@ -126,13 +124,9 @@ test_vec_as_list.NULL <- function (x = NULL, ...) {
 
 test_vec_as_list.autotest_obj <- function (x) {
 
-    operation <- "Convert vector input to list-columns"
-    res0 <- report_object (type = "dummy",
-                           fn_name = x$fn,
-                           parameter = names (x$params) [x$i],
-                           parameter_type = "generic vector",
-                           operation = operation,
-                           content = "(Should yield same result)")
+    res0 <- test_vec_as_list.NULL ()
+    res0$fn_name <- x$fn
+    res0$parameter <- names (x$params) [x$i]
 
     if (x$test) {
 
