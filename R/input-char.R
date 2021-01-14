@@ -5,6 +5,7 @@ test_single_char <- function (x = NULL, ...) {
 
 test_single_char.NULL <- function (x) {
     report_object (type = "dummy",
+                   test_name = "single_char_case",
                    parameter_type = "single character",
                    operation = "Change case",
                    content = "(Should yield same result)")
@@ -25,12 +26,10 @@ test_single_char.autotest_obj <- function (x) {
 case_dependency <- function (x, lower = TRUE) {
 
     op <- paste0 (ifelse (lower, "lower", "upper"), "-case character parameter")
-    res <- report_object (type = "dummy",
-                          fn_name = x$fn,
-                          parameter = names (x$params) [x$i],
-                          parameter_type = "single character",
-                          operation = op,
-                          content = "(Should yield same result)")
+    res <- test_single_char.NULL ()
+    res$fn_name <- x$fn
+    res$parameter <- names (x$params) [x$i]
+    res$operation <- op
 
     if (x$test) {
 
@@ -54,6 +53,7 @@ case_dependency <- function (x, lower = TRUE) {
 chk_match_arg <- function (x) {
 
     res <- report_object (type = "dummy",
+                          test_name = "random_char_string",
                           fn_name = x$fn,
                           parameter = names (x$params) [x$i],
                           parameter_type = "single character",
