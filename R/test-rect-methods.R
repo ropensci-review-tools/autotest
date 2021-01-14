@@ -90,11 +90,7 @@ test_rect_as_other.autotest_obj <- function (x, test_data = NULL, ...) { # nolin
                                         x$env,
                                         these_tests)
     } else {
-        this_ret <- dummy_rect_as_other (x$fn,
-                                         x$params,
-                                         x$class,
-                                         x$i,
-                                         these_tests)
+        this_ret <- dummy_rect_as_other (x, these_tests)
     }
 
     return (rbind (ret, this_ret))
@@ -119,10 +115,9 @@ test_rect_compare_outputs.NULL <- function (x = NULL, ...) {
 test_rect_compare_outputs.autotest_obj <- function (x, test_data = NULL) { # nolint
 
     if (x$test)
-        ret <- compare_rect_outputs (x$fn, x$params, x$i, x$env, test_data)
+        ret <- compare_rect_outputs (x, test_data)
     else
-        ret <- dummy_compare_rect_outputs (x$fn, x$params, x$class, x$i,
-                                           test_data)
+        ret <- dummy_compare_rect_outputs (x, test_data)
 
     return (ret)
 }

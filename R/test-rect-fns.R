@@ -114,17 +114,18 @@ other_rect_classes <- function (classes = NULL, this_class = NULL) {
     return (other)
 }
 
-dummy_rect_as_other <- function (fn, params, this_class, i, test_data = NULL) {
+#' @param x An `autotest_obj` object
+dummy_rect_as_other <- function (x, test_data = NULL) {
 
-    par_type <- class (params [[i]]) [1]
-    other <- other_rect_classes (this_class, par_type)
+    par_type <- class (x$params [[x$i]]) [1]
+    other <- other_rect_classes (x$class, par_type)
     other <- gsub ("^.*::", "", other)
 
     template <- test_rect_as_other.NULL ()
     res <- report_object (type = "dummy",
                           test_name = template$test_name,
-                          fn_name = fn,
-                          parameter = names (params) [i],
+                          fn_name = x$fn,
+                          parameter = names (x$params) [x$i],
                           parameter_type = par_type,
                           operation = paste0 ("Convert [",
                                               par_type,
@@ -142,10 +143,10 @@ dummy_rect_as_other <- function (fn, params, this_class, i, test_data = NULL) {
     return (res)
 }
 
-dummy_compare_rect_outputs <- function (fn, params, this_class, i, test_data) {
+dummy_compare_rect_outputs <- function (x, test_data) {
 
-    par_type <- class (params [[i]]) [1]
-    other <- other_rect_classes (this_class, par_type)
+    par_type <- class (x$params [[x$i]]) [1]
+    other <- other_rect_classes (x$class, par_type)
     other <- gsub ("^.*::", "", other)
 
     template <- test_rect_compare_outputs.NULL ()
@@ -161,8 +162,8 @@ dummy_compare_rect_outputs <- function (fn, params, this_class, i, test_data) {
 
     res <- report_object (type = "dummy",
                           test_name = test_names,
-                          fn_name = fn,
-                          parameter = names (params) [i],
+                          fn_name = x$fn,
+                          parameter = names (x$params) [x$i],
                           parameter_type = par_type,
                           operation = operations,
                           content = content)
@@ -180,12 +181,7 @@ dummy_compare_rect_outputs <- function (fn, params, this_class, i, test_data) {
 #' Change class of params [[i]] to other rectangular classes and capture
 #' resultant return values in `this_env`
 #' @noRd
-pass_rect_as_other <- function (fn,
-                                params,
-                                this_class,
-                                i,
-                                this_env,
-                                test_data = NULL) {
+pass_rect_as_other <- function (x, test_data = NULL) {
 
     res <- NULL
 
@@ -200,26 +196,26 @@ pass_rect_as_other <- function (fn,
         }
     }
 
-    other <- other_rect_classes (this_class, class (params [[i]]))
+    other <- other_rect_classes (x$class, class (x$params [[x$i]]))
 
     for (o in seq_along (other)) {
-        this_ret <- pass_one_rect_as_other (fn, params, i, other [o])
+        this_ret <- pass_one_rect_as_other (x$fn, x$params, x$i, other [o])
         res <- rbind (res, this_ret)
-        if (docall (this_ret, fn, params)) {
+        if (docall (this_ret, x$fn, x$params)) {
 
             junk <- utils::capture.output (
                 val <- suppressWarnings (
                             suppressMessages (
-                                do.call (fn, params, envir = this_env)
+                                do.call (x$fn, x$params, envir = x$env)
                                 ))
             )
             nm <- paste0 ("val-", gsub ("^.*::", "", other [o]))
-            assign (nm, val, envir = this_env)
+            assign (nm, val, envir = x$env)
         }
     }
 
     if (!is.null (res)) {
-        par_type <- class (params [[i]]) [1]
+        par_type <- class (x$params [[x$i]]) [1]
         res$parameter_type <- par_type
         res$operation <- paste0 ("check error/warning on ",
                                  par_type,
