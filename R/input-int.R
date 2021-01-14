@@ -25,9 +25,16 @@ test_single_int_range.NULL <- function (x = NULL, ...) {
                                      "correspond with documentation"))
 }
 
-test_single_int_range.autotest_obj <- function (x, ...) { # nolint
+test_single_int_range.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     res <- NULL
+
+    if (!is.null (test_data)) {
+        r <- test_single_int_range.NULL ()
+        # These two tests are coupled, with `test` flags determined by the
+        # first only
+        x$test <- test_data$test [test_data$test_name == r$test_name [1]]
+    }
 
     if (x$test)
         res <- single_int_range (x)

@@ -19,7 +19,7 @@ autotest_single.NULL <- function (x = NULL, ...) {
     return (do.call (rbind, res))
 }
 
-autotest_single.autotest_obj <- function (x, ...) {
+autotest_single.autotest_obj <- function (x, test_data = NULL, ...) {
 
     if (any (x$params == "NULL")) {
         x$params <- x$params [x$params != "NULL"]
@@ -43,8 +43,8 @@ autotest_single.autotest_obj <- function (x, ...) {
         if (val_type == "integer") {
 
             res <- rbind (res,
-                          test_single_int_range (x),
-                          test_int_as_dbl (x, vec = FALSE))
+                          test_single_int_range (x, test_data),
+                          test_int_as_dbl (x, vec = FALSE, test_data))
 
         } else if (val_type == "numeric") {
 
