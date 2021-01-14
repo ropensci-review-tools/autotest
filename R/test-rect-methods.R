@@ -77,29 +77,27 @@ test_rect_as_other.autotest_obj <- function (x, test_data = NULL, ...) { # nolin
         these_tests$test <- x$test
     } else {
         these_tests <- test_data [test_data$operation == this_op, ]
-        ret <- these_tests [which (!these_tests$test), ]
-        these_tests <- these_tests [which (these_tests$test), ]
     }
 
-    if (nrow (these_tests) > 0) {
-        if (x$test) {
-            this_ret <- pass_rect_as_other (x$fn,
-                                            x$params,
-                                            x$class,
-                                            x$i,
-                                            x$env,
-                                            these_tests)
-        } else {
-            this_ret <- dummy_rect_as_other (x$fn,
-                                             x$params,
-                                             x$class,
-                                             x$i,
-                                             these_tests)
-        }
-        ret <- rbind (ret, this_ret)
+    ret <- these_tests [which (!these_tests$test), ]
+    these_tests <- these_tests [which (these_tests$test), ]
+
+    if (x$test) {
+        this_ret <- pass_rect_as_other (x$fn,
+                                        x$params,
+                                        x$class,
+                                        x$i,
+                                        x$env,
+                                        these_tests)
+    } else {
+        this_ret <- dummy_rect_as_other (x$fn,
+                                         x$params,
+                                         x$class,
+                                         x$i,
+                                         these_tests)
     }
 
-    return (ret)
+    return (rbind (ret, this_ret))
 }
 
 test_rect_compare_outputs <- function (x = NULL, test_data = NULL, ...) {
