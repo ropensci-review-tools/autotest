@@ -38,23 +38,6 @@ not_null_and_is <- function (x, is_this) {
     return (res)
 }
 
-report_object <- function (type = "diagnostic",
-                           fn_name = NA_character_,
-                           parameter = NA_character_,
-                           parameter_type = NA_character_,
-                           operation = NA_character_,
-                           content = NA_character_,
-                           test = TRUE) {
-    data.frame (type = type,
-                fn_name = fn_name,
-                parameter = parameter,
-                parameter_type = parameter_type,
-                operation = operation,
-                content = content,
-                test = test,
-                stringsAsFactors = FALSE)
-}
-
 # same criteria as rprojroot::is_r_package, but without extra dependency.
 pkg_is_source <- function (package) {
     is_source <- FALSE
