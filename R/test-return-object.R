@@ -19,33 +19,42 @@ autotest_return.NULL <- function (x = NULL, ...) {
                        classes = NULL,
                        test = FALSE)
 
-    rbind (test_return_success (x),
-           test_return_is_described (x),
-           test_return_has_class (x),
-           test_return_primary_val_matches_desc (x))
+    rbind (test_return_success (),
+           test_return_is_described (),
+           test_return_has_class (),
+           test_return_primary_val_matches_desc ())
 }
 
-autotest_return.autotest_obj <- function (x) {
+autotest_return.autotest_obj <- function (x, test_data = NULL) {
 
-    rbind (test_return_success (x),
-           test_return_is_described (x),
-           test_return_has_class (x),
-           test_return_primary_val_matches_desc (x))
+    rbind (test_return_success (x, test_data),
+           test_return_is_described (x, test_data),
+           test_return_has_class (x, test_data),
+           test_return_primary_val_matches_desc (x, test_data))
 }
 
-test_return_success <- function (x, ...) {
+test_return_success <- function (x = NULL, ...) {
     UseMethod ("test_return_success", x)
 }
 
-
-test_return_success.autotest_obj <- function (x, ...) { # nolint
+test_return_success.NULL <- function (x = NULL, ...) {
 
     op <- "Check that function successfully returns an object"
-    ret <- report_object (type = "dummy",
-                          test_name = "return successful",
-                          fn_name = x$fn,
-                          parameter = "(return object)",
-                          operation = op)
+    report_object (type = "dummy",
+                   test_name = "return_successful",
+                   parameter = "(return object)",
+                   operation = op)
+}
+
+
+test_return_success.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
+
+    ret <- test_return_success.NULL ()
+    ret$fn_name <- x$fn
+
+    if (!is.null (test_data)) {
+        x$test <- test_data$test [test_data$test_name == ret$test_name]
+    }
 
     if (x$test) {
 
@@ -86,17 +95,26 @@ capture_return_object <- function (x) {
 }
 m_capture_return_object <- memoise::memoise (capture_return_object)
 
-test_return_is_described <- function (x, ...) {
+test_return_is_described <- function (x = NULL, ...) {
     UseMethod ("test_return_is_described", x)
 }
 
-test_return_is_described.autotest_obj <- function (x, ...) { # nolint
+test_return_is_described.NULL <- function (x = NULL, ...) {
 
-    ret <- report_object (type = "dummy",
-                          test_name = "return_val_described",
-                          fn_name = x$fn,
-                          parameter = "(return object)",
-                          operation = "Check that description has return value")
+    report_object (type = "dummy",
+                   test_name = "return_val_described",
+                   parameter = "(return object)",
+                   operation = "Check that description has return value")
+}
+
+test_return_is_described.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
+
+    ret <- test_return_is_described.NULL ()
+    ret$fn_name <- x$fn
+
+    if (!is.null (test_data)) {
+        x$test <- test_data$test [test_data$test_name == ret$test_name]
+    }
 
     if (x$test) {
 
@@ -117,18 +135,27 @@ test_return_is_described.autotest_obj <- function (x, ...) { # nolint
     return (ret)
 }
 
-test_return_has_class <- function (x, ...) {
+test_return_has_class <- function (x = NULL, ...) {
     UseMethod ("test_return_has_class", x)
 }
 
-test_return_has_class.autotest_obj <- function (x) { # nolint
+test_return_has_class.NULL <- function (x = NULL, ...) {
 
     op <- "Check whether description of return value specifies class"
-    ret <- report_object (type = "dummy",
-                          test_name = "return_desc_includes_class",
-                          fn_name = x$fn,
-                          parameter = "(return object)",
-                          operation = op)
+    report_object (type = "dummy",
+                   test_name = "return_desc_includes_class",
+                   parameter = "(return object)",
+                   operation = op)
+}
+
+test_return_has_class.autotest_obj <- function (x, test_data = NULL) { # nolint
+
+    ret <- test_return_has_class.NULL ()
+    ret$fn_name <- x$fn
+
+    if (!is.null (test_data)) {
+        x$test <- test_data$test [test_data$test_name == ret$test_name]
+    }
 
     if (x$test) {
 
@@ -160,18 +187,27 @@ test_return_has_class.autotest_obj <- function (x) { # nolint
     return (ret)
 }
 
-test_return_primary_val_matches_desc <- function (x, ...) { # nolint
+test_return_primary_val_matches_desc <- function (x = NULL, ...) { # nolint
     UseMethod ("test_return_primary_val_matches_desc", x)
 }
 
-test_return_primary_val_matches_desc.autotest_obj <- function (x) { # nolint
+test_return_primary_val_matches_desc.NULL <- function (x = NULL, ...) { # nolint
 
     op <- "Compare class of return value with description"
-    ret <- report_object (type = "dummy",
-                          test_name = "return_class_matches_desc",
-                          fn_name = x$fn,
-                          parameter = "(return object)",
-                          operation = op)
+    report_object (type = "dummy",
+                   test_name = "return_class_matches_desc",
+                   parameter = "(return object)",
+                   operation = op)
+}
+
+test_return_primary_val_matches_desc.autotest_obj <- function (x, test_data = NULL) { # nolint
+
+    ret <- test_return_primary_val_matches_desc.NULL ()
+    ret$fn_name <- x$fn
+
+    if (!is.null (test_data)) {
+        x$test <- test_data$test [test_data$test_name == ret$test_name]
+    }
 
     if (x$test) {
 
