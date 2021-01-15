@@ -84,7 +84,7 @@ untested_params <- function (exs) {
 
     this_env <- as.environment (paste0 ("package:", package))
     fmls <- lapply (fns, function (f)
-                    names (formals (f, env = this_env)))
+                    names (formals (f, envir = this_env)))
     fmls <- lapply (seq_along (fmls), function (i) {
                         index <- which (!fmls [[i]] %in% pars_f [[i]] &
                                         !fmls [[i]] == "...")
