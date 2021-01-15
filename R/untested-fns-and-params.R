@@ -33,6 +33,7 @@ report_fns_wo_example <- function (package, res) {
 untested_params <- function (exs) {
 
     pars <- list ()
+
     for (i in exs) {
 
         package <- gsub ("package:\\s?|\\s?$", "",
@@ -55,8 +56,11 @@ untested_params <- function (exs) {
                                           character (1),
                                           USE.NAMES = FALSE)
                          return (p) })
-        if (methods::is (these_pars, "matrix"))
-            these_pars <- list (as.vector (these_pars [, 1]))
+        if (methods::is (these_pars, "matrix")) {
+            these_pars <- apply (these_pars, 2, function (j)
+                                 list (as.vector (j)))
+            these_pars <- lapply (these_pars, unlist)
+        }
         names (these_pars) <- these_fns
 
         pars <- c (pars, these_pars)
@@ -72,8 +76,12 @@ untested_params <- function (exs) {
     fmls <- lapply (fns, function (f)
                     names (formals (f, env = this_env)))
     fmls <- lapply (seq_along (fmls), function (i) {
-                        fmls [[i]] [which (!fmls [[i]] %in% pars_f [[i]])]  })
+                        index <- which (!fmls [[i]] %in% pars_f [[i]] &
+                                        !fmls [[i]] == "...")
+                        fmls [[i]] [index]  })
     names (fmls) <- fns
+
+    fmls <- fmls [which (vapply (fmls, length, integer (1)) > 0)]
 
     return (fmls)
 }
@@ -94,6 +102,7 @@ test_untested_params.NULL <- function (exs = NULL, ...) {
 test_untested_params.list <- function (exs = NULL, res_in = NULL, ...) {
 
     pars <- untested_params (exs)
+    pars <- pars [which (vapply (pars, length, integer (1)) > 0)]
 
     res <- lapply (seq_along (pars), function (i) {
                        ro <- test_untested_params.NULL ()

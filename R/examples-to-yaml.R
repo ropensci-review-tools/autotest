@@ -36,7 +36,7 @@ examples_to_yaml <- function (package = NULL,
         pb <- utils::txtProgressBar (style = 3)
     }
 
-    for (i in seq (exs)) {
+    for (i in seq_along (exs)) {
 
         this_fn <- names (exs) [i]
         prev_fns <- list ()
@@ -204,6 +204,7 @@ one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x,
     yaml <- yaml [which (!duplicated (yaml))]
 
     x_content <- assign_names_to_params (x_content, pkg)
+    x_content <- add_default_vals_to_params (x_content, pkg)
 
     yaml <- add_params_to_yaml (x_content, yaml, fn)
 
@@ -835,6 +836,44 @@ assign_names_to_params <- function (x, pkg) {
                      return (i)    })
 
     return (x)
+}
+
+add_default_vals_to_params <- function (x, package) {
+
+    this_env <- as.environment (paste0 ("package:", package))
+
+    xout <- lapply (seq_along (x), function (i) {
+                    this_fn <- names (x) [i]
+                    these_pars <- x [[i]] [, 1]
+                    fmls <- formals (this_fn, env = this_env)
+                    fmls <- fmls [which (!names (fmls) %in% these_pars)]
+                    fmls <- fmls [which (vapply (fmls,
+                                                 length,
+                                                 integer (1)) > 0)]
+
+                    # only include those formals which can be evaluated
+                    index <- vapply (fmls, function (j) {
+                                         res <- tryCatch (eval (j),
+                                              error = function (e) NULL)
+                                         !is.null (res) },
+                                         logical (1))
+                    fmls <- fmls [index]
+
+                    # formal args may specify all admissable values, from which
+                    # only the first is extracted here
+                    fmls <- lapply (fmls, function (j) eval (j) [1])
+                    # insert all character fmls in escaped quotations:
+                    fmls <- lapply (fmls, function (j) {
+                                        if (is.character (j))
+                                            j <- paste0 ('\"', j, '\"')
+                                        return (j)  })
+                    out <- cbind (names (fmls),
+                                  unname (do.call (c, fmls)))
+                    rbind (x [[i]], out)
+        })
+    names (xout) <- names (x)
+
+    return (xout)
 }
 
 #' add to parameters list of yaml, duplicating fn name and preprocessing stages
