@@ -149,7 +149,6 @@ x <- autotest_package (package = "stats", functions = "var", test = FALSE)
     #> ✔ [3 / 4]: cov
     #> ✔ [4 / 4]: cov
 
-
 ``` r
 print (x)
 #> # A tibble: 114 x 9
@@ -208,8 +207,8 @@ print (y)
 ```
 
 And only 16 of the original 114 tests produced unexpected behaviour.
-There were in fact only three kinds of tests which produced these
-failures:
+There were in fact only two kinds of tests which produced these 16
+results:
 
 ``` r
 unique (y$operation)
@@ -263,7 +262,7 @@ Those tests are still returned from `autotest_package()`, but with
 `test = FALSE` to indicate they were not run, and a `type` of “dummy”
 rather than the previous “diagnostic”.
 
-## Can `autotest` automatically create the tests in my `tests` directory?
+## Can `autotest` automatically create tests in my `tests` directory?
 
 Not yet, but that should be possible soon. Stay tuned …
 

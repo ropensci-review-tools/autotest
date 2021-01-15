@@ -134,7 +134,8 @@ print (y)
 
 And only `r nrow (y)` of the original `r nrow (x)` tests produced unexpected
 behaviour. There were in fact only two kinds of tests which produced these
-failures:
+`r nrow (y)` results:
+
 
 ```{r unique-operations}
 unique (y$operation)
@@ -159,7 +160,7 @@ FALSE` to indicate they were not run, and a `type` of "dummy" rather than the
 previous "diagnostic".
 
 
-## Can `autotest` automatically create the tests in my `tests` directory?
+## Can `autotest` automatically create tests in my `tests` directory?
 
 Not yet, but that should be possible soon. Stay tuned ...
 
