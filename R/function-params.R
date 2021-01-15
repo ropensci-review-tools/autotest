@@ -155,13 +155,17 @@ fill_param_vals <- function (p_keys, p_vals, e, package) {
 # stats::var is a good example where param, `x`, is passed as a formula and
 # evaluated here via !can_get but can_eval.
 get_non_formula_val <- function (this_val, e, package, p_vals, p) {
+
     if (is.name (this_val)) {
+
         temp_val <- paste0 (this_val)
+
         can_get <- !is.null (tryCatch (get (temp_val),
                                        error = function (e) NULL))
         can_eval <- !is.null (tryCatch (eval (parse (text = this_val),
                                               envir = e),
                                         error = function (err) NULL))
+
         if (can_get) {
             this_val <- get (temp_val, envir = e)
         } else if (can_eval) {
@@ -183,7 +187,9 @@ get_non_formula_val <- function (this_val, e, package, p_vals, p) {
                 eval (envir = as.environment (paste0 ("package:",
                                                       this_pkg)))
         }
+
     } else if (is.character (this_val)) {
+
         if (this_val %in% names (e)) {
             this_val <- parse (text = this_val) %>%
                 eval (envir = e)
@@ -199,8 +205,12 @@ get_non_formula_val <- function (this_val, e, package, p_vals, p) {
         } else {
             tryeval <- tryCatch (eval (parse (text = this_val)),
                                  error = function (e) NULL)
+            # Character values may also name functions, in which case these
+            # should NOT be assigned to the values. An example is ?var which has
+            # `method = "complete"`, where "complete" is also a function.
             if (!is.null (tryeval))
-                this_val <- tryeval
+                if (!methods::is (tryeval, "function"))
+                    this_val <- tryeval
         }
     }
 
