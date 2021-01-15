@@ -44,7 +44,7 @@ autotest_obj <- function (package = NA_character_,
     if (is.null (x$package_loc))
         x$package_loc <- x$package
 
-    class (x) <- "autotest_obj"
+    class (x) <- c ("autotest_obj", class (x))
 
     return (x)
 }
