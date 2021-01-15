@@ -41,7 +41,7 @@ inputs (parameters) to function calls, rather than mutation of underlying code
 `autotest` primarily works by scraping documented examples for all functions,
 and mutating the parameters input to those functions.
 
-**This package is very unstable and subject to ongoing development (Nov 2020)**
+**This package is very unstable and subject to ongoing development (Jan 2021)**
 
 ## Installation
 
@@ -77,7 +77,7 @@ issued during package `auotest`-ing.
 
 ## What is tested?
 
-The package includes a function which lists all test currently implemented.
+The package includes a function which lists all tests currently implemented.
 
 ```{r autotest_types}
 autotest_types ()
@@ -89,6 +89,13 @@ same kinds of objects. The table returned from
 [`autotest_types()`](https://ropenscilabs.github.io/autotest/reference/autotest_types.html)
 can be used to selectively switch tests off by setting values in the `test`
 column to `FALSE`, as demonstrated below.
+
+Descriptions of each test can be readily extracted from the results of that function:
+
+```{r autotest_type_descs}
+a <- autotest_types ()
+print (a [, c ("parameter_type", "operation", "content")], n = Inf)
+```
 
 
 ## How Does It Work?

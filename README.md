@@ -17,8 +17,8 @@ underlying code (see, for example,
 primarily works by scraping documented examples for all functions, and
 mutating the parameters input to those functions.
 
-**This package is very unstable and subject to ongoing development (Nov
-2020)**
+**This package is very unstable and subject to ongoing development (Jan
+2021)**
 
 ## Installation
 
@@ -54,7 +54,7 @@ other diagnostic messages issued during package `auotest`-ing.
 
 ## What is tested?
 
-The package includes a function which lists all test currently
+The package includes a function which lists all tests currently
 implemented.
 
 ``` r
@@ -82,6 +82,40 @@ kinds of objects. The table returned from
 can be used to selectively switch tests off by setting values in the
 `test` column to `FALSE`, as demonstrated below.
 
+Descriptions of each test can be readily extracted from the results of
+that function:
+
+``` r
+a <- autotest_types ()
+print (a [, c ("parameter_type", "operation", "content")], n = Inf)
+#> # A tibble: 23 x 3
+#>    parameter_type     operation                    content                      
+#>    <chr>              <chr>                        <chr>                        
+#>  1 rectangular        Convert one rectangular cla… "check for error/warning mes…
+#>  2 rectangular        Convert one rectangular cla… "expect dimensions are same "
+#>  3 rectangular        Convert one rectangular cla… "expect column names are ret…
+#>  4 rectangular        Convert one rectangular cla… "expect all columns retain i…
+#>  5 rectangular        Extend existent class with … "(Should yield same result)" 
+#>  6 rectangular        Replace class with new class "(Should yield same result)" 
+#>  7 vector             Convert vector input to lis… "(Should yield same result)" 
+#>  8 vector             Custom class definitions fo… "(Should yield same result)" 
+#>  9 numeric            Add trivial noise to numeri… "(Should yield same result)" 
+#> 10 single integer     Integer value converted to … "(Should yield same result)" 
+#> 11 single logical     Substitute integer values f… "(Function call should still…
+#> 12 single character   random character string as … "Should error"               
+#> 13 single character   Change case                  "(Should yield same result)" 
+#> 14 single integer     Ascertain permissible range  "Should either be unrestrict…
+#> 15 single integer     Ascertain permissible range  "Should either be unrestrict…
+#> 16 single integer     Length 2 vector for length … "Should trigger message, war…
+#> 17 single name or fo… Unquoted name/formula as qu… "Capture any warnings or err…
+#> 18 single logical     Substitute character values… "should trigger warning or e…
+#> 19 single logical     Negate default value of log… "(Function call should still…
+#> 20 <NA>               Check that function success…  <NA>                        
+#> 21 <NA>               Check that description has …  <NA>                        
+#> 22 <NA>               Check whether description o…  <NA>                        
+#> 23 <NA>               Compare class of return val…  <NA>
+```
+
 ## How Does It Work?
 
 The `autotest_package()` function returns the results of implementing
@@ -105,8 +139,6 @@ following code illustrates.
 x <- autotest_package (package = "stats", functions = "var", test = FALSE)
 ```
 
-<img src="README-stats-var-no-test-1.png" width="672" /><img src="README-stats-var-no-test-2.png" width="672" /><img src="README-stats-var-no-test-3.png" width="672" /><img src="README-stats-var-no-test-4.png" width="672" /><img src="README-stats-var-no-test-5.png" width="672" /><img src="README-stats-var-no-test-6.png" width="672" /><img src="README-stats-var-no-test-7.png" width="672" /><img src="README-stats-var-no-test-8.png" width="672" /><img src="README-stats-var-no-test-9.png" width="672" /><img src="README-stats-var-no-test-10.png" width="672" /><img src="README-stats-var-no-test-11.png" width="672" /><img src="README-stats-var-no-test-12.png" width="672" /><img src="README-stats-var-no-test-13.png" width="672" /><img src="README-stats-var-no-test-14.png" width="672" /><img src="README-stats-var-no-test-15.png" width="672" /><img src="README-stats-var-no-test-16.png" width="672" /><img src="README-stats-var-no-test-17.png" width="672" /><img src="README-stats-var-no-test-18.png" width="672" /><img src="README-stats-var-no-test-19.png" width="672" /><img src="README-stats-var-no-test-20.png" width="672" /><img src="README-stats-var-no-test-21.png" width="672" /><img src="README-stats-var-no-test-22.png" width="672" /><img src="README-stats-var-no-test-23.png" width="672" /><img src="README-stats-var-no-test-24.png" width="672" /><img src="README-stats-var-no-test-25.png" width="672" /><img src="README-stats-var-no-test-26.png" width="672" /><img src="README-stats-var-no-test-27.png" width="672" /><img src="README-stats-var-no-test-28.png" width="672" /><img src="README-stats-var-no-test-29.png" width="672" /><img src="README-stats-var-no-test-30.png" width="672" /><img src="README-stats-var-no-test-31.png" width="672" /><img src="README-stats-var-no-test-32.png" width="672" /><img src="README-stats-var-no-test-33.png" width="672" /><img src="README-stats-var-no-test-34.png" width="672" /><img src="README-stats-var-no-test-35.png" width="672" /><img src="README-stats-var-no-test-36.png" width="672" /><img src="README-stats-var-no-test-37.png" width="672" /><img src="README-stats-var-no-test-38.png" width="672" /><img src="README-stats-var-no-test-39.png" width="672" /><img src="README-stats-var-no-test-40.png" width="672" /><img src="README-stats-var-no-test-41.png" width="672" /><img src="README-stats-var-no-test-42.png" width="672" /><img src="README-stats-var-no-test-43.png" width="672" /><img src="README-stats-var-no-test-44.png" width="672" /><img src="README-stats-var-no-test-45.png" width="672" /><img src="README-stats-var-no-test-46.png" width="672" /><img src="README-stats-var-no-test-47.png" width="672" /><img src="README-stats-var-no-test-48.png" width="672" /><img src="README-stats-var-no-test-49.png" width="672" /><img src="README-stats-var-no-test-50.png" width="672" /><img src="README-stats-var-no-test-51.png" width="672" /><img src="README-stats-var-no-test-52.png" width="672" /><img src="README-stats-var-no-test-53.png" width="672" /><img src="README-stats-var-no-test-54.png" width="672" /><img src="README-stats-var-no-test-55.png" width="672" /><img src="README-stats-var-no-test-56.png" width="672" /><img src="README-stats-var-no-test-57.png" width="672" /><img src="README-stats-var-no-test-58.png" width="672" /><img src="README-stats-var-no-test-59.png" width="672" /><img src="README-stats-var-no-test-60.png" width="672" /><img src="README-stats-var-no-test-61.png" width="672" /><img src="README-stats-var-no-test-62.png" width="672" /><img src="README-stats-var-no-test-63.png" width="672" /><img src="README-stats-var-no-test-64.png" width="672" /><img src="README-stats-var-no-test-65.png" width="672" /><img src="README-stats-var-no-test-66.png" width="672" /><img src="README-stats-var-no-test-67.png" width="672" /><img src="README-stats-var-no-test-68.png" width="672" /><img src="README-stats-var-no-test-69.png" width="672" /><img src="README-stats-var-no-test-70.png" width="672" /><img src="README-stats-var-no-test-71.png" width="672" /><img src="README-stats-var-no-test-72.png" width="672" /><img src="README-stats-var-no-test-73.png" width="672" /><img src="README-stats-var-no-test-74.png" width="672" /><img src="README-stats-var-no-test-75.png" width="672" /><img src="README-stats-var-no-test-76.png" width="672" /><img src="README-stats-var-no-test-77.png" width="672" /><img src="README-stats-var-no-test-78.png" width="672" /><img src="README-stats-var-no-test-79.png" width="672" /><img src="README-stats-var-no-test-80.png" width="672" /><img src="README-stats-var-no-test-81.png" width="672" /><img src="README-stats-var-no-test-82.png" width="672" /><img src="README-stats-var-no-test-83.png" width="672" /><img src="README-stats-var-no-test-84.png" width="672" /><img src="README-stats-var-no-test-85.png" width="672" /><img src="README-stats-var-no-test-86.png" width="672" /><img src="README-stats-var-no-test-87.png" width="672" /><img src="README-stats-var-no-test-88.png" width="672" /><img src="README-stats-var-no-test-89.png" width="672" /><img src="README-stats-var-no-test-90.png" width="672" /><img src="README-stats-var-no-test-91.png" width="672" /><img src="README-stats-var-no-test-92.png" width="672" /><img src="README-stats-var-no-test-93.png" width="672" /><img src="README-stats-var-no-test-94.png" width="672" /><img src="README-stats-var-no-test-95.png" width="672" /><img src="README-stats-var-no-test-96.png" width="672" /><img src="README-stats-var-no-test-97.png" width="672" /><img src="README-stats-var-no-test-98.png" width="672" /><img src="README-stats-var-no-test-99.png" width="672" /><img src="README-stats-var-no-test-100.png" width="672" /><img src="README-stats-var-no-test-101.png" width="672" /><img src="README-stats-var-no-test-102.png" width="672" /><img src="README-stats-var-no-test-103.png" width="672" /><img src="README-stats-var-no-test-104.png" width="672" /><img src="README-stats-var-no-test-105.png" width="672" /><img src="README-stats-var-no-test-106.png" width="672" /><img src="README-stats-var-no-test-107.png" width="672" /><img src="README-stats-var-no-test-108.png" width="672" /><img src="README-stats-var-no-test-109.png" width="672" /><img src="README-stats-var-no-test-110.png" width="672" /><img src="README-stats-var-no-test-111.png" width="672" /><img src="README-stats-var-no-test-112.png" width="672" /><img src="README-stats-var-no-test-113.png" width="672" /><img src="README-stats-var-no-test-114.png" width="672" /><img src="README-stats-var-no-test-115.png" width="672" /><img src="README-stats-var-no-test-116.png" width="672" /><img src="README-stats-var-no-test-117.png" width="672" /><img src="README-stats-var-no-test-118.png" width="672" /><img src="README-stats-var-no-test-119.png" width="672" /><img src="README-stats-var-no-test-120.png" width="672" /><img src="README-stats-var-no-test-121.png" width="672" /><img src="README-stats-var-no-test-122.png" width="672" /><img src="README-stats-var-no-test-123.png" width="672" /><img src="README-stats-var-no-test-124.png" width="672" /><img src="README-stats-var-no-test-125.png" width="672" /><img src="README-stats-var-no-test-126.png" width="672" /><img src="README-stats-var-no-test-127.png" width="672" /><img src="README-stats-var-no-test-128.png" width="672" /><img src="README-stats-var-no-test-129.png" width="672" /><img src="README-stats-var-no-test-130.png" width="672" /><img src="README-stats-var-no-test-131.png" width="672" /><img src="README-stats-var-no-test-132.png" width="672" /><img src="README-stats-var-no-test-133.png" width="672" /><img src="README-stats-var-no-test-134.png" width="672" /><img src="README-stats-var-no-test-135.png" width="672" /><img src="README-stats-var-no-test-136.png" width="672" /><img src="README-stats-var-no-test-137.png" width="672" /><img src="README-stats-var-no-test-138.png" width="672" /><img src="README-stats-var-no-test-139.png" width="672" /><img src="README-stats-var-no-test-140.png" width="672" /><img src="README-stats-var-no-test-141.png" width="672" /><img src="README-stats-var-no-test-142.png" width="672" /><img src="README-stats-var-no-test-143.png" width="672" /><img src="README-stats-var-no-test-144.png" width="672" /><img src="README-stats-var-no-test-145.png" width="672" /><img src="README-stats-var-no-test-146.png" width="672" /><img src="README-stats-var-no-test-147.png" width="672" /><img src="README-stats-var-no-test-148.png" width="672" /><img src="README-stats-var-no-test-149.png" width="672" /><img src="README-stats-var-no-test-150.png" width="672" /><img src="README-stats-var-no-test-151.png" width="672" /><img src="README-stats-var-no-test-152.png" width="672" /><img src="README-stats-var-no-test-153.png" width="672" /><img src="README-stats-var-no-test-154.png" width="672" /><img src="README-stats-var-no-test-155.png" width="672" /><img src="README-stats-var-no-test-156.png" width="672" /><img src="README-stats-var-no-test-157.png" width="672" /><img src="README-stats-var-no-test-158.png" width="672" /><img src="README-stats-var-no-test-159.png" width="672" /><img src="README-stats-var-no-test-160.png" width="672" /><img src="README-stats-var-no-test-161.png" width="672" /><img src="README-stats-var-no-test-162.png" width="672" /><img src="README-stats-var-no-test-163.png" width="672" /><img src="README-stats-var-no-test-164.png" width="672" /><img src="README-stats-var-no-test-165.png" width="672" /><img src="README-stats-var-no-test-166.png" width="672" /><img src="README-stats-var-no-test-167.png" width="672" /><img src="README-stats-var-no-test-168.png" width="672" /><img src="README-stats-var-no-test-169.png" width="672" /><img src="README-stats-var-no-test-170.png" width="672" /><img src="README-stats-var-no-test-171.png" width="672" /><img src="README-stats-var-no-test-172.png" width="672" /><img src="README-stats-var-no-test-173.png" width="672" /><img src="README-stats-var-no-test-174.png" width="672" /><img src="README-stats-var-no-test-175.png" width="672" /><img src="README-stats-var-no-test-176.png" width="672" /><img src="README-stats-var-no-test-177.png" width="672" /><img src="README-stats-var-no-test-178.png" width="672" /><img src="README-stats-var-no-test-179.png" width="672" /><img src="README-stats-var-no-test-180.png" width="672" /><img src="README-stats-var-no-test-181.png" width="672" />
-
     #> 
     #> ── autotesting stats ──
     #> 
@@ -115,7 +147,6 @@ x <- autotest_package (package = "stats", functions = "var", test = FALSE)
     #> ✔ [3 / 4]: cov
     #> ✔ [4 / 4]: cov
 
-<img src="README-stats-var-no-test-182.png" width="672" />
 
 ``` r
 print (x)
