@@ -28,6 +28,8 @@ test_negate_logical.autotest_obj <- function (x, test_data = NULL, ...) { # noli
             res$fn_name <- x$fn
             res$parameter <- names (x$params) [x$i]
             res$content <- m$content
+        } else {
+            res <- NULL
         }
 
         x$params [[x$i]] <- !x$params [[x$i]]
@@ -64,7 +66,7 @@ test_int_for_logical.NULL <- function (x = NULL, ...) {
     return (res)
 }
 
-test_int_for_logical <- function (x, test_data = NULL, ...) {
+test_int_for_logical.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     res <- test_int_for_logical.NULL ()
 
@@ -113,7 +115,7 @@ test_char_for_logical.NULL <- function (x = NULL, ...) {
     return (res)
 }
 
-test_char_for_logical <- function (x = NULL, test_data = NULL, ...) {
+test_char_for_logical.autotest_obj <- function (x = NULL, test_data = NULL, ...) { # nolint
 
     res <- test_char_for_logical.NULL ()
 
