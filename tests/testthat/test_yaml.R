@@ -3,6 +3,20 @@ context("yaml")
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
              identical (Sys.getenv ("TEST_ALL"), "true"))
 
+test_that("main function errors", {
+              expect_error (autotest_yaml (),
+                            "either yaml or filename must be given")
+              expect_error (autotest_yaml (1),
+                            "yaml must be either a single character vector")
+              x <- 1
+              attr (x, "package") <- 1
+              x <- list (x)
+              expect_error (autotest_yaml (x),
+                            "yaml must be either a single character vector")
+
+              expect_null (autotest_single_yaml ())
+             })
+
 test_that("yaml test", {
 
     expect_message (
@@ -33,6 +47,23 @@ test_that("yaml test", {
     if (test_all)
         expect_error (at_yaml_template (loc = td), "Directory") # does not exist
 
+             })
+
+test_that ("yaml filename", {
+              #exs <- examples_to_yaml (package = "stats", functions = "var")
+              yaml <- c ("package: stats",
+                         "functions:",
+                          "    - var:",
+                          "        - parameters:",
+                          "            - x: 1:10")
+              attr (yaml, "package") <- "stats"
+
+              f <- tempfile (fileext = ".yaml")
+              writeLines (yaml, con = f)
+
+              res1 <- autotest_yaml (filename = f)
+              res2 <- autotest_yaml (yaml = yaml)
+              expect_identical (res1, res2)
              })
 
 test_that("yaml internal", {
