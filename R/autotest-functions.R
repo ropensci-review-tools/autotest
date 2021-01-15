@@ -225,12 +225,17 @@ fn_from_yaml <- function (yaml) {
 #'
 #' List all types of 'autotests' currently implemented.
 #'
+#' @param notest Character string of names of tests which should be switched off
+#' by setting the `test` column to `FALSE`. Run this function first without this
+#' parameter to get all names, then re-run with this parameter switch specified
+#' tests off.
+#'
 #' @return An `autotest` object with each row listing one unique type of test
 #' which can be applied to every parameter (of the appropriate class) of each
 #' function.
 #'
 #' @export
-autotest_types <- function () {
+autotest_types <- function (notest = NULL) {
 
     res <- rbind (autotest_rectangular (),
                   autotest_vector (),
@@ -239,6 +244,17 @@ autotest_types <- function () {
     res <- tibble::tibble (res)
 
     class (res) <- c ("autotest_package", class (res))
+
+    if (!is.null (notest)) {
+        index <- match (notest, res$test_name)
+        if (any (is.na (index))) {
+            message ("notest = [",
+                     paste0 (notest [which (is.na (index))], collapse = ", "),
+                     "] does not match any test_name values")
+            index <- index [which (!is.na (index))]
+        }
+        res$test [index] <- FALSE
+    }
 
     return (res)
 }

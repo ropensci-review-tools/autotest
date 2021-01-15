@@ -4,7 +4,13 @@
 \alias{autotest_types}
 \title{autotest_types}
 \usage{
-autotest_types()
+autotest_types(notest = NULL)
+}
+\arguments{
+\item{notest}{Character string of names of tests which should be switched off
+by setting the \code{test} column to \code{FALSE}. Run this function first without this
+parameter to get all names, then re-run with this parameter switch specified
+tests off.}
 }
 \value{
 An \code{autotest} object with each row listing one unique type of test

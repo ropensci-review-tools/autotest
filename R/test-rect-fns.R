@@ -115,6 +115,7 @@ other_rect_classes <- function (classes = NULL, this_class = NULL) {
 }
 
 #' @param x An `autotest_obj` object
+#' @noRd
 dummy_rect_as_other <- function (x, test_data = NULL) {
 
     par_type <- class (x$params [[x$i]]) [1]
