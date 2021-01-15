@@ -25,7 +25,7 @@ test_fns_wo_example.character <- function (package, res) {
         r0$content <- "This function has no documented example"
         r0$yaml_hash <- NA_character_
         for (i in no_examples) {
-            r0$fn_name = i
+            r0$fn_name <- i
             res <- rbind (res, r0)
         }
     }
