@@ -1,9 +1,9 @@
 
-test_single_logical <- function (x = NULL, ...) {
-    UseMethod ("test_single_logical", x)
+test_negate_logical <- function (x = NULL, ...) {
+    UseMethod ("test_negate_logical", x)
 }
 
-test_single_logical.NULL <- function (x = NULL, ...) {
+test_negate_logical.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
                    test_name = "negate_logical",
                    parameter_type = "single logical",
@@ -11,28 +11,19 @@ test_single_logical.NULL <- function (x = NULL, ...) {
                    content = "(Function call should still work)")
 }
 
-test_single_logical.autotest_obj <- function (x) { # nolint
+test_negate_logical.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
-    res <- NULL
+    res <- test_negate_logical.NULL ()
 
-    res <- rbind (res, negate_logical (x))
-
-    res <- rbind (res, int_for_logical (x))
-
-    res <- rbind (res, char_for_logical (x))
-
-    return (res)
-}
-
-negate_logical <- function (x) {
+    if (!is.null (test_data)) {
+        x$test <- test_data$test [test_data$test_name == res$test_name]
+    }
 
     if (x$test) {
 
-        res <- NULL
         f <- tempfile (fileext = ".txt")
         m <- catch_all_msgs (f, x$fn, x$params)
         if (!is.null (m)) {
-            res <- test_single_logical.NULL ()
             res$type <- m$type
             res$fn_name <- x$fn
             res$parameter <- names (x$params) [x$i]
@@ -42,7 +33,7 @@ negate_logical <- function (x) {
         x$params [[x$i]] <- !x$params [[x$i]]
         m <- catch_all_msgs (f, x$fn, x$params)
         if (!is.null (m)) {
-            res_n <- test_single_logical.NULL ()
+            res_n <- test_negate_logical.NULL ()
             res_n$type <- m$type
             res_n$fn_name <- x$fn
             res_n$parameter <- names (x$params) [x$i]
@@ -52,8 +43,6 @@ negate_logical <- function (x) {
 
     } else {
 
-        res <- test_single_logical.NULL ()
-
         res$fn_name <- x$fn
         res$parameter <- names (x$params) [x$i]
 
@@ -62,9 +51,26 @@ negate_logical <- function (x) {
     return (res)
 }
 
-int_for_logical <- function (x) {
+test_int_for_logical <- function (x = NULL, ...) {
+    UseMethod ("test_int_for_logical", x)
+}
 
-    res <- subst_for_logical (x, subst = "integer")
+test_int_for_logical.NULL <- function (x = NULL, ...) {
+
+    res <- subst_for_logical (subst = "integer")
+    res$content <- paste0 ("(Function call should still work ",
+                           "unless explicitly prevented)")
+
+    return (res)
+}
+
+test_int_for_logical <- function (x, test_data = NULL, ...) {
+
+    res <- test_int_for_logical.NULL ()
+
+    if (!is.null (test_data)) {
+        x$test <- test_data$test [test_data$test_name == res$test_name]
+    }
 
     if (x$test) {
         f <- tempfile (fileext = ".txt")
@@ -90,17 +96,30 @@ int_for_logical <- function (x) {
             res <- NULL
         else
             res$type <- "diagnostic"
-    } else {
-        res$content <- paste0 ("(Function call should still work ",
-                               "unless explicitly prevented)")
     }
 
     return (res)
 }
 
-char_for_logical <- function (x) {
+test_char_for_logical <- function (x = NULL, ...) {
+    UseMethod ("test_char_for_logical", x)
+}
 
-    res <- subst_for_logical (x, subst = "character")
+test_char_for_logical.NULL <- function (x = NULL, ...) {
+
+    res <- subst_for_logical (subst = "character")
+    res$content <- "should trigger warning or error"
+
+    return (res)
+}
+
+test_char_for_logical <- function (x = NULL, test_data = NULL, ...) {
+
+    res <- test_char_for_logical.NULL ()
+
+    if (!is.null (test_data)) {
+        x$test <- test_data$test [test_data$test_name == res$test_name]
+    }
 
     if (x$test) {
 
@@ -114,8 +133,6 @@ char_for_logical <- function (x) {
             # warnings or errors generated, so do not return res_tmp
             res <- NULL
         }
-    } else {
-        res$content <- "Should trigger warning or error"
     }
 
     return (res)
@@ -124,32 +141,37 @@ char_for_logical <- function (x) {
 #' Construt report object from results of subsituting other kinds of parameters
 #' for assumed logical parameters
 #' @noRd
-subst_for_logical <- function (x, subst = "integer") {
+subst_for_logical <- function (x = NULL, subst = "integer") {
 
     subst <- match.arg (subst, c ("integer", "character"))
 
     operation <- paste0 ("Substitute ",
                          subst,
                          " values for logical parameter")
-    content <- paste0 ("Parameter ",
-                       names (x$params) [x$i],
-                       " of function [",
-                       x$fn,
-                       "] is assumed to be logical, ",
-                       "but responds to ",
-                       subst,
-                       " input")
+    fn_name <- parameter <- content <- NA_character_
+    if (!is.null (x)) {
+        fn_name <- x$fn
+        parameter <- names (x$params) [x$i]
+        content <- paste0 ("Parameter ",
+                           names (x$params) [x$i],
+                           " of function [",
+                           x$fn,
+                           "] is assumed to be logical, ",
+                           "but responds to ",
+                           subst,
+                           " input")
+    }
 
     subst <- switch (EXPR = subst,
                      "integer" = "int",
                      "character" = "char")
     test_name <- paste0 ("subst_", subst, "_for_logical")
 
-    return (report_object (type = "dummy",
-                           test_name = test_name,
-                           fn_name = x$fn,
-                           parameter = names (x$params) [x$i],
-                           parameter_type = "single logical",
-                           operation = operation,
-                           content = content))
+    report_object (type = "dummy",
+                   test_name = test_name,
+                   fn_name = fn_name,
+                   parameter = parameter,
+                   parameter_type = "single logical",
+                   operation = operation,
+                   content = content)
 }

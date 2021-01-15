@@ -10,8 +10,9 @@ autotest_single.NULL <- function (x = NULL, ...) {
     tests <- all_names [grep ("^test\\_", all_names)]
     tests <- tests [which (!grepl ("^.*\\.(default|NULL)$", tests))]
 
-    tests <- grep ("^test\\_(single|double|int)\\_", tests, value = TRUE)
-    tests <- unique (gsub ("\\..*$", "", tests))
+    index1 <- grep ("^test\\_(single|double|int)_", tests)
+    index2 <- grep ("^test\\_(.*)logical", tests)
+    tests <- unique (gsub ("\\..*$", "", tests [c (index1, index2)]))
 
     res <- lapply (tests, function (i)
                    do.call (paste0 (i, ".NULL"), list (NULL)))
@@ -58,7 +59,10 @@ autotest_single.autotest_obj <- function (x, test_data = NULL, ...) {
 
         } else if (val_type == "logical") {
 
-            res <- rbind (res, test_single_logical (x))
+            res <- rbind (res,
+                          test_negate_logical (x, test_data),
+                          test_int_for_logical (x, test_data),
+                          test_char_for_logical (x, test_data))
 
         } else if (val_type %in% c ("name", "formula")) {
 
