@@ -120,9 +120,12 @@ x <- autotest_package (package = "stats", functions = "var", test = FALSE)
 print (x)
 ```
 
-That result details the `r nrow (x)` tests which would be applied to the `var`
-function from the `stats` package. These `r nrow (x)` tests yield the following
-results when actually applied:
+Testing the `var` function also tests `cor` and `cov`, because the package
+works by scraping the documented examples from the associated `.Rd` help file,
+and `?var` shows that the help topic is `cor`, and includes the three
+functions, `var`, `cor`, and `cov`. That result details the `r nrow (x)` tests
+which would be applied to the `var` function from the `stats` package. These
+`r nrow (x)` tests yield the following results when actually applied:
 
 ```{r stats-var-test}
 y <- autotest_package (package = "stats", functions = "var", test = TRUE)
@@ -152,10 +155,13 @@ print (y)
 ```
 
 Those tests are still returned from `autotest_package()`, but with `test =
-FALSE`, and a `type` of "dummy" rather than the previous "diagnostic".
+FALSE` to indicate they were not run, and a `type` of "dummy" rather than the
+previous "diagnostic".
 
 
+## Can `autotest` automatically create the tests in my `tests` directory?
 
+Not yet, but that should be possible soon. Stay tuned ...
 
 ## Prior work
 

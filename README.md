@@ -110,10 +110,10 @@ print (a [, c ("parameter_type", "operation", "content")], n = Inf)
 #> 17 single name or fo… Unquoted name/formula as qu… "Capture any warnings or err…
 #> 18 single logical     Substitute character values… "should trigger warning or e…
 #> 19 single logical     Negate default value of log… "(Function call should still…
-#> 20 <NA>               Check that function success…  <NA>                        
-#> 21 <NA>               Check that description has …  <NA>                        
-#> 22 <NA>               Check whether description o…  <NA>                        
-#> 23 <NA>               Compare class of return val…  <NA>
+#> 20 (return object)    Check that function success…  <NA>                        
+#> 21 (return object)    Check that description has …  <NA>                        
+#> 22 (return object)    Check whether description o…  <NA>                        
+#> 23 (return object)    Compare class of return val…  <NA>
 ```
 
 ## How Does It Work?
@@ -155,20 +155,24 @@ print (x)
 #>    <chr> <chr>     <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
 #>  1 dummy vector_t… var     x         vector         Convert … (Shoul… TRUE 
 #>  2 dummy negate_l… var     na.rm     single logical Negate d… (Funct… TRUE 
-#>  3 dummy subst_in… <NA>    <NA>      single logical Substitu… (Funct… TRUE 
-#>  4 dummy subst_ch… <NA>    <NA>      single logical Substitu… should… TRUE 
+#>  3 dummy subst_in… var     na.rm     single logical Substitu… (Funct… TRUE 
+#>  4 dummy subst_ch… var     na.rm     single logical Substitu… should… TRUE 
 #>  5 dummy single_p… var     na.rm     single logical Length 2… Should… TRUE 
-#>  6 dummy return_s… var     (return … <NA>           Check th… <NA>    TRUE 
-#>  7 dummy return_v… var     (return … <NA>           Check th… <NA>    TRUE 
-#>  8 dummy return_d… var     (return … <NA>           Check wh… <NA>    TRUE 
-#>  9 dummy return_c… var     (return … <NA>           Compare … <NA>    TRUE 
+#>  6 dummy return_s… var     (return … (return objec… Check th… <NA>    TRUE 
+#>  7 dummy return_v… var     (return … (return objec… Check th… <NA>    TRUE 
+#>  8 dummy return_d… var     (return … (return objec… Check wh… <NA>    TRUE 
+#>  9 dummy return_c… var     (return … (return objec… Compare … <NA>    TRUE 
 #> 10 dummy vector_t… var     y         vector         Convert … (Shoul… TRUE 
 #> # … with 86 more rows, and 1 more variable: yaml_hash <chr>
 ```
 
-That result details the 96 tests which would be applied to the `var`
-function from the `stats` package. These 96 tests yield the following
-results when actually applied:
+Testing the `var` function also tests `cor` and `cov`, because the
+package works by scraping the documented examples from the associated
+`.Rd` help file, and `?var` shows that the help topic is `cor`, and
+includes the three functions, `var`, `cor`, and `cov`. That result
+details the 96 tests which would be applied to the `var` function from
+the `stats` package. These 96 tests yield the following results when
+actually applied:
 
 ``` r
 y <- autotest_package (package = "stats", functions = "var", test = TRUE)
@@ -238,8 +242,12 @@ print (y)
 ```
 
 Those tests are still returned from `autotest_package()`, but with
-`test = FALSE`, and a `type` of “dummy” rather than the previous
-“diagnostic”.
+`test = FALSE` to indicate they were not run, and a `type` of “dummy”
+rather than the previous “diagnostic”.
+
+## Can `autotest` automatically create the tests in my `tests` directory?
+
+Not yet, but that should be possible soon. Stay tuned ...
 
 ## Prior work
 
