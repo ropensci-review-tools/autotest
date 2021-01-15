@@ -11,7 +11,7 @@ test_single_name.NULL <- function (x = NULL, ...) {
                    content = "Capture any warnings or errors issued")
 }
 
-test_single_name.autotest_obj <- function (x) {
+test_single_name.autotest_obj <- function (x, test_data = NULL) {
 
     ret <- test_single_name.NULL ()
 
@@ -21,6 +21,10 @@ test_single_name.autotest_obj <- function (x) {
     ret$operation <- paste0 ("(unquoted) ",
                              class (x$params [[x$i]]) [1],
                              " param as (quoted) character")
+
+    if (!is.null (test_data)) {
+        x$test <- test_data$test [test_data$test_name == ret$test_name]
+    }
 
     if (x$test) {
 

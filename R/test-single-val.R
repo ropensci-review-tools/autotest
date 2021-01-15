@@ -66,7 +66,7 @@ autotest_single.autotest_obj <- function (x, test_data = NULL, ...) {
 
         } else if (val_type %in% c ("name", "formula")) {
 
-            res <- rbind (res, test_single_name (x))
+            res <- rbind (res, test_single_name (x, test_data))
             if (val_type %in% c ("name", "formula"))
                 check_vec <- FALSE
         }
