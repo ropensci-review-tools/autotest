@@ -58,6 +58,7 @@ test_rect_as_other <- function (x = NULL, test_data = NULL, ...) {
 }
 
 test_rect_as_other.NULL <- function (x = NULL, ...) {
+
     report_object (type = "dummy",
                    test_name = "rect_as_other",
                    parameter_type = "rectangular",
@@ -97,7 +98,18 @@ test_rect_compare_outputs <- function (x = NULL, test_data = NULL, ...) {
     UseMethod ("test_rect_compare_outputs", x)
 }
 
+#' test_rect_compare_outputs
+#'
+#' The `NULL` method here is different to most others in that it comprises three
+#' distinct tests, rather than the usual single test. This is because the
+#' comparisons are themselves between multiple objects, with each pairwise
+#' comparison of types of objects subject to each of these three tests. The
+#' whole thing is therefore easier to construct by having the three primary
+#' tests listed within the following initial `NULL` method.
+#'
+#' @noRd
 test_rect_compare_outputs.NULL <- function (x = NULL, ...) {
+
     report_object (type = "dummy",
             test_name = c ("rect_compare_dims",
                            "rect_compare_col_names",
@@ -126,6 +138,7 @@ test_rect_extend_class <- function (x = NULL, test_data = NULL, ...) {
 }
 
 test_rect_extend_class.NULL <- function (x = NULL, ...) {
+
     report_object (type = "dummy",
                    test_name = "extend_rect_class",
                    parameter_type = "rectangular",
@@ -150,6 +163,7 @@ test_rect_replace_class <- function (x = NULL, test_data = NULL, ...) {
 }
 
 test_rect_replace_class.NULL <- function (x = NULL, ...) { # nolint
+
     report_object (type = "dummy",
                    test_name = "replace_rect_class",
                    parameter_type = "rectangular",
