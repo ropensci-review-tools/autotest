@@ -245,9 +245,7 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # 
     res$parameter <- names (x$params) [x$i]
     res$parameter_type <- param_type
 
-    if (is.null (test_data))
-        res$test <- x$test
-    else
+    if (!is.null (test_data))
         res$test <- test_data$test [test_data$test_name == res$test_name]
 
     if (res$test) {

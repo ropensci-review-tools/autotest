@@ -131,12 +131,12 @@ test_vec_as_list.autotest_obj <- function (x, test_data = NULL) {
     res0 <- test_vec_as_list.NULL ()
     res0$fn_name <- x$fn
     res0$parameter <- names (x$params) [x$i]
-    if (!is.null (test_data))
+    if (!is.null (test_data)) {
         res0$test <- test_data$test [test_data$test_name == res0$test_name]
-    else
-        res0$test <- x$test
+        x$test <- res0$test
+    }
 
-    if (res0$test) {
+    if (x$test) {
 
         p <- x$params [[x$i]]
         p <- I (as.list (p))
