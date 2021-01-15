@@ -1,22 +1,32 @@
 
-#' report_fns_wo_examples
+#' test_fns_wo_examples
 #'
 #' Get functions which do not have examples and return as an autotest object.
 #' @noRd
-report_fns_wo_example <- function (package, res) {
+test_fns_wo_example <- function (package = NULL, res) {
+    UseMethod ("test_fns_wo_example", package)
+}
 
-    no_examples <- fns_without_examples (package)
+test_fns_wo_example.NULL <- function (package = NULL, res) {
+
+    report_object (type = "dummy",
+                   test_name = "fn_without_example",
+                   operation = "Identify functions without documented examples")
+}
+
+test_fns_wo_example.character <- function (package, res) {
+
+    r0 <- test_fns_wo_example.NULL ()
+
+    no_examples <- fns_without_examples (package) # in namespace-processing
     no_examples <- no_examples [no_examples %in% unique (res$fn_name)]
     if (length (no_examples) > 0) {
-        cnt <- "This function has no documented example"
+        r0$type <- "warning"
+        r0$content <- "This function has no documented example"
+        r0$yaml_hash <- NA_character_
         for (i in no_examples) {
-            rtemp <- report_object (type = "warning",
-                                    fn_name = i,
-                                    operation = "<see content>",
-                                    content = cnt)
-            rtemp$yaml_hash <- NA_character_
-            res <- rbind (res, rtemp)
-
+            r0$fn_name = i
+            res <- rbind (res, r0)
         }
     }
 
@@ -96,7 +106,7 @@ test_untested_params.NULL <- function (exs = NULL, ...) {
                    test_name = "par_is_demonstrated",
                    content = paste0 ("Examples do not demonstrate ",
                                      "usage of this parameter"),
-                   operation = "check parameter usage is demonstrated")
+                   operation = "Check that parameter usage is demonstrated")
 }
 
 test_untested_params.list <- function (exs = NULL, res_in = NULL, ...) {

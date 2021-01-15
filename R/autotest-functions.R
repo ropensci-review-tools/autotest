@@ -179,7 +179,7 @@ autotest_package <- function (package,
     res <- res [which (!duplicated (res)), ]
 
     res <- test_untested_params (exs, res)
-    res <- report_fns_wo_example (package, res)
+    res <- test_fns_wo_example (package, res)
 
     attr (res, "package") <- package
 
@@ -228,7 +228,9 @@ autotest_types <- function (notest = NULL) {
     res <- rbind (autotest_rectangular (),
                   autotest_vector (),
                   autotest_single (),
-                  autotest_return ())
+                  autotest_return (),
+                  test_untested_params (),
+                  test_fns_wo_example ())
     res <- tibble::tibble (res)
 
     class (res) <- c ("autotest_package", class (res))
