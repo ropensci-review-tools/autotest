@@ -165,9 +165,13 @@ test_return_has_class.autotest_obj <- function (x, test_data = NULL) { # nolint
 
         retobj <- m_capture_return_object (x)
 
-        chk <- vapply (attr (retobj, "class"), function (i)
-                       grepl (i, Rd_value),
-                       logical (1))
+        chk <- TRUE
+        cl <- attr (retobj, "class")
+        if (!is.null (cl)) {
+            chk <- vapply (cl, function (i)
+                           grepl (i, Rd_value),
+                           logical (1))
+        }
 
         if (!any (chk)) {
 
