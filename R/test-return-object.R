@@ -42,6 +42,7 @@ test_return_success.NULL <- function (x = NULL, ...) {
     op <- "Check that function successfully returns an object"
     report_object (type = "dummy",
                    test_name = "return_successful",
+                   parameter_type = "(return object)",
                    parameter = "(return object)",
                    operation = op)
 }
@@ -104,6 +105,7 @@ test_return_is_described.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
                    test_name = "return_val_described",
                    parameter = "(return object)",
+                   parameter_type = "(return object)",
                    operation = "Check that description has return value")
 }
 
@@ -145,6 +147,7 @@ test_return_has_class.NULL <- function (x = NULL, ...) {
     report_object (type = "dummy",
                    test_name = "return_desc_includes_class",
                    parameter = "(return object)",
+                   parameter_type = "(return object)",
                    operation = op)
 }
 
@@ -201,6 +204,7 @@ test_return_primary_val_matches_desc.NULL <- function (x = NULL, ...) { # nolint
     report_object (type = "dummy",
                    test_name = "return_class_matches_desc",
                    parameter = "(return object)",
+                   parameter_type = "(return object)",
                    operation = op)
 }
 
