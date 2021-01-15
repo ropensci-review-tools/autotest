@@ -8,8 +8,7 @@ status](https://github.com/ropenscilabs/autotest/workflows/R-CMD-check/badge.svg
 Concept](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
 <!-- badges: end -->
 
-autotest
-========
+# autotest
 
 Automatic mutation testing of R packages. Mutation in the sense of
 mutating inputs (parameters) to function calls, rather than mutation of
@@ -21,8 +20,7 @@ mutating the parameters input to those functions.
 **This package is very unstable and subject to ongoing development (Nov
 2020)**
 
-Installation
-------------
+## Installation
 
 Not yet on CRAN, so must be installed from remote repository host
 systems using any one of the following options:
@@ -41,8 +39,7 @@ The package can then be loaded the usual way:
 library (autotest)
 ```
 
-Usage
------
+## Usage
 
 The simply way to use the package is
 
@@ -55,19 +52,49 @@ installed package, or a path to a local directory containing the source
 for a package. The result is a `data.frame` of errors, warnings, and
 other diagnostic messages issued during package `auotest`-ing.
 
-How Does It Work? (Part 1)
---------------------------
+## What is tested?
+
+The package includes a function which lists all test currently
+implemented.
+
+``` r
+autotest_types ()
+#> # A tibble: 23 x 8
+#>    type  test_name  fn_name parameter parameter_type operation   content   test 
+#>    <chr> <chr>      <chr>   <chr>     <chr>          <chr>       <chr>     <lgl>
+#>  1 dummy rect_as_o… <NA>    <NA>      rectangular    Convert on… "check f… TRUE 
+#>  2 dummy rect_comp… <NA>    <NA>      rectangular    Convert on… "expect … TRUE 
+#>  3 dummy rect_comp… <NA>    <NA>      rectangular    Convert on… "expect … TRUE 
+#>  4 dummy rect_comp… <NA>    <NA>      rectangular    Convert on… "expect … TRUE 
+#>  5 dummy extend_re… <NA>    <NA>      rectangular    Extend exi… "(Should… TRUE 
+#>  6 dummy replace_r… <NA>    <NA>      rectangular    Replace cl… "(Should… TRUE 
+#>  7 dummy vector_to… <NA>    <NA>      vector         Convert ve… "(Should… TRUE 
+#>  8 dummy vector_cu… <NA>    <NA>      vector         Custom cla… "(Should… TRUE 
+#>  9 dummy trivial_n… <NA>    <NA>      numeric        Add trivia… "(Should… TRUE 
+#> 10 dummy int_as_nu… <NA>    <NA>      single integer Integer va… "(Should… TRUE 
+#> # … with 13 more rows
+```
+
+That functions returns a [`tibble`](https://tibble.tidyverse.org)
+describing 23 unique tests. All `autotest` functions return these same
+kinds of objects. The table returned from
+[`autotest_types()`](https://ropenscilabs.github.io/autotest/reference/autotest_types.html)
+can be used to selectively switch tests off by setting values in the
+`test` column to `FALSE`, as demonstrated below.
+
+## How Does It Work?
 
 The `autotest_package()` function returns the results of implementing
-all tests on a given package. These results only indicate any divergence
-from expected behaviour, whether unexpected errors, warnings, or other
-behaviour. An ideal result is that `autotest_package()` returns nothing
-(strictly, `NULL`), indicating that all tests passed successfully. To
-see which tests were performed, or to see which tests would be performed
-prior to actually running them, the function has a `test` parameter with
-a default value of `TRUE`. Setting this to `FALSE` returns a (generally
-much larger) `data.frame` of all tests which would be conducted on the
-nominated package.
+all tests on a given package, or on specified functions on that package.
+These results only indicate any divergence from expected behaviour,
+whether unexpected errors, warnings, or other behaviour. An ideal result
+is that `autotest_package()` returns nothing (strictly, `NULL`),
+indicating that all tests passed successfully. To see which tests were
+performed, or to see which tests would be performed prior to actually
+running them, the function has a `test` parameter with a default value
+of `TRUE`. Setting this to `FALSE` returns a (generally much larger)
+`data.frame` of all tests which would be conducted on the nominated
+package.
 
 Tests can also be selectively specified through the parameters
 `functions`, used to nominate functions to include in tests, or
@@ -75,8 +102,10 @@ Tests can also be selectively specified through the parameters
 following code illustrates.
 
 ``` r
-autotest_package (package = "stats", functions = "var", test = FALSE)
+x <- autotest_package (package = "stats", functions = "var", test = FALSE)
 ```
+
+<img src="README-stats-var-no-test-1.png" width="672" /><img src="README-stats-var-no-test-2.png" width="672" /><img src="README-stats-var-no-test-3.png" width="672" /><img src="README-stats-var-no-test-4.png" width="672" /><img src="README-stats-var-no-test-5.png" width="672" /><img src="README-stats-var-no-test-6.png" width="672" /><img src="README-stats-var-no-test-7.png" width="672" /><img src="README-stats-var-no-test-8.png" width="672" /><img src="README-stats-var-no-test-9.png" width="672" /><img src="README-stats-var-no-test-10.png" width="672" /><img src="README-stats-var-no-test-11.png" width="672" /><img src="README-stats-var-no-test-12.png" width="672" /><img src="README-stats-var-no-test-13.png" width="672" /><img src="README-stats-var-no-test-14.png" width="672" /><img src="README-stats-var-no-test-15.png" width="672" /><img src="README-stats-var-no-test-16.png" width="672" /><img src="README-stats-var-no-test-17.png" width="672" /><img src="README-stats-var-no-test-18.png" width="672" /><img src="README-stats-var-no-test-19.png" width="672" /><img src="README-stats-var-no-test-20.png" width="672" /><img src="README-stats-var-no-test-21.png" width="672" /><img src="README-stats-var-no-test-22.png" width="672" /><img src="README-stats-var-no-test-23.png" width="672" /><img src="README-stats-var-no-test-24.png" width="672" /><img src="README-stats-var-no-test-25.png" width="672" /><img src="README-stats-var-no-test-26.png" width="672" /><img src="README-stats-var-no-test-27.png" width="672" /><img src="README-stats-var-no-test-28.png" width="672" /><img src="README-stats-var-no-test-29.png" width="672" /><img src="README-stats-var-no-test-30.png" width="672" /><img src="README-stats-var-no-test-31.png" width="672" /><img src="README-stats-var-no-test-32.png" width="672" /><img src="README-stats-var-no-test-33.png" width="672" /><img src="README-stats-var-no-test-34.png" width="672" /><img src="README-stats-var-no-test-35.png" width="672" /><img src="README-stats-var-no-test-36.png" width="672" /><img src="README-stats-var-no-test-37.png" width="672" /><img src="README-stats-var-no-test-38.png" width="672" /><img src="README-stats-var-no-test-39.png" width="672" /><img src="README-stats-var-no-test-40.png" width="672" /><img src="README-stats-var-no-test-41.png" width="672" /><img src="README-stats-var-no-test-42.png" width="672" /><img src="README-stats-var-no-test-43.png" width="672" /><img src="README-stats-var-no-test-44.png" width="672" /><img src="README-stats-var-no-test-45.png" width="672" /><img src="README-stats-var-no-test-46.png" width="672" /><img src="README-stats-var-no-test-47.png" width="672" /><img src="README-stats-var-no-test-48.png" width="672" /><img src="README-stats-var-no-test-49.png" width="672" /><img src="README-stats-var-no-test-50.png" width="672" /><img src="README-stats-var-no-test-51.png" width="672" /><img src="README-stats-var-no-test-52.png" width="672" /><img src="README-stats-var-no-test-53.png" width="672" /><img src="README-stats-var-no-test-54.png" width="672" /><img src="README-stats-var-no-test-55.png" width="672" /><img src="README-stats-var-no-test-56.png" width="672" /><img src="README-stats-var-no-test-57.png" width="672" /><img src="README-stats-var-no-test-58.png" width="672" /><img src="README-stats-var-no-test-59.png" width="672" /><img src="README-stats-var-no-test-60.png" width="672" /><img src="README-stats-var-no-test-61.png" width="672" /><img src="README-stats-var-no-test-62.png" width="672" /><img src="README-stats-var-no-test-63.png" width="672" /><img src="README-stats-var-no-test-64.png" width="672" /><img src="README-stats-var-no-test-65.png" width="672" /><img src="README-stats-var-no-test-66.png" width="672" /><img src="README-stats-var-no-test-67.png" width="672" /><img src="README-stats-var-no-test-68.png" width="672" /><img src="README-stats-var-no-test-69.png" width="672" /><img src="README-stats-var-no-test-70.png" width="672" /><img src="README-stats-var-no-test-71.png" width="672" /><img src="README-stats-var-no-test-72.png" width="672" /><img src="README-stats-var-no-test-73.png" width="672" /><img src="README-stats-var-no-test-74.png" width="672" /><img src="README-stats-var-no-test-75.png" width="672" /><img src="README-stats-var-no-test-76.png" width="672" /><img src="README-stats-var-no-test-77.png" width="672" /><img src="README-stats-var-no-test-78.png" width="672" /><img src="README-stats-var-no-test-79.png" width="672" /><img src="README-stats-var-no-test-80.png" width="672" /><img src="README-stats-var-no-test-81.png" width="672" /><img src="README-stats-var-no-test-82.png" width="672" /><img src="README-stats-var-no-test-83.png" width="672" /><img src="README-stats-var-no-test-84.png" width="672" /><img src="README-stats-var-no-test-85.png" width="672" /><img src="README-stats-var-no-test-86.png" width="672" /><img src="README-stats-var-no-test-87.png" width="672" /><img src="README-stats-var-no-test-88.png" width="672" /><img src="README-stats-var-no-test-89.png" width="672" /><img src="README-stats-var-no-test-90.png" width="672" /><img src="README-stats-var-no-test-91.png" width="672" /><img src="README-stats-var-no-test-92.png" width="672" /><img src="README-stats-var-no-test-93.png" width="672" /><img src="README-stats-var-no-test-94.png" width="672" /><img src="README-stats-var-no-test-95.png" width="672" /><img src="README-stats-var-no-test-96.png" width="672" /><img src="README-stats-var-no-test-97.png" width="672" /><img src="README-stats-var-no-test-98.png" width="672" /><img src="README-stats-var-no-test-99.png" width="672" /><img src="README-stats-var-no-test-100.png" width="672" /><img src="README-stats-var-no-test-101.png" width="672" /><img src="README-stats-var-no-test-102.png" width="672" /><img src="README-stats-var-no-test-103.png" width="672" /><img src="README-stats-var-no-test-104.png" width="672" /><img src="README-stats-var-no-test-105.png" width="672" /><img src="README-stats-var-no-test-106.png" width="672" /><img src="README-stats-var-no-test-107.png" width="672" /><img src="README-stats-var-no-test-108.png" width="672" /><img src="README-stats-var-no-test-109.png" width="672" /><img src="README-stats-var-no-test-110.png" width="672" /><img src="README-stats-var-no-test-111.png" width="672" /><img src="README-stats-var-no-test-112.png" width="672" /><img src="README-stats-var-no-test-113.png" width="672" /><img src="README-stats-var-no-test-114.png" width="672" /><img src="README-stats-var-no-test-115.png" width="672" /><img src="README-stats-var-no-test-116.png" width="672" /><img src="README-stats-var-no-test-117.png" width="672" /><img src="README-stats-var-no-test-118.png" width="672" /><img src="README-stats-var-no-test-119.png" width="672" /><img src="README-stats-var-no-test-120.png" width="672" /><img src="README-stats-var-no-test-121.png" width="672" /><img src="README-stats-var-no-test-122.png" width="672" /><img src="README-stats-var-no-test-123.png" width="672" /><img src="README-stats-var-no-test-124.png" width="672" /><img src="README-stats-var-no-test-125.png" width="672" /><img src="README-stats-var-no-test-126.png" width="672" /><img src="README-stats-var-no-test-127.png" width="672" /><img src="README-stats-var-no-test-128.png" width="672" /><img src="README-stats-var-no-test-129.png" width="672" /><img src="README-stats-var-no-test-130.png" width="672" /><img src="README-stats-var-no-test-131.png" width="672" /><img src="README-stats-var-no-test-132.png" width="672" /><img src="README-stats-var-no-test-133.png" width="672" /><img src="README-stats-var-no-test-134.png" width="672" /><img src="README-stats-var-no-test-135.png" width="672" /><img src="README-stats-var-no-test-136.png" width="672" /><img src="README-stats-var-no-test-137.png" width="672" /><img src="README-stats-var-no-test-138.png" width="672" /><img src="README-stats-var-no-test-139.png" width="672" /><img src="README-stats-var-no-test-140.png" width="672" /><img src="README-stats-var-no-test-141.png" width="672" /><img src="README-stats-var-no-test-142.png" width="672" /><img src="README-stats-var-no-test-143.png" width="672" /><img src="README-stats-var-no-test-144.png" width="672" /><img src="README-stats-var-no-test-145.png" width="672" /><img src="README-stats-var-no-test-146.png" width="672" /><img src="README-stats-var-no-test-147.png" width="672" /><img src="README-stats-var-no-test-148.png" width="672" /><img src="README-stats-var-no-test-149.png" width="672" /><img src="README-stats-var-no-test-150.png" width="672" /><img src="README-stats-var-no-test-151.png" width="672" /><img src="README-stats-var-no-test-152.png" width="672" /><img src="README-stats-var-no-test-153.png" width="672" /><img src="README-stats-var-no-test-154.png" width="672" /><img src="README-stats-var-no-test-155.png" width="672" /><img src="README-stats-var-no-test-156.png" width="672" /><img src="README-stats-var-no-test-157.png" width="672" /><img src="README-stats-var-no-test-158.png" width="672" /><img src="README-stats-var-no-test-159.png" width="672" /><img src="README-stats-var-no-test-160.png" width="672" /><img src="README-stats-var-no-test-161.png" width="672" /><img src="README-stats-var-no-test-162.png" width="672" /><img src="README-stats-var-no-test-163.png" width="672" /><img src="README-stats-var-no-test-164.png" width="672" /><img src="README-stats-var-no-test-165.png" width="672" /><img src="README-stats-var-no-test-166.png" width="672" /><img src="README-stats-var-no-test-167.png" width="672" /><img src="README-stats-var-no-test-168.png" width="672" /><img src="README-stats-var-no-test-169.png" width="672" /><img src="README-stats-var-no-test-170.png" width="672" /><img src="README-stats-var-no-test-171.png" width="672" /><img src="README-stats-var-no-test-172.png" width="672" /><img src="README-stats-var-no-test-173.png" width="672" /><img src="README-stats-var-no-test-174.png" width="672" /><img src="README-stats-var-no-test-175.png" width="672" /><img src="README-stats-var-no-test-176.png" width="672" /><img src="README-stats-var-no-test-177.png" width="672" /><img src="README-stats-var-no-test-178.png" width="672" /><img src="README-stats-var-no-test-179.png" width="672" /><img src="README-stats-var-no-test-180.png" width="672" /><img src="README-stats-var-no-test-181.png" width="672" />
 
     #> 
     #> ── autotesting stats ──
@@ -86,152 +115,102 @@ autotest_package (package = "stats", functions = "var", test = FALSE)
     #> ✔ [3 / 4]: cov
     #> ✔ [4 / 4]: cov
 
-    #> # A tibble: 94 x 7
-    #>    type  fn_name parameter  parameter_type operation        content yaml_hash   
-    #>    <chr> <chr>   <chr>      <chr>          <chr>            <chr>   <chr>       
-    #>  1 dummy var     x          integer vector Integer vector … <NA>    bcf42b882bb…
-    #>  2 dummy var     x          generic vector Custom class de… <NA>    bcf42b882bb…
-    #>  3 dummy var     x          generic vector Convert vector … <NA>    bcf42b882bb…
-    #>  4 dummy var     na.rm      single logical Negate default … <NA>    bcf42b882bb…
-    #>  5 dummy var     na.rm      single logical Substitute inte… <NA>    bcf42b882bb…
-    #>  6 dummy var     na.rm      single logical Substitute char… <NA>    bcf42b882bb…
-    #>  7 dummy var     na.rm      single logical Length 2 vector… <NA>    bcf42b882bb…
-    #>  8 dummy var     (return o… <NA>           Check that desc… <NA>    bcf42b882bb…
-    #>  9 dummy var     (return o… <NA>           Check whether d… <NA>    bcf42b882bb…
-    #> 10 dummy var     (return o… <NA>           Compare class o… <NA>    bcf42b882bb…
-    #> # … with 84 more rows
-
-That result details the 130 tests which would be applied to the `var`
-function from the `stats` package. These 130 tests yield the following
-results:
+<img src="README-stats-var-no-test-182.png" width="672" />
 
 ``` r
-autotest_package (package = "stats", functions = "var", test = TRUE)
+print (x)
+#> # A tibble: 96 x 9
+#>    type  test_name fn_name parameter parameter_type operation content test 
+#>    <chr> <chr>     <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
+#>  1 dummy vector_t… var     x         vector         Convert … (Shoul… TRUE 
+#>  2 dummy negate_l… var     na.rm     single logical Negate d… (Funct… TRUE 
+#>  3 dummy subst_in… <NA>    <NA>      single logical Substitu… (Funct… TRUE 
+#>  4 dummy subst_ch… <NA>    <NA>      single logical Substitu… should… TRUE 
+#>  5 dummy single_p… var     na.rm     single logical Length 2… Should… TRUE 
+#>  6 dummy return_s… var     (return … <NA>           Check th… <NA>    TRUE 
+#>  7 dummy return_v… var     (return … <NA>           Check th… <NA>    TRUE 
+#>  8 dummy return_d… var     (return … <NA>           Check wh… <NA>    TRUE 
+#>  9 dummy return_c… var     (return … <NA>           Compare … <NA>    TRUE 
+#> 10 dummy vector_t… var     y         vector         Convert … (Shoul… TRUE 
+#> # … with 86 more rows, and 1 more variable: yaml_hash <chr>
+```
+
+That result details the 96 tests which would be applied to the `var`
+function from the `stats` package. These 96 tests yield the following
+results when actually applied:
+
+``` r
+y <- autotest_package (package = "stats", functions = "var", test = TRUE)
 #> ── autotesting stats ──
 #> 
 #> ✔ [1 / 4]: var
 #> ✔ [2 / 4]: cor
 #> ✔ [3 / 4]: cov
 #> ✔ [4 / 4]: cov
-#> # A tibble: 9 x 7
-#>   type   fn_name parameter parameter_type  operation   content       yaml_hash  
-#>   <chr>  <chr>   <chr>     <chr>           <chr>       <chr>         <chr>      
-#> 1 diagn… var     x         generic vector  Convert ve… "Function [v… bcf42b882b…
-#> 2 diagn… var     y         generic vector  Convert ve… "Function [v… bcf42b882b…
-#> 3 diagn… cor     x         generic vector  Convert ve… "Function [c… bcf42b882b…
-#> 4 diagn… cor     y         generic vector  Convert ve… "Function [c… bcf42b882b…
-#> 5 diagn… cor     use       single charact… upper-case… "is case dep… bcf42b882b…
-#> 6 diagn… cor     use       single charact… upper-case… "is case dep… 4e21cddacf…
-#> 7 diagn… cov     use       single charact… upper-case… "is case dep… 4e21cddacf…
-#> 8 diagn… cov     use       single charact… upper-case… "is case dep… 8dc19144c4…
-#> 9 diagn… cov     use       single charact… upper-case… "is case dep… 87d5da3d7a…
+print (y)
+#> # A tibble: 9 x 9
+#>   type  test_name fn_name parameter parameter_type operation content test 
+#>   <chr> <chr>     <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
+#> 1 diag… vector_t… var     x         vector         Convert … "Funct… TRUE 
+#> 2 diag… vector_t… var     y         vector         Convert … "Funct… TRUE 
+#> 3 diag… vector_t… cor     x         vector         Convert … "Funct… TRUE 
+#> 4 diag… vector_t… cor     y         vector         Convert … "Funct… TRUE 
+#> 5 diag… single_c… cor     use       single charac… upper-ca… "is ca… TRUE 
+#> 6 diag… single_c… cor     use       single charac… upper-ca… "is ca… TRUE 
+#> 7 diag… single_c… cov     use       single charac… upper-ca… "is ca… TRUE 
+#> 8 diag… single_c… cov     use       single charac… upper-ca… "is ca… TRUE 
+#> 9 diag… single_c… cov     use       single charac… upper-ca… "is ca… TRUE 
+#> # … with 1 more variable: yaml_hash <chr>
 ```
 
-How Does It Work (Part 2)
--------------------------
-
-The tests themselves are controlled by `yaml` files, internally
-generated by calling `autotest_package()`. These `yaml` test
-specifications can be explicitly extracted for a given package or
-function(s) thereof with the `examples_to_yaml()` function, as
-demonstrated in the following code.
+And only 9 of the original 96 tests produced unexpected behaviour. There
+were in fact only two kinds of tests which produced these failures:
 
 ``` r
-yaml <- examples_to_yaml (package = "stats", functions = "var")
-length (yaml)
-#> [1] 4
-print (yaml [[1]], width = 20)
-#>  [1] "package: stats"                    
-#>  [2] "functions:"                        
-#>  [3] "    - var:"                        
-#>  [4] "        - preprocess:"             
-#>  [5] "            - 'Cl <- cor(longley)'"
-#>  [6] "        - parameters:"             
-#>  [7] "            - x: 1:10"             
-#>  [8] "    - var:"                        
-#>  [9] "        - preprocess:"             
-#> [10] "            - 'Cl <- cor(longley)'"
-#> [11] "        - parameters:"             
-#> [12] "            - x: 1:5"              
-#> [13] "            - y: 1:5"              
-#> [14] "    - cor:"                        
-#> [15] "        - preprocess:"             
-#> [16] "            - 'Cl <- cor(longley)'"
-#> [17] "        - parameters:"             
-#> [18] "            - x: 1:10"             
-#> [19] "            - y: 2:11"             
-#> [20] "    - cor:"                        
-#> [21] "        - preprocess:"             
-#> [22] "            - 'Cl <- cor(longley)'"
-#> [23] "        - parameters:"             
-#> [24] "            - x: longley"          
-#> attr(,"package")
-#> [1] "stats"
+unique (y$operation)
+#> [1] "Convert vector input to list-columns"
+#> [2] "upper-case character parameter"
 ```
 
-That `yaml` contains the values of all parameters used in one function
-call within the documented example code. Only explicitly specified
-values are declared, with all other parameters assuming default values.
-All parameters of a function are then mutated, whether explicitly
-specified or default.
-
-The “preprocess” lines of the `yaml` include any lines which assign
-values to named objects, and which may be used in any subsequent line of
-a given `yaml`. That `yaml` can also be used to generate lists of tests
-(with `test = FALSE`), or results of applying those tests (with
-`test = TRUE`), using the function, `autotest_yaml()`:
+The first involves conversion of a vector to a list-column
+representation (via `I(as.list(<vec>))`). Relatively few packages accept
+this kind of input, even though doing so is relatively straightforward.
+The following lines demonstrate how these tests can be switched off when
+`autotest`-ing a package. The `autotest_types()` function accepts a
+single argument listing the `test_name` entries of any tests which are
+to be switched off.
 
 ``` r
-autotest_yaml (yaml = yaml, test = FALSE)
-#> ✔ var
-#> ✔ var
-#> ✔ cor
-#> ✔ cor
-#> ✔ cor
-#> ✔ cov
-#> ✔ cov
-#> ✔ cov
-#> ✔ cov
-#> # A tibble: 94 x 7
-#>    type  fn_name parameter  parameter_type operation        content yaml_hash   
-#>    <chr> <chr>   <chr>      <chr>          <chr>            <chr>   <chr>       
-#>  1 dummy var     x          integer vector Integer vector … <NA>    bcf42b882bb…
-#>  2 dummy var     x          generic vector Custom class de… <NA>    bcf42b882bb…
-#>  3 dummy var     x          generic vector Convert vector … <NA>    bcf42b882bb…
-#>  4 dummy var     na.rm      single logical Negate default … <NA>    bcf42b882bb…
-#>  5 dummy var     na.rm      single logical Substitute inte… <NA>    bcf42b882bb…
-#>  6 dummy var     na.rm      single logical Substitute char… <NA>    bcf42b882bb…
-#>  7 dummy var     na.rm      single logical Length 2 vector… <NA>    bcf42b882bb…
-#>  8 dummy var     (return o… <NA>           Check that desc… <NA>    bcf42b882bb…
-#>  9 dummy var     (return o… <NA>           Check whether d… <NA>    bcf42b882bb…
-#> 10 dummy var     (return o… <NA>           Compare class o… <NA>    bcf42b882bb…
-#> # … with 84 more rows
-autotest_yaml (yaml = yaml, test = TRUE)
-#> ✔ var
-#> ✔ var
-#> ✔ cor
-#> ✔ cor
-#> ✔ cor
-#> ✔ cov
-#> ✔ cov
-#> ✔ cov
-#> ✔ cov
-#> # A tibble: 9 x 7
-#>   type   fn_name parameter parameter_type  operation   content       yaml_hash  
-#>   <chr>  <chr>   <chr>     <chr>           <chr>       <chr>         <chr>      
-#> 1 diagn… var     x         generic vector  Convert ve… "Function [v… bcf42b882b…
-#> 2 diagn… var     y         generic vector  Convert ve… "Function [v… bcf42b882b…
-#> 3 diagn… cor     x         generic vector  Convert ve… "Function [c… bcf42b882b…
-#> 4 diagn… cor     y         generic vector  Convert ve… "Function [c… bcf42b882b…
-#> 5 diagn… cor     use       single charact… upper-case… "is case dep… bcf42b882b…
-#> 6 diagn… cor     use       single charact… upper-case… "is case dep… 4e21cddacf…
-#> 7 diagn… cov     use       single charact… upper-case… "is case dep… 4e21cddacf…
-#> 8 diagn… cov     use       single charact… upper-case… "is case dep… 8dc19144c4…
-#> 9 diagn… cov     use       single charact… upper-case… "is case dep… 87d5da3d7a…
+types <- autotest_types (notest = "vector_to_list_col")
+y <- autotest_package (package = "stats", functions = "var",
+                       test = TRUE, test_data = types)
+#> ── autotesting stats ──
+#> 
+#> ✔ [1 / 4]: var
+#> ✔ [2 / 4]: cor
+#> ✔ [3 / 4]: cov
+#> ✔ [4 / 4]: cov
+print (y)
+#> # A tibble: 9 x 9
+#>   type  test_name fn_name parameter parameter_type operation content test 
+#>   <chr> <chr>     <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
+#> 1 dummy vector_t… var     x         vector         Convert … (Shoul… FALSE
+#> 2 dummy vector_t… var     y         vector         Convert … (Shoul… FALSE
+#> 3 dummy vector_t… cor     x         vector         Convert … (Shoul… FALSE
+#> 4 dummy vector_t… cor     y         vector         Convert … (Shoul… FALSE
+#> 5 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
+#> 6 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
+#> 7 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
+#> 8 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
+#> 9 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
+#> # … with 1 more variable: yaml_hash <chr>
 ```
 
-Prior work
-----------
+Those tests are still returned from `autotest_package()`, but with
+`test = FALSE`, and a `type` of “dummy” rather than the previous
+“diagnostic”.
+
+## Prior work
 
 1.  The
     [`great-expectations`](https://github.com/great-expectations/great_expectations)
