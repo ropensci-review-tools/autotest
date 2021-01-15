@@ -111,7 +111,7 @@ preload_package <- function (package) {
 }
 
 # combine lists of `functions` to include and `exclude` into single vector
-exclude_functions <- function (package, functions, exclude) {
+exclude_functions <- function (package, functions, exclude = NULL) {
     if (!is.null (functions)) {
         fns <- m_get_pkg_functions (package)
         if (!all (functions %in% fns)) {
