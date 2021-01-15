@@ -75,7 +75,6 @@ test_rect_as_other.autotest_obj <- function (x, test_data = NULL, ...) { # nolin
     this_op <- these_tests$operation
 
     if (is.null (test_data)) {
-        these_tests$test <- x$test
         these_tests$fn_name <- x$fn
         these_tests$parameter <- names (x$params) [x$i]
     } else {
