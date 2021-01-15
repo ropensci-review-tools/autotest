@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.682</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.685</span>
       </span>
     </div>
 
@@ -137,10 +137,10 @@
 <span class="co">#&gt; 17 single name or fo… Unquoted name/formula as qu… "Capture any warnings or err…</span>
 <span class="co">#&gt; 18 single logical     Substitute character values… "should trigger warning or e…</span>
 <span class="co">#&gt; 19 single logical     Negate default value of log… "(Function call should still…</span>
-<span class="co">#&gt; 20 &lt;NA&gt;               Check that function success…  &lt;NA&gt;                        </span>
-<span class="co">#&gt; 21 &lt;NA&gt;               Check that description has …  &lt;NA&gt;                        </span>
-<span class="co">#&gt; 22 &lt;NA&gt;               Check whether description o…  &lt;NA&gt;                        </span>
-<span class="co">#&gt; 23 &lt;NA&gt;               Compare class of return val…  &lt;NA&gt;</span></code></pre></div>
+<span class="co">#&gt; 20 (return object)    Check that function success…  &lt;NA&gt;                        </span>
+<span class="co">#&gt; 21 (return object)    Check that description has …  &lt;NA&gt;                        </span>
+<span class="co">#&gt; 22 (return object)    Check whether description o…  &lt;NA&gt;                        </span>
+<span class="co">#&gt; 23 (return object)    Compare class of return val…  &lt;NA&gt;</span></code></pre></div>
 </div>
 <div id="how-does-it-work" class="section level2">
 <h2 class="hasAnchor">
@@ -163,16 +163,16 @@
 <span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt;</span>
 <span class="co">#&gt;  1 dummy vector_t… var     x         vector         Convert … (Shoul… TRUE </span>
 <span class="co">#&gt;  2 dummy negate_l… var     na.rm     single logical Negate d… (Funct… TRUE </span>
-<span class="co">#&gt;  3 dummy subst_in… &lt;NA&gt;    &lt;NA&gt;      single logical Substitu… (Funct… TRUE </span>
-<span class="co">#&gt;  4 dummy subst_ch… &lt;NA&gt;    &lt;NA&gt;      single logical Substitu… should… TRUE </span>
+<span class="co">#&gt;  3 dummy subst_in… var     na.rm     single logical Substitu… (Funct… TRUE </span>
+<span class="co">#&gt;  4 dummy subst_ch… var     na.rm     single logical Substitu… should… TRUE </span>
 <span class="co">#&gt;  5 dummy single_p… var     na.rm     single logical Length 2… Should… TRUE </span>
-<span class="co">#&gt;  6 dummy return_s… var     (return … &lt;NA&gt;           Check th… &lt;NA&gt;    TRUE </span>
-<span class="co">#&gt;  7 dummy return_v… var     (return … &lt;NA&gt;           Check th… &lt;NA&gt;    TRUE </span>
-<span class="co">#&gt;  8 dummy return_d… var     (return … &lt;NA&gt;           Check wh… &lt;NA&gt;    TRUE </span>
-<span class="co">#&gt;  9 dummy return_c… var     (return … &lt;NA&gt;           Compare … &lt;NA&gt;    TRUE </span>
+<span class="co">#&gt;  6 dummy return_s… var     (return … (return objec… Check th… &lt;NA&gt;    TRUE </span>
+<span class="co">#&gt;  7 dummy return_v… var     (return … (return objec… Check th… &lt;NA&gt;    TRUE </span>
+<span class="co">#&gt;  8 dummy return_d… var     (return … (return objec… Check wh… &lt;NA&gt;    TRUE </span>
+<span class="co">#&gt;  9 dummy return_c… var     (return … (return objec… Compare … &lt;NA&gt;    TRUE </span>
 <span class="co">#&gt; 10 dummy vector_t… var     y         vector         Convert … (Shoul… TRUE </span>
 <span class="co">#&gt; # … with 86 more rows, and 1 more variable: yaml_hash &lt;chr&gt;</span></code></pre></div>
-<p>That result details the 96 tests which would be applied to the <code>var</code> function from the <code>stats</code> package. These 96 tests yield the following results when actually applied:</p>
+<p>Testing the <code>var</code> function also tests <code>cor</code> and <code>cov</code>, because the package works by scraping the documented examples from the associated <code>.Rd</code> help file, and <code><a href="https://rdrr.io/r/stats/cor.html">?var</a></code> shows that the help topic is <code>cor</code>, and includes the three functions, <code>var</code>, <code>cor</code>, and <code>cov</code>. That result details the 96 tests which would be applied to the <code>var</code> function from the <code>stats</code> package. These 96 tests yield the following results when actually applied:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>, functions <span class="op">=</span> <span class="st">"var"</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; ── autotesting stats ──</span>
@@ -225,7 +225,12 @@
 <span class="co">#&gt; 8 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE </span>
 <span class="co">#&gt; 9 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE </span>
 <span class="co">#&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</span></code></pre></div>
-<p>Those tests are still returned from <code><a href="reference/autotest_package.html">autotest_package()</a></code>, but with <code>test = FALSE</code>, and a <code>type</code> of “dummy” rather than the previous “diagnostic”.</p>
+<p>Those tests are still returned from <code><a href="reference/autotest_package.html">autotest_package()</a></code>, but with <code>test = FALSE</code> to indicate they were not run, and a <code>type</code> of “dummy” rather than the previous “diagnostic”.</p>
+</div>
+<div id="can-autotest-automatically-create-the-tests-in-my-tests-directory" class="section level2">
+<h2 class="hasAnchor">
+<a href="#can-autotest-automatically-create-the-tests-in-my-tests-directory" class="anchor"></a>Can <code>autotest</code> automatically create the tests in my <code>tests</code> directory?</h2>
+<p>Not yet, but that should be possible soon. Stay tuned …</p>
 </div>
 <div id="prior-work" class="section level2">
 <h2 class="hasAnchor">
