@@ -69,6 +69,8 @@ test_int_for_logical.NULL <- function (x = NULL, ...) {
 test_int_for_logical.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     res <- test_int_for_logical.NULL ()
+    res$fn_name <- x$fn
+    res$parameter <- names (x$params) [x$i]
 
     if (!is.null (test_data)) {
         x$test <- test_data$test [test_data$test_name == res$test_name]
@@ -118,6 +120,8 @@ test_char_for_logical.NULL <- function (x = NULL, ...) {
 test_char_for_logical.autotest_obj <- function (x = NULL, test_data = NULL, ...) { # nolint
 
     res <- test_char_for_logical.NULL ()
+    res$fn_name <- x$fn
+    res$parameter <- names (x$params) [x$i]
 
     if (!is.null (test_data)) {
         x$test <- test_data$test [test_data$test_name == res$test_name]
