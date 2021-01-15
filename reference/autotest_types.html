@@ -74,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.675</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.681</span>
       </span>
     </div>
 
@@ -113,8 +113,19 @@
     <p>List all types of 'autotests' currently implemented.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>autotest_types</span><span class='op'>(</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>autotest_types</span><span class='op'>(</span>notest <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>notest</th>
+      <td><p>Character string of names of tests which should be switched off
+by setting the <code>test</code> column to <code>FALSE</code>. Run this function first without this
+parameter to get all names, then re-run with this parameter switch specified
+tests off.</p></td>
+    </tr>
+    </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
