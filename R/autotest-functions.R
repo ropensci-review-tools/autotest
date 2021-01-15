@@ -178,20 +178,8 @@ autotest_package <- function (package,
     }
     res <- res [which (!duplicated (res)), ]
 
-    no_examples <- fns_without_examples (package)
-    no_examples <- no_examples [no_examples %in% unique (res$fn_name)]
-    if (length (no_examples) > 0) {
-        cnt <- "This function has no documented example"
-        for (i in no_examples) {
-            rtemp <- report_object (type = "warning",
-                                    fn_name = i,
-                                    operation = "<see content>",
-                                    content = cnt)
-            rtemp$yaml_hash <- NA_character_
-            res <- rbind (res, rtemp)
-
-        }
-    }
+    res <- test_untested_params (exs, res)
+    res <- report_fns_wo_example (package, res)
 
     attr (res, "package") <- package
 
