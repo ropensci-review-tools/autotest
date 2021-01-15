@@ -365,7 +365,7 @@ strip_if_cond <- function (x) {
                     ns <- nested_sequences (br_open, br_closed)
                     br_open <- ns$br_open
                     br_closed <- ns$br_closed
-                    x2 <- substring (x2, br_closed [1] + 1, nchar (x2))
+                    x2 <- substring (x2, br_open [1] + 1, br_closed [1] - 1)
                 }
             }
             x <- c (x1, x2)
