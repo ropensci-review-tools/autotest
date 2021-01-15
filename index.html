@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.692</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.694</span>
       </span>
     </div>
 
@@ -204,7 +204,7 @@
 <span class="co">#&gt; 15 warn… par_is_d… var     use       &lt;NA&gt;           Check th… "Examp… TRUE </span>
 <span class="co">#&gt; 16 warn… par_is_d… cov     y         &lt;NA&gt;           Check th… "Examp… TRUE </span>
 <span class="co">#&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</span></code></pre></div>
-<p>And only 16 of the original 114 tests produced unexpected behaviour. There were in fact only three kinds of tests which produced these failures:</p>
+<p>And only 16 of the original 114 tests produced unexpected behaviour. There were in fact only two kinds of tests which produced these 16 results:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span> <span class="op">(</span><span class="va">y</span><span class="op">$</span><span class="va">operation</span><span class="op">)</span>
 <span class="co">#&gt; [1] "Convert vector input to list-columns"      </span>
@@ -244,9 +244,9 @@
 <span class="co">#&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</span></code></pre></div>
 <p>Those tests are still returned from <code><a href="reference/autotest_package.html">autotest_package()</a></code>, but with <code>test = FALSE</code> to indicate they were not run, and a <code>type</code> of “dummy” rather than the previous “diagnostic”.</p>
 </div>
-<div id="can-autotest-automatically-create-the-tests-in-my-tests-directory" class="section level2">
+<div id="can-autotest-automatically-create-tests-in-my-tests-directory" class="section level2">
 <h2 class="hasAnchor">
-<a href="#can-autotest-automatically-create-the-tests-in-my-tests-directory" class="anchor"></a>Can <code>autotest</code> automatically create the tests in my <code>tests</code> directory?</h2>
+<a href="#can-autotest-automatically-create-tests-in-my-tests-directory" class="anchor"></a>Can <code>autotest</code> automatically create tests in my <code>tests</code> directory?</h2>
 <p>Not yet, but that should be possible soon. Stay tuned …</p>
 </div>
 <div id="prior-work" class="section level2">
