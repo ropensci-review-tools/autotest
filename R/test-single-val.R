@@ -73,7 +73,7 @@ autotest_single.autotest_obj <- function (x, test_data = NULL, ...) {
 
         # check response to vector input:
         if (check_vec) {
-            res <- rbind (res, test_single_length (x, val_type))
+            res <- rbind (res, test_single_length (x, val_type, test_data))
         }
     }
 
@@ -113,12 +113,16 @@ test_single_length.NULL <- function (x = NULL, ...) {
                    content = "Should trigger message, warning, or error")
 }
 
-test_single_length.autotest_obj <- function (x, val_type) { # nolint
+test_single_length.autotest_obj <- function (x, val_type, test_data = NULL) { # nolint
 
     res <- test_single_length.NULL ()
     res$fn_name <- x$fn
     res$parameter <- names (x$params) [x$i]
     res$parameter_type <- paste0 ("single ", val_type)
+
+    if (!is.null (test_data)) {
+        x$test <- test_data$test [test_data$test_name == res$test_name]
+    }
 
     if (x$test) {
 
