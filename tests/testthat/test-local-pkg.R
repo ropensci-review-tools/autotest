@@ -1,0 +1,27 @@
+
+context("local source package")
+
+make_pkg <- function () {
+
+    desc <- c ('Package: demo',
+               'Title: What the Package Does (One Line, Title Case)',
+               'Version: 0.0.0.9000',
+               'Authors@R: ',
+               '  person(given = "First",',
+               '         family = "Last",',
+               '         role = c("aut", "cre"),',
+               '         email = "first.last@example.com",',
+               '         comment = c(ORCID = "YOUR-ORCID-ID"))',
+               'Description: What the package does (one paragraph).',
+               'License: GPL-3',
+               'Encoding: UTF-8',
+               'LazyData: true',
+               'Roxygen: list(markdown = TRUE)',
+               'RoxygenNote: 7.1.1')
+    d <- file.path (tempdir (), "demo")
+    dir.create (d)
+    writeLines (desc, con = file.path (d, "DESCRIPTION"))
+}
+
+test_that("pkg", {
+})
