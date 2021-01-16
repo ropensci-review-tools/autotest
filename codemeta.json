@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/ropenscilabs/autotest",
   "issueTracker": "\n    https://github.com/mpadge/ropenscilabs/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.1.697",
+  "version": "0.0.1.698",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -98,6 +98,18 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=cli"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "data.table",
+      "name": "data.table",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=data.table"
     },
     {
       "@type": "SoftwareApplication",
@@ -189,7 +201,7 @@
       "sameAs": "https://CRAN.R-project.org/package=yaml"
     }
   ],
-  "fileSize": "265.718KB",
+  "fileSize": "266.24KB",
   "contIntegration": "https://codecov.io/gh/ropenscilabs/autotest",
   "developmentStatus": "https://www.repostatus.org/#concept",
   "readme": "https://github.com/ropenscilabs/autotest/blob/master/README.md"
