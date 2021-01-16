@@ -845,7 +845,7 @@ add_default_vals_to_params <- function (x, package) {
     xout <- lapply (seq_along (x), function (i) {
                     this_fn <- names (x) [i]
                     these_pars <- x [[i]] [, 1]
-                    fmls <- formals (this_fn, env = this_env)
+                    fmls <- formals (this_fn, envir = this_env)
                     fmls <- fmls [which (!names (fmls) %in% these_pars)]
                     fmls <- fmls [which (vapply (fmls,
                                                  length,
