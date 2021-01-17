@@ -10,18 +10,46 @@ make_pkg <- function () {
                '  person(given = "First",',
                '         family = "Last",',
                '         role = c("aut", "cre"),',
-               '         email = "first.last@example.com",',
-               '         comment = c(ORCID = "YOUR-ORCID-ID"))',
+               '         email = "first.last@example.com")',
                'Description: What the package does (one paragraph).',
                'License: GPL-3',
-               'Encoding: UTF-8',
-               'LazyData: true',
-               'Roxygen: list(markdown = TRUE)',
-               'RoxygenNote: 7.1.1')
+               'Encoding: UTF-8')
+
     d <- file.path (tempdir (), "demo")
-    dir.create (d)
+    if (!file.exists (d))
+        dir.create (d)
     writeLines (desc, con = file.path (d, "DESCRIPTION"))
+
+    rfile <- c ("test <- function(x = 1) {",
+                "  x ^ 2 }")
+    dr <- file.path (d, "R")
+    if (!file.exists (dr))
+        dir.create (dr)
+    writeLines (rfile, con = file.path (dr, "test.R"))
+
+    rdfile <- c ("\\name{test}",
+                 "\\alias{test}",
+                 "\\title{test,A test funtion}",
+                 "\\usage{test(x = 1)}",
+                 "\\arguments{\\item{x}{input}}",
+                 "\\value{return value}",
+                 "\\description{test A test funtion}",
+                 "\\examples{",
+                 "test(1)",
+                 "}")
+    dm <- file.path (d, "man")
+    if (!file.exists (dm))
+        dir.create (dm)
+    writeLines (rdfile, con = file.path (dm, "test.Rd"))
+
+    nfile <- ""
+    writeLines (nfile, con = file.path (d, "NAMESPACE"))
+
+    return (d)
 }
 
 test_that("pkg", {
+
+              d <- make_pkg ()
+              #autotest_package (package = d)
 })
