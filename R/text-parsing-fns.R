@@ -80,25 +80,44 @@ match_one_brackets <- function (x, br_open, br_closed, collapse_sym) {
         x [br_closed [i]] <- paste0 (xmid, collapse = collapse_sym)
     }
 
-    # then remove all of the intervening lines, making sure to remove any
-    # pipes into ggplot2 expression from preceding lines:
+    x <- rm_intervening_lines (x, br_open, br_closed)
+
+    x <- gsub ("\\s+", " ", x)
+
+    x <- rm_final_ggplus_lines (x, has_gg_pluses)
+
+    return (x)
+}
+
+#' remove intervening lines, making sure to remove any
+#' pipes into ggplot2 expression from preceding lines:
+rm_intervening_lines <- function (x, br_open, br_closed) {
+
     if (length (br_open) > 0) {
 
         index <- unlist (lapply (seq_along (br_open), function (i)
                                  br_open [i]:(br_closed [i] - 1)))
         index2 <- (index - 1) [index > 1]
+
         pipe_sym <- "\\\\%>\\\\%$"
+
         terminal_pipe <- grep (pipe_sym, x [index2])
+
         if (length (terminal_pipe) > 0) {
+
             terminal_pipe <- index2 [terminal_pipe]
             x [terminal_pipe] <- gsub (pipe_sym, "", x [terminal_pipe])
         }
         x <- x [-index]
     }
 
-    x <- gsub ("\\s+", " ", x)
+    return (x)
+}
+
+rm_final_ggplus_lines <- function (x, has_gg_pluses) {
 
     if (has_gg_pluses) {
+
 
         index <- grep ("\\+\\s?$", x)
         index2 <- cumsum (c (FALSE, diff (index) > 1))
