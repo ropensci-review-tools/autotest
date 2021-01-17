@@ -95,6 +95,9 @@ m_get_param_lists <- memoise::memoise (get_param_lists)
 pkg_param_classes <- function (package) {
 
     objs <- m_get_example_objs (package)
+    if (is.null (objs))
+        return (NULL)
+
     objs$package <- vapply (objs$package, function (i)
                             strsplit (i, "::") [[1]] [1],
                             character (1))
