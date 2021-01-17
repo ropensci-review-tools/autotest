@@ -27,7 +27,20 @@ match_brackets <- function (x, curly = FALSE) {
     else if (any (is.na (br_open)) & any (is.na (br_closed)))
         return (NULL) # error in parsing brackets
 
+    x <- match_one_brackets (x, br_open, br_closed, collapse_sym)
+
+    # catch instances where curly brackets are only used on first condition,
+    # with second condition being a single line
+    if (curly)
+        x <- catch_curly_else (x)
+
+    return (x)
+}
+
+match_one_brackets <- function (x, br_open, br_closed, collapse_sym) {
+
     has_gg_pluses <- FALSE
+
     for (i in seq_along (br_open)) {
 
         xmid <- x [br_open [i]:br_closed [i]]
@@ -54,7 +67,8 @@ match_brackets <- function (x, curly = FALSE) {
             rms <- NULL
             for (j in index) {
                 if (j < length (xmid)) {
-                        xmid [j + 1] <- paste0 (xmid [j], xmid [j + 1],
+                        xmid [j + 1] <- paste0 (xmid [j],
+                                                xmid [j + 1],
                                                 collapse = " ")
                         rms <- c (rms, j)
                 }
@@ -65,9 +79,11 @@ match_brackets <- function (x, curly = FALSE) {
 
         x [br_closed [i]] <- paste0 (xmid, collapse = collapse_sym)
     }
+
     # then remove all of the intervening lines, making sure to remove any
     # pipes into ggplot2 expression from preceding lines:
     if (length (br_open) > 0) {
+
         index <- unlist (lapply (seq_along (br_open), function (i)
                                  br_open [i]:(br_closed [i] - 1)))
         index2 <- (index - 1) [index > 1]
@@ -83,6 +99,7 @@ match_brackets <- function (x, curly = FALSE) {
     x <- gsub ("\\s+", " ", x)
 
     if (has_gg_pluses) {
+
         index <- grep ("\\+\\s?$", x)
         index2 <- cumsum (c (FALSE, diff (index) > 1))
         index <- lapply (split (index, f = as.factor (index2)), function (i)
@@ -94,15 +111,17 @@ match_brackets <- function (x, curly = FALSE) {
         x <- x [-unlist (lapply (index, function (i) i [-1]))]
     }
 
-    # catch instances where curly brackets are only used on first condition,
-    # with second condition being a single line
-    if (curly) {
-        index <- rev (grep ("else\\s?$", x))
-        if (length (index) > 0) {
-            for (i in index) {
-                x [i] <- paste0 (x [i], " ", x [i + 1])
-                x <- x [- (i + 1)]
-            }
+    return (x)
+}
+
+catch_curly_else <- function (x) {
+
+    index <- rev (grep ("else\\s?$", x))
+
+    if (length (index) > 0) {
+        for (i in index) {
+            x [i] <- paste0 (x [i], " ", x [i + 1])
+            x <- x [- (i + 1)]
         }
     }
 
