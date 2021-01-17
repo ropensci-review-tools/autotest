@@ -52,10 +52,20 @@ pkg_is_source <- function (package) {
 }
 
 get_git_hash <- function (package) {
+
+    ret <- NULL
+
     wd <- setwd (package)
-    x <- system2 ("git", c ("log", "-1"), stdout = TRUE) [1]
+
+    if (dir.exists (file.path (package, ".git"))) {
+
+        x <- system2 ("git", c ("log", "-1"), stdout = TRUE) [1]
+        ret <- gsub ("commit\\s+", "", x)
+    }
+
     setwd (wd)
-    return (gsub ("commit\\s+", "", x))
+
+    return (ret)
 }
 
 #' @param pkg Either name of locally-installed package or path to package source
