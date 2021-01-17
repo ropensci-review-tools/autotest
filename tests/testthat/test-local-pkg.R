@@ -20,7 +20,14 @@ make_pkg <- function () {
         dir.create (d)
     writeLines (desc, con = file.path (d, "DESCRIPTION"))
 
-    rfile <- c ("test <- function(x = 1) {",
+    rfile <- c ("#' test",
+                "#' A test funtion",
+                "#' @param x input",
+                "#' @return return value",
+                "#' @examples",
+                "#' test(1)",
+                "#' @export",
+                "test <- function(x = 1) {",
                 "  x ^ 2 }")
     dr <- file.path (d, "R")
     if (!file.exists (dr))
@@ -42,7 +49,7 @@ make_pkg <- function () {
         dir.create (dm)
     writeLines (rdfile, con = file.path (dm, "test.Rd"))
 
-    nfile <- ""
+    nfile <- "export(test)"
     writeLines (nfile, con = file.path (d, "NAMESPACE"))
 
     return (d)
@@ -50,6 +57,6 @@ make_pkg <- function () {
 
 test_that("pkg", {
 
-              d <- make_pkg ()
-              #autotest_package (package = d)
+              package <- make_pkg ()
+              x <- autotest_package (package = package)
 })
