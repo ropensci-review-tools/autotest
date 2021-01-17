@@ -80,7 +80,7 @@ get_Rd_value <- function (package, fn_name) { # nolint
     return (val)
 }
 
-get_Rd_param <- function (package, fn_name, param_name) {
+get_Rd_param <- function (package, fn_name, param_name) { # nolint
     x <- tools::Rd_db (package = package)
     xfn <- x [[paste0 (fn_name, ".Rd")]]
 
