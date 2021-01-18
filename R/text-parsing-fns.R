@@ -91,6 +91,7 @@ match_one_brackets <- function (x, br_open, br_closed, collapse_sym) {
 
 #' remove intervening lines, making sure to remove any
 #' pipes into ggplot2 expression from preceding lines:
+#' @noRd
 rm_intervening_lines <- function (x, br_open, br_closed) {
 
     if (length (br_open) > 0) {
