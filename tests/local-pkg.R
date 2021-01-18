@@ -10,7 +10,9 @@ make_pkg <- function () {
                "         role = c(\"aut\", \"cre\"),",
                "         email = \"first.last@example.com\")",
                "Description: What the package does (one paragraph).",
-               "Imports: methods",
+               "Imports:",
+               "  data.table,",
+               "  methods",
                "License: GPL-3",
                "Encoding: UTF-8")
 
@@ -44,8 +46,10 @@ make_pkg <- function () {
                 "  ret <- x",
                 "  if (methods::is (x, \"tbl_df\"))",
                 "    ret <- x [-1, -ncol (x)]",
-                "  else if (methods::is (x, \"data.table\"))",
-                "    ret <- x [-(1:2), -\"Petal.Width\"]",
+                "  else if (methods::is (x, \"data.table\")) {",
+                "    nm = names (x) [ncol (x)]",
+                "    ret <- x [, (nm):=NULL]",
+                "    ret <- ret [-(1:2),]}",
                 "return (ret)  }")
     writeLines (rfile, con = file.path (dr, "test-rect.R"))
 
@@ -82,7 +86,8 @@ make_pkg <- function () {
                  "}")
     writeLines (rdfile, con = file.path (dm, "test_rect.Rd"))
 
-    nfile <- c ("export(test)",
+    nfile <- c ("importFrom(data.table,`:=`)",
+                "export(test)",
                 "export(test_rect)")
     writeLines (nfile, con = file.path (d, "NAMESPACE"))
 
