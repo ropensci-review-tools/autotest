@@ -7,8 +7,11 @@
 #  ----------------------------------------------------------------------
 
 chk_dims <- function (x, res1, res2) {
+
     ret <- NULL
+
     if (!identical (dim (res1), dim (res2))) {
+
         operation <- paste0 ("compare output dimensions for ",
                              "different rectangular inputs")
         content <- paste0 ("Function [",
@@ -30,8 +33,11 @@ chk_dims <- function (x, res1, res2) {
 }
 
 chk_names <- function (x, res1, res2) {
+
     ret <- NULL
+
     if (!identical (names (res1), names (res2))) {
+
         operation <- "compare output names for different rectangular inputs"
         content <- paste0 ("Function [",
                            x$fn,
@@ -53,9 +59,15 @@ chk_names <- function (x, res1, res2) {
 }
 
 chk_columns <- function (x, res1, res2) {
+
     ret <- NULL
-    for (i in seq (ncol (res1))) {
+
+    cnames <- colnames (res1) [which (colnames (res1) %in% colnames (res2))]
+
+    for (i in seq_along (cnames)) {
+
         if (!identical (res1 [[i]], res2 [[i]])) {
+
             operation <- paste0 ("compare output columns for ",
                                  "different rectangular inputs")
             content <- paste0 ("Function [",
