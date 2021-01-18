@@ -16,6 +16,7 @@ test_single_char_case_dep.autotest_obj <- function (x, test_data = NULL) { # nol
 
     res <- NULL
 
+
     if (!is.null (test_data)) {
         r <- test_single_char_case_dep.NULL ()
         x$test <- test_data$test [test_data$test_name == r$test_name]
@@ -23,6 +24,9 @@ test_single_char_case_dep.autotest_obj <- function (x, test_data = NULL) { # nol
 
     for (lower in c (TRUE, FALSE))
         res <- rbind (res, case_dependency (x, lower = lower))
+
+    if (!is.null (test_data) & !x$test & !is.null (res))
+        res$type <- "no_test"
 
     return (res)
 }
@@ -76,6 +80,8 @@ test_single_char_as_random.autotest_obj <- function (x, test_data = NULL, ...) {
     if (!is.null (test_data)) {
         r <- test_single_char_as_random.NULL ()
         x$test <- test_data$test [test_data$test_name == r$test_name]
+        if (!x$test)
+            res$type <- "no_test"
     }
 
     x$params [[x$i]] <- paste0 (sample (c (letters, LETTERS),

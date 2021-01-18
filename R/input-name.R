@@ -24,6 +24,8 @@ test_single_name.autotest_obj <- function (x, test_data = NULL) {
 
     if (!is.null (test_data)) {
         x$test <- test_data$test [test_data$test_name == ret$test_name]
+        if (!x$test)
+            res$type <- "no_test"
     }
 
     if (x$test) {

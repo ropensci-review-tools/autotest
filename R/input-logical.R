@@ -17,6 +17,8 @@ test_negate_logical.autotest_obj <- function (x, test_data = NULL, ...) { # noli
 
     if (!is.null (test_data)) {
         x$test <- test_data$test [test_data$test_name == res$test_name]
+        if (!x$test)
+            res$type <- "no_test"
     }
 
     if (x$test) {
@@ -74,6 +76,8 @@ test_int_for_logical.autotest_obj <- function (x, test_data = NULL, ...) { # nol
 
     if (!is.null (test_data)) {
         x$test <- test_data$test [test_data$test_name == res$test_name]
+        if (!x$test)
+            res$type <- "no_test"
     }
 
     if (x$test) {
@@ -125,6 +129,8 @@ test_char_for_logical.autotest_obj <- function (x = NULL, test_data = NULL, ...)
 
     if (!is.null (test_data)) {
         x$test <- test_data$test [test_data$test_name == res$test_name]
+        if (!x$test)
+            res$type <- "no_test"
     }
 
     if (x$test) {

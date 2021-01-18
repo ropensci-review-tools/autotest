@@ -55,6 +55,8 @@ test_return_success.autotest_obj <- function (x, test_data = NULL, ...) { # noli
 
     if (!is.null (test_data)) {
         x$test <- test_data$test [test_data$test_name == ret$test_name]
+        if (!x$test)
+            ret$type <- "no_test"
     }
 
     if (x$test) {
@@ -116,6 +118,8 @@ test_return_is_described.autotest_obj <- function (x, test_data = NULL, ...) { #
 
     if (!is.null (test_data)) {
         x$test <- test_data$test [test_data$test_name == ret$test_name]
+        if (!x$test)
+            ret$type <- "no_test"
     }
 
     if (x$test) {
@@ -158,6 +162,8 @@ test_return_has_class.autotest_obj <- function (x, test_data = NULL) { # nolint
 
     if (!is.null (test_data)) {
         x$test <- test_data$test [test_data$test_name == ret$test_name]
+        if (!x$test)
+            ret$type <- "no_test"
     }
 
     if (x$test) {
@@ -215,6 +221,8 @@ test_return_primary_val_matches_desc.autotest_obj <- function (x, test_data = NU
 
     if (!is.null (test_data)) {
         x$test <- test_data$test [test_data$test_name == ret$test_name]
+        if (!x$test)
+            ret$type <- "no_test"
     }
 
     if (x$test) {

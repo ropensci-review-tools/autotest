@@ -34,6 +34,8 @@ test_single_int_range.autotest_obj <- function (x, test_data = NULL, ...) { # no
         # These two tests are coupled, with `test` flags determined by the
         # first only
         x$test <- test_data$test [test_data$test_name == r$test_name [1]]
+        if (!x$test)
+            res$type <- "no_test"
     }
 
     if (x$test)
@@ -248,8 +250,11 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # 
     res$parameter <- names (x$params) [x$i]
     res$parameter_type <- param_type
 
-    if (!is.null (test_data))
+    if (!is.null (test_data)) {
         x$test <- test_data$test [test_data$test_name == res$test_name]
+        if (!x$test)
+            res$type <- "no_test"
+    }
 
     if (x$test) {
         f <- tempfile (fileext = ".txt")

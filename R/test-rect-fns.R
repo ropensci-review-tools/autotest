@@ -182,6 +182,7 @@ dummy_compare_rect_outputs <- function (x, test_data) {
         for (i in unique (res$content)) {
             index <- which (res$content == i)
             res$test [index] <- test_data$test [match (i, test_data$content)]
+            res$type [index] [which (!res$test [index])] <- "no_test"
         }
     }
 
