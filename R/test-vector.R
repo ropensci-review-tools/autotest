@@ -73,9 +73,9 @@ test_vec_class_defs.autotest_obj <- function (x, test_data = NULL) { # nolint
     res0$fn_name <- x$fn
     res0$parameter <- names (x$params) [x$i]
     if (!is.null (test_data))
-        res0$test <- test_data$test [test_data$test_name == res0$test_name]
+        x$test <- test_data$test [test_data$test_name == res0$test_name]
 
-    if (res0$test) {
+    if (x$test) {
 
         if (!names (x$params) [x$i] %in% names (x$classes)) {
             p <- x$params [[x$i]]
