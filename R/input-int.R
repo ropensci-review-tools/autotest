@@ -86,6 +86,9 @@ single_int_range <- function (x) {
 
             res_out <- test_single_int_range.NULL ()
             res_out <- res_out [grep ("match_int_range", res_out$test_name), ]
+            res_out$type <- "diagnostic"
+            res_out$fn_name <- x$fn
+            res_out$parameter <- names (x$params) [x$i]
             res_out$content <- paste0 (" Parameter range for ",
                                        names (x$params) [x$i],
                                        " is NOT documented")
