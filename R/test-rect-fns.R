@@ -241,7 +241,8 @@ pass_one_rect_as_other <- function (x,
 
     x$params [[x$i]] <- do.call (eval (parse (text = other)),
                                  x$params [[x$i]])
-    msgs <- catch_all_msgs (x$f, x$fn, x$params)
+    f <- tempfile ()
+    msgs <- catch_all_msgs (f, x$fn, x$params)
 
     if (!is.null (msgs)) {
         msgs$parameter <- rep (names (x$params) [x$i], nrow (msgs))
