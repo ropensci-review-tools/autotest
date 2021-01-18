@@ -8,5 +8,14 @@ source ("../local-pkg.R")
 test_that("pkg", {
 
               package <- make_pkg ()
-              x <- autotest_package (package = package)
+              xf <- autotest_package (package = package)
+              expect_true (all (xf$test))
+              expect_true (all (xf$type == "dummy"))
+
+              xt <- autotest_package (package = package, test = TRUE)
+              expect_true (all (xt$test))
+              expect_true (all (xt$type == "diagnostic"))
+
+              n <- test_rect_compare_outputs.NULL ()
+              expect_true (all (n$test_name %in% xt$test_name))
 })
