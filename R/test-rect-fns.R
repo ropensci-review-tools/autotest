@@ -367,6 +367,7 @@ do_extend_rect_class_struct <- function (x) {
                                    types = c ("warning", "error"))
 
         ret <- test_rect_extend_class.NULL ()
+        ret$type <- msg_out$type
         ret$fn_name <- msg_out$fn_name
         ret$parameter <- msg_out$parameter
         ret$parameter_type <- msg_out$parameter_type
