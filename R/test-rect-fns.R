@@ -204,6 +204,15 @@ pass_rect_as_other <- function (x, test_data = NULL) {
         res <- rbind (res, this_ret)
         if (docall (this_ret, x$fn, x$params)) {
 
+            convert <- switch (EXPR = other [o],
+                       "tibble::tibble" = "tibble::as_tibble",
+                       "data.table::data.table" = "data.table::as.data.table",
+                       "data.frame" = "as.data.frame")
+            this_fn <- eval (parse (text = convert))
+            args <- list (x$params [[x$i]])
+            names (args) <- names (x$params) [x$i]
+            x$params [[x$i]] <- do.call (this_fn, args)
+
             junk <- utils::capture.output (
                 val <- suppressWarnings (
                             suppressMessages (
