@@ -133,7 +133,7 @@ print (y)
 ```
 
 And only `r nrow (y)` of the original `r nrow (x)` tests produced unexpected
-behaviour. There were in fact only two kinds of tests which produced these
+behaviour. There were in fact only three kinds of tests which produced these
 `r nrow (y)` results:
 
 
@@ -156,7 +156,7 @@ print (y)
 ```
 
 Those tests are still returned from `autotest_package()`, but with `test =
-FALSE` to indicate they were not run, and a `type` of "dummy" rather than the
+FALSE` to indicate they were not run, and a `type` of "no_test" rather than the
 previous "diagnostic".
 
 

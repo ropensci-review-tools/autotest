@@ -149,30 +149,31 @@ x <- autotest_package (package = "stats", functions = "var", test = FALSE)
     #> ✔ [3 / 4]: cov
     #> ✔ [4 / 4]: cov
 
+
 ``` r
 print (x)
-#> # A tibble: 114 x 9
+#> # A tibble: 122 x 9
 #>    type  test_name fn_name parameter parameter_type operation content test 
 #>    <chr> <chr>     <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
-#>  1 dummy vector_t… var     x         vector         Convert … (Shoul… TRUE 
-#>  2 dummy negate_l… var     na.rm     single logical Negate d… (Funct… TRUE 
-#>  3 dummy subst_in… var     na.rm     single logical Substitu… (Funct… TRUE 
-#>  4 dummy subst_ch… var     na.rm     single logical Substitu… should… TRUE 
-#>  5 dummy single_p… var     na.rm     single logical Length 2… Should… TRUE 
-#>  6 dummy return_s… var     (return … (return objec… Check th… <NA>    TRUE 
-#>  7 dummy return_v… var     (return … (return objec… Check th… <NA>    TRUE 
-#>  8 dummy return_d… var     (return … (return objec… Check wh… <NA>    TRUE 
-#>  9 dummy return_c… var     (return … (return objec… Compare … <NA>    TRUE 
-#> 10 dummy vector_t… var     y         vector         Convert … (Shoul… TRUE 
-#> # … with 104 more rows, and 1 more variable: yaml_hash <chr>
+#>  1 dummy int_as_n… var     x         integer vector Integer … (Shoul… TRUE 
+#>  2 dummy vector_c… var     x         vector         Custom c… (Shoul… TRUE 
+#>  3 dummy vector_t… var     x         vector         Convert … (Shoul… TRUE 
+#>  4 dummy negate_l… var     na.rm     single logical Negate d… (Funct… TRUE 
+#>  5 dummy subst_in… var     na.rm     single logical Substitu… (Funct… TRUE 
+#>  6 dummy subst_ch… var     na.rm     single logical Substitu… should… TRUE 
+#>  7 dummy single_p… var     na.rm     single logical Length 2… Should… TRUE 
+#>  8 dummy return_s… var     (return … (return objec… Check th… <NA>    TRUE 
+#>  9 dummy return_v… var     (return … (return objec… Check th… <NA>    TRUE 
+#> 10 dummy return_d… var     (return … (return objec… Check wh… <NA>    TRUE 
+#> # … with 112 more rows, and 1 more variable: yaml_hash <chr>
 ```
 
 Testing the `var` function also tests `cor` and `cov`, because the
 package works by scraping the documented examples from the associated
 `.Rd` help file, and `?var` shows that the help topic is `cor`, and
 includes the three functions, `var`, `cor`, and `cov`. That result
-details the 114 tests which would be applied to the `var` function from
-the `stats` package. These 114 tests yield the following results when
+details the 122 tests which would be applied to the `var` function from
+the `stats` package. These 122 tests yield the following results when
 actually applied:
 
 ``` r
@@ -206,8 +207,8 @@ print (y)
 #> # … with 1 more variable: yaml_hash <chr>
 ```
 
-And only 16 of the original 114 tests produced unexpected behaviour.
-There were in fact only two kinds of tests which produced these 16
+And only 16 of the original 122 tests produced unexpected behaviour.
+There were in fact only three kinds of tests which produced these 16
 results:
 
 ``` r
@@ -239,10 +240,10 @@ print (y)
 #> # A tibble: 16 x 9
 #>    type  test_name fn_name parameter parameter_type operation content test 
 #>    <chr> <chr>     <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
-#>  1 dummy vector_t… var     x         vector         Convert … (Shoul… FALSE
-#>  2 dummy vector_t… var     y         vector         Convert … (Shoul… FALSE
-#>  3 dummy vector_t… cor     x         vector         Convert … (Shoul… FALSE
-#>  4 dummy vector_t… cor     y         vector         Convert … (Shoul… FALSE
+#>  1 no_t… vector_t… var     x         vector         Convert … (Shoul… FALSE
+#>  2 no_t… vector_t… var     y         vector         Convert … (Shoul… FALSE
+#>  3 no_t… vector_t… cor     x         vector         Convert … (Shoul… FALSE
+#>  4 no_t… vector_t… cor     y         vector         Convert … (Shoul… FALSE
 #>  5 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
 #>  6 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE 
 #>  7 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
@@ -259,7 +260,7 @@ print (y)
 ```
 
 Those tests are still returned from `autotest_package()`, but with
-`test = FALSE` to indicate they were not run, and a `type` of “dummy”
+`test = FALSE` to indicate they were not run, and a `type` of “no_test”
 rather than the previous “diagnostic”.
 
 ## Can `autotest` automatically create tests in my `tests` directory?
