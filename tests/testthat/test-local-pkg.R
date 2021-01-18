@@ -3,7 +3,12 @@ context("local source package")
 
 source ("../local-pkg.R")
 # functions to make local package, including
-# - make_pkg()
+# - make_pkg(), which itself calls
+# - d <- make_pkg_path ()
+# - make_desc (d)
+# - make_test_int (d)
+# - make_test_rect (d)
+# - make_namespace (d)
 
 test_that("pkg", {
 
