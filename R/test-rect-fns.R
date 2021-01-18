@@ -12,22 +12,21 @@ chk_dims <- function (x, res1, res2) {
 
     if (!identical (dim (res1), dim (res2))) {
 
-        operation <- paste0 ("compare output dimensions for ",
-                             "different rectangular inputs")
-        content <- paste0 ("Function [",
-                           x$fn,
-                           "] errors on rectangular input for [",
-                           names (x$params) [x$i],
-                           "]: Dimensions differ between ",
-                           class (res1) [1],
-                           " and ",
-                           class (res2) [1], " inputs")
-        ret <- report_object (type = "diagnostic",
-                              fn_name = x$fn,
-                              parameter = names (x$params) [x$i],
-                              parameter_type = "generic tabular",
-                              operation = operation,
-                              content = content)
+        ret <- test_rect_compare_outputs.NULL ()
+        ret <- ret [grep ("compare_dims", ret$test_name), ]
+        ret$type <- "diagnostic"
+        ret$fn_name <- x$fn
+        ret$parameter <- names (x$params) [x$i]
+        ret$operation <- paste0 ("compare output dimensions for ",
+                                 "different rectangular inputs")
+        ret$content <- paste0 ("Function [",
+                               x$fn,
+                               "] errors on rectangular input for [",
+                               names (x$params) [x$i],
+                               "]: Dimensions differ between ",
+                               class (res1) [1],
+                               " and ",
+                               class (res2) [1], " inputs")
     }
     return (ret)
 }
@@ -38,22 +37,21 @@ chk_names <- function (x, res1, res2) {
 
     if (!identical (names (res1), names (res2))) {
 
-        operation <- "compare output names for different rectangular inputs"
-        content <- paste0 ("Function [",
-                           x$fn,
-                           "] errors on rectangular input for [",
-                           names (x$params) [x$i],
-                           "]: Column names differ between ",
-                           class (res1) [1],
-                           " and ",
-                           class (res2) [1],
-                           " inputs")
-        ret <- report_object (type = "diagnostic",
-                              fn_name = x$fn,
-                              parameter = names (x$params) [x$i],
-                              parameter_type = "generic tabular",
-                              operation = operation,
-                              content = content)
+        ret <- test_rect_compare_outputs.NULL ()
+        ret <- ret [grep ("compare_col_names", ret$test_name), ]
+        ret$type <- "diagnostic"
+        ret$fn_name <- x$fn
+        ret$parameter <- names (x$params) [x$i]
+        ret$operation <- "compare output names for different rectangular inputs"
+        ret$content <- paste0 ("Function [",
+                               x$fn,
+                               "] errors on rectangular input for [",
+                               names (x$params) [x$i],
+                               "]: Column names differ between ",
+                               class (res1) [1],
+                               " and ",
+                               class (res2) [1],
+                               " inputs")
     }
     return (ret)
 }
@@ -68,9 +66,14 @@ chk_columns <- function (x, res1, res2) {
 
         if (!identical (res1 [[i]], res2 [[i]])) {
 
-            operation <- paste0 ("compare output columns for ",
-                                 "different rectangular inputs")
-            content <- paste0 ("Function [",
+            ro <- test_rect_compare_outputs.NULL ()
+            ro <- ro [grep ("compare_col_structure", ro$test_name), ]
+            ro$type <- "diagnostic"
+            ro$fn_name <- x$fn
+            ro$parameter <- names (x$params) [x$i]
+            ro$operation <- paste0 ("compare output columns for ",
+                                    "different rectangular inputs")
+            ro$content <- paste0 ("Function [",
                                x$fn,
                                "] errors on rectangular input for [",
                                names (x$params) [x$i],
@@ -81,13 +84,7 @@ chk_columns <- function (x, res1, res2) {
                                " and ",
                                class (res2) [1],
                                " inputs")
-            ret <- rbind (ret,
-                          report_object (type = "diagnostic",
-                                         fn_name = x$fn,
-                                         parameter = names (x$params) [x$i],
-                                         parameter_type = "generic tabular",
-                                         operation = operation,
-                                         content = content))
+            ret <- rbind (ret, ro)
         }
     }
     return (ret)
