@@ -129,6 +129,10 @@ get_example_lines <- function (package, rd_name) {
             load_all_if_needed (package)
     }
 
+    # readLines auto-parses "\" to "\\\\", which then needs to be reverted to
+    # the usual escaped-version of "\\":
+    ex <- gsub ("\\\\", "\\", ex, fixed = TRUE)
+
     return (ex)
 }
 

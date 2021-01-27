@@ -864,8 +864,8 @@ add_default_vals_to_params <- function (x, package) {
                     fmls <- lapply (fmls, function (j) eval (j) [1])
                     # Escaped version of `\` is `\\\\`, so all instances need to
                     # be replaced
-                    fmls <- lapply (fmls, function (j)
-                                    gsub ("\\", "\\\\\\\\", j, fixed = TRUE))
+                    #fmls <- lapply (fmls, function (j)
+                    #                gsub ("\\", "\\\\\\\\", j, fixed = TRUE))
                     # insert all character fmls in escaped quotations:
                     fmls <- lapply (fmls, function (j) {
                                         if (is.character (j))
