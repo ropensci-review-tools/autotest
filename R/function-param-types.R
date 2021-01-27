@@ -25,8 +25,15 @@ single_params <- function (params) {
                                      error = function (e) NULL)
                     if (!is.null (val))
                         chk <- length (val) == 1
-                } else {
-                    chk <- TRUE
+                } else if (!isS4 (j)){
+                    # single objects can still be almost anything, so only
+                    # consider as truly single those objects which have
+                    # attribute lists each element of which have at most two
+                    # elements. This is entirely arbitrary, and should be
+                    # modified once more is known about the kinds of things
+                    # thrown at this function.
+                    lens <- vapply (attributes (j), length, integer (1))
+                    chk <- !any (lens > 2)
                 }
             } else if (methods::is (j, "formula")) {
                 chk <- TRUE
