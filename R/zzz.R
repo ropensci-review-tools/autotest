@@ -78,8 +78,12 @@ get_pkg_deps <- function (pkg, suggests = FALSE) {
         desc <- file.path (pkg, "DESCRIPTION")
         get_deps <- function (desc, s = "Imports") {
             deps <- strsplit (read.dcf (desc, s), ",\\n") [[1]]
-            deps <- gsub ("\\(.*\\)$", "", deps)
-            return (gsub ("^\\s*|\\s*$", "", deps))
+            ret <- NULL
+            if (!is.na (deps)) {
+                ret <- gsub ("\\(.*\\)$", "", deps)
+                ret <- gsub ("^\\s*|\\s*$", "", ret)
+            }
+            return (ret)
         }
         deps <- get_deps (desc)
         if (suggests)
