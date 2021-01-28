@@ -13,7 +13,7 @@ Automatic testing of R packages via a simple YAML
 Useful links:
 \itemize{
   \item \url{https://github.com/ropenscilabs/autotest}
-  \item Report bugs at \url{https://github.com/mpadge/ropenscilabs/autotest/issues}
+  \item Report bugs at \url{https://github.com/ropenscilabs/autotest/issues}
 }
 
 }
