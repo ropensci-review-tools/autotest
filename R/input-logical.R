@@ -37,12 +37,14 @@ test_negate_logical.autotest_obj <- function (x, test_data = NULL, ...) { # noli
         x$params [[x$i]] <- !x$params [[x$i]]
         m <- catch_all_msgs (f, x$fn, x$params)
         if (!is.null (m)) {
+            # m may have multiple rows, so copy fields from NULL template to m.
             res_n <- test_negate_logical.NULL ()
-            res_n$type <- m$type
-            res_n$fn_name <- x$fn
-            res_n$parameter <- names (x$params) [x$i]
-            res_n$content <- m$content
-            res <- rbind (res, res_n)
+            m$test_name <- res_n$test_name
+            m$fn_name <- x$fn
+            m$parameter <- names (x$params) [x$i]
+            m$parameter_type <- res_n$parameter_type
+            m$operation <- res_n$operation
+            res <- rbind (res, m)
         }
 
     } else {
