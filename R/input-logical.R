@@ -26,17 +26,6 @@ test_negate_logical.autotest_obj <- function (x, test_data = NULL, ...) { # noli
         f <- tempfile (fileext = ".txt")
         m <- catch_all_msgs (f, x$fn, x$params)
         if (!is.null (m)) {
-            res$type <- m$type
-            res$fn_name <- x$fn
-            res$parameter <- names (x$params) [x$i]
-            res$content <- m$content
-        } else {
-            res <- NULL
-        }
-
-        x$params [[x$i]] <- !x$params [[x$i]]
-        m <- catch_all_msgs (f, x$fn, x$params)
-        if (!is.null (m)) {
             # m may have multiple rows, so copy fields from NULL template to m.
             res_n <- test_negate_logical.NULL ()
             m$test_name <- res_n$test_name
@@ -44,6 +33,22 @@ test_negate_logical.autotest_obj <- function (x, test_data = NULL, ...) { # noli
             m$parameter <- names (x$params) [x$i]
             m$parameter_type <- res_n$parameter_type
             m$operation <- res_n$operation
+
+            res <- m
+        } else {
+            res <- NULL
+        }
+
+        x$params [[x$i]] <- !x$params [[x$i]]
+        m <- catch_all_msgs (f, x$fn, x$params)
+        if (!is.null (m)) {
+            res_n <- test_negate_logical.NULL ()
+            m$test_name <- res_n$test_name
+            m$fn_name <- x$fn
+            m$parameter <- names (x$params) [x$i]
+            m$parameter_type <- res_n$parameter_type
+            m$operation <- res_n$operation
+
             res <- rbind (res, m)
         }
 
