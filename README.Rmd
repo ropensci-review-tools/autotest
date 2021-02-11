@@ -116,7 +116,7 @@ Tests can also be selectively specified through the parameters `functions`,
 used to nominate functions to include in tests, or `exclude`, used to nominate
 functions to exclude from tests. The following code illustrates.
 
-```{r stats-var-no-test}
+```{r stats-var-no-test, fig.show = "hide"}
 x <- autotest_package (package = "stats", functions = "var", test = FALSE)
 print (x)
 ```
