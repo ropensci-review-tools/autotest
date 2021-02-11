@@ -146,8 +146,9 @@ The first involves conversion of a vector to a list-column representation (via
 `I(as.list(<vec>))`). Relatively few packages accept this kind of input, even
 though doing so is relatively straightforward. The following lines demonstrate
 how these tests can be switched off when `autotest`-ing a package. The
-`autotest_types()` function accepts a single argument listing the `test_name`
-entries of any tests which are to be switched off.
+`autotest_types()` function, used above to extract information on all types of
+tests, also accepts a single argument listing the `test_name` entries of any
+tests which are to be switched off.
 
 ```{r stats-var-test-switch}
 types <- autotest_types (notest = "vector_to_list_col")
