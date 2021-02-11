@@ -15,6 +15,18 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  warning = TRUE,
+  message = TRUE,
+  width = 120,
+  comment = "#>",
+  fig.retina = 2,
+  fig.path = "README-"
+)
+```
+
 This vignette extends from the main
 [`README`](https://ropenscilabs.github.io/autotest/) document by providing
 a demonstration of applying `autotest` to a package. By default the
@@ -74,7 +86,10 @@ This one file thus contains documentation for those four functions. Example
 code can be extracted with a dedicated function from the [`tools`
 package](https://stat.ethz.ch/R-manual/R-devel/library/tools/html/00Index.html):
 
-```{r}
+```{r Rd2ex-dummy, echo = TRUE, eval = FALSE}
+tools::Rd2ex (cor_rd)
+```
+```{r Rd2ex-dummy, echo = FALSE, eval = TRUE}
 tools::Rd2ex (cor_rd)
 ```
 
@@ -97,14 +112,45 @@ function](https://ropenscilabs.github.io/autotest/reference/autotest_package.htm
 optionally restricted to some specified sub-set of functions. The following
 demonstrates the results for the `cor` function:
 
-```{r at-cor-notest, eval = FALSE}
-x <- autotest_package (package = "stats", functions = "cor")
+```{r at-cor-notest-dummy, echo = TRUE, eval = FALSE}
+x0 <- autotest_package (package = "stats", functions = "cor")
 ```
+```{r at-cor-notest, fig.show = "hide", collapse = TRUE, echo = FALSE}
+x0 <- autotest_package (package = "stats", functions = "cor")
+```
+
+That reveals that the example code from the `.Rd` file has four main points at
+which the aliases defined in that file are tested: once each for `var` and
+`cor`, and twice for `cov`. The result looks like this:
+
+```{r print-x-dummy, echo = TRUE, eval = FALSE}
+print (x0)
+```
+```{r print-x, echo = FALSE, collapse = TRUE}
+print (x0)
+```
+
 
 The [`autotest_package()`
 function](https://ropenscilabs.github.io/autotest/reference/autotest_package.html)
 has a `test` parameter with a default value of `test = FALSE`, meaning that no
 mutation tests are actually conducted. This means in turn that simply calling
-the function on a specified package, or subset of functions thereof, will
-return data on tests which would be performed on that package or those
-functions, without actually running the tests.
+the function on a specified package like was done above, or subset of functions
+thereof, will return data on tests which would be performed on that package or
+those functions, without actually running the tests. This in indicated in the
+results by values for `type` (the first column) of `"dummy"`. Calling the
+function with `test = TRUE` would apply a total of `r nrow(x)` tests to those
+four functions. Doing so yields the following results:
+
+```{r at-cor-test-dummy, echo = TRUE, eval = FALSE}
+x1 <- autotest_package (package = "stats", functions = "cor", test = TRUE)
+```
+```{r at-cor-test, fig.show = "hide", collapse = TRUE, echo = FALSE}
+x1 <- autotest_package (package = "stats", functions = "cor", test = TRUE)
+```
+```{r print-x1-dummy, echo = TRUE, eval = FALSE}
+print (x1)
+```
+```{r print-x1, echo = FALSE, collapse = TRUE}
+print (x1)
+```
