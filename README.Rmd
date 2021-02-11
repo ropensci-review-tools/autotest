@@ -41,7 +41,8 @@ inputs (parameters) to function calls, rather than mutation of underlying code
 `autotest` primarily works by scraping documented examples for all functions,
 and mutating the parameters input to those functions.
 
-**This package is very unstable and subject to ongoing development (Jan 2021)**
+**This package is very unstable and subject to ongoing development
+(`r strftime(Sys.Date(),"%b")`, 2021)**
 
 ## Installation
 
