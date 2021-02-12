@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.0.1.743
+Version: 0.0.1.744
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -24,9 +24,11 @@ Imports:
     yaml
 Suggests: 
     devtools,
+    dplyr,
     knitr,
     rmarkdown,
-    testthat
+    testthat,
+    tidyr
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

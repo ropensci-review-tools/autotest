@@ -337,9 +337,9 @@ the `test_data` parameter. For all `type` values other than `"dummy"`, the
 `test` column specifies whether or not each test was actually conducted.
 
 The preceding example showed how the results of 
-[`autotest_types()](https://ropenscilabs.github.io/autotest/reference/autotest_types.html)
-can be used to control which tests are implemented for an entire package,
-finer-scale control can be achieved by modifying individual rows of the full
+[`autotest_types()`](https://ropenscilabs.github.io/autotest/reference/autotest_types.html)
+can be used to control which tests are implemented for an entire package.
+Finer-scale control can be achieved by modifying individual rows of the full
 table returned by
 [`autotest_package()`](https://ropenscilabs.github.io/autotest/reference/autotest_package.html).
 The following code demonstrates by showing how list-column tests can be
@@ -347,7 +347,7 @@ switched off only for
 particular functions, starting again with the `xf` data of dummy tests
 generated above.
 
-```{r test_data2, echo = TRUE, eval = FALSE}
+```{r test_data2-fakey, echo = TRUE, eval = FALSE}
 xf <- autotest_package (package = "stats",
                         functions = "cor")
 xf$test [grepl ("list_col", xf$test_name) & xf$fn_name == "var"] <- FALSE
@@ -356,3 +356,25 @@ xt3 <- autotest_package (package = "stats",
                          test = TRUE,
                          test_data = xf)
 ```
+```{r test_data2, echo = FALSE, eval = TRUE}
+xf <- autotest_package (package = "stats",
+                        functions = "cor")
+xf$test [grepl ("list_col", xf$test_name) & xf$fn_name == "var"] <- FALSE
+xt3 <- autotest_package (package = "stats",
+                         functions = "cor",
+                         test = TRUE,
+                         test_data = xf)
+```
+```{r print-xt3-dummy, echo = TRUE, eval = FALSE}
+print (xt3)
+```
+```{r print-xt3, echo = FALSE, eval = TRUE}
+print (xt3)
+```
+
+These procedures illustrate the three successively finer levels of control over
+tests, by switching them off for:
+
+1. Entire packages;
+2. Specified functions only; or
+3. Specific parameters of particular functions only.
