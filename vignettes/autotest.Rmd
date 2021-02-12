@@ -28,14 +28,13 @@ knitr::opts_chunk$set(
 ```
 
 This vignette extends from the main
-[`README`](https://ropenscilabs.github.io/autotest/) document by providing
+[`README`](https://ropenscilabs.github.io/autotest/) document to provide
 a demonstration of applying `autotest` to a package. By default the
 [`autotest_package()`
 function](https://ropenscilabs.github.io/autotest/reference/autotest_package.html)
 tests an entire package, but testing can also be restricted to specified
 functions only. This vignette will demonstrate application to a few functions
-from the 
-[`stats`
+from the [`stats`
 package](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/00Index.html).
 
 ```{r pkg-load, echo = FALSE}
@@ -43,7 +42,7 @@ library (autotest)
 ```
 
 
-## `.Rd` files, example code, and the autotest workflow
+## 1. `.Rd` files, example code, and the autotest workflow
 
 To understand what `autotest` does, it is first necessary to understand a bit
 about the structure of documentation files for R package, which are contained
@@ -54,11 +53,12 @@ passed to the specified functions, and mutating those parameters.
 The general procedure can be illustrated by examining a specific function, for
 which we now choose the [`cor`
 function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/cor.html),
-primarily because both inputs and outputs are relatively simple. The following
-lines gets that content for the `cor` function, noting that the above link
-reveals the name of the `.Rd` file to be "cor", meaning that the name of the
-`.Rd` file is `"cor.Rd"`. The first line extracts the entire `.Rd` database for
-the [`stats`
+because of its relative simplicity. The following lines extract the
+documentation for the `cor` function, a `.html` version of which can be seen by
+clicking on the link above. Note that that web page reveals the name of the
+`.Rd` file to be "cor" (in the upper left corner), meaning that the name of the
+`.Rd` file is `"cor.Rd"`. The following lines extract that content, first by
+loading the entire `.Rd` database for the [`stats`
 package](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/00Index.html).
 
 ```{r cor-rd}
@@ -84,7 +84,7 @@ tools:::.Rd_get_metadata (cor_rd, "alias")
 
 This one file thus contains documentation for those four functions. Example
 code can be extracted with a dedicated function from the [`tools`
-package](https://stat.ethz.ch/R-manual/R-devel/library/tools/html/00Index.html):
+package](https://stat.ethz.ch/R-manual/R-devel/library/tools/html/Rd2HTML.html):
 
 ```{r Rd2ex-dummy, echo = TRUE, eval = FALSE}
 tools::Rd2ex (cor_rd)
@@ -93,30 +93,67 @@ tools::Rd2ex (cor_rd)
 tools::Rd2ex (cor_rd)
 ```
 
-`autotest` then tests the example code from a single `.Rd` file according to
-the following general steps:
+This is the entire content of the `\examples` portion of `"cor.Rd"`, as can be
+confirmed by comparing with the [online
+version](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/cor.html).
+
+## 2. Internal structure of the `autotest` workflow
+
+For each `.Rd` file in a package, `autotest` tests the code given in the
+example section according to the following general steps:
 
 1. Extract example lines from the `.Rd` file, as demonstrated above;
-2. Identify all points at which functions specified as aliases in the `.Rd` file are called;
-3. Identify all objects passed to those values, including values, classes,
-   attributes, and other properties, as well as parameters not included in
-   example code but identifiable by default values;
-4. Mutate those values according to the kinds of test described in
+2. Identify all function `aliases` described by that file;
+3. Identify all points at which those functions are called;
+4. Identify all objects passed to those values, including values, classes,
+   attributes, and other properties.
+5. Identify any other parameters not explicitly passed in example code, but
+   defined via default value;
+6. Mutate the values of all parameters according to the kinds of test described
+   in
    [`autotest_types()`](https://ropenscilabs.github.io/autotest/reference/autotest_types.html).
 
+Calling `autotest_package(..., test = FALSE)` implements the first 5 of those
+6 steps, and returns data on all possible mutations of each parameter, while
+setting `test = TRUE` actually passes the mutated parameters to the specified
+functions, and returns reports on any unexpected behaviour. 
 
-## autotesting the `stats::cov` function
 
-The first step in an `autotest` workflow is to call the [`autotest_package()`
-function](https://ropenscilabs.github.io/autotest/reference/autotest_package.html),
-optionally restricted to some specified sub-set of functions. The following
-demonstrates the results for the `cor` function:
+## 3. `autotest`-ing the `stats::cov` function
+
+The preceding sections describe how `autotest` actually works, while the
+present section demonstrates how the package is typically used in practice.
+As demonstrated in the [`README`](https://ropenscilabs.github.io/autotest/),
+information on all tests implemented within the package can be obtained by
+calling the [`autotest_types()`
+function](https://ropenscilabs.github.io/autotest/reference/autotest_types.html).
+The main function for testing package is
+[`autotest_package()`](https://ropenscilabs.github.io/autotest/reference/autotest_package.html).
+The nominated package can be either an installed package, or the full path to
+a local directory containing a package's source code. By default all `.Rd`
+files of a package are tested, with restriction to specified functions possible
+either by nominating functions to exclude from testing (via the `exclude`
+parameter), or functions to include (via the `functions` parameter). The
+`functions` parameter is intended to enable testing only of specified
+functions, while the `exclude` parameter is intended to enable testing of all
+functions except those specified with this parameter. Specifying values for
+both of these parameters is not generally recommended.
+
+### 3.1 Listing tests without conducting them
+
+The following demonstrates the results of `autotest`-ing the [`cor`
+function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/cor.html) of
+the `stats` package, noting that the default call uses `test = FALSE`, and so
+returns details of all tests without actually implementing them (and for this
+reason we name the object `xf` for "false"):
 
 ```{r at-cor-notest-dummy, echo = TRUE, eval = FALSE}
-x0 <- autotest_package (package = "stats", functions = "cor")
+xf <- autotest_package (package = "stats",
+                        functions = "cor")
 ```
 ```{r at-cor-notest, fig.show = "hide", collapse = TRUE, echo = FALSE}
-x0 <- autotest_package (package = "stats", functions = "cor")
+xf <- autotest_package (package = "stats",
+                        functions = "cor")
 ```
 
 That reveals that the example code from the `.Rd` file has four main points at
@@ -124,33 +161,198 @@ which the aliases defined in that file are tested: once each for `var` and
 `cor`, and twice for `cov`. The result looks like this:
 
 ```{r print-x-dummy, echo = TRUE, eval = FALSE}
-print (x0)
+print (xf)
 ```
 ```{r print-x, echo = FALSE, collapse = TRUE}
-print (x0)
+print (xf)
 ```
 
+The object returned from `autotest_package()` is a simple
+[`tibble`](https://tibble.tidyverse.org), with each row detailing one test
+which would be applied to the each of the listed functions and parameters.
+Because no tests were conducted, all tests will generally have a `type` of
+`"dummy"`. In this case, however, we see the following:
 
-The [`autotest_package()`
-function](https://ropenscilabs.github.io/autotest/reference/autotest_package.html)
-has a `test` parameter with a default value of `test = FALSE`, meaning that no
-mutation tests are actually conducted. This means in turn that simply calling
-the function on a specified package like was done above, or subset of functions
-thereof, will return data on tests which would be performed on that package or
-those functions, without actually running the tests. This in indicated in the
-results by values for `type` (the first column) of `"dummy"`. Calling the
-function with `test = TRUE` would apply a total of `r nrow(x)` tests to those
-four functions. Doing so yields the following results:
+```{r test-types}
+table (xf$type)
+```
+
+In addition to the `r length (which (xf$type == "dummy"))` dummy tests, the
+function also returns `r length (which (xf$type == "warning"))` warnings, the
+corresponding rows of which are:
+
+```{r test-warnings}
+xf [xf$type != "dummy", c ("fn_name", "parameter", "operation", "content")]
+```
+
+Although the `auotest` package is primarily intended to apply mutation tests to
+all parameters of all functions of a package, doing so requires identifying
+parameter types and classes through parsing example code. Any parameters of
+a function which are neither demonstrated within example code, nor given
+default values can not be tested, because it is not possible to determine their
+expected types. The above result reveals that neither the `use` parameter of
+the `var` function, nor the `y` parameter of `cov`, are demonstrated in example
+code, triggering a warning that these parameter are unable to be tested.
+
+### 3.2 Conducting tests
+
+The `r length (which (xf$type == "dummy"))` tests listed above with `type ==
+"dummy"` can then be applied to all nominated functions and parameters by
+calling the same function with `test = TRUE`. Doing so yields the following
+results (as an object names `xt` for "true"):
 
 ```{r at-cor-test-dummy, echo = TRUE, eval = FALSE}
-x1 <- autotest_package (package = "stats", functions = "cor", test = TRUE)
+xt <- autotest_package (package = "stats",
+                        functions = "cor",
+                        test = TRUE)
 ```
 ```{r at-cor-test, fig.show = "hide", collapse = TRUE, echo = FALSE}
-x1 <- autotest_package (package = "stats", functions = "cor", test = TRUE)
+xt <- autotest_package (package = "stats",
+                        functions = "cor",
+                        test = TRUE)
 ```
-```{r print-x1-dummy, echo = TRUE, eval = FALSE}
-print (x1)
+```{r print-xt-dummy, echo = TRUE, eval = FALSE}
+print (xt)
 ```
-```{r print-x1, echo = FALSE, collapse = TRUE}
-print (x1)
+```{r print-xt, echo = FALSE, collapse = TRUE}
+print (xt)
+```
+
+And the `r length (which (xf$type == "dummy"))` tests yielded `r nrow (xf)`
+unexpected responses. The best way to understand these results is to examine
+the object in detail, typically through `edit(xt)`, or equivalently in RStudio,
+clicking on the listed object. The different types of tests which produced
+unexpected responses were:
+
+```{r xt-operations}
+table (xt$operation)
+```
+
+Two of those reflect the previous results regarding parameters unable to be
+tested, while the remainder come from only two types of tests. Information on
+the precise results can is contained in the `content` column, although in this
+case it is fairly straightforward to see that the operation `"upper case
+character parameter"` arises because the `use` and `method` parameters of the
+`cor` and `cov` functions are case-dependent, and can only be submitted in
+lower case form.
+
+### 3.3 List-columnn tests
+
+The only other operation is `"Convert vector input to list-columns"`. This
+involves converting a vector to a list like this:
+
+```{r vec2list-demo}
+vec <- 1:3
+x <- data.frame (a = vec,
+                 b = vec)
+x$a <- I(as.list(x$a))
+print (x)
+```
+
+This list-column format is not revealed by the default `print` method of
+a `data.frame` object, yet clearly emerges when examining individual columns:
+```{r vec2list-columns}
+x$b # vector as expected
+x$a # a list!
+```
+as well as when represented in 
+[`tibble`](https://tibble.tidyverse.org) format:
+```{r list-col-tibble}
+tibble::as_tibble (x)
+```
+
+This list-column format commonly arises as a result of applying the [`tidyr::nest`
+function](https://tidyr.tidyverse.org/reference/nest.html) (or, for base-R
+fans, from the [`I` or "AsIs"
+function](https://stat.ethz.ch/R-manual/R-devel/library/base/html/AsIs.html)).
+
+```{r nest-demo, message = FALSE}
+library (dplyr)
+library (tidyr)
+mtcars %>% group_by(cyl) %>% nest()
+```
+
+This test simply involves converting an input vector to a list-column like this:
+
+```{r var-demo, error = TRUE}
+x <- runif (10)
+var (x) # works
+var (I (as.list (x)))
+```
+
+The `var` function errors when the input is passed in list-column format. This
+may be considered reasonable and justifiable behaviour, and so the following
+sub-section describes how to control individual tests.
+
+### 3.4 Controlling which tests are conducted
+
+The `test` parameter of the [`autotest_package()`
+function](https://ropenscilabs.github.io/autotest/reference/autotest_package.html)
+can be used to control whether all tests are conducted or not. Finer-level
+control over tests can be achieved by specifying the `test_data` parameter.
+This parameter must be an object of class `autotest_package`, as returned by
+either the
+[`autotest_types()`](https://ropenscilabs.github.io/autotest/reference/autotest_types.html)]
+or
+[`autotest_package()](https://ropenscilabs.github.io/autotest/reference/autotest_package.html)
+functions. The former of these is the function which specifies all unique
+tests, and so returns a relatively small `tibble` of `r nrow(autotest_types())`
+rows. The following lines demonstrate how to switch off the list-column test
+for all functions and parameters:
+
+```{r test_data1-dummy, echo = TRUE, eval = FALSE}
+types <- autotest_types()
+types$test [grep ("list_col", types$test_name)] <- FALSE
+xt2 <- autotest_package (package = "stats",
+                         functions = "cor",
+                         test = TRUE,
+                         test_data = types)
+```
+```{r test_data1, echo = FALSE, eval = TRUE}
+types <- autotest_types()
+types$test [grep ("list_col", types$test_name)] <- FALSE
+xt2 <- autotest_package (package = "stats",
+                         functions = "cor",
+                         test = TRUE,
+                         test_data = types)
+```
+```{r print-xt2-dummy, echo = TRUE, eval = FALSE}
+print (xt2)
+```
+```{r print-xt2, echo = FALSE, eval = TRUE}
+print (xt2)
+```
+
+
+The result now has four rows with `test == FALSE`, and `type == "no_test"`,
+indicating that these tests were not actually conducted. That also makes
+apparent the role of these `test` flags. When initially calling 
+[`autotest_package()`](https://ropenscilabs.github.io/autotest/reference/autotest_package.html)
+with default `test = FALSE`, the result contains a `test` column in which all
+values are `TRUE`. Although potentially perplexing at first, this value must be
+understood in relation to the `type` column. A `type` of `"dummy"` indicates
+that a test has not been conducted, in which case `test = TRUE` is a control
+flag used to determine what would be conducted if these data were submitted as
+the `test_data` parameter. For all `type` values other than `"dummy"`, the
+`test` column specifies whether or not each test was actually conducted.
+
+The preceding example showed how the results of 
+[`autotest_types()](https://ropenscilabs.github.io/autotest/reference/autotest_types.html)
+can be used to control which tests are implemented for an entire package,
+finer-scale control can be achieved by modifying individual rows of the full
+table returned by
+[`autotest_package()`](https://ropenscilabs.github.io/autotest/reference/autotest_package.html).
+The following code demonstrates by showing how list-column tests can be
+switched off only for
+particular functions, starting again with the `xf` data of dummy tests
+generated above.
+
+```{r test_data2, echo = TRUE, eval = FALSE}
+xf <- autotest_package (package = "stats",
+                        functions = "cor")
+xf$test [grepl ("list_col", xf$test_name) & xf$fn_name == "var"] <- FALSE
+xt3 <- autotest_package (package = "stats",
+                         functions = "cor",
+                         test = TRUE,
+                         test_data = xf)
 ```
