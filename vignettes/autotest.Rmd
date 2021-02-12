@@ -89,7 +89,7 @@ package](https://stat.ethz.ch/R-manual/R-devel/library/tools/html/00Index.html):
 ```{r Rd2ex-dummy, echo = TRUE, eval = FALSE}
 tools::Rd2ex (cor_rd)
 ```
-```{r Rd2ex-dummy, echo = FALSE, eval = TRUE}
+```{r Rd2ex, echo = FALSE, eval = TRUE}
 tools::Rd2ex (cor_rd)
 ```
 
