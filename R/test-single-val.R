@@ -121,7 +121,7 @@ test_single_length.autotest_obj <- function (x, val_type, test_data = NULL) { # 
     res$parameter_type <- paste0 ("single ", val_type)
 
     if (!is.null (test_data)) {
-        x$test <- test_data$test [test_data$test_name == res$test_name]
+        x$test <- test_these_data (test_data, res)
         if (!x$test)
             ret$type <- "no_test"
     }
