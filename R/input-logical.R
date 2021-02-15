@@ -14,6 +14,8 @@ test_negate_logical.NULL <- function (x = NULL, ...) {
 test_negate_logical.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     res <- test_negate_logical.NULL ()
+    res$fn_name <- x$fn
+    res$parameter <- names (x$params) [x$i]
 
     if (!is.null (test_data)) {
         x$test <- test_these_data (test_data, res)
