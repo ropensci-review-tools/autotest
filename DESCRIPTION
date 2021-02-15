@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.0.1.745
+Version: 0.0.1.746
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -20,6 +20,7 @@ Imports:
     methods,
     pkgload,
     rlang,
+    testthat,
     tibble,
     yaml
 Suggests: 
@@ -27,7 +28,6 @@ Suggests:
     dplyr,
     knitr,
     rmarkdown,
-    testthat,
     tidyr
 VignetteBuilder: 
     knitr
