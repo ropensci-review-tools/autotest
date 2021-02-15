@@ -1,9 +1,14 @@
 
 context("testthat expectation")
 
-# The expect_autotest expectation is that tests which have been switched off
-# should contain an additional 'note' column which explains why each one is not
-# run.
+# Note that local packages should just use the expectations
+# `expect_autotest_no_testdata`, or `expect_autotest_testdata`. This test file
+# demonstrates finer-level testthat expectations for which a pre-derived
+# `autotest` object can be submitted.
+#
+# The expect_autotest_notes expectation is that tests which have been switched
+# off should contain an additional 'note' column which explains why each one is
+# not run.
 
 test_that("expect_autotest", {
 
