@@ -4,10 +4,10 @@
 \alias{expect_autotest_testdata}
 \title{expect_autotest_testdata}
 \usage{
-expect_autotest_testdata(test_data)
+expect_autotest_testdata(object)
 }
 \arguments{
-\item{test_data}{An \code{autotest_package} object with a \code{test} column flagging
+\item{object}{An \code{autotest_package} object with a \code{test} column flagging
 tests which are not to be run on the local package.}
 }
 \value{

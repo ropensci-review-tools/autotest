@@ -6,6 +6,9 @@
 \usage{
 expect_autotest_no_testdata(object = NULL)
 }
+\arguments{
+\item{object}{Not used here, but required for \code{testthat} expectations}
+}
 \value{
 (invisibly) The autotest object
 }
