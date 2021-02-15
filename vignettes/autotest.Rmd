@@ -378,3 +378,107 @@ tests, by switching them off for:
 1. Entire packages;
 2. Specified functions only; or
 3. Specific parameters of particular functions only.
+
+## 4. `autotest`-ing your package
+
+`autotest` can be very easily incorporated in your package's `tests/` directory
+via three custom [`testthat`](https://testthat.r-lib.org) expectations:
+
+- `expect_autotest_no_err` to expect no errors in results from `autotest_package()`;
+- `expect_autotest_no_warn` to expect no warnings; and
+- `expect_autotest_notes` to expect tests which have been switched off to have
+  an additional `"note"` column explaining why.
+
+Using these requires adding `autotest` to the `Suggests` list of your package's
+`DESCRIPTION` file, along with `testthat`. Note that the use of testing
+frameworks other than [`testthat`](https://testthat.r-lib.org) is possible
+through writing custom expectations for the output of
+[`autotest_package()`](https://ropenscilabs.github.io/autotest/reference/autotest_package.html),
+but that is not considered here.
+
+To use these expectations, you must first decide which, if any, tests you judge
+to be not applicable to your package, and switch them off following the
+procedure described above (that is, at the package level through modifying the
+`test` flag of the object returned from
+[`autotest_types()`](https://ropenscilabs.github.io/autotest/reference/autotest_types.html),
+or at finer function- or parameter-levels by modifying equivalent values in the
+object returned from [`autotest_package(..., test
+= FALSE)`](https://ropenscilabs.github.io/autotest/reference/autotest_package.html).
+These objects must then be passed as the `test_data` parameter to
+[`autotest_package()`](https://ropenscilabs.github.io/autotest/reference/autotest_package.html).
+If you consider all tests to be applicable, then
+[`autotest_package()`](https://ropenscilabs.github.io/autotest/reference/autotest_package.html)
+can be called without specifying this parameter.
+
+If you switch tests off via a `test_data` parameter, then the
+`expect_autotest` expectation requires you to append an additional column to
+the `test_data` object called `"note"` (case-insensitive), and include a note
+for each row which has `test = FALSE` explaining why those tests have been
+switched off. The process is illustrated in [one test file included with this
+package](https://github.com/ropenscilabs/autotest/blob/master/tests/testthat/test-testthat-expectation.R),
+which demonstrates how to switch off all tests which convert vectors to
+list-column format. That file first demonstrates the expectations that 
+[`autotest_package()`](https://ropenscilabs.github.io/autotest/reference/autotest_package.html)
+should generate no errors or warnings, although in the case of the
+[`stats::cov()`
+function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/cor.html)
+warnings are generated about the usage of parameters not being demonstrated in
+examples, so we use `expect_failure()`, even though these tests should
+generally `expect_success()`:
+
+```{r testthat-no-err-warn-fakey, collapse = TRUE, echo = TRUE, eval = FALSE}
+library (testthat) # as called in your test suite
+# switch off vector-to-list-column tests:
+test_data <- autotest_types (notest = "vector_to_list_col")
+x <- autotest_package (package = "stats",
+                       functions = "cov",
+                       test = TRUE,
+                       test_data = test_data)
+       
+expect_success (expect_autotest_no_err (x))
+expect_failure (expect_autotest_no_warn (x)) # should expect_success!!
+```
+```{r testthat-no-err-warn, collapse = TRUE, echo = FALSE, eval = TRUE}
+library (testthat) # as called in your test suite
+# switch off vector-to-list-column tests:
+test_data <- autotest_types (notest = "vector_to_list_col")
+x <- autotest_package (package = "stats",
+                       functions = "cov",
+                       test = TRUE,
+                       test_data = test_data)
+       
+expect_success (expect_autotest_no_err (x))
+expect_failure (expect_autotest_no_warn (x)) # should expect_success!!
+```
+
+The test files then affirms that simply passing the object, `x`, which has
+tests flagged as `type == "no_test"`,  yet without explaining why in an
+additional `"note"` column, should cause `expect_autotest()` to fail. The following line, removing the logical `testthat` expectation, demonstrates:
+
+```{r testthat-demo-fail-fakey, echo = TRUE, eval = FALSE}
+expect_autotest_notes (x)
+```
+```{r testthat-demo-fail, error = TRUE, echo = FALSE, eval = TRUE}
+expect_autotest_notes (x)
+```
+
+As demonstrated above, these `expect_autotest_...` calls should always be
+wrapped in a direct [`testhat`](https://testthat.r-lib.org) expectation of
+[`expect_success()`](https://testthat.r-lib.org/reference/expect_success.html).
+To achieve success in that case, we need to append an additional `"note"`
+column containing explanations of why each test has been switched off:
+
+```{r testthat-demo-success}
+x$note <- ""
+x [grep ("vector_to_list", x$test_name), "note"] <-
+  "these tests have been switched off because ..."
+
+expect_success (expect_autotest_notes (x))
+```
+
+This procedure of requiring an additional `"note"` column ensures that your own
+test suite will explicitly include all explanations of why you deem particular
+tests not to be applicable to your package. In general, using `autotest` in
+a package's test suite should be as simple as adding `autotest` to `Suggests`,
+obtaining the result of `autotest_package()`, and then applying the three
+expectations described here, each wrapped in `expect_success()`. 
