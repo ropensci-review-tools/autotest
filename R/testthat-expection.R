@@ -1,7 +1,56 @@
 
-# testthat expection
-# https://testthat.r-lib.org/articles/custom-expectation.html
-expect_autotest <- function (object, n) {
+#' expect_autotest_no_err
+#'
+#' Expect `autotest_package()` to be clear of errors
+#'
+#' @param object An `autotest` object to be tested
+#' @return (invisibly) The same object
+#' @export
+expect_autotest_no_err <- function (object) {
+
+    act <- testthat::quasi_label (rlang::enquo (object),
+                                  arg = "object")
+
+    chk <- !any ("error" %in% act$val$type)
+
+    testthat::expect (
+                      chk,
+                      sprintf ("`autotest` generates errors")
+                      )
+
+    invisible(act$val)
+}
+
+#' expect_autotest_no_warn
+#'
+#' Expect `autotest_package()` to be clear of warnings
+#'
+#' @param object An `autotest` object to be tested
+#' @return (invisibly) The same object
+#' @export
+expect_autotest_no_warn <- function (object) {
+
+    act <- testthat::quasi_label (rlang::enquo (object),
+                                  arg = "object")
+
+    chk <- !any ("warning" %in% act$val$type)
+
+    testthat::expect (
+                      chk,
+                      sprintf ("`autotest` generates warnings")
+                      )
+
+    invisible(act$val)
+}
+
+#' expect_autotest_notes
+#'
+#' Expect `test_data` param of `autotest_package` to have additional `note`
+#' column explaining why tests have been switched off.
+#'
+#' @param object An `autotest` object to be tested
+#' @export
+expect_autotest_notes <- function (object) {
 
     act <- testthat::quasi_label (rlang::enquo (object),
                                   arg = "object")
