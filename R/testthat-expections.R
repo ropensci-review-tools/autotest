@@ -4,6 +4,7 @@
 #'
 #' Expect `autotest_package()` to be clear of errors with no tests switched off
 #'
+#' @param object Not used here, but required for `testthat` expectations
 #' @return (invisibly) The autotest object
 #' @export
 expect_autotest_no_testdata <- function (object = NULL) {
@@ -27,15 +28,15 @@ expect_autotest_no_testdata <- function (object = NULL) {
 #' Expect `autotest_package()` to be clear of errors with some tests switched
 #' off, and to have note column explaining why those tests are not run.
 #'
-#' @param test_data An `autotest_package` object with a `test` column flagging
+#' @param object An `autotest_package` object with a `test` column flagging
 #' tests which are not to be run on the local package.
 #' @return (invisibly) The autotest object
 #' @export
-expect_autotest_testdata <- function (test_data) {
+expect_autotest_testdata <- function (object) {
 
     x <- autotest_package (here::here (),
                            test = TRUE,
-                           test_data = test_data)
+                           test_data = object)
 
     chk <- !any (c ("warning", "error") %in% x$type)
 
@@ -49,14 +50,14 @@ expect_autotest_testdata <- function (test_data) {
     chk <- TRUE
     index <- which (x$type == "no_test")
     if (length (index) > 0) {
-        i <- grep ("^note", names (test_data), ignore.case = TRUE)
+        i <- grep ("^note", names (object), ignore.case = TRUE)
         if (length (i) == 1) {
-            # non-dplyr merge test_data$note into x
+            # non-dplyr merge object$note into x
             xref <- paste0 (x$test_name, x$fn_name, x$parameter)
-            tref <- paste0 (test_data$test_name,test_data$fn_name, test_data$parameter)
+            tref <- paste0 (object$test_name, object$fn_name, object$parameter)
             x <- x [which (xref %in% tref), ]
             xref <- paste0 (x$test_name, x$fn_name, x$parameter)
-            x$note <- test_data [[i]] [match (xref, tref)]
+            x$note <- object [[i]] [match (xref, tref)]
 
             index <- which (x$type == "no_test")
             if (length (index) > 0)
