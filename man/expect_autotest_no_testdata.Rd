@@ -4,7 +4,7 @@
 \alias{expect_autotest_no_testdata}
 \title{expect_autotest_no_testdata}
 \usage{
-expect_autotest_no_testdata()
+expect_autotest_no_testdata(object = NULL)
 }
 \value{
 (invisibly) The autotest object
