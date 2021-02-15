@@ -1,4 +1,80 @@
 
+
+#' expect_autotest_no_testdata
+#'
+#' Expect `autotest_package()` to be clear of errors with no tests switched off
+#'
+#' @return (invisibly) The autotest object
+#' @export
+expect_autotest_no_testdata <- function (object = NULL) {
+
+    x <- autotest_package (here::here (),
+                           test = TRUE)
+
+    chk <- !any (c ("warning", "error") %in% x$type)
+
+    testthat::expect (
+                      chk,
+                      sprintf ("`autotest` generates warnings or errors")
+                      )
+
+    invisible (x)
+}
+
+
+#' expect_autotest_testdata
+#'
+#' Expect `autotest_package()` to be clear of errors with some tests switched
+#' off, and to have note column explaining why those tests are not run.
+#'
+#' @param test_data An `autotest_package` object with a `test` column flagging
+#' tests which are not to be run on the local package.
+#' @return (invisibly) The autotest object
+#' @export
+expect_autotest_testdata <- function (test_data) {
+
+    x <- autotest_package (here::here (),
+                           test = TRUE,
+                           test_data = test_data)
+
+    chk <- !any (c ("warning", "error") %in% x$type)
+
+    testthat::expect (
+                      chk,
+                      sprintf ("`autotest` generates warnings or errors")
+                      )
+
+    # Then check that test_data has `note` column with values for all tests
+    # switched off:
+    chk <- TRUE
+    index <- which (x$type == "no_test")
+    if (length (index) > 0) {
+        i <- grep ("^note", names (test_data), ignore.case = TRUE)
+        if (length (i) == 1) {
+            # non-dplyr merge test_data$note into x
+            xref <- paste0 (x$test_name, x$fn_name, x$parameter)
+            tref <- paste0 (test_data$test_name,test_data$fn_name, test_data$parameter)
+            x <- x [which (xref %in% tref), ]
+            xref <- paste0 (x$test_name, x$fn_name, x$parameter)
+            x$note <- test_data [[i]] [match (xref, tref)]
+
+            index <- which (x$type == "no_test")
+            if (length (index) > 0)
+                chk <- all (nchar (x$note [index]) > 0)
+        }
+    }
+    msg <- paste0 ("Any autotest tests which are switched off should ",
+                   "have explanatory notes in a 'note' column")
+    testthat::expect (
+                      chk,
+                      sprintf (msg)
+                      )
+
+    invisible (x)
+}
+
+
+
 #' expect_autotest_no_err
 #'
 #' Expect `autotest_package()` to be clear of errors
