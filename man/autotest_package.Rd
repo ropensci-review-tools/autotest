@@ -5,7 +5,7 @@
 \title{autotest_package}
 \usage{
 autotest_package(
-  package,
+  package = ".",
   functions = NULL,
   exclude = NULL,
   test = FALSE,
@@ -14,7 +14,8 @@ autotest_package(
 )
 }
 \arguments{
-\item{package}{Name of package to be 'autotested'}
+\item{package}{Name of package to be 'autotested'. If not specified, default
+presumes current directory is within package to be tested.}
 
 \item{functions}{Optional character vector containing names of functions of
 nominated package to be included in 'autotesting'.}

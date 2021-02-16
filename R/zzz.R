@@ -38,6 +38,40 @@ not_null_and_is <- function (x, is_this) {
     return (res)
 }
 
+# Conversion of default `package = "."` to proper package path
+dot_to_package <- function (package) {
+
+    ip <- as.data.frame (installed.packages ())
+    if (package %in% ip$Package)
+        return (package)
+
+    # https://github.com/r-lib/rprojroot/blob/master/R/root.R#L115:
+    .max_depth <- 10L
+
+    files <- c ("DESCRIPTION", "NAMESPACE")
+
+    if (package == "." | !all (files %in% list.files (package))) {
+
+        package <- normalizePath (package)
+
+        if (!all (files %in% list.files (package))) {
+
+            for (i in seq_len (.max_depth)) {
+
+                package <- normalizePath (file.path (package, ".."))
+
+                if (all (files %in% list.files (package)))
+                    return (package)
+            }
+        }
+    }
+
+    if (!all (files %in% list.files (package)))
+        stop ("Unable to find root directory of an R package")
+
+    return (package)
+}
+
 # same criteria as rprojroot::is_r_package, but without extra dependency.
 pkg_is_source <- function (package) {
     is_source <- FALSE

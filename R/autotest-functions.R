@@ -136,19 +136,22 @@ autotest_single_yaml <- function (yaml = NULL,
 #' Automatically test an entire package by converting examples to `yaml` format
 #' and submitting each to the \link{autotest_yaml} function.
 #'
-#' @param package Name of package to be 'autotested'
+#' @param package Name of package to be 'autotested'. If not specified, default
+#' presumes current directory is within package to be tested.
 #' @param functions Optional character vector containing names of functions of
 #' nominated package to be included in 'autotesting'.
 #' @param exclude Optional character vector containing names of any functions of
 #' nominated package to be excluded from 'autotesting'.
 #' @inheritParams autotest_yaml
 #' @export
-autotest_package <- function (package,
+autotest_package <- function (package = ".",
                               functions = NULL,
                               exclude = NULL,
                               test = FALSE,
                               test_data = NULL,
                               quiet = FALSE) {
+
+    package <- dot_to_package (package)
 
     exclude <- exclude_functions (package, functions, exclude)
 
