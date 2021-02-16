@@ -88,10 +88,12 @@ capture_return_object <- function (x) {
     ret <- add_msg_output (ret, msgs, types = "warning",
                            operation = "normal function call")
 
-    o <- utils::capture.output (
-        retobj <- tryCatch (do.call (x$fn, x$params),
-                            warning = function (w) w,
-                            error = function (e) e)
+    suppressMessages (
+        o <- utils::capture.output (
+            retobj <- tryCatch (do.call (x$fn, x$params),
+                                warning = function (w) w,
+                                error = function (e) e)
+            )
         )
 
     return (retobj)
