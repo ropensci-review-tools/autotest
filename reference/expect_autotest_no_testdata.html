@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>autotest_types — autotest_types • autotest</title>
+<title>expect_autotest_no_testdata — expect_autotest_no_testdata • autotest</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="autotest_types — autotest_types" />
-<meta property="og:description" content="List all types of 'autotests' currently implemented." />
+<meta property="og:title" content="expect_autotest_no_testdata — expect_autotest_no_testdata" />
+<meta property="og:description" content="Expect autotest_package() to be clear of errors with no tests switched off" />
 
 
 
@@ -113,34 +113,29 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>autotest_types</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ropenscilabs/autotest/blob/master/R/autotest-functions.R'><code>R/autotest-functions.R</code></a></small>
-    <div class="hidden name"><code>autotest_types.Rd</code></div>
+    <h1>expect_autotest_no_testdata</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ropenscilabs/autotest/blob/master/R/testthat-expections.R'><code>R/testthat-expections.R</code></a></small>
+    <div class="hidden name"><code>expect_autotest_no_testdata.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>List all types of 'autotests' currently implemented.</p>
+    <p>Expect <code><a href='autotest_package.html'>autotest_package()</a></code> to be clear of errors with no tests switched off</p>
     </div>
 
-    <pre class="usage"><span class='fu'>autotest_types</span><span class='op'>(</span>notest <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>expect_autotest_no_testdata</span><span class='op'>(</span>object <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>notest</th>
-      <td><p>Character string of names of tests which should be switched off
-by setting the <code>test</code> column to <code>FALSE</code>. Run this function first without this
-parameter to get all names, then re-run with this parameter switch specified
-tests off.</p></td>
+      <th>object</th>
+      <td><p>Not used here, but required for <code>testthat</code> expectations</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An <code>autotest</code> object with each row listing one unique type of test
-which can be applied to every parameter (of the appropriate class) of each
-function.</p>
+    <p>(invisibly) The autotest object</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

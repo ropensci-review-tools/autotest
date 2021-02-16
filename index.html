@@ -20,6 +20,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -32,12 +34,15 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.731</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.762</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
+<li>
+  <a href="articles/autotest.html">Get started</a>
+</li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
@@ -67,7 +72,7 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#autotest" class="anchor"></a>autotest</h1></div>
 <p>Automatic mutation testing of R packages. Mutation in the sense of mutating inputs (parameters) to function calls, rather than mutation of underlying code (see, for example, <a href="https://github.com/ropensci/mutant"><code>mutant</code></a> for that). <code>autotest</code> primarily works by scraping documented examples for all functions, and mutating the parameters input to those functions.</p>
-<p><strong>This package is very unstable and subject to ongoing development (Jan 2021)</strong></p>
+<p><strong>This package is very unstable and subject to ongoing development (Feb, 2021)</strong></p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -150,16 +155,15 @@
 <p>The <code><a href="reference/autotest_package.html">autotest_package()</a></code> function returns the results of implementing all tests on a given package, or on specified functions on that package. These results only indicate any divergence from expected behaviour, whether unexpected errors, warnings, or other behaviour. An ideal result is that <code><a href="reference/autotest_package.html">autotest_package()</a></code> returns nothing (strictly, <code>NULL</code>), indicating that all tests passed successfully. To see which tests were performed, or to see which tests would be performed prior to actually running them, the function has a <code>test</code> parameter with a default value of <code>TRUE</code>. Setting this to <code>FALSE</code> returns a (generally much larger) <code>data.frame</code> of all tests which would be conducted on the nominated package.</p>
 <p>Tests can also be selectively specified through the parameters <code>functions</code>, used to nominate functions to include in tests, or <code>exclude</code>, used to nominate functions to exclude from tests. The following code illustrates.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>, functions <span class="op">=</span> <span class="st">"var"</span>, test <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-2"><a href="#cb7-2"></a><span class="co">#&gt; ── autotesting stats ──</span></span>
-<span id="cb7-3"><a href="#cb7-3"></a><span class="co">#&gt; </span></span>
-<span id="cb7-4"><a href="#cb7-4"></a><span class="co">#&gt; ✔ [1 / 4]: var</span></span>
-<span id="cb7-5"><a href="#cb7-5"></a><span class="co">#&gt; ✔ [2 / 4]: cor</span></span>
-<span id="cb7-6"><a href="#cb7-6"></a><span class="co">#&gt; ✔ [3 / 4]: cov</span></span>
-<span id="cb7-7"><a href="#cb7-7"></a><span class="co">#&gt; ✔ [4 / 4]: cov</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span> <span class="op">(</span><span class="va">x</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>, functions <span class="op">=</span> <span class="st">"var"</span>, test <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── autotesting stats ──</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ✔ [1 / 4]: var</span>
+<span class="co">#&gt; ✔ [2 / 4]: cor</span>
+<span class="co">#&gt; ✔ [3 / 4]: cov</span>
+<span class="co">#&gt; ✔ [4 / 4]: cov</span>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span> <span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 122 x 9</span>
 <span class="co">#&gt;    type  test_name fn_name parameter parameter_type operation content test </span>
 <span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt;</span>
@@ -175,7 +179,7 @@
 <span class="co">#&gt; 10 dummy return_d… var     (return … (return objec… Check wh… &lt;NA&gt;    TRUE </span>
 <span class="co">#&gt; # … with 112 more rows, and 1 more variable: yaml_hash &lt;chr&gt;</span></code></pre></div>
 <p>Testing the <code>var</code> function also tests <code>cor</code> and <code>cov</code>, because the package works by scraping the documented examples from the associated <code>.Rd</code> help file, and <code><a href="https://rdrr.io/r/stats/cor.html">?var</a></code> shows that the help topic is <code>cor</code>, and includes the three functions, <code>var</code>, <code>cor</code>, and <code>cov</code>. That result details the 122 tests which would be applied to the <code>var</code> function from the <code>stats</code> package. These 122 tests yield the following results when actually applied:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>, functions <span class="op">=</span> <span class="st">"var"</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; ── autotesting stats ──</span>
 <span class="co">#&gt; </span>
@@ -205,13 +209,13 @@
 <span class="co">#&gt; 16 warn… par_is_d… cov     y         &lt;NA&gt;           Check th… "Examp… TRUE </span>
 <span class="co">#&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</span></code></pre></div>
 <p>And only 16 of the original 122 tests produced unexpected behaviour. There were in fact only three kinds of tests which produced these 16 results:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span> <span class="op">(</span><span class="va">y</span><span class="op">$</span><span class="va">operation</span><span class="op">)</span>
 <span class="co">#&gt; [1] "Convert vector input to list-columns"      </span>
 <span class="co">#&gt; [2] "upper-case character parameter"            </span>
 <span class="co">#&gt; [3] "Check that parameter usage is demonstrated"</span></code></pre></div>
-<p>The first involves conversion of a vector to a list-column representation (via <code>I(as.list(&lt;vec&gt;))</code>). Relatively few packages accept this kind of input, even though doing so is relatively straightforward. The following lines demonstrate how these tests can be switched off when <code>autotest</code>-ing a package. The <code><a href="reference/autotest_types.html">autotest_types()</a></code> function accepts a single argument listing the <code>test_name</code> entries of any tests which are to be switched off.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<p>The first involves conversion of a vector to a list-column representation (via <code>I(as.list(&lt;vec&gt;))</code>). Relatively few packages accept this kind of input, even though doing so is relatively straightforward. The following lines demonstrate how these tests can be switched off when <code>autotest</code>-ing a package. The <code><a href="reference/autotest_types.html">autotest_types()</a></code> function, used above to extract information on all types of tests, also accepts a single argument listing the <code>test_name</code> entries of any tests which are to be switched off.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">types</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_types.html">autotest_types</a></span> <span class="op">(</span>notest <span class="op">=</span> <span class="st">"vector_to_list_col"</span><span class="op">)</span>
 <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>, functions <span class="op">=</span> <span class="st">"var"</span>,
                        test <span class="op">=</span> <span class="cn">TRUE</span>, test_data <span class="op">=</span> <span class="va">types</span><span class="op">)</span>
@@ -252,7 +256,7 @@
 <div id="prior-work" class="section level2">
 <h2 class="hasAnchor">
 <a href="#prior-work" class="anchor"></a>Prior work</h2>
-<ol>
+<ol style="list-style-type: decimal">
 <li>The <a href="https://github.com/great-expectations/great_expectations"><code>great-expectations</code></a> framework for python, described in <a href="https://medium.com/@expectgreatdata/down-with-pipeline-debt-introducing-great-expectations-862ddc46782a">this medium article</a>.</li>
 <li>
 <a href="https://hackage.haskell.org/package/QuickCheck"><code>QuickCheck</code></a> for Haskell</li>
@@ -274,12 +278,15 @@
 </li>
 </ul>
 </div>
+
 <div class="license">
 <h2>License</h2>
 <ul class="list-unstyled">
 <li><a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a></li>
 </ul>
 </div>
+
+
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
@@ -287,7 +294,7 @@
 </ul>
 </div>
 
-  <div class="dev-status">
+<div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/ropenscilabs/autotest/actions?query=workflow%3AR-CMD-check"><img src="https://github.com/ropenscilabs/autotest/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
@@ -295,7 +302,8 @@
 <li><a href="https://www.repostatus.org/#concept"><img src="https://www.repostatus.org/badges/latest/concept.svg" alt="Project Status: Concept"></a></li>
 </ul>
 </div>
-</div>
+
+  </div>
 </div>
 
 
@@ -312,6 +320,8 @@
 
   
 
+
+  
 
   </body>
 </html>
