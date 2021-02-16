@@ -74,14 +74,20 @@ dot_to_package <- function (package) {
 
 # same criteria as rprojroot::is_r_package, but without extra dependency.
 pkg_is_source <- function (package) {
+
+    need_these <- file.path (package,
+                             c ("DESCRIPTION", "NAMESPACE", "R", "man"))
+
     is_source <- FALSE
+
     if (file.exists (package)) {
-        if (file.exists (file.path (package, "DESCRIPTION"))) {
+        if (all (file.exists (need_these))) {
             desc <- readLines (file.path (package, "DESCRIPTION"))
             if (any (grepl ("^Package\\:", desc)))
                 is_source <- TRUE
         }
     }
+
     return (is_source)
 }
 
