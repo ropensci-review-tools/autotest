@@ -27,6 +27,9 @@ get_all_examples <- function (package,
         pb <- utils::txtProgressBar (style = 3)
     }
 
+    if (!is_source)
+        package <- basename (package)
+
     exs <- list ()
     for (i in seq (rdnames)) {
         exi <- get_fn_exs (package, rdnames [i], topic [i],
@@ -192,7 +195,7 @@ get_package_name <- function (package) {
     pkg_name <- NULL
 
     if (!pkg_is_source (package)) {
-        pkg_name <- package
+        pkg_name <- basename (package)
     } else {
         desc <- file.path (package, "DESCRIPTION")
         pkg_name <- read.dcf (desc, "Package")

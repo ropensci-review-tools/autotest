@@ -21,7 +21,13 @@ get_example_objs <- function (package,
                              pattern = "\\.Rd$",
                              full.names = TRUE)
     } else {
-        flist <- tools::Rd_db (package)
+        if (basename (package) == package) {
+            flist <- tools::Rd_db (package = package)
+        } else {
+            # packages installed into local tempdir via covr:
+            flist <- tools::Rd_db (package = basename (package),
+                                   dir = package)
+        }
     }
 
     dev <- options()$"device"

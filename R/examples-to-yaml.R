@@ -36,6 +36,9 @@ examples_to_yaml <- function (package = NULL,
         pb <- utils::txtProgressBar (style = 3)
     }
 
+    if (!pkg_is_source (package) & basename (package) != package)
+        package <- basename (package)
+
     for (i in seq_along (exs)) {
 
         this_fn <- names (exs) [i]
@@ -95,6 +98,12 @@ preload_package <- function (package) {
 
         # TODO: Use g to get hash of HEAD
         #g <- rprojroot::find_root (rprojroot::is_git_root, path = package)
+    } else if (!basename (package) == package) {
+        # pkgs installed in tmp_loc via covr
+        library (basename (package),
+                 lib.loc = package,
+                 character.only = TRUE)
+        pkg_name <- basename (package)
     } else {
         ip <- data.frame (utils::installed.packages (),
                           stringsAsFactors = FALSE)
@@ -927,9 +936,13 @@ get_fn_aliases <- function (pkg, fn_name) {
         return (get_aliases_non_source (pkg, fn_name))
 }
 
+# first get all aliases for all functions in package:
 get_aliases_non_source <- function (pkg, fn_name) {
-    # first get all aliases for all functions in package:
-    loc <- file.path (R.home (), "library", pkg, "help", pkg)
+
+    if (basename (pkg) == pkg)
+        loc <- file.path (R.home (), "library", pkg, "help", pkg)
+    else
+        loc <- file.path (pkg, "help", basename (pkg))
     e <- new.env ()
     chk <- lazyLoad (loc, envir = e) # nolint
     fns <- ls (envir = e)
@@ -943,15 +956,13 @@ get_aliases_non_source <- function (pkg, fn_name) {
         })
     names (all_aliases) <- fns
 
-    #x <- get (fn_name, envir = e)
-
     has_fn_name <- which (vapply (all_aliases, function (i)
                                   fn_name %in% i, logical (1)))
     if (length (has_fn_name) > 0) {
         aliases <- unname (unlist (all_aliases [has_fn_name]))
         classes <- vapply (aliases, function (i) {
                                pkg_env <- as.environment (paste0 ("package:",
-                                                                  pkg))
+                                                            basename (pkg)))
                                i_get <- tryCatch (get (i, envir = pkg_env),
                                                   error = function (e) NULL)
                                ret <- NA_character_

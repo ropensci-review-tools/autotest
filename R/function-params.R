@@ -62,7 +62,13 @@ get_Rd_value <- function (package, fn_name) { # nolint
             rd <- tools::parse_Rd (f)
             )
     } else {
-        x <- tools::Rd_db (package = package)
+        if (basename (package) == package) {
+            x <- tools::Rd_db (package = package)
+        } else {
+            # packages installed into local tempdir via covr:
+            x <- tools::Rd_db (package = basename (package),
+                               dir = package)
+        }
         rd <- x [[paste0 (fn_name, ".Rd")]]
     }
 

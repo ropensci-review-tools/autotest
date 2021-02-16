@@ -55,7 +55,13 @@ get_param_lists <- function (package) {
                                 character (1), USE.NAMES = FALSE)
             )
     } else {
-        r <- tools::Rd_db (package)
+        if (basename (package) == package) {
+            r <- tools::Rd_db (package = package)
+        } else {
+            # packages installed into local tempdir via covr:
+            r <- tools::Rd_db (package = basename (package),
+                               dir = package)
+        }
         rdnames <- gsub ("\\.Rd$", "", names (r))
         params <- lapply (r, function (i)
                           paste0 (get_Rd_metadata (i, "arguments"),

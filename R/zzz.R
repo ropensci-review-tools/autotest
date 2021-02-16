@@ -41,7 +41,7 @@ not_null_and_is <- function (x, is_this) {
 # Conversion of default `package = "."` to proper package path
 dot_to_package <- function (package) {
 
-    ip <- as.data.frame (installed.packages ())
+    ip <- as.data.frame (utils::installed.packages ())
     if (package %in% ip$Package)
         return (package)
 

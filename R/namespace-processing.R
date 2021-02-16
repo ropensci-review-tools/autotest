@@ -16,6 +16,8 @@ get_pkg_functions <- function (package) {
             )
         fns <- unique (unlist (fns))
     } else {
+        # package is dir to temp installed version in covr, so:
+        package <- basename (package)
         fns <- ls (paste0 ("package:", package))
     }
 
@@ -47,7 +49,13 @@ fns_without_examples <- function (package) {
                                       aliases = get_Rd_metadata (rd, "alias"))
                                })
     } else {
-        rd <- tools::Rd_db (package = package)
+        if (basename (package) == package) {
+            rd <- tools::Rd_db (package = package)
+        } else {
+            # packages installed into local tempdir via covr:
+            rd <- tools::Rd_db (package = basename (package),
+                                dir = package)
+        }
         ex_alias <- lapply (rd, function (i)
                             list (ex = get_Rd_metadata (i, "examples"),
                                   aliases = get_Rd_metadata (i, "alias")))
@@ -121,7 +129,13 @@ fns_to_topics <- function (x = NULL, package) {
                                       rep (name, length (alias)))
                                })
     } else {
-        rd <- tools::Rd_db (package = package)
+        if (basename (package) == package) {
+            rd <- tools::Rd_db (package = package)
+        } else {
+            # packages installed into local tempdir via covr:
+            rd <- tools::Rd_db (package = basename (package),
+                                dir = package)
+        }
         # installed packages can have different R
         alias_topic <- lapply (rd, function (i) {
                                 alias <- get_Rd_metadata (i, "alias")

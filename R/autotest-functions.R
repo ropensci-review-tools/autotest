@@ -196,7 +196,7 @@ autotest_package <- function (package = ".",
     } else {
 
         attr (res, "packageName") <- package
-        attr (res, "packageVersion") <- utils::packageVersion (package)
+        attr (res, "packageVersion") <- utils::packageVersion (basename (package))
 
     }
 
