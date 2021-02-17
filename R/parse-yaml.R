@@ -43,16 +43,41 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
 #' see https://github.com/viking/r-yaml/issues/5
 #' @noRd
 yaml_handlers <- function () {
-    handlers <- list("bool#yes" = function(x) {
-                         if (substr (tolower (x), 1, 1) == "y")
-                             x
-                         else
-                             TRUE   },
-                      "bool#no" = function(x) {
-                          if (substr (tolower (x), 1, 1) == "n")
-                              x
-                          else
-                              TRUE  })
+
+    bool_yes <- function (x) {
+        if (substr (tolower (x), 1, 1) == "y")
+            return (x)
+        else
+            return (TRUE)
+    }
+
+    bool_no <- function (x) {
+        if (substr (tolower (x), 1, 1) == "n")
+            return (x)
+        else
+            return (TRUE)
+    }
+
+    int_handler <- function (x) {
+        if (substring (x, nchar (x), nchar (x)) == "L")
+            return (as.integer (x))
+        else
+            return (as.double (x))
+    }
+
+    str_handler <- function (x) {
+        index <- as.integer (gregexpr ("[0-9]", x) [[1]])
+        if (identical (index, seq (nchar (x) - 1)) &
+            substring (x, nchar (x), nchar (x)) == "L")
+            return (as.integer (substring (x, 1, nchar (x) - 1)))
+        else
+            return (x)
+    }
+
+    handlers <- list("bool#yes" = bool_yes,
+                     "bool#no" = bool_no,
+                     "int" = int_handler,
+                     "str" = str_handler)
 
     return (handlers)
 }
