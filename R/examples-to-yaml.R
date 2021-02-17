@@ -548,8 +548,8 @@ extract_primary_call_content <- function (x, aliases) {
         br2 <- vapply (seq_along (br2), function (i)
                        br2 [[i]] [which (br2 [[1]] > is_fn [1]) [1]],
                        integer (1)) [fn_index]
-        pos1 <- is_fn [fn_index] + attr (is_fn, "match.length") [fn_index]
-        fn_pars <- strsplit (substring (x [fn_index], pos1, br2 - 1), ",")
+        #pos1 <- is_fn [fn_index] + attr (is_fn, "match.length") [fn_index]
+        #fn_pars <- strsplit (substring (x [fn_index], pos1, br2 - 1), ",")
     }
 
     x <- substring (x, br1, nchar (x))
@@ -572,12 +572,12 @@ extract_primary_call_content <- function (x, aliases) {
     x <- split_content_at_commas (x)
 
     # then replace any variables defined in functions with default values of 1
-    if (length (fn_index) > 0) {
-        x [fn_index] <- lapply (seq_along (fn_index), function (i) {
-                                    gsub (fn_pars [[i]],
-                                          "1",
-                                          x [[fn_index [i] ]])  }) # nolint
-    }
+    #if (length (fn_index) > 0) {
+    #    x [fn_index] <- lapply (seq_along (fn_index), function (i) {
+    #                                gsub (fn_pars [[i]],
+    #                                      "1",
+    #                                      x [[fn_index [i] ]])  }) # nolint
+    #}
 
     return (x)
 }
@@ -916,12 +916,21 @@ add_params_to_yaml <- function (x, yaml, fn) {
                        paste0 (yaml_indent (3), "- (none)"))
         } else {
             for (j in seq (nrow (x [[i]]))) {
+                # range expressions like `x:y` can not be left, because `:` is
+                # YAML field delimiter, so
+                val_j <- x [[i]] [j, 2]
+                if (grepl (":", val_j)) {
+                    val_j <- eval (parse (text = val_j))
+                    val_j <- paste0 ("[",
+                                     paste0 (val_j, collapse = ", "),
+                                     "]")
+                }
                 yaml <- c (yaml,
                            paste0 (yaml_indent (3),
                                    "- ",
                                    x [[i]] [j, 1],
                                    ": ",
-                                   x [[i]] [j, 2]))
+                                   val_j))
             }
         }
     }
