@@ -19,7 +19,9 @@ test_fns_wo_example.character <- function (package, res) {
     r0 <- test_fns_wo_example.NULL ()
 
     no_examples <- fns_without_examples (package) # in namespace-processing
-    no_examples <- no_examples [no_examples %in% unique (res$fn_name)]
+    # res will be NULL if package has no examples at all
+    if (!is.null (res))
+        no_examples <- no_examples [no_examples %in% unique (res$fn_name)]
     if (length (no_examples) > 0) {
         r0$type <- "warning"
         r0$content <- "This function has no documented example"
@@ -41,6 +43,9 @@ test_fns_wo_example.character <- function (package, res) {
 #' example whether or not a parameter might be tested in some other example.
 #' @noRd
 untested_params <- function (exs) {
+
+    if (length (exs) == 0)
+        return (NULL) # package has no examples
 
     pars <- list ()
 
