@@ -67,7 +67,7 @@ yaml_handlers <- function () {
 
     str_handler <- function (x) {
         index <- as.integer (gregexpr ("[0-9]", x) [[1]])
-        if (identical (index, seq (nchar (x) - 1)) &
+        if (identical (index, seq_len (nchar (x) - 1)) &
             substring (x, nchar (x), nchar (x)) == "L")
             return (as.integer (substring (x, 1, nchar (x) - 1)))
         else
