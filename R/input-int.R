@@ -2,9 +2,9 @@ is_int <- function (p) {
 
     p_is_int <- FALSE
 
-    if (is.numeric (p))
-        if (p == round (p))
-            p_is_int <- TRUE
+    #if (is.numeric (p))
+    #    if (p == round (p))
+    #        p_is_int <- TRUE
     if (!p_is_int)
         p_is_int <- is.integer (p)
 
