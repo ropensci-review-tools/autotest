@@ -184,6 +184,9 @@ autotest_package <- function (package = ".",
     res <- test_untested_params (exs, res)
     res <- test_fns_wo_example (package, res)
 
+    if (is.null (res))
+        return (res)
+
     attr (res, "package") <- package
 
     if (pkg_is_source (package)) {
@@ -196,7 +199,8 @@ autotest_package <- function (package = ".",
     } else {
 
         attr (res, "packageName") <- package
-        attr (res, "packageVersion") <- utils::packageVersion (basename (package))
+        attr (res, "packageVersion") <-
+            utils::packageVersion (basename (package))
 
     }
 
