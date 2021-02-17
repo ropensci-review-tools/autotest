@@ -42,7 +42,8 @@ double_noise <- function (x) {
                      error = function (e) NULL)
 
     if (!is.null (res0) & !is.null (res1)) {
-        if (!identical (res0, res1)) {
+        tol <- abs (res0 - res1)
+        if (!tol <= (10 * .Machine$double.eps)) {
             res <- test_double_noise.NULL ()
             res$type <- "diagnostic"
             res$fn_name <- x$fn
