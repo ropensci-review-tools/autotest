@@ -174,28 +174,37 @@ test_return_has_class.autotest_obj <- function (x, test_data = NULL) { # nolint
         rdname <- gsub ("\\.Rd$", "", aliases$name [aliases$alias == x$fn])
         Rd_value <- get_Rd_value (package = x$package_loc, fn_name = rdname) # nolint
 
-        retobj <- m_capture_return_object (x)
-
-        chk <- TRUE
-        cl <- attr (retobj, "class")
-        if (!is.null (cl)) {
-            chk <- vapply (cl, function (i)
-                           grepl (i, Rd_value),
-                           logical (1))
-        }
-
-        if (!any (chk)) {
+        if (is.null (Rd_value)) {
 
             ret$type <- "diagnostic"
             ret$content <- paste0 ("Function [",
                                    x$fn,
-                                   "] returns a value of class [",
-                                   paste0 (attr (retobj, "class"),
-                                           collapse = ", "),
-                                   "], which differs from the value ",
-                                   "provided in the description")
+                                   "] does not describe return value")
         } else {
-            ret <- NULL
+
+            retobj <- m_capture_return_object (x)
+
+            cl <- attr (retobj, "class")
+            okay <- TRUE
+            if (!is.null (cl)) {
+                okay <- vapply (cl, function (i)
+                                grepl (i, Rd_value),
+                                logical (1))
+            }
+
+            if (!any (okay)) { # one okay means all okay
+
+                ret$type <- "diagnostic"
+                ret$content <- paste0 ("Function [",
+                                       x$fn,
+                                       "] returns a value of class [",
+                                       paste0 (attr (retobj, "class"),
+                                               collapse = ", "),
+                                       "], which differs from the value ",
+                                       "provided in the description")
+            } else {
+                ret <- NULL
+            }
         }
     }
 
@@ -233,32 +242,41 @@ test_return_primary_val_matches_desc.autotest_obj <- function (x, test_data = NU
         rdname <- gsub ("\\.Rd$", "", aliases$name [aliases$alias == x$fn])
         Rd_value <- get_Rd_value (package = x$package_loc, fn_name = rdname) # nolint
 
-        retobj <- m_capture_return_object (x)
+        if (is.null (Rd_value)) {
 
-        chk <- TRUE
-        if (!is.null (attr (retobj, "class"))) {
-            chk <- vapply (attr (retobj, "class"), function (i)
-                           grepl (i, Rd_value),
-                           logical (1))
-        }
+            ret$type <- "diagnostic"
+            ret$content <- paste0 ("Function [",
+                                   x$fn,
+                                   "] does not describe return value")
+        } else {
 
-        if (!any (chk)) {
+            retobj <- m_capture_return_object (x)
 
-            txt <- compare_return_classes (Rd_value, retobj)
+            chk <- TRUE
+            if (!is.null (attr (retobj, "class"))) {
+                chk <- vapply (attr (retobj, "class"), function (i)
+                               grepl (i, Rd_value),
+                               logical (1))
+            }
 
-            if (!is.null (txt)) {
-                ret$type <- "diagnostic"
-                ret_tmp <- NULL
-                for (i in txt) {
-                    ret$content <- i
-                    ret_tmp <- rbind (ret_tmp, ret)
+            if (!any (chk)) {
+
+                txt <- compare_return_classes (Rd_value, retobj)
+
+                if (!is.null (txt)) {
+                    ret$type <- "diagnostic"
+                    ret_tmp <- NULL
+                    for (i in txt) {
+                        ret$content <- i
+                        ret_tmp <- rbind (ret_tmp, ret)
+                    }
+                    ret <- ret_tmp
+                } else {
+                    ret <- NULL
                 }
-                ret <- ret_tmp
             } else {
                 ret <- NULL
             }
-        } else {
-            ret <- NULL
         }
     } # end if x$test
 
