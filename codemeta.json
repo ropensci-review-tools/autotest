@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/ropenscilabs/autotest",
   "issueTracker": "https://github.com/ropenscilabs/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.1.779",
+  "version": "0.0.1.780",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -285,7 +285,7 @@
       "sameAs": "https://CRAN.R-project.org/package=yaml"
     }
   ],
-  "fileSize": "2043.555KB",
+  "fileSize": "2077.929KB",
   "contIntegration": "https://codecov.io/gh/ropenscilabs/autotest",
   "developmentStatus": "https://www.repostatus.org/#concept",
   "readme": "https://github.com/ropenscilabs/autotest/blob/master/README.md"
