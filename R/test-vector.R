@@ -159,12 +159,13 @@ test_vec_as_list.autotest_obj <- function (x, test_data = NULL) {
             res <- NULL
             res0$type <- "diagnostic"
             for (e in index) {
-                # list-column errors are generally from attempting to apply
-                # base-R binary operators like `+`, `*`, and the like, so only
-                # dump output here if the message is a default one, presuming
-                # any other errors are because of specific messages about
-                # processing list-columns.
-                if (grepl ("binary operator", msgs$content [e])) {
+                # Need to allow here for custom error messages preventing
+                # list-columns, which means standard message must be caught.
+                # These are currently:
+                # 1. Attempts to apply base-R binary operators like `+`, `*`
+                # 2. Other procedures which error on "is.atomic(x) is not TRUE"
+                generic_msgs <- "binary operator|is.atomic"
+                if (grepl (generic_msgs, msgs$content [e])) {
                     res0$content <- paste0 ("Function [",
                                             x$fn,
                                             "] errors on list-columns ",
