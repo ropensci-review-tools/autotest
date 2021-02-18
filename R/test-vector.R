@@ -44,6 +44,9 @@ autotest_vector.autotest_obj <- function (x, test_data = NULL, ...) {
             ret <- rbind (ret, test_int_as_dbl (x,
                                                 vec = TRUE,
                                                 test_data = test_data))
+        } else if (typeof (params_v [[v]]) == "double" &
+                   !is.factor (params_v [[v]])) {
+            ret <- rbind (ret, test_double_noise (x, test_data = test_data))
         }
 
         ret <- rbind (ret, test_vec_class_defs (x, test_data = test_data))
