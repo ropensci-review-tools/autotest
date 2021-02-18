@@ -156,14 +156,21 @@ test_vec_as_list.autotest_obj <- function (x, test_data = NULL) {
             res <- NULL
             res0$type <- "diagnostic"
             for (e in index) {
-                res0$content <- paste0 ("Function [",
-                                        x$fn,
-                                        "] errors on list-columns ",
-                                        "when submitted as ",
-                                        names (x$params) [x$i],
-                                        " Error message: ",
-                                        msgs$content [e])
-                res <- rbind (res, res0)
+                # list-column errors are generally from attempting to apply
+                # base-R binary operators like `+`, `*`, and the like, so only
+                # dump output here if the message is a default one, presuming
+                # any other errors are because of specific messages about
+                # processing list-columns.
+                if (grepl ("binary operator", msgs$content [e])) {
+                    res0$content <- paste0 ("Function [",
+                                            x$fn,
+                                            "] errors on list-columns ",
+                                            "when submitted as ",
+                                            names (x$params) [x$i],
+                                            " Error message: ",
+                                            msgs$content [e])
+                    res <- rbind (res, res0)
+                }
             }
         } else {
             res <- NULL
