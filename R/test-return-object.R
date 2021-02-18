@@ -326,8 +326,9 @@ compare_return_classes <- function (Rd_value, retval) { # nolint
 
             r_i <- r [[which (i)]]
             desc_class <- substring (Rd_value [i], r_i, nchar (Rd_value [i]))
-            desc_class <- substring (desc_class, 1,
-                                     regexpr ("\\s+", desc_class) - 1)
+            if (grepl ("\\s", desc_class))
+                desc_class <- substring (desc_class, 1,
+                                         regexpr ("\\s+", desc_class) - 1)
             actual_class <- retclasses [which (retclasses_mod == desc_class)]
 
             txt <- paste0 ("Function returns an object of class [",
