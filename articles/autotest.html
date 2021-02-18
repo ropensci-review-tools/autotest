@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.771</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.774</span>
       </span>
     </div>
 
@@ -195,27 +195,27 @@
 <p>That reveals that the example code from the <code>.Rd</code> file has four main points at which the aliases defined in that file are tested: once each for <code>var</code> and <code>cor</code>, and twice for <code>cov</code>. The result looks like this:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span> <span class="op">(</span><span class="va">xf</span><span class="op">)</span></code></pre></div>
-<pre><code>#&gt; # A tibble: 102 x 9
+<pre><code>#&gt; # A tibble: 106 x 9
 #&gt;    type  test_name fn_name parameter parameter_type operation content test 
 #&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt;
-#&gt;  1 dummy vector_c… var     x         vector         Custom c… (Shoul… TRUE 
-#&gt;  2 dummy vector_t… var     x         vector         Convert … (Shoul… TRUE 
-#&gt;  3 dummy vector_c… var     na.rm     vector         Custom c… (Shoul… TRUE 
-#&gt;  4 dummy vector_t… var     na.rm     vector         Convert … (Shoul… TRUE 
-#&gt;  5 dummy return_s… var     (return … (return objec… Check th… &lt;NA&gt;    TRUE 
-#&gt;  6 dummy return_v… var     (return … (return objec… Check th… &lt;NA&gt;    TRUE 
-#&gt;  7 dummy return_d… var     (return … (return objec… Check wh… &lt;NA&gt;    TRUE 
-#&gt;  8 dummy return_c… var     (return … (return objec… Compare … &lt;NA&gt;    TRUE 
-#&gt;  9 dummy vector_c… var     y         vector         Custom c… (Shoul… TRUE 
-#&gt; 10 dummy vector_t… var     y         vector         Convert … (Shoul… TRUE 
-#&gt; # … with 92 more rows, and 1 more variable: yaml_hash &lt;chr&gt;</code></pre>
+#&gt;  1 dummy trivial_… var     x         numeric        Add triv… (Shoul… TRUE 
+#&gt;  2 dummy vector_c… var     x         vector         Custom c… (Shoul… TRUE 
+#&gt;  3 dummy vector_t… var     x         vector         Convert … (Shoul… TRUE 
+#&gt;  4 dummy vector_c… var     na.rm     vector         Custom c… (Shoul… TRUE 
+#&gt;  5 dummy vector_t… var     na.rm     vector         Convert … (Shoul… TRUE 
+#&gt;  6 dummy return_s… var     (return … (return objec… Check th… &lt;NA&gt;    TRUE 
+#&gt;  7 dummy return_v… var     (return … (return objec… Check th… &lt;NA&gt;    TRUE 
+#&gt;  8 dummy return_d… var     (return … (return objec… Check wh… &lt;NA&gt;    TRUE 
+#&gt;  9 dummy return_c… var     (return … (return objec… Compare … &lt;NA&gt;    TRUE 
+#&gt; 10 dummy trivial_… var     y         numeric        Add triv… (Shoul… TRUE 
+#&gt; # … with 96 more rows, and 1 more variable: yaml_hash &lt;chr&gt;</code></pre>
 <p>The object returned from <code><a href="../reference/autotest_package.html">autotest_package()</a></code> is a simple <a href="https://tibble.tidyverse.org" class="external-link"><code>tibble</code></a>, with each row detailing one test which would be applied to the each of the listed functions and parameters. Because no tests were conducted, all tests will generally have a <code>type</code> of <code>"dummy"</code>. In this case, however, we see the following:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span> <span class="op">(</span><span class="va">xf</span><span class="op">$</span><span class="va">type</span><span class="op">)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;   dummy warning </span>
-<span class="co">#&gt;     100       2</span></code></pre></div>
-<p>In addition to the 100 dummy tests, the function also returns 2 warnings, the corresponding rows of which are:</p>
+<span class="co">#&gt;     104       2</span></code></pre></div>
+<p>In addition to the 104 dummy tests, the function also returns 2 warnings, the corresponding rows of which are:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">xf</span> <span class="op">[</span><span class="va">xf</span><span class="op">$</span><span class="va">type</span> <span class="op">!=</span> <span class="st">"dummy"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span> <span class="op">(</span><span class="st">"fn_name"</span>, <span class="st">"parameter"</span>, <span class="st">"operation"</span>, <span class="st">"content"</span><span class="op">)</span><span class="op">]</span>
 <span class="co">#&gt; # A tibble: 2 x 4</span>
@@ -228,7 +228,7 @@
 <div id="conducting-tests" class="section level3">
 <h3 class="hasAnchor">
 <a href="#conducting-tests" class="anchor"></a>3.2 Conducting tests</h3>
-<p>The 100 tests listed above with <code>type == "dummy"</code> can then be applied to all nominated functions and parameters by calling the same function with <code>test = TRUE</code>. Doing so yields the following results (as an object names <code>xt</code> for “true”):</p>
+<p>The 104 tests listed above with <code>type == "dummy"</code> can then be applied to all nominated functions and parameters by calling the same function with <code>test = TRUE</code>. Doing so yields the following results (as an object names <code>xt</code> for “true”):</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">xt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>,
                         functions <span class="op">=</span> <span class="st">"cor"</span>,
@@ -241,35 +241,26 @@
 #&gt; ✔ [4 / 4]: cov</code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span> <span class="op">(</span><span class="va">xt</span><span class="op">)</span></code></pre></div>
-<pre><code>#&gt; # A tibble: 17 x 9
+<pre><code>#&gt; # A tibble: 10 x 9
 #&gt;    type  test_name fn_name parameter parameter_type operation content test 
 #&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt;
-#&gt;  1 diag… vector_t… var     x         vector         Convert … Functi… TRUE 
-#&gt;  2 diag… vector_t… var     na.rm     vector         Convert … Functi… TRUE 
-#&gt;  3 diag… vector_t… var     y         vector         Convert … Functi… TRUE 
-#&gt;  4 diag… vector_t… cor     x         vector         Convert … Functi… TRUE 
-#&gt;  5 diag… vector_t… cor     y         vector         Convert … Functi… TRUE 
-#&gt;  6 diag… vector_t… cor     method    vector         Convert … Functi… TRUE 
-#&gt;  7 diag… vector_t… cor     x         vector         Convert … Functi… TRUE 
-#&gt;  8 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
-#&gt;  9 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE 
-#&gt; 10 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
-#&gt; 11 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
-#&gt; 12 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
-#&gt; 13 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
-#&gt; 14 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
-#&gt; 15 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
-#&gt; 16 warn… par_is_d… var     use       &lt;NA&gt;           Check th… Exampl… TRUE 
-#&gt; 17 warn… par_is_d… cov     y         &lt;NA&gt;           Check th… Exampl… TRUE 
+#&gt;  1 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
+#&gt;  2 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE 
+#&gt;  3 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
+#&gt;  4 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
+#&gt;  5 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
+#&gt;  6 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
+#&gt;  7 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
+#&gt;  8 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
+#&gt;  9 warn… par_is_d… var     use       &lt;NA&gt;           Check th… Exampl… TRUE 
+#&gt; 10 warn… par_is_d… cov     y         &lt;NA&gt;           Check th… Exampl… TRUE 
 #&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</code></pre>
-<p>And the 100 tests yielded 102 unexpected responses. The best way to understand these results is to examine the object in detail, typically through <code><a href="https://rdrr.io/r/utils/edit.html" class="external-link">edit(xt)</a></code>, or equivalently in RStudio, clicking on the listed object. The different types of tests which produced unexpected responses were:</p>
+<p>And the 104 tests yielded 106 unexpected responses. The best way to understand these results is to examine the object in detail, typically through <code><a href="https://rdrr.io/r/utils/edit.html" class="external-link">edit(xt)</a></code>, or equivalently in RStudio, clicking on the listed object. The different types of tests which produced unexpected responses were:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span> <span class="op">(</span><span class="va">xt</span><span class="op">$</span><span class="va">operation</span><span class="op">)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Check that parameter usage is demonstrated </span>
 <span class="co">#&gt;                                          2 </span>
-<span class="co">#&gt;       Convert vector input to list-columns </span>
-<span class="co">#&gt;                                          7 </span>
 <span class="co">#&gt;             upper-case character parameter </span>
 <span class="co">#&gt;                                          8</span></code></pre></div>
 <p>Two of those reflect the previous results regarding parameters unable to be tested, while the remainder come from only two types of tests. Information on the precise results can is contained in the <code>content</code> column, although in this case it is fairly straightforward to see that the operation <code>"upper case character parameter"</code> arises because the <code>use</code> and <code>method</code> parameters of the <code>cor</code> and <code>cov</code> functions are case-dependent, and can only be submitted in lower case form.</p>
@@ -326,7 +317,7 @@
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span> <span class="op">(</span><span class="fl">10</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span> <span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="co"># works</span>
-<span class="co">#&gt; [1] 0.0544117</span>
+<span class="co">#&gt; [1] 0.06111147</span>
 <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list</a></span> <span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Error in var(I(as.list(x))): is.atomic(x) is not TRUE</span></code></pre></div>
 <p>The <code>var</code> function errors when the input is passed in list-column format. This may be considered reasonable and justifiable behaviour, and so the following sub-section describes how to control individual tests.</p>
@@ -395,26 +386,22 @@
 #&gt; ✔ [4 / 4]: cov</code></pre>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span> <span class="op">(</span><span class="va">xt3</span><span class="op">)</span></code></pre></div>
-<pre><code>#&gt; # A tibble: 17 x 9
+<pre><code>#&gt; # A tibble: 13 x 9
 #&gt;    type  test_name fn_name parameter parameter_type operation content test 
 #&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt;
 #&gt;  1 no_t… vector_t… var     x         vector         Convert … (Shoul… FALSE
 #&gt;  2 no_t… vector_t… var     na.rm     vector         Convert … (Shoul… FALSE
 #&gt;  3 no_t… vector_t… var     y         vector         Convert … (Shoul… FALSE
-#&gt;  4 diag… vector_t… cor     x         vector         Convert … Functi… TRUE 
-#&gt;  5 diag… vector_t… cor     y         vector         Convert … Functi… TRUE 
-#&gt;  6 diag… vector_t… cor     method    vector         Convert … Functi… TRUE 
-#&gt;  7 diag… vector_t… cor     x         vector         Convert … Functi… TRUE 
-#&gt;  8 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
-#&gt;  9 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE 
+#&gt;  4 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
+#&gt;  5 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE 
+#&gt;  6 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
+#&gt;  7 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
+#&gt;  8 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
+#&gt;  9 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
 #&gt; 10 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
 #&gt; 11 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
-#&gt; 12 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
-#&gt; 13 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
-#&gt; 14 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
-#&gt; 15 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
-#&gt; 16 warn… par_is_d… var     use       &lt;NA&gt;           Check th… Exampl… TRUE 
-#&gt; 17 warn… par_is_d… cov     y         &lt;NA&gt;           Check th… Exampl… TRUE 
+#&gt; 12 warn… par_is_d… var     use       &lt;NA&gt;           Check th… Exampl… TRUE 
+#&gt; 13 warn… par_is_d… cov     y         &lt;NA&gt;           Check th… Exampl… TRUE 
 #&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</code></pre>
 <p>These procedures illustrate the three successively finer levels of control over tests, by switching them off for:</p>
 <ol style="list-style-type: decimal">
