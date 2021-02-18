@@ -5,7 +5,12 @@ get_all_examples <- function (package,
                               exclude = NULL,
                               quiet = FALSE) {
 
+    if (is_source) {
+        if (!is_pkg_same (package))
+            memoise::forget (m_get_pkg_functions)
+    }
     fns <- m_get_pkg_functions (package)
+
     if (!is.null (exclude))
         fns <- fns [which (!fns %in% exclude)]
     topics <- m_fns_to_topics (fns, package)
