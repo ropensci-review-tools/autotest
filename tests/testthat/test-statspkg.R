@@ -55,21 +55,20 @@ test_that ("autotest var", {
     expect_message (
         x_f <- autotest_yaml (yaml, test = FALSE)
         )
-    expect_true (nrow (x_f) > nrow (x_t))
+    #expect_true (nrow (x_f) > nrow (x_t))
+    expect_true (is.null (x_t))
 
-    for (x in list (x_t, x_f)) {
-        expect_is (x, "data.frame")
-        expect_equal (ncol (x), 9)
-        expect_identical (names (x), c ("type",
-                                        "test_name",
-                                        "fn_name",
-                                        "parameter",
-                                        "parameter_type",
-                                        "operation",
-                                        "content",
-                                        "test",
-                                        "yaml_hash"))
-    }
+    expect_is (x_f, "data.frame")
+    expect_equal (ncol (x_f), 9)
+    expect_identical (names (x_f), c ("type",
+                                      "test_name",
+                                      "fn_name",
+                                      "parameter",
+                                      "parameter_type",
+                                      "operation",
+                                      "content",
+                                      "test",
+                                      "yaml_hash"))
 
     f <- tempfile (fileext = ".yaml")
     con <- file (f)
