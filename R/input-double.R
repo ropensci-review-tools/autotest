@@ -36,14 +36,23 @@ double_noise <- function (x) {
 
     res0 <- tryCatch (do.call (x$fn, x$params),
                       error = function (e) NULL)
+
+    if (!is.vector (res0))
+        return (NULL) # can only test effects of noise on simple vector outputs
+    if (!is.numeric (res0))
+        return (NULL) # can only test effects on numeric output
+
     x$params [[x$i]] <- x$params [[x$i]] +
         stats::runif (length (x$params [[x$i]])) * 10 * .Machine$double.eps
     res1 <- tryCatch (do.call (x$fn, x$params),
                      error = function (e) NULL)
 
     if (!is.null (res0) & !is.null (res1)) {
-        tol <- max (abs (res0 - res1))
-        if (!tol <= (10 * .Machine$double.eps)) {
+        different <- length (res0) != length (res1)
+        if (!different)
+            different <- max (abs (res0 - res1)) > (10 * .Machine$double.eps)
+
+        if (different) {
             res <- test_double_noise.NULL ()
             res$type <- "diagnostic"
             res$fn_name <- x$fn
