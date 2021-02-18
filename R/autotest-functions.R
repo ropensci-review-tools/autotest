@@ -87,13 +87,15 @@ autotest_single_yaml <- function (yaml = NULL,
 
     res <- parse_yaml_template (yaml = yaml, filename = filename)
 
+    par_lengths <- single_or_vec (res)
+
     reports <- NULL
 
     for (i in seq_along (res$parameters)) {
         this_fn <- names (res$parameters) [i]
         params <- get_params (res, i, this_fn)
         params <- params [which (params != "NULL")]
-        param_types <- get_param_types (params)
+        param_types <- get_param_types (this_fn, params, par_lengths)
 
         test_obj <- autotest_obj (package = res$package,
                                   package_loc = attr (yaml, "package"),
