@@ -256,10 +256,11 @@ yaml_template <- function () {
        "            - <param_name>: <value>")
 }
 
-#' any YAML sequences like [1 2 3] are converted to "double" storage mode. This
-#' function reverts to "int" so that test_double_is_int is not triggered
+#' any YAML sequences like `[1 2 3]` are converted to "double" storage mode.
+#' This function reverts to "int" so that test_double_is_int is not triggered
 #' @param p parameters part of `parse_yaml_template` result
 #' @return Same thing but with modified storage.mode
+#' @noRd
 set_seq_storage_mode <- function (p) {
 
     p <- lapply (p, function (i) {
