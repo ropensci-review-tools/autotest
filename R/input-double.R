@@ -1,4 +1,72 @@
 
+test_double_is_int <- function (x = NULL, ...) {
+    UseMethod ("test_double_is_int", x)
+}
+
+test_double_is_int.NULL <- function (x = NULL, ...) {
+    report_object (type = "dummy",
+                   test_name = "double_is_int",
+                   parameter_type = "numeric",
+                   operation = "Check whether double is only used as int",
+                   content = "int parameters should have terminal 'L'")
+}
+
+test_double_is_int.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
+
+    res <- NULL
+
+    if (!is.null (test_data)) {
+        r <- test_double_is_int.NULL ()
+        x$test <- test_these_data (test_data, r)
+        if (!x$test)
+            res$type <- "no_test"
+    }
+
+    if (x$test)
+        res <- double_is_int (x)
+    else
+        res <- dbl_is_int_dummy_report (x)
+
+    return (res)
+}
+
+double_is_int <- function (x) {
+
+    res <- NULL
+
+    for (p in x$params) {
+        if (!is.null (attr (p, "is_int"))) {
+            if (attr (p, "is_int") &
+                storage.mode (p) == "double") {
+
+                res0 <- test_double_is_int.NULL ()
+                res0$type <- "diagnostic"
+                res0$fn_name <- x$fn
+                res0$parameter <- names (x$params) [x$i]
+                res0$content <- paste0 ("Parameter [",
+                                       names (x$params) [x$i],
+                                       "] is not specified as integer, yet ",
+                                       "only used as such; please use '1L' ",
+                                       "for integer, or 1.0 for non-integer ",
+                                       "values.")
+                res <- rbind (res, res0)
+            }
+        }
+    }
+
+    return (res)
+}
+
+dbl_is_int_dummy_report <- function (x) {
+
+    res <- test_double_is_int.NULL ()
+
+    res$fn_name <- x$fn
+    res$parameter <- names (x$params) [x$i]
+
+    return (res)
+}
+
 test_double_noise <- function (x = NULL, ...) {
     UseMethod ("test_double_noise", x)
 }

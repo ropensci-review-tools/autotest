@@ -126,20 +126,20 @@ double_or_int <- function (res) {
     is_par_int <- function (p) {
         ret <- FALSE
         if (is.numeric (p))
-            ret <- abs (p - round (p)) < .Machine$double.eps
+            ret <- all (abs (p - round (p)) < .Machine$double.eps)
         return (ret)
     }
 
     pars <- lapply (fns, function (f) {
 
         pars <- res$parameters [names (res$parameters) == f] [[1]]
-        pars <- lapply (pars, function (i) unlist (i))
+        nms <- vapply (pars, names, character (1))
+        pars <- lapply (pars, function (i) i [[1]])
+        names (pars) <- nms
 
-        pars <- lapply (pars, function (i) {
-                            nms <- names (i)
-                            int_val <- vapply (nms, function (j)
-                                               is_par_int (i [[j]]),
-                                               logical (1))
+        pars <- lapply (seq_along (pars), function (i) {
+                            nms <- names (pars) [i]
+                            int_val <- is_par_int (pars [[i]])
                             data.frame (name = nms,
                                         int_val = int_val)
                     })
@@ -172,7 +172,8 @@ add_int_attrs <- function (x, int_val) {
 
     if (nrow (int_val) > 0) {
         for (p in int_val$par) {
-            attr (x$params [[p]], "is_int") <- TRUE
+            if (is.numeric (x$params [[p]]) )
+                attr (x$params [[p]], "is_int") <- TRUE
         }
     }
 
