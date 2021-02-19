@@ -12,13 +12,14 @@ is_int <- function (p) {
 }
 
 test_single_int_range <- function (x = NULL, ...) {
+
     UseMethod ("test_single_int_range", x)
 }
 
 test_single_int_range.NULL <- function (x = NULL, ...) {
+
     report_object (type = "dummy",
-                   test_name = c ("int_range",
-                                  "match_int_range_to_docs"),
+                   test_name = "int_range",
                    parameter_type = "single integer",
                    operation = "Ascertain permissible range",
                    content = paste0 ("Should either be unrestricted or ",
@@ -55,46 +56,80 @@ single_int_range <- function (x) {
 
     res <- NULL
 
+    rd <- get_Rd_param (package = x$package_loc,
+                        fn_name = x$fn,
+                        param_name = names (x$params) [x$i])
+    rd_range <- gregexpr ("[0-9]+", rd)
+    # regmatches returns char(0) for no match, so int(0):
+    rd_range <- as.integer (regmatches (rd, rd_range) [[1]])
+
     res_out <- test_single_int_range.NULL ()
-    res_out <- res_out [res_out$test_name == "int_range", ]
     res_out$type <- "diagnostic"
     res_out$fn_name <- x$fn
     res_out$parameter <- names (x$params) [x$i]
 
     if (!any (is.finite (int_range))) {
 
-        content <- paste0 ("Parameter [",
-                           names (x$params) [x$i],
-                           "] permits unrestricted integer inputs")
-        res <- res_out
-        res$content <- content
+        if (any (grepl ("unrestricted", rd))) {
+
+            res <- NULL
+
+        } else {
+
+            content <- paste0 ("Parameter [",
+                               names (x$params) [x$i],
+                               "] permits unrestricted integer inputs, ",
+                               " yet does not document this; please add ",
+                               "'unrestricted' to parameter description.")
+            res <- res_out
+            res$content <- content
+        }
 
     } else if (!is.null (int_range)) {
 
-        content <- paste0 ("Parameter [",
-                           names (x$params) [x$i],
-                           "] responds to integer values in [",
-                           paste0 (int_range, collapse = ", "), "]")
-        res <- res_out
-        res$content <- content
+        if (length (rd_range) == 0) {
 
-        rd <- get_Rd_param (package = x$package,
-                            fn_name = x$fn,
-                            param_name = names (x$params) [x$i])
-        range_in_rd <- vapply (int_range, function (j)
-                               grepl (j, rd), logical (1))
+            res <- res_out
+            res$content <- paste0 ("Parameter [",
+                                   names (x$params) [x$i],
+                                   "] has no documented range")
 
-        if (!all (range_in_rd)) {
+        } else if (length (rd_range) == 1) {
 
-            res_out <- test_single_int_range.NULL ()
-            res_out <- res_out [grep ("match_int_range", res_out$test_name), ]
-            res_out$type <- "diagnostic"
-            res_out$fn_name <- x$fn
-            res_out$parameter <- names (x$params) [x$i]
-            res_out$content <- paste0 (" Parameter range for ",
-                                       names (x$params) [x$i],
-                                       " is NOT documented")
-            res <- rbind (res, res_out)
+            if (grepl ("negative|positive", rd)) {
+
+                res <- NULL
+
+            } else {
+
+                content <- paste0 ("Parameter [",
+                                   names (x$params) [x$i],
+                                   "] defines only one positive or negative ",
+                                   "limit; plese either specify both lower and ",
+                                   "upper limits, or that values must be ",
+                                   "'positive' or 'negative'")
+                res <- res_out
+                res$content <- content
+            }
+
+        } else {
+
+            if (any (rd_range >= max (int_range)) &
+                any (rd_range <= min (int_range))) {
+
+                res <- NULL
+
+            } else {
+
+                content <- paste0 ("Parameter [",
+                                   names (x$params) [x$i],
+                                   "] responds to approximate ranges of [",
+                                   paste0 (int_range, collapse = ", "),
+                                   "], yet documents ranges between [",
+                                   paste0 (rd_range, collapse = ", "), "]")
+                res <- res_out
+                res$content <- content
+            }
         }
     }
 
@@ -263,7 +298,7 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # 
             junk <- utils::capture.output (
                 out1 <- suppressWarnings (do.call (x$fn, x$params))
                 )
-            x$params [[x$i]] <- as.numeric (x$params [[x$i]])
+            x$params [[x$i]] <- x$params [[x$i]] + 0.001
             out2 <- catch_all_msgs (f, x$fn, x$params)
             if (length (out2) == 0) {
                 junk <- utils::capture.output (
