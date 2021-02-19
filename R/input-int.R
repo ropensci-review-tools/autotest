@@ -270,9 +270,11 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # 
                     out2 <- suppressWarnings (do.call (x$fn, x$params))
                     )
 
-                if (identical (out1, out2))
+                # Note that out1 can carry the `attr(., "is_int")`, so may not
+                # be identical to out2
+                if (max (abs (out1 - out2)) < .Machine$double.eps) {
                     res <- NULL
-                else {
+                } else {
                     res$type <- "diagnostic"
                     res$content <- paste0 ("Function [",
                                            x$fn,
