@@ -87,7 +87,10 @@ autotest_single_yaml <- function (yaml = NULL,
 
     res <- parse_yaml_template (yaml = yaml, filename = filename)
 
+    # are parameters exclusively used as single-valued, or vectors?
     par_lengths <- single_or_vec (res)
+    # are numeric parameters exclusively used as integers?
+    int_val <- double_or_int (res)
 
     reports <- NULL
 
@@ -95,7 +98,8 @@ autotest_single_yaml <- function (yaml = NULL,
         this_fn <- names (res$parameters) [i]
         params <- get_params (res, i, this_fn)
         params <- params [which (params != "NULL")]
-        param_types <- get_param_types (this_fn, params, par_lengths)
+        param_types <- get_param_types (this_fn, params,
+                                        par_lengths)
 
         test_obj <- autotest_obj (package = res$package,
                                   package_loc = attr (yaml, "package"),
@@ -107,6 +111,8 @@ autotest_single_yaml <- function (yaml = NULL,
                                   env = new.env (),
                                   test = test,
                                   quiet = quiet)
+
+        test_obj <- add_int_attrs (test_obj, int_val)
 
         reports <- rbind (reports, autotest_rectangular (test_obj, test_data))
 

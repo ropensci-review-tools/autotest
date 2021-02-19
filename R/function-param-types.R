@@ -111,3 +111,70 @@ single_or_vec <- function (res) {
 
     return (do.call (rbind, pars))
 }
+
+#' double_or_int
+#'
+#' Do different usages within a single yaml indicate whether a single-length
+#' parameter is intended to be an integer, yet without `L`, or whether it is
+#' indeed a double?
+#' @param res The parsed yaml returned from `parse_yaml_template`.
+#' @noRd
+double_or_int <- function (res) {
+
+    fns <- unique (names (res$parameters))
+
+    is_par_int <- function (p) {
+        ret <- FALSE
+        if (is.numeric (p))
+            ret <- abs (p - round (p)) < .Machine$double.eps
+        return (ret)
+    }
+
+    pars <- lapply (fns, function (f) {
+
+        pars <- res$parameters [names (res$parameters) == f] [[1]]
+        pars <- lapply (pars, function (i) unlist (i))
+
+        pars <- lapply (pars, function (i) {
+                            nms <- names (i)
+                            int_val <- vapply (nms, function (j)
+                                               is_par_int (i [[j]]),
+                                               logical (1))
+                            data.frame (name = nms,
+                                        int_val = int_val)
+                    })
+
+        pars <- data.frame (do.call (rbind, unname (pars)))
+        pars <- lapply (split (pars, f = as.factor (pars$name)),
+                        function (i) {
+                            int_val <- all (i$int_val)
+                            i <- i [1, ]
+                            i$int_val <- int_val
+                            return (i)
+                        })
+
+        pars <- do.call (rbind, pars)
+
+        data.frame (fn = f,
+                    par = pars$name,
+                    int_val = pars$int_val,
+                    stringsAsFactors = FALSE)
+                     })
+
+    return (do.call (rbind, pars))
+}
+
+# add attributes to elements of `autotest_object` `x` identifying any parameters
+# which are exclusively used as `int`, but not explicitly specified as such
+add_int_attrs <- function (x, int_val) {
+
+    int_val <- int_val [int_val$fn == x$fn & int_val$int_val, , drop = FALSE]
+
+    if (nrow (int_val) > 0) {
+        for (p in int_val$par) {
+            attr (x$params [[p]], "is_int") <- TRUE
+        }
+    }
+
+    return (x)
+}
