@@ -1,5 +1,5 @@
 ---
-title: "Some Further Details"
+title: "Control of tests"
 author: 
   - "Mark Padgham"
 date: "`r Sys.Date()`"
@@ -10,7 +10,7 @@ output:
         number_sections: false
         theme: flatly
 vignette: >
-  %\VignetteIndexEntry{Some Further Details}
+  %\VignetteIndexEntry{Control of tests}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -31,23 +31,20 @@ The [first
 vignette](https://ropenscilabs.github.io/autotest/articles/autotest.html)
 demonstrates the process of applying `autotest` at all stages of package
 development. This vignette provides additional information for those applying
-`autotest` to already developed packages. Doing so will commonly generate many
-results. To avoid being overwhelmed about what one should do to reduce the
-number of diagnostic messages produced by autotest, this vignette provides
-a bit more detail on what autotest actually does. Knowing this should help you
-to better address any diagnostic messages that are issued.
-
-By default the [`autotest_package()`
+`autotest` to already developed packages, in particular through describing how
+tests can be selectively applied to a package. By default the
+[`autotest_package()`
 function](https://ropenscilabs.github.io/autotest/reference/autotest_package.html)
 tests an entire package, but testing can also be restricted to specified
 functions only. This vignette will demonstrate application to a few functions
 from the [`stats`
-package](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/00Index.html).
+package](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/00Index.html),
+starting by loading the package.
 
 ```{r pkg-load-fakey, eval = FALSE, echo = TRUE}
 library (autotest)
 ```
-```{r pkg-lod, eval = TRUE, echo = FALSE}
+```{r pkg-lod, eval = TRUE, echo = FALSE, message = FALSE}
 devtools::load_all (".", export_all = FALSE)
 ```
 
