@@ -524,3 +524,8 @@ consists of the following single point:
 - From the moment you develop your first function, and every single time you
   modify your code, do whatever steps are necessary to ensure
   `autotest_package()` returns `NULL`.
+
+This vignette has only demonstrated a few of the tests included in the package,
+but as long as you use `autotest` throughout the entire process of package
+development, any additional diagnostic messages should include sufficient
+information for you to be able to restructure your code to avoid them.
