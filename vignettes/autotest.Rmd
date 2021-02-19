@@ -140,11 +140,14 @@ DT::datatable (x2, options = list (dom = "t"))
 ```
 
 Of the `r nrow(x1)` tests which were performed, only `r nrow(x2)` yielded
-unexpected behaviour. The result of the test says that the parameter `x` is
-"assumed to be a single numeric". `autotest` does its best to figure out what
-types of inputs are expected for each parameter, and with the example only
-demonstrating `x = 1`, assumes that `x` is always expected to be a single
-value. We could resolve this by asserting that `length(x) == 1`, as follows:
+unexpected behaviour. The first indicates that the parameter `x` has only been
+used as an integer, yet was not specified as such. The second states that the
+parameter `x` is "assumed to be a single numeric". `autotest` does its best to
+figure out what types of inputs are expected for each parameter, and with the
+example only demonstrating `x = 1`, assumes that `x` is always expected to be
+a single value. We can resolve the first of these by replacing `x = 1` with `x
+= 1.` to clearly indicate that it is not an integer, and the second by
+asserting that `length(x) == 1`, as follows:
 
 ```{r assert-length}
 code <- c ("#' my_function",
@@ -152,7 +155,7 @@ code <- c ("#' my_function",
            "#' @param x An input",
            "#' @return Something else",
            "#' @examples",
-           "#' y <- my_function (x = 1)",
+           "#' y <- my_function (x = 1.)",
            "#' @export",
            "my_function <- function (x) {",
            "  if (length(x) > 1) {",
@@ -171,6 +174,84 @@ This is then sufficient to pass all `autotest` tests and so return `NULL`.
 autotest_package (path, test = TRUE)
 ```
 
+## Integer input
+
+Note that `autotest` distinguishes integer and non-integer types by their
+[`storage.mode`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/mode.html)
+of `"integer"` and `"double"`, and not by their respective classes of
+`"integer"` and `"numeric"`, because `"numeric"` is ambiguous in R, and
+`is.numeric(1L)` is `TRUE`, even though `storage.mode(1L)` is `"integer"`, and
+not `"numeric"`. Replacing `x = 1` with `x = 1.` explicitly identifies that
+parameter as a `"double"` parameter, and allowed the preceding tests to pass.
+Note what happens if we instead specify that parameter as an integer (`x =
+1L`).
+
+```{r int-input}
+code [6] <- gsub ("1\\.", "1L", code [6])
+writeLines (code, file.path (path, "R", "myfn.R"))
+roxygen2::roxygenise (path)
+x3 <- autotest_package (path, test = TRUE)
+DT::datatable (x3, options = list (dom = "t"))
+```
+
+That then generates two additional messages, the second of which reflects an
+expectation that parameters assumed to be integer-valued should assert that,
+for example by converting with `as.integer()`. The following suffices to remove
+that message.
+
+```{r use-as-int}
+code <- c (code [1:12],
+           "  if (is.numeric (x))",
+           "    x <- as.integer (x)",
+           code [13:length (code)])
+```
+
+The remaining message concerns integer ranges. For any parameters which
+`autotest` identifies as single integers, routines will try a full range of
+values between `+/- .Machine$integer.max`, to ensure that all values are
+appropriately handled. Many routines may sensibly allow unrestricted ranges,
+while many others may not implement explicit control over permissible ranges,
+yet may error on, for example, unexpectedly large positive or negative values.
+The content of the diagnostic message indicates one way to resolve this issue,
+which is simply by describing the input as `"unrestricted"`.
+
+```{r unrestricted}
+code [3] <- gsub ("An input", "An unrestricted input", code [3])
+writeLines (code, file.path (path, "R", "myfn.R"))
+roxygen2::roxygenise (path)
+autotest_package (path, test = TRUE)
+```
+
+An alternative, and frequently better way, is to ensure and document specific
+control over permissible ranges, as in the following revision of our function.
+
+```{r}
+code <- c ("#' my_function",
+           "#'",
+           "#' @param x An input between 0 and 10",
+           "#' @return Something else",
+           "#' @examples",
+           "#' y <- my_function (x = 1L)",
+           "#' @export",
+           "my_function <- function (x) {",
+           "  if (length(x) > 1) {",
+           "    warning(\"only the first value of x will be used\")",
+           "    x <- x [1]",
+           "  }",
+           "  if (is.numeric (x))",
+           "    x <- as.integer (x)",
+           "  if (x < 0 | x > 10) {",
+           "    stop (\"x must be between 0 and 10\")",
+           "  }",
+           "  return (x + 1L)",
+           "}")
+writeLines (code, file.path (path, "R", "myfn.R"))
+roxygen2::roxygenise (path)
+autotest_package (path, test = TRUE)
+```
+
+
+
 ## Vector input
 
 The initial test results above suggested that the input was *assumed* to be of
@@ -188,17 +269,23 @@ code <- c ("#' my_function",
            "#' y <- my_function (x = 1:2)",
            "#' @export",
            "my_function <- function (x) {",
-           "  return (x + 1)",
+           "  if (is.numeric (x)) {",
+           "    x <- as.integer (x)",
+           "  }",
+           "  return (x + 1L)",
            "}")
 writeLines (code, file.path (path, "R", "myfn.R"))
 roxygen2::roxygenise (path)
 ```
 
-Testing the package now gives:
+Note that the first example no longer has `x = 1L`. This is because vector
+inputs are identified as `integer` by examining all individual values, and
+presuming `integer` representations for any parameters for which all values are
+whole numbers, regardless of `storage.mode`.
 
 ```{r autotest-TRUE3}
-x3 <- autotest_package (path, test = TRUE)
-DT::datatable (x3, options = list (dom = "t"))
+x4 <- autotest_package (path, test = TRUE)
+DT::datatable (x4, options = list (dom = "t"))
 ```
 
 ### List-column conversion
@@ -263,7 +350,10 @@ code <- c ("#' my_function",
            "  if (methods::is (unclass (x), \"list\")) {",
            "    x <- unlist (x)",
            "  }",
-           "  return (x + 1)",
+           "  if (is.numeric (x)) {",
+           "    x <- as.integer (x)",
+           "  }",
+           "  return (x + 1L)",
            "}")
 writeLines (code, file.path (path, "R", "myfn.R"))
 roxygen2::roxygenise (path)
@@ -301,44 +391,79 @@ code <- c ("#' my_function",
            "  if (methods::is (unclass (x), \"list\")) {",
            "    x <- unlist (x)",
            "  }",
+           "  if (is.numeric (x)) {",
+           "    x <- as.integer (x)",
+           "  }",
            "  return (x + stats::runif (1))",
            "}")
 writeLines (code, file.path (path, "R", "myfn.R"))
 roxygen2::roxygenise (path)
-x4 <- autotest_package (path, test = TRUE)
-DT::datatable (x4, options = list (dom = "t"))
+x5 <- autotest_package (path, test = TRUE)
+DT::datatable (x5, options = list (dom = "t"))
 ```
 
 That prompts a new diagnostic result that our functions does not generate
-repeatable results when trivial noise is added. `autotest` expects all
-functions to be able to generate repeatable results, and so all functions
-should enable external specification of a seed used to generate random numbers,
-generally through additional parameters. Let us then modify our function to
-enable a random seed to be specified.
+repeatable results when trivial noise is added, in addition to once again
+noting that different results arise when "assumed int-valued parameter is
+submitted as double." Both of these messages reflect the `autotest` expectation
+that all functions are able to generate repeatable results. This means that any
+function which rely on random numbers should enable external specification of a
+random number seed, generally through an additional parameter. Let us then
+modify our function to enable a random seed to be specified.
 
 ```{r runif-seed}
 code <- c ("#' my_function",
            "#'",
            "#' @param x An input",
-           "#' @param seed Random seed",
+           "#' @param seed Random seed (unrestricted)",
            "#' @return Something else",
            "#' @examples",
            "#' y <- my_function (x = 1)",
            "#' y <- my_function (x = 1:2)",
            "#' @export",
-           "my_function <- function (x, seed = 1) {",
+           "my_function <- function (x, seed = 1L) {",
            "  if (methods::is (unclass (x), \"list\")) {",
            "    x <- unlist (x)",
+           "  }",
+           "  if (is.numeric (x)) {",
+           "    x <- as.integer (x)",
            "  }",
            "  set.seed (seed)",
            "  return (x + stats::runif (1))",
            "}")
 writeLines (code, file.path (path, "R", "myfn.R"))
 roxygen2::roxygenise (path)
-autotest_package (path, test = TRUE)
+x6 <- autotest_package (path, test = TRUE)
+DT::datatable (x6, options = list (dom = "t"))
 ```
 
-And that is sufficient to again generate clean results.
+That now generates one additional because we have not asserted that `seed` has
+a length of one, from which it is immediately evident that clean results can be
+generated by inserting lines like the following:
+
+```{r seed-control, eval = FALSE}
+if (length (seed) > 1) {
+    warning ("Only the first value of seed will be used")
+    seed <- seed [1]
+}
+```
+```{r seed-control-hide, echo = FALSE}
+code <- c (code [1:16],
+           "  if (length (seed) > 1) {",
+           "    warning (\"Only the first value of seed will be used\")",
+           "    seed <- seed [1]",
+           "  }",
+           code [17:length (code)])
+writeLines (code, file.path (path, "R", "myfn.R"))
+```
+
+
+Note this must be a `warning` or `error`, because information is potentially
+being lost here by discarding any additional values of `seed`, and `autotest`
+considers any operations in which information is lost to warrant either
+warnings or errors.
+
+
 
 ## Return results and documentation
 
@@ -346,46 +471,36 @@ Functions which return complicated results, such as objects with specific
 classes, need to document those class types, and `autotest` compares return
 objects with documentation to ensure that this is done. The following code
 constructs a new function to demonstrate some of the ways `autotest` inspects
-return objects.
+return objects, demonstrating a vector input (`length(x) > 1`) in the example
+to avoid messages regarding length checks an integer ranges.
 
 ```{r return-val}
 code <- c ("#' my_function2",
            "#'",
            "#' @param x An input",
            "#' @examples",
-           "#' y <- my_function2 (x = 1)",
+           "#' y <- my_function2 (x = 1:2)",
            "#' @export",
            "my_function2 <- function (x) {",
            "  return (datasets::iris)",
            "}")
 writeLines (code, file.path (path, "R", "myfn2.R"))
 roxygen2::roxygenise (path) # need to update docs with seed param
-x5 <- autotest_package (path, test = TRUE)
-DT::datatable (x5, options = list (dom = "t"))
+x7 <- autotest_package (path, test = TRUE)
+DT::datatable (x7, options = list (dom = "t"))
 ```
 
-Several new diagnostic messages are then issued. The first is the same as was
-initially triggered, because `autotest` presumes the example with `x = 1` to
-indicate that parameter should be single valued, and so can be dealt with by
-generating an error if `length(x) > 1`. The remainder happen because there is
-no description of the return object. So let's try an updated version.
+Several new diagnostic messages are then issued regarding the description of
+the returned value. Let's insert a description to see the effect.
 
 ```{r return-val-2}
-code <- c ("#' my_function2",
-           "#'",
-           "#' @param x An input",
+code <- c (code [1:3],
            "#' @return The iris data set as dataframe",
-           "#' @examples",
-           "#' y <- my_function2 (x = 1)",
-           "#' @export",
-           "my_function2 <- function (x) {",
-           "  if (length (x) > 1) stop (\"error\")",
-           "  return (datasets::iris)",
-           "}")
+           code [4:length (code)])
 writeLines (code, file.path (path, "R", "myfn2.R"))
 roxygen2::roxygenise (path) # need to update docs with seed param
-x6 <- autotest_package (path, test = TRUE)
-DT::datatable (x6, options = list (dom = "t"))
+x8 <- autotest_package (path, test = TRUE)
+DT::datatable (x8, options = list (dom = "t"))
 ```
 
 That result still contains a couple of diagnostic messages, but it is now
