@@ -30,6 +30,8 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
     }
     names (parameters) <- names (preprocess) <- names (classes) <- fn_names
 
+    parameters <- set_seq_storage_mode (parameters)
+
     list (package = x$package,
           parameters = parameters,
           preprocess = preprocess,
@@ -186,7 +188,7 @@ add_yaml_classes <- function (classes, x, f) {
     return (classes)
 }
 
-# x is raw yaml from 'readLines' NOY parsed from yaml.load
+# x is raw yaml from 'readLines' NOT parsed from yaml.load
 load_libraries <- function (x, quiet = FALSE) {
     libraries <- vapply (x [grep ("::", x)], function (i) {
                              first_bit <- strsplit (i, "::") [[1]] [1]
@@ -252,4 +254,26 @@ yaml_template <- function () {
        "    - <name of same or different function>::",
        "        - parameters:",
        "            - <param_name>: <value>")
+}
+
+#' any YAML sequences like [1 2 3] are converted to "double" storage mode. This
+#' function reverts to "int" so that test_double_is_int is not triggered
+#' @param p parameters part of `parse_yaml_template` result
+#' @return Same thing but with modified storage.mode
+set_seq_storage_mode <- function (p) {
+
+    p <- lapply (p, function (i) {
+                 i <- lapply (i, function (j) {
+                              if (storage.mode (j [[1]]) == "double" &
+                                  length (j [[1]]) > 1) {
+                                  if (all (abs (j [[1]] - round (j [[1]])) <
+                                           .Machine$double.eps))
+                                      storage.mode (j [[1]]) <- "integer"
+                              }
+                              return (j)
+                                 })
+                 return (i)
+       })
+
+    return (p)
 }
