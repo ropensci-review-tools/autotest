@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.796</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.800</span>
       </span>
     </div>
 
@@ -100,8 +100,8 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span> <span class="op">(</span><span class="op">)</span>, <span class="st">"demo"</span><span class="op">)</span>
 <span class="fu">usethis</span><span class="fu">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/create_package.html" class="external-link">create_package</a></span> <span class="op">(</span><span class="va">path</span>, check_name <span class="op">=</span> <span class="cn">FALSE</span>, open <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="co">#&gt; ✔ Creating '/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpCAp88Q/demo/'</span>
-<span class="co">#&gt; ✔ Setting active project to '/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpCAp88Q/demo'</span>
+<span class="co">#&gt; ✔ Creating '/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmpz1VKnd/demo/'</span>
+<span class="co">#&gt; ✔ Setting active project to '/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmpz1VKnd/demo'</span>
 <span class="co">#&gt; ✔ Creating 'R/'</span>
 <span class="co">#&gt; ✔ Writing 'DESCRIPTION'</span>
 <span class="co">#&gt; Package: demo</span>
@@ -122,7 +122,7 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">wd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span> <span class="op">(</span><span class="va">path</span><span class="op">)</span>
 <span class="fu">usethis</span><span class="fu">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/licenses.html" class="external-link">use_gpl3_license</a></span> <span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; ✔ Setting active project to '/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpCAp88Q/demo'</span>
+<span class="co">#&gt; ✔ Setting active project to '/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmpz1VKnd/demo'</span>
 <span class="co">#&gt; ✔ Setting License field in DESCRIPTION to 'GPL (&gt;= 3)'</span>
 <span class="co">#&gt; ✔ Writing 'LICENSE.md'</span>
 <span class="co">#&gt; ✔ Adding '^LICENSE\\.md$' to '.Rbuildignore'</span>
@@ -130,7 +130,7 @@
 <p>The structure looks like this:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="http://fs.r-lib.org/reference/dir_tree.html" class="external-link">dir_tree</a></span> <span class="op">(</span><span class="va">path</span><span class="op">)</span>
-<span class="co">#&gt; /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T//RtmpCAp88Q/demo</span>
+<span class="co">#&gt; /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T//Rtmpz1VKnd/demo</span>
 <span class="co">#&gt; ├── DESCRIPTION</span>
 <span class="co">#&gt; ├── LICENSE.md</span>
 <span class="co">#&gt; ├── NAMESPACE</span>
@@ -154,7 +154,7 @@
 <p>Our package now looks like this:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="http://fs.r-lib.org/reference/dir_tree.html" class="external-link">dir_tree</a></span> <span class="op">(</span><span class="va">path</span><span class="op">)</span>
-<span class="co">#&gt; /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T//RtmpCAp88Q/demo</span>
+<span class="co">#&gt; /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T//Rtmpz1VKnd/demo</span>
 <span class="co">#&gt; ├── DESCRIPTION</span>
 <span class="co">#&gt; ├── LICENSE.md</span>
 <span class="co">#&gt; ├── NAMESPACE</span>
@@ -173,8 +173,8 @@
 <p>We use the <a href="https://rstudio.github.io/DT" class="external-link"><code>DT</code> package</a> to display the results here.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span> <span class="op">(</span><span class="va">x0</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span> <span class="op">(</span>dom <span class="op">=</span> <span class="st">"t"</span><span class="op">)</span><span class="op">)</span> <span class="co"># display table only</span></code></pre></div>
-<div id="htmlwidget-48b45f1f5e2ec28d36eb" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-48b45f1f5e2ec28d36eb">{"x":{"filter":"none","data":[["1"],["warning"],["fn_without_example"],["my_function"],[null],[null],["Identify functions without documented examples"],["This function has no documented example"],[true],[null]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>type<\/th>\n      <th>test_name<\/th>\n      <th>fn_name<\/th>\n      <th>parameter<\/th>\n      <th>parameter_type<\/th>\n      <th>operation<\/th>\n      <th>content<\/th>\n      <th>test<\/th>\n      <th>yaml_hash<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script><div id="adding-examples-to-our-code" class="section level2">
+<div id="htmlwidget-71acae498217db8c450d" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-71acae498217db8c450d">{"x":{"filter":"none","data":[["1"],["warning"],["fn_without_example"],["my_function"],[null],[null],["Identify functions without documented examples"],["This function has no documented example"],[true],[null]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>type<\/th>\n      <th>test_name<\/th>\n      <th>fn_name<\/th>\n      <th>parameter<\/th>\n      <th>parameter_type<\/th>\n      <th>operation<\/th>\n      <th>content<\/th>\n      <th>test<\/th>\n      <th>yaml_hash<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script><div id="adding-examples-to-our-code" class="section level2">
 <h2 class="hasAnchor">
 <a href="#adding-examples-to-our-code" class="anchor"></a>Adding examples to our code</h2>
 <p>That tells us straight away that we need to add an example to our function documentation. So let’s do that by inserting extra lines into the <code>code</code> defined above, and see what happens.</p>
@@ -194,23 +194,23 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ✔ [1 / 1]: my_function</span>
 <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span> <span class="op">(</span><span class="va">x1</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span> <span class="op">(</span>dom <span class="op">=</span> <span class="st">"t"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div id="htmlwidget-99ed3b565426cce7471d" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-99ed3b565426cce7471d">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7"],["dummy","dummy","dummy","dummy","dummy","dummy","dummy"],["double_is_int","trivial_noise","single_par_as_length_2","return_successful","return_val_described","return_desc_includes_class","return_class_matches_desc"],["my_function","my_function","my_function","my_function","my_function","my_function","my_function"],["x","x","x","(return object)","(return object)","(return object)","(return object)"],["numeric","numeric","single numeric","(return object)","(return object)","(return object)","(return object)"],["Check whether double is only used as int","Add trivial noise to numeric parameter","Length 2 vector for length 1 parameter","Check that function successfully returns an object","Check that description has return value","Check whether description of return value specifies class","Compare class of return value with description"],["int parameters should have terminal 'L'","(Should yield same result)","Should trigger message, warning, or error",null,null,null,null],[true,true,true,true,true,true,true],["c11ef443929ace0ce736eda0db86ea86","c11ef443929ace0ce736eda0db86ea86","c11ef443929ace0ce736eda0db86ea86","c11ef443929ace0ce736eda0db86ea86","c11ef443929ace0ce736eda0db86ea86","c11ef443929ace0ce736eda0db86ea86","c11ef443929ace0ce736eda0db86ea86"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>type<\/th>\n      <th>test_name<\/th>\n      <th>fn_name<\/th>\n      <th>parameter<\/th>\n      <th>parameter_type<\/th>\n      <th>operation<\/th>\n      <th>content<\/th>\n      <th>test<\/th>\n      <th>yaml_hash<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script><p>The first thing to notice is the first column, which has <code>test_type = "dummy"</code> for all rows. The <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html" class="external-link"><code>autotest_package()</code> function</a> has a parameter <code>test</code> with a default value of <code>FALSE</code>, so that the default call demonstrated above does not actually implement the tests, rather it returns an object listing all tests that would be performed with actually doing so. Applying the tests by setting <code>test = TRUE</code> gives the following result.</p>
+<div id="htmlwidget-065cb7c09fc255c93f80" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-065cb7c09fc255c93f80">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7"],["dummy","dummy","dummy","dummy","dummy","dummy","dummy"],["double_is_int","trivial_noise","single_par_as_length_2","return_successful","return_val_described","return_desc_includes_class","return_class_matches_desc"],["my_function","my_function","my_function","my_function","my_function","my_function","my_function"],["x","x","x","(return object)","(return object)","(return object)","(return object)"],["numeric","numeric","single numeric","(return object)","(return object)","(return object)","(return object)"],["Check whether double is only used as int","Add trivial noise to numeric parameter","Length 2 vector for length 1 parameter","Check that function successfully returns an object","Check that description has return value","Check whether description of return value specifies class","Compare class of return value with description"],["int parameters should have terminal 'L'","(Should yield same result)","Should trigger message, warning, or error",null,null,null,null],[true,true,true,true,true,true,true],["48098429649195ed779f714bef948140","48098429649195ed779f714bef948140","48098429649195ed779f714bef948140","48098429649195ed779f714bef948140","48098429649195ed779f714bef948140","48098429649195ed779f714bef948140","48098429649195ed779f714bef948140"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>type<\/th>\n      <th>test_name<\/th>\n      <th>fn_name<\/th>\n      <th>parameter<\/th>\n      <th>parameter_type<\/th>\n      <th>operation<\/th>\n      <th>content<\/th>\n      <th>test<\/th>\n      <th>yaml_hash<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script><p>The first thing to notice is the first column, which has <code>test_type = "dummy"</code> for all rows. The <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html" class="external-link"><code>autotest_package()</code> function</a> has a parameter <code>test</code> with a default value of <code>FALSE</code>, so that the default call demonstrated above does not actually implement the tests, rather it returns an object listing all tests that would be performed with actually doing so. Applying the tests by setting <code>test = TRUE</code> gives the following result.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="va">path</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; ── autotesting demo ──</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ✔ [1 / 1]: my_function</span>
 <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span> <span class="op">(</span><span class="va">x2</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span> <span class="op">(</span>dom <span class="op">=</span> <span class="st">"t"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div id="htmlwidget-0d876c9425ce995a35f7" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-0d876c9425ce995a35f7">{"x":{"filter":"none","data":[["1","2"],["diagnostic","diagnostic"],["double_is_int","single_par_as_length_2"],["my_function","my_function"],["x","x"],["numeric","single numeric"],["Check whether double is only used as int","Length 2 vector for length 1 parameter"],["Parameter [x] is not specified as integer, yet only used as such; please use '1L' for integer, or 1.0 for non-integer values.","Parameter [x] of function [my_function] is assumed to be a single numeric, but responds to vectors of length &gt; 1"],[true,true],["c11ef443929ace0ce736eda0db86ea86","c11ef443929ace0ce736eda0db86ea86"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>type<\/th>\n      <th>test_name<\/th>\n      <th>fn_name<\/th>\n      <th>parameter<\/th>\n      <th>parameter_type<\/th>\n      <th>operation<\/th>\n      <th>content<\/th>\n      <th>test<\/th>\n      <th>yaml_hash<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script><p>Of the 7 tests which were performed, only 2 yielded unexpected behaviour. The result of the test says that the parameter <code>x</code> is “assumed to be a single numeric”. <code>autotest</code> does its best to figure out what types of inputs are expected for each parameter, and with the example only demonstrating <code>x = 1</code>, assumes that <code>x</code> is always expected to be a single value. We could resolve this by asserting that <code>length(x) == 1</code>, as follows:</p>
+<div id="htmlwidget-8ffe9c7a3b6c6a8a8cb7" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-8ffe9c7a3b6c6a8a8cb7">{"x":{"filter":"none","data":[["1","2"],["diagnostic","diagnostic"],["double_is_int","single_par_as_length_2"],["my_function","my_function"],["x","x"],["numeric","single numeric"],["Check whether double is only used as int","Length 2 vector for length 1 parameter"],["Parameter [x] is not specified as integer, yet only used as such; please use '1L' for integer, or 1.0 for non-integer values.","Parameter [x] of function [my_function] is assumed to be a single numeric, but responds to vectors of length &gt; 1"],[true,true],["48098429649195ed779f714bef948140","48098429649195ed779f714bef948140"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>type<\/th>\n      <th>test_name<\/th>\n      <th>fn_name<\/th>\n      <th>parameter<\/th>\n      <th>parameter_type<\/th>\n      <th>operation<\/th>\n      <th>content<\/th>\n      <th>test<\/th>\n      <th>yaml_hash<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script><p>Of the 7 tests which were performed, only 2 yielded unexpected behaviour. The first indicates that the parameter <code>x</code> has only been used as an integer, yet was not specified as such. The second states that the parameter <code>x</code> is “assumed to be a single numeric”. <code>autotest</code> does its best to figure out what types of inputs are expected for each parameter, and with the example only demonstrating <code>x = 1</code>, assumes that <code>x</code> is always expected to be a single value. We can resolve the first of these by replacing <code>x = 1</code> with <code>x = 1.</code> to clearly indicate that it is not an integer, and the second by asserting that <code>length(x) == 1</code>, as follows:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">code</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span> <span class="op">(</span><span class="st">"#' my_function"</span>,
            <span class="st">"#'"</span>,
            <span class="st">"#' @param x An input"</span>,
            <span class="st">"#' @return Something else"</span>,
            <span class="st">"#' @examples"</span>,
-           <span class="st">"#' y &lt;- my_function (x = 1)"</span>,
+           <span class="st">"#' y &lt;- my_function (x = 1.)"</span>,
            <span class="st">"#' @export"</span>,
            <span class="st">"my_function &lt;- function (x) {"</span>,
            <span class="st">"  if (length(x) &gt; 1) {"</span>,
@@ -223,24 +223,92 @@
 <span class="fu">roxygen2</span><span class="fu">::</span><span class="fu"><a href="https://roxygen2.r-lib.org/reference/roxygenize.html" class="external-link">roxygenise</a></span> <span class="op">(</span><span class="va">path</span><span class="op">)</span>
 <span class="co">#&gt; Loading demo</span>
 <span class="co">#&gt; Writing NAMESPACE</span>
-<span class="co">#&gt; Writing NAMESPACE</span></code></pre></div>
+<span class="co">#&gt; Writing NAMESPACE</span>
+<span class="co">#&gt; Writing my_function.Rd</span></code></pre></div>
 <p>This is then sufficient to pass all <code>autotest</code> tests and so return <code>NULL</code>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="va">path</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; ── autotesting demo ──</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ✔ [1 / 1]: my_function</span>
-<span class="co">#&gt; # A tibble: 1 x 9</span>
-<span class="co">#&gt;   type  test_name fn_name parameter parameter_type operation content test </span>
-<span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt;</span>
-<span class="co">#&gt; 1 diag… double_i… my_fun… x         numeric        Check wh… Parame… TRUE </span>
-<span class="co">#&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</span></code></pre></div>
+<span class="co">#&gt; NULL</span></code></pre></div>
+</div>
+<div id="integer-input" class="section level2">
+<h2 class="hasAnchor">
+<a href="#integer-input" class="anchor"></a>Integer input</h2>
+<p>Note that <code>autotest</code> distinguishes integer and non-integer types by their <a href="https://stat.ethz.ch/R-manual/R-devel/library/base/html/mode.html" class="external-link"><code>storage.mode</code></a> of <code>"integer"</code> and <code>"double"</code>, and not by their respective classes of <code>"integer"</code> and <code>"numeric"</code>, because <code>"numeric"</code> is ambiguous in R, and <code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">is.numeric(1L)</a></code> is <code>TRUE</code>, even though <code><a href="https://rdrr.io/r/base/mode.html" class="external-link">storage.mode(1L)</a></code> is <code>"integer"</code>, and not <code>"numeric"</code>. Replacing <code>x = 1</code> with <code>x = 1.</code> explicitly identifies that parameter as a <code>"double"</code> parameter, and allowed the preceding tests to pass. Note what happens if we instead specify that parameter as an integer (<code>x = 1L</code>).</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">code</span> <span class="op">[</span><span class="fl">6</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span> <span class="op">(</span><span class="st">"1\\."</span>, <span class="st">"1L"</span>, <span class="va">code</span> <span class="op">[</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span> <span class="op">(</span><span class="va">code</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span> <span class="op">(</span><span class="va">path</span>, <span class="st">"R"</span>, <span class="st">"myfn.R"</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">roxygen2</span><span class="fu">::</span><span class="fu"><a href="https://roxygen2.r-lib.org/reference/roxygenize.html" class="external-link">roxygenise</a></span> <span class="op">(</span><span class="va">path</span><span class="op">)</span>
+<span class="co">#&gt; Loading demo</span>
+<span class="co">#&gt; Writing NAMESPACE</span>
+<span class="co">#&gt; Writing NAMESPACE</span>
+<span class="co">#&gt; Writing my_function.Rd</span>
+<span class="va">x3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="va">path</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">#&gt; ── autotesting demo ──</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ✔ [1 / 1]: my_function</span>
+<span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span> <span class="op">(</span><span class="va">x3</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span> <span class="op">(</span>dom <span class="op">=</span> <span class="st">"t"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div id="htmlwidget-88adf4cbce81286a963e" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-88adf4cbce81286a963e">{"x":{"filter":"none","data":[["1","2"],["diagnostic","diagnostic"],["int_range","int_as_numeric"],["my_function","my_function"],["x","x"],["single integer","single integer"],["Ascertain permissible range","Integer value converted to numeric"],["Parameter [x] permits unrestricted integer inputs,  yet does not document this; please add 'unrestricted' to parameter description.","Function [my_function] returns different values when assumed int-valued parameter [x] is submitted as double."],[true,true],["ab204426fbc025a4e99dce8fd4071750","ab204426fbc025a4e99dce8fd4071750"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>type<\/th>\n      <th>test_name<\/th>\n      <th>fn_name<\/th>\n      <th>parameter<\/th>\n      <th>parameter_type<\/th>\n      <th>operation<\/th>\n      <th>content<\/th>\n      <th>test<\/th>\n      <th>yaml_hash<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script><p>That then generates two additional messages, the second of which reflects an expectation that parameters assumed to be integer-valued should assert that, for example by converting with <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer()</a></code>. The following suffices to remove that message.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">code</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span> <span class="op">(</span><span class="va">code</span> <span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">12</span><span class="op">]</span>,
+           <span class="st">"  if (is.numeric (x))"</span>,
+           <span class="st">"    x &lt;- as.integer (x)"</span>,
+           <span class="va">code</span> <span class="op">[</span><span class="fl">13</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span> <span class="op">(</span><span class="va">code</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<p>The remaining message concerns integer ranges. For any parameters which <code>autotest</code> identifies as single integers, routines will try a full range of values between <code>+/- .Machine$integer.max</code>, to ensure that all values are appropriately handled. Many routines may sensibly allow unrestricted ranges, while many others may not implement explicit control over permissible ranges, yet may error on, for example, unexpectedly large positive or negative values. The content of the diagnostic message indicates one way to resolve this issue, which is simply by describing the input as <code>"unrestricted"</code>.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">code</span> <span class="op">[</span><span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span> <span class="op">(</span><span class="st">"An input"</span>, <span class="st">"An unrestricted input"</span>, <span class="va">code</span> <span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span> <span class="op">(</span><span class="va">code</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span> <span class="op">(</span><span class="va">path</span>, <span class="st">"R"</span>, <span class="st">"myfn.R"</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">roxygen2</span><span class="fu">::</span><span class="fu"><a href="https://roxygen2.r-lib.org/reference/roxygenize.html" class="external-link">roxygenise</a></span> <span class="op">(</span><span class="va">path</span><span class="op">)</span>
+<span class="co">#&gt; Loading demo</span>
+<span class="co">#&gt; Writing NAMESPACE</span>
+<span class="co">#&gt; Writing NAMESPACE</span>
+<span class="co">#&gt; Writing my_function.Rd</span>
+<span class="fu"><a href="../reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="va">path</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">#&gt; ── autotesting demo ──</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ✔ [1 / 1]: my_function</span>
+<span class="co">#&gt; NULL</span></code></pre></div>
+<p>An alternative, and frequently better way, is to ensure and document specific control over permissible ranges, as in the following revision of our function.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">code</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span> <span class="op">(</span><span class="st">"#' my_function"</span>,
+           <span class="st">"#'"</span>,
+           <span class="st">"#' @param x An input between 0 and 10"</span>,
+           <span class="st">"#' @return Something else"</span>,
+           <span class="st">"#' @examples"</span>,
+           <span class="st">"#' y &lt;- my_function (x = 1L)"</span>,
+           <span class="st">"#' @export"</span>,
+           <span class="st">"my_function &lt;- function (x) {"</span>,
+           <span class="st">"  if (length(x) &gt; 1) {"</span>,
+           <span class="st">"    warning(\"only the first value of x will be used\")"</span>,
+           <span class="st">"    x &lt;- x [1]"</span>,
+           <span class="st">"  }"</span>,
+           <span class="st">"  if (is.numeric (x))"</span>,
+           <span class="st">"    x &lt;- as.integer (x)"</span>,
+           <span class="st">"  if (x &lt; 0 | x &gt; 10) {"</span>,
+           <span class="st">"    stop (\"x must be between 0 and 10\")"</span>,
+           <span class="st">"  }"</span>,
+           <span class="st">"  return (x + 1L)"</span>,
+           <span class="st">"}"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span> <span class="op">(</span><span class="va">code</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span> <span class="op">(</span><span class="va">path</span>, <span class="st">"R"</span>, <span class="st">"myfn.R"</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">roxygen2</span><span class="fu">::</span><span class="fu"><a href="https://roxygen2.r-lib.org/reference/roxygenize.html" class="external-link">roxygenise</a></span> <span class="op">(</span><span class="va">path</span><span class="op">)</span>
+<span class="co">#&gt; Loading demo</span>
+<span class="co">#&gt; Writing NAMESPACE</span>
+<span class="co">#&gt; Writing NAMESPACE</span>
+<span class="co">#&gt; Writing my_function.Rd</span>
+<span class="fu"><a href="../reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="va">path</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">#&gt; ── autotesting demo ──</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ✔ [1 / 1]: my_function</span>
+<span class="co">#&gt; NULL</span></code></pre></div>
 </div>
 <div id="vector-input" class="section level2">
 <h2 class="hasAnchor">
 <a href="#vector-input" class="anchor"></a>Vector input</h2>
 <p>The initial test results above suggested that the input was <em>assumed</em> to be of length one. Let us now revert our function to its original format which accepted vectors of length &gt; 1, and include an example demonstrating such input.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">code</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span> <span class="op">(</span><span class="st">"#' my_function"</span>,
            <span class="st">"#'"</span>,
            <span class="st">"#' @param x An input"</span>,
@@ -250,7 +318,10 @@
            <span class="st">"#' y &lt;- my_function (x = 1:2)"</span>,
            <span class="st">"#' @export"</span>,
            <span class="st">"my_function &lt;- function (x) {"</span>,
-           <span class="st">"  return (x + 1)"</span>,
+           <span class="st">"  if (is.numeric (x)) {"</span>,
+           <span class="st">"    x &lt;- as.integer (x)"</span>,
+           <span class="st">"  }"</span>,
+           <span class="st">"  return (x + 1L)"</span>,
            <span class="st">"}"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span> <span class="op">(</span><span class="va">code</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span> <span class="op">(</span><span class="va">path</span>, <span class="st">"R"</span>, <span class="st">"myfn.R"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu">roxygen2</span><span class="fu">::</span><span class="fu"><a href="https://roxygen2.r-lib.org/reference/roxygenize.html" class="external-link">roxygenise</a></span> <span class="op">(</span><span class="va">path</span><span class="op">)</span>
@@ -258,19 +329,19 @@
 <span class="co">#&gt; Writing NAMESPACE</span>
 <span class="co">#&gt; Writing NAMESPACE</span>
 <span class="co">#&gt; Writing my_function.Rd</span></code></pre></div>
-<p>Testing the package now gives:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">x3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="va">path</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<p>Note that the first example no longer has <code>x = 1L</code>. This is because vector inputs are identified as <code>integer</code> by examining all individual values, and presuming <code>integer</code> representations for any parameters for which all values are whole numbers, regardless of <code>storage.mode</code>.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">x4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="va">path</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; ── autotesting demo ──</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ✔ [1 / 1]: my_function</span>
-<span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span> <span class="op">(</span><span class="va">x3</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span> <span class="op">(</span>dom <span class="op">=</span> <span class="st">"t"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div id="htmlwidget-154d9e1d67b8df96e3f0" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-154d9e1d67b8df96e3f0">{"x":{"filter":"none","data":[["1","2"],["diagnostic","diagnostic"],["vector_to_list_col","int_as_numeric"],["my_function","my_function"],["x","x"],["vector","integer vector"],["Convert vector input to list-columns","Integer value converted to numeric"],["Function [my_function] errors on list-columns when submitted as x Error message: non-numeric argument to binary operator","Function [my_function] returns different values when assumed int-valued parameter [x] is submitted as double."],[true,true],["9df479211884edc5bf15ecfee375d15d","9df479211884edc5bf15ecfee375d15d"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>type<\/th>\n      <th>test_name<\/th>\n      <th>fn_name<\/th>\n      <th>parameter<\/th>\n      <th>parameter_type<\/th>\n      <th>operation<\/th>\n      <th>content<\/th>\n      <th>test<\/th>\n      <th>yaml_hash<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script><div id="list-column-conversion" class="section level3">
+<span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span> <span class="op">(</span><span class="va">x4</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span> <span class="op">(</span>dom <span class="op">=</span> <span class="st">"t"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div id="htmlwidget-2269482788fe83659331" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2269482788fe83659331">{"x":{"filter":"none","data":[["1"],["diagnostic"],["vector_to_list_col"],["my_function"],["x"],["vector"],["Convert vector input to list-columns"],["Function [my_function] errors on list-columns when submitted as x Error message: non-numeric argument to binary operator"],[true],["f0d80c17c86f09365ae69fc3a2593190"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>type<\/th>\n      <th>test_name<\/th>\n      <th>fn_name<\/th>\n      <th>parameter<\/th>\n      <th>parameter_type<\/th>\n      <th>operation<\/th>\n      <th>content<\/th>\n      <th>test<\/th>\n      <th>yaml_hash<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script><div id="list-column-conversion" class="section level3">
 <h3 class="hasAnchor">
 <a href="#list-column-conversion" class="anchor"></a>List-column conversion</h3>
 <p>The above result reflects one of the standard tests, which is to determine whether list-column formats are appropriately processed. List-columns commonly arise when using (either directly or indirectly), the <a href="https://tidyr.tidyverse.org/reference/nest.html" class="external-link"><code>tidyr::nest()</code> function</a>, or equivalently in base R with the <a href="https://stat.ethz.ch/R-manual/R-devel/library/base/html/AsIs.html" class="external-link"><code>I</code> or <code>AsIs</code> function</a>. They look like this:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span> <span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, y <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>
 <span class="va">dat</span><span class="op">$</span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list</a></span> <span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="co"># base R</span>
 <span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html" class="external-link">nest</a></span> <span class="op">(</span><span class="va">dat</span>, y <span class="op">=</span> <span class="va">y</span><span class="op">)</span>
@@ -282,7 +353,7 @@
 <span class="co">#&gt; 2 &lt;int [1]&gt; &lt;tibble [1 × 1]&gt;</span>
 <span class="co">#&gt; 3 &lt;int [1]&gt; &lt;tibble [1 × 1]&gt;</span></code></pre></div>
 <p>The use of packages like <a href="https://tidyr.tidyverse.org" class="external-link"><code>tidyr</code></a> and <a href="https://purrr.tidyverse.org" class="external-link"><code>purrr</code></a> quite often leads to <a href="https://tibble.tidyverse.org" class="external-link"><code>tibble</code></a>-class inputs which contain list-columns. Any functions which fail to identify and appropriately respond to such inputs may generate unexpected errors, and this <code>autotest</code> is intended to enforce appropriate handling of these kinds of inputs. The following lines demonstrate the kinds of results that can arise without such checks.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="va">mtcars</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span> <span class="op">(</span><span class="va">m</span>, n <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span>
 <span class="co">#&gt;               mpg cyl disp  hp drat    wt  qsec vs am gear carb</span>
@@ -296,12 +367,12 @@
 <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span> <span class="op">(</span><span class="va">m</span><span class="op">)</span>
 <span class="co">#&gt; Error in cor(m): 'x' must be numeric</span></code></pre></div>
 <p>In contrast, many functions either assume inputs to be lists, and convert when not, or implicitly <code>unlist</code>. Either way, such functions may respond entirely consistently regardless of the presence of list-columns, like this:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">m</span><span class="op">$</span><span class="va">mpg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span> <span class="op">(</span><span class="st">"a"</span>, <span class="va">m</span><span class="op">$</span><span class="va">mpg</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span> <span class="op">(</span><span class="va">m</span><span class="op">$</span><span class="va">mpg</span><span class="op">)</span>
 <span class="co">#&gt; [1] "character"</span></code></pre></div>
 <p>The list-column <code>autotest</code> is intended to enforce consistent behaviour in response to list-column inputs. One way to identify list-column formats is to check the value of <code><a href="https://rdrr.io/r/base/class.html" class="external-link">class(unclass(.))</a></code> of each column. The <code>unclass</code> function is necessary to first remove any additional class attributes, such as <code>I</code> in <code>dat$x</code> above. A modified version of our function which identifies and responds to list-column inputs might look like this:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">code</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span> <span class="op">(</span><span class="st">"#' my_function"</span>,
            <span class="st">"#'"</span>,
            <span class="st">"#' @param x An input"</span>,
@@ -314,7 +385,10 @@
            <span class="st">"  if (methods::is (unclass (x), \"list\")) {"</span>,
            <span class="st">"    x &lt;- unlist (x)"</span>,
            <span class="st">"  }"</span>,
-           <span class="st">"  return (x + 1)"</span>,
+           <span class="st">"  if (is.numeric (x)) {"</span>,
+           <span class="st">"    x &lt;- as.integer (x)"</span>,
+           <span class="st">"  }"</span>,
+           <span class="st">"  return (x + 1L)"</span>,
            <span class="st">"}"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span> <span class="op">(</span><span class="va">code</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span> <span class="op">(</span><span class="va">path</span>, <span class="st">"R"</span>, <span class="st">"myfn.R"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu">roxygen2</span><span class="fu">::</span><span class="fu"><a href="https://roxygen2.r-lib.org/reference/roxygenize.html" class="external-link">roxygenise</a></span> <span class="op">(</span><span class="va">path</span><span class="op">)</span>
@@ -322,16 +396,12 @@
 <span class="co">#&gt; Writing NAMESPACE</span>
 <span class="co">#&gt; Writing NAMESPACE</span></code></pre></div>
 <p>That change once again leads to clean <code>autotest</code> results:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="va">path</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; ── autotesting demo ──</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ✔ [1 / 1]: my_function</span>
-<span class="co">#&gt; # A tibble: 1 x 9</span>
-<span class="co">#&gt;   type  test_name fn_name parameter parameter_type operation content test </span>
-<span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt;</span>
-<span class="co">#&gt; 1 diag… int_as_n… my_fun… x         integer vector Integer … Functi… TRUE </span>
-<span class="co">#&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</span></code></pre></div>
+<span class="co">#&gt; NULL</span></code></pre></div>
 <p>Of course simply attempting to <code>unlist</code> a complex list-column may be dangerous, and it may be preferable to issue some kind of message or warning, or even either simply remove any list-columns entirely or generate an error. Replacing the above, potentially dangerous, line, <code>x &lt;- unlist (x)</code> with a simple <code><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop("list-columns are not allowed")</a></code> will also produce clean <code>autotest</code> results.</p>
 </div>
 </div>
@@ -339,7 +409,7 @@
 <h2 class="hasAnchor">
 <a href="#random-numbers" class="anchor"></a>Random numbers</h2>
 <p>Let us now extend our example to highlight a few more aspects of <code>autotest</code>, by replacing the functional operation <code>x &lt;- x + 1</code> to instead add a random component via <code>x &lt;- x + runif (1)</code>.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">code</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span> <span class="op">(</span><span class="st">"#' my_function"</span>,
            <span class="st">"#'"</span>,
            <span class="st">"#' @param x An input"</span>,
@@ -351,6 +421,9 @@
            <span class="st">"my_function &lt;- function (x) {"</span>,
            <span class="st">"  if (methods::is (unclass (x), \"list\")) {"</span>,
            <span class="st">"    x &lt;- unlist (x)"</span>,
+           <span class="st">"  }"</span>,
+           <span class="st">"  if (is.numeric (x)) {"</span>,
+           <span class="st">"    x &lt;- as.integer (x)"</span>,
            <span class="st">"  }"</span>,
            <span class="st">"  return (x + stats::runif (1))"</span>,
            <span class="st">"}"</span><span class="op">)</span>
@@ -359,26 +432,29 @@
 <span class="co">#&gt; Loading demo</span>
 <span class="co">#&gt; Writing NAMESPACE</span>
 <span class="co">#&gt; Writing NAMESPACE</span>
-<span class="va">x4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="va">path</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">x5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="va">path</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; ── autotesting demo ──</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ✔ [1 / 1]: my_function</span>
-<span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span> <span class="op">(</span><span class="va">x4</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span> <span class="op">(</span>dom <span class="op">=</span> <span class="st">"t"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div id="htmlwidget-559a692d64d0c14507b9" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-559a692d64d0c14507b9">{"x":{"filter":"none","data":[["1"],["diagnostic"],["int_as_numeric"],["my_function"],["x"],["integer vector"],["Integer value converted to numeric"],["Function [my_function] returns different values when assumed int-valued parameter [x] is submitted as double."],[true],["9df479211884edc5bf15ecfee375d15d"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>type<\/th>\n      <th>test_name<\/th>\n      <th>fn_name<\/th>\n      <th>parameter<\/th>\n      <th>parameter_type<\/th>\n      <th>operation<\/th>\n      <th>content<\/th>\n      <th>test<\/th>\n      <th>yaml_hash<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script><p>That prompts a new diagnostic result that our functions does not generate repeatable results when trivial noise is added. <code>autotest</code> expects all functions to be able to generate repeatable results, and so all functions should enable external specification of a seed used to generate random numbers, generally through additional parameters. Let us then modify our function to enable a random seed to be specified.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span> <span class="op">(</span><span class="va">x5</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span> <span class="op">(</span>dom <span class="op">=</span> <span class="st">"t"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div id="htmlwidget-04b76ada0e8b65bb3b7b" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-04b76ada0e8b65bb3b7b">{"x":{"filter":"none","data":[["1","2"],["diagnostic","diagnostic"],["trivial_noise","int_as_numeric"],["my_function","my_function"],["x","x"],["numeric","integer vector"],["Add trivial noise to numeric parameter","Integer value converted to numeric"],["Parameter [x] yields different result when trivial noise is added","Function [my_function] returns different values when assumed int-valued parameter [x] is submitted as double."],[true,true],["f0d80c17c86f09365ae69fc3a2593190","f0d80c17c86f09365ae69fc3a2593190"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>type<\/th>\n      <th>test_name<\/th>\n      <th>fn_name<\/th>\n      <th>parameter<\/th>\n      <th>parameter_type<\/th>\n      <th>operation<\/th>\n      <th>content<\/th>\n      <th>test<\/th>\n      <th>yaml_hash<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script><p>That prompts a new diagnostic result that our functions does not generate repeatable results when trivial noise is added, in addition to once again noting that different results arise when “assumed int-valued parameter is submitted as double.” Both of these messages reflect the <code>autotest</code> expectation that all functions are able to generate repeatable results. This means that any function which rely on random numbers should enable external specification of a random number seed, generally through an additional parameter. Let us then modify our function to enable a random seed to be specified.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">code</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span> <span class="op">(</span><span class="st">"#' my_function"</span>,
            <span class="st">"#'"</span>,
            <span class="st">"#' @param x An input"</span>,
-           <span class="st">"#' @param seed Random seed"</span>,
+           <span class="st">"#' @param seed Random seed (unrestricted)"</span>,
            <span class="st">"#' @return Something else"</span>,
            <span class="st">"#' @examples"</span>,
            <span class="st">"#' y &lt;- my_function (x = 1)"</span>,
            <span class="st">"#' y &lt;- my_function (x = 1:2)"</span>,
            <span class="st">"#' @export"</span>,
-           <span class="st">"my_function &lt;- function (x, seed = 1) {"</span>,
+           <span class="st">"my_function &lt;- function (x, seed = 1L) {"</span>,
            <span class="st">"  if (methods::is (unclass (x), \"list\")) {"</span>,
            <span class="st">"    x &lt;- unlist (x)"</span>,
+           <span class="st">"  }"</span>,
+           <span class="st">"  if (is.numeric (x)) {"</span>,
+           <span class="st">"    x &lt;- as.integer (x)"</span>,
            <span class="st">"  }"</span>,
            <span class="st">"  set.seed (seed)"</span>,
            <span class="st">"  return (x + stats::runif (1))"</span>,
@@ -389,29 +465,30 @@
 <span class="co">#&gt; Writing NAMESPACE</span>
 <span class="co">#&gt; Writing NAMESPACE</span>
 <span class="co">#&gt; Writing my_function.Rd</span>
-<span class="fu"><a href="../reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="va">path</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">x6</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="va">path</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; ── autotesting demo ──</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ✔ [1 / 1]: my_function</span>
-<span class="co">#&gt; # A tibble: 3 x 9</span>
-<span class="co">#&gt;   type  test_name fn_name parameter parameter_type operation content test </span>
-<span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt;</span>
-<span class="co">#&gt; 1 diag… double_i… my_fun… seed      numeric        Check wh… Parame… TRUE </span>
-<span class="co">#&gt; 2 diag… single_p… my_fun… seed      single numeric Length 2… Parame… TRUE </span>
-<span class="co">#&gt; 3 diag… int_as_n… my_fun… x         integer vector Integer … Functi… TRUE </span>
-<span class="co">#&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</span></code></pre></div>
-<p>And that is sufficient to again generate clean results.</p>
+<span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span> <span class="op">(</span><span class="va">x6</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span> <span class="op">(</span>dom <span class="op">=</span> <span class="st">"t"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div id="htmlwidget-6faa33157620e5df46b4" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6faa33157620e5df46b4">{"x":{"filter":"none","data":[["1"],["diagnostic"],["single_par_as_length_2"],["my_function"],["seed"],["single integer"],["Length 2 vector for length 1 parameter"],["Parameter [seed] of function [my_function] is assumed to be a single integer, but responds to vectors of length &gt; 1"],[true],["43e73baf1b045f9c0005d7fa2241d825"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>type<\/th>\n      <th>test_name<\/th>\n      <th>fn_name<\/th>\n      <th>parameter<\/th>\n      <th>parameter_type<\/th>\n      <th>operation<\/th>\n      <th>content<\/th>\n      <th>test<\/th>\n      <th>yaml_hash<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script><p>That now generates one additional because we have not asserted that <code>seed</code> has a length of one, from which it is immediately evident that clean results can be generated by inserting lines like the following:</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span> <span class="op">(</span><span class="va">seed</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span>
+    <span class="kw"><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning</a></span> <span class="op">(</span><span class="st">"Only the first value of seed will be used"</span><span class="op">)</span>
+    <span class="va">seed</span> <span class="op">&lt;-</span> <span class="va">seed</span> <span class="op">[</span><span class="fl">1</span><span class="op">]</span>
+<span class="op">}</span></code></pre></div>
+<p>Note this must be a <code>warning</code> or <code>error</code>, because information is potentially being lost here by discarding any additional values of <code>seed</code>, and <code>autotest</code> considers any operations in which information is lost to warrant either warnings or errors.</p>
 </div>
 <div id="return-results-and-documentation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#return-results-and-documentation" class="anchor"></a>Return results and documentation</h2>
-<p>Functions which return complicated results, such as objects with specific classes, need to document those class types, and <code>autotest</code> compares return objects with documentation to ensure that this is done. The following code constructs a new function to demonstrate some of the ways <code>autotest</code> inspects return objects.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<p>Functions which return complicated results, such as objects with specific classes, need to document those class types, and <code>autotest</code> compares return objects with documentation to ensure that this is done. The following code constructs a new function to demonstrate some of the ways <code>autotest</code> inspects return objects, demonstrating a vector input (<code>length(x) &gt; 1</code>) in the example to avoid messages regarding length checks an integer ranges.</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">code</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span> <span class="op">(</span><span class="st">"#' my_function2"</span>,
            <span class="st">"#'"</span>,
            <span class="st">"#' @param x An input"</span>,
            <span class="st">"#' @examples"</span>,
-           <span class="st">"#' y &lt;- my_function2 (x = 1)"</span>,
+           <span class="st">"#' y &lt;- my_function2 (x = 1:2)"</span>,
            <span class="st">"#' @export"</span>,
            <span class="st">"my_function2 &lt;- function (x) {"</span>,
            <span class="st">"  return (datasets::iris)"</span>,
@@ -422,41 +499,33 @@
 <span class="co">#&gt; Writing NAMESPACE</span>
 <span class="co">#&gt; Writing NAMESPACE</span>
 <span class="co">#&gt; Writing my_function2.Rd</span>
-<span class="va">x5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="va">path</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">x7</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="va">path</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; ── autotesting demo ──</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ✔ [1 / 2]: my_function</span>
 <span class="co">#&gt; ✔ [2 / 2]: my_function2</span>
-<span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span> <span class="op">(</span><span class="va">x5</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span> <span class="op">(</span>dom <span class="op">=</span> <span class="st">"t"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div id="htmlwidget-5d3c961bb398e3f34f05" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-5d3c961bb398e3f34f05">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7","8"],["diagnostic","diagnostic","diagnostic","diagnostic","diagnostic","diagnostic","diagnostic","diagnostic"],["double_is_int","single_par_as_length_2","int_as_numeric","double_is_int","single_par_as_length_2","return_val_described","return_desc_includes_class","return_class_matches_desc"],["my_function","my_function","my_function","my_function2","my_function2","my_function2","my_function2","my_function2"],["seed","seed","x","x","x","(return object)","(return object)","(return object)"],["numeric","single numeric","integer vector","numeric","single numeric","(return object)","(return object)","(return object)"],["Check whether double is only used as int","Length 2 vector for length 1 parameter","Integer value converted to numeric","Check whether double is only used as int","Length 2 vector for length 1 parameter","Check that description has return value","Check whether description of return value specifies class","Compare class of return value with description"],["Parameter [seed] is not specified as integer, yet only used as such; please use '1L' for integer, or 1.0 for non-integer values.","Parameter [seed] of function [my_function] is assumed to be a single numeric, but responds to vectors of length &gt; 1","Function [my_function] returns different values when assumed int-valued parameter [x] is submitted as double.","Parameter [x] is not specified as integer, yet only used as such; please use '1L' for integer, or 1.0 for non-integer values.","Parameter [x] of function [my_function2] is assumed to be a single numeric, but responds to vectors of length &gt; 1","Function [my_function2] does not specify a return value.","Function [my_function2] does not describe return value","Function [my_function2] does not describe return value"],[true,true,true,true,true,true,true,true],["964ef08bd00325d29d198a0644074f4f","964ef08bd00325d29d198a0644074f4f","964ef08bd00325d29d198a0644074f4f","a83d6a89415337f358ab300d77e4cd91","a83d6a89415337f358ab300d77e4cd91","a83d6a89415337f358ab300d77e4cd91","a83d6a89415337f358ab300d77e4cd91","a83d6a89415337f358ab300d77e4cd91"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>type<\/th>\n      <th>test_name<\/th>\n      <th>fn_name<\/th>\n      <th>parameter<\/th>\n      <th>parameter_type<\/th>\n      <th>operation<\/th>\n      <th>content<\/th>\n      <th>test<\/th>\n      <th>yaml_hash<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script><p>Several new diagnostic messages are then issued. The first is the same as was initially triggered, because <code>autotest</code> presumes the example with <code>x = 1</code> to indicate that parameter should be single valued, and so can be dealt with by generating an error if <code>length(x) &gt; 1</code>. The remainder happen because there is no description of the return object. So let’s try an updated version.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">code</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span> <span class="op">(</span><span class="st">"#' my_function2"</span>,
-           <span class="st">"#'"</span>,
-           <span class="st">"#' @param x An input"</span>,
+<span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span> <span class="op">(</span><span class="va">x7</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span> <span class="op">(</span>dom <span class="op">=</span> <span class="st">"t"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div id="htmlwidget-444c869f1dbb2d0172e3" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-444c869f1dbb2d0172e3">{"x":{"filter":"none","data":[["1","2","3"],["diagnostic","diagnostic","diagnostic"],["return_val_described","return_desc_includes_class","return_class_matches_desc"],["my_function2","my_function2","my_function2"],["(return object)","(return object)","(return object)"],["(return object)","(return object)","(return object)"],["Check that description has return value","Check whether description of return value specifies class","Compare class of return value with description"],["Function [my_function2] does not specify a return value.","Function [my_function2] does not describe return value","Function [my_function2] does not describe return value"],[true,true,true],["fcc86a401caad113751dcd4738f2e0a5","fcc86a401caad113751dcd4738f2e0a5","fcc86a401caad113751dcd4738f2e0a5"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>type<\/th>\n      <th>test_name<\/th>\n      <th>fn_name<\/th>\n      <th>parameter<\/th>\n      <th>parameter_type<\/th>\n      <th>operation<\/th>\n      <th>content<\/th>\n      <th>test<\/th>\n      <th>yaml_hash<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script><p>Several new diagnostic messages are then issued regarding the description of the returned value. Let’s insert a description to see the effect.</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">code</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span> <span class="op">(</span><span class="va">code</span> <span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>,
            <span class="st">"#' @return The iris data set as dataframe"</span>,
-           <span class="st">"#' @examples"</span>,
-           <span class="st">"#' y &lt;- my_function2 (x = 1)"</span>,
-           <span class="st">"#' @export"</span>,
-           <span class="st">"my_function2 &lt;- function (x) {"</span>,
-           <span class="st">"  if (length (x) &gt; 1) stop (\"error\")"</span>,
-           <span class="st">"  return (datasets::iris)"</span>,
-           <span class="st">"}"</span><span class="op">)</span>
+           <span class="va">code</span> <span class="op">[</span><span class="fl">4</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span> <span class="op">(</span><span class="va">code</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span> <span class="op">(</span><span class="va">code</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span> <span class="op">(</span><span class="va">path</span>, <span class="st">"R"</span>, <span class="st">"myfn2.R"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu">roxygen2</span><span class="fu">::</span><span class="fu"><a href="https://roxygen2.r-lib.org/reference/roxygenize.html" class="external-link">roxygenise</a></span> <span class="op">(</span><span class="va">path</span><span class="op">)</span> <span class="co"># need to update docs with seed param</span>
 <span class="co">#&gt; Loading demo</span>
 <span class="co">#&gt; Writing NAMESPACE</span>
 <span class="co">#&gt; Writing NAMESPACE</span>
 <span class="co">#&gt; Writing my_function2.Rd</span>
-<span class="va">x6</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="va">path</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">x8</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="va">path</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; ── autotesting demo ──</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ✔ [1 / 2]: my_function</span>
 <span class="co">#&gt; ✔ [2 / 2]: my_function2</span>
-<span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span> <span class="op">(</span><span class="va">x6</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span> <span class="op">(</span>dom <span class="op">=</span> <span class="st">"t"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div id="htmlwidget-b2d0b9e94534a2ba3e9b" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-b2d0b9e94534a2ba3e9b">{"x":{"filter":"none","data":[["1","2","3","4","5","6"],["diagnostic","diagnostic","diagnostic","diagnostic","diagnostic","diagnostic"],["double_is_int","single_par_as_length_2","int_as_numeric","double_is_int","return_desc_includes_class","return_class_matches_desc"],["my_function","my_function","my_function","my_function2","my_function2","my_function2"],["seed","seed","x","x","(return object)","(return object)"],["numeric","single numeric","integer vector","numeric","(return object)","(return object)"],["Check whether double is only used as int","Length 2 vector for length 1 parameter","Integer value converted to numeric","Check whether double is only used as int","Check whether description of return value specifies class","Compare class of return value with description"],["Parameter [seed] is not specified as integer, yet only used as such; please use '1L' for integer, or 1.0 for non-integer values.","Parameter [seed] of function [my_function] is assumed to be a single numeric, but responds to vectors of length &gt; 1","Function [my_function] returns different values when assumed int-valued parameter [x] is submitted as double.","Parameter [x] is not specified as integer, yet only used as such; please use '1L' for integer, or 1.0 for non-integer values.","Function [my_function2] returns a value of class [data.frame], which differs from the value provided in the description","Function returns an object of class [data.frame] yet documentation describes class of value as [dataframe]"],[true,true,true,true,true,true],["964ef08bd00325d29d198a0644074f4f","964ef08bd00325d29d198a0644074f4f","964ef08bd00325d29d198a0644074f4f","a83d6a89415337f358ab300d77e4cd91","a83d6a89415337f358ab300d77e4cd91","a83d6a89415337f358ab300d77e4cd91"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>type<\/th>\n      <th>test_name<\/th>\n      <th>fn_name<\/th>\n      <th>parameter<\/th>\n      <th>parameter_type<\/th>\n      <th>operation<\/th>\n      <th>content<\/th>\n      <th>test<\/th>\n      <th>yaml_hash<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script><p>That result still contains a couple of diagnostic messages, but it is now pretty clear what we need to do, which is to be precise with our specification of the class of return object. The following then suffices to once again generate clean <code>autotest</code> results.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span> <span class="op">(</span><span class="va">x8</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span> <span class="op">(</span>dom <span class="op">=</span> <span class="st">"t"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div id="htmlwidget-0c2476a284a3ef380c02" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-0c2476a284a3ef380c02">{"x":{"filter":"none","data":[["1","2"],["diagnostic","diagnostic"],["return_desc_includes_class","return_class_matches_desc"],["my_function2","my_function2"],["(return object)","(return object)"],["(return object)","(return object)"],["Check whether description of return value specifies class","Compare class of return value with description"],["Function [my_function2] returns a value of class [data.frame], which differs from the value provided in the description","Function returns an object of class [data.frame] yet documentation describes class of value as [dataframe]"],[true,true],["fcc86a401caad113751dcd4738f2e0a5","fcc86a401caad113751dcd4738f2e0a5"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>type<\/th>\n      <th>test_name<\/th>\n      <th>fn_name<\/th>\n      <th>parameter<\/th>\n      <th>parameter_type<\/th>\n      <th>operation<\/th>\n      <th>content<\/th>\n      <th>test<\/th>\n      <th>yaml_hash<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script><p>That result still contains a couple of diagnostic messages, but it is now pretty clear what we need to do, which is to be precise with our specification of the class of return object. The following then suffices to once again generate clean <code>autotest</code> results.</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">code</span> <span class="op">[</span><span class="fl">4</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"#' @return The iris data set as data.frame"</span>
 <span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span> <span class="op">(</span><span class="va">code</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span> <span class="op">(</span><span class="va">path</span>, <span class="st">"R"</span>, <span class="st">"myfn2.R"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu">roxygen2</span><span class="fu">::</span><span class="fu"><a href="https://roxygen2.r-lib.org/reference/roxygenize.html" class="external-link">roxygenise</a></span> <span class="op">(</span><span class="va">path</span><span class="op">)</span> <span class="co"># need to update docs with seed param</span>
@@ -469,14 +538,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ✔ [1 / 2]: my_function</span>
 <span class="co">#&gt; ✔ [2 / 2]: my_function2</span>
-<span class="co">#&gt; # A tibble: 4 x 9</span>
-<span class="co">#&gt;   type  test_name fn_name parameter parameter_type operation content test </span>
-<span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt;</span>
-<span class="co">#&gt; 1 diag… double_i… my_fun… seed      numeric        Check wh… Parame… TRUE </span>
-<span class="co">#&gt; 2 diag… single_p… my_fun… seed      single numeric Length 2… Parame… TRUE </span>
-<span class="co">#&gt; 3 diag… int_as_n… my_fun… x         integer vector Integer … Functi… TRUE </span>
-<span class="co">#&gt; 4 diag… double_i… my_fun… x         numeric        Check wh… Parame… TRUE </span>
-<span class="co">#&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</span></code></pre></div>
+<span class="co">#&gt; NULL</span></code></pre></div>
 </div>
 <div id="general-procedure" class="section level2">
 <h2 class="hasAnchor">
