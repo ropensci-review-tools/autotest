@@ -34,23 +34,22 @@ double_is_int <- function (x) {
 
     res <- NULL
 
-    for (p in x$params) {
-        if (!is.null (attr (p, "is_int"))) {
-            if (attr (p, "is_int") &
-                storage.mode (p) == "double") {
+    p <- x$params [[x$i]]
 
-                res0 <- test_double_is_int.NULL ()
-                res0$type <- "diagnostic"
-                res0$fn_name <- x$fn
-                res0$parameter <- names (x$params) [x$i]
-                res0$content <- paste0 ("Parameter [",
-                                       names (x$params) [x$i],
-                                       "] is not specified as integer, yet ",
-                                       "only used as such; please use '1L' ",
-                                       "for integer, or 1.0 for non-integer ",
-                                       "values.")
-                res <- rbind (res, res0)
-            }
+    if (!is.null (attr (p, "is_int"))) {
+        if (attr (p, "is_int") &
+            storage.mode (p) == "double") {
+
+            res <- test_double_is_int.NULL ()
+            res$type <- "diagnostic"
+            res$fn_name <- x$fn
+            res$parameter <- names (x$params) [x$i]
+            res$content <- paste0 ("Parameter [",
+                                    names (x$params) [x$i],
+                                    "] is not specified as integer, yet ",
+                                    "only used as such; please use '1L' ",
+                                    "for integer, or 1.0 for non-integer ",
+                                    "values.")
         }
     }
 

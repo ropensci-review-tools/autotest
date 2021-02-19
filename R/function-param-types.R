@@ -127,6 +127,9 @@ double_or_int <- function (res) {
         ret <- FALSE
         if (is.numeric (p))
             ret <- all (abs (p - round (p)) < .Machine$double.eps)
+        if (!is.null (attr (p, "is_int")))
+            if (!attr (p, "is_int"))
+                ret <- FALSE
         return (ret)
     }
 
@@ -172,7 +175,7 @@ add_int_attrs <- function (x, int_val) {
 
     if (nrow (int_val) > 0) {
         for (p in int_val$par) {
-            if (is.numeric (x$params [[p]]) )
+            if (is.numeric (x$params [[p]]))
                 attr (x$params [[p]], "is_int") <- TRUE
         }
     }

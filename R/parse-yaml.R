@@ -31,6 +31,7 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
     names (parameters) <- names (preprocess) <- names (classes) <- fn_names
 
     parameters <- set_seq_storage_mode (parameters)
+    parameters <- param_had_dot (yaml, parameters)
 
     list (package = x$package,
           parameters = parameters,
@@ -274,6 +275,30 @@ set_seq_storage_mode <- function (p) {
                               return (j)
                                  })
                  return (i)
+       })
+
+    return (p)
+}
+
+#' Parameters intended to be double should be specified as `1.` or `1.0`. This
+#' routine checks for such as sets `attr(., "is_int") <- FALSE`, to then switch
+#' off `test_double_is_int`.
+#' @param p parameters part of `parse_yaml_template` result
+#' @noRd
+param_had_dot <- function (yaml, p) {
+
+    p <- lapply (p, function (i) {
+                     lapply (i, function (j) {
+                                 nm <- names (j)
+                                 ptn <- paste0 ("-\\s?", nm, ":")
+                                 ln <- strsplit (grep (ptn, yaml, value = TRUE),
+                                                 ptn)
+                                 if (storage.mode (j [[1]]) == "double" &
+                                     length (j [[1]]) == 1 &
+                                     grepl ("\\.", ln [[1]] [2]))
+                                     attr (j [[1]], "is_int") <- FALSE
+                                 return (j)
+                                 })
        })
 
     return (p)
