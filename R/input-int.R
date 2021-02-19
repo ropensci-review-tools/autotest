@@ -70,7 +70,7 @@ single_int_range <- function (x) {
 
     if (!any (is.finite (int_range))) {
 
-        if (any (grepl ("unrestricted", rd))) {
+        if (any (grepl ("unrestricted", rd, ignore.case = TRUE))) {
 
             res <- NULL
 
@@ -96,7 +96,7 @@ single_int_range <- function (x) {
 
         } else if (length (rd_range) == 1) {
 
-            if (grepl ("negative|positive", rd)) {
+            if (grepl ("negative|positive", rd, ignore.case = TRUE)) {
 
                 res <- NULL
 
