@@ -89,18 +89,37 @@ get_Rd_value <- function (package, fn_name) { # nolint
 }
 
 get_Rd_param <- function (package, fn_name, param_name) { # nolint
-    x <- tools::Rd_db (package = package)
-    xfn <- x [[paste0 (fn_name, ".Rd")]]
 
-    tags <- vapply (xfn, function (i) attr (i, "Rd_tag"), character (1))
-    xfn <- xfn [[which (tags == "\\arguments")]]
-    index <- vapply (xfn, function (i) attr (i, "Rd_tag"), character (1))
-    xfn <- xfn [which (index == "\\item")]
+    if (pkg_is_source (package)) {
 
-    params <- vapply (xfn, function (i) as.character (i [[1]]), character (1))
+        f <- file.path (package, "man", paste0 (fn_name, ".Rd"))
+        suppressWarnings (
+            rd <- tools::parse_Rd (f)
+            )
+    } else {
+
+        if (basename (package) == package) {
+
+            x <- tools::Rd_db (package = package)
+        } else {
+
+            # packages installed into local tempdir via covr:
+            x <- tools::Rd_db (package = basename (package),
+                               dir = package)
+        }
+
+        rd <- x [[paste0 (fn_name, ".Rd")]]
+    }
+
+    tags <- vapply (rd, function (i) attr (i, "Rd_tag"), character (1))
+    rd <- rd [[which (tags == "\\arguments")]]
+    index <- vapply (rd, function (i) attr (i, "Rd_tag"), character (1))
+    rd <- rd [which (index == "\\item")]
+
+    params <- vapply (rd, function (i) as.character (i [[1]]), character (1))
     ret <- NA_character_
     if (param_name %in% params)
-        ret <- as.character (xfn [[which (params == param_name)]] [[2]] [[1]])
+        ret <- as.character (rd [[which (params == param_name)]] [[2]] [[1]])
     return (ret)
 }
 
