@@ -883,6 +883,14 @@ add_default_vals_to_params <- function (x, package) {
                                         j <- paste0 ('\"', j, '\"')
                                     }
                                     return (j)  })
+                    # convert any single-val integer-mode fmls to "1L"-format
+                    fmls <- lapply (fmls, function (j) {
+                                        if (is.numeric (j) &
+                                            length (j) == 1 &
+                                            storage.mode (j) == "integer")
+                                            j <- paste0 (j, "L")
+                                        return (j)
+                                    })
                     out <- cbind (names (fmls),
                                   unname (do.call (c, fmls)))
                     rbind (x [[i]], out)
