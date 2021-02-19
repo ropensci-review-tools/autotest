@@ -307,7 +307,16 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # 
 
                 # Note that out1 can carry the `attr(., "is_int")`, so may not
                 # be identical to out2
-                if (max (abs (out1 - out2)) < .Machine$double.eps) {
+                no_change <- TRUE
+                if (is.numeric (out1) & is.numeric (out2)) {
+                    if (max (abs (out1 - out2)) > .Machine$double.eps)
+                        no_change <- FALSE
+                } else {
+                    no_change <- length (setdiff (out1, out2)) == 0
+                }
+
+                if (no_change) {
+
                     res <- NULL
                 } else {
                     res$type <- "diagnostic"
