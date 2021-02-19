@@ -875,13 +875,14 @@ add_default_vals_to_params <- function (x, package) {
                     # be replaced in order to represent valid yaml. These are
                     # subsequently reduced later because R's `parse` function
                     # only parses `\\` and not `\\\\`.
-                    fmls <- lapply (fmls, function (j)
-                                    gsub ("\\", "\\\\", j, fixed = TRUE))
-                    # insert all character fmls in escaped quotations:
+                    # Also insert all character fmls in escaped quotations:
                     fmls <- lapply (fmls, function (j) {
-                                        if (is.character (j))
-                                            j <- paste0 ('\"', j, '\"')
-                                        return (j)  })
+                                    if (is.character (j)) {
+                                        j <- gsub ("\\", "\\\\", j,
+                                                   fixed = TRUE)
+                                        j <- paste0 ('\"', j, '\"')
+                                    }
+                                    return (j)  })
                     out <- cbind (names (fmls),
                                   unname (do.call (c, fmls)))
                     rbind (x [[i]], out)
