@@ -16,13 +16,10 @@ get_param_types <- function (fn, params, par_lengths) {
 
     # use par_lengths to set any parameters identified as single through usage
     # in present example to vector
-    index <- which (par_lengths$fn == fn &
-                    par_lengths$par %in% names (params))
+    index <- which (par_lengths$par %in% names (params) & !par_lengths$single)
     if (length (index) > 0) {
-        par_lengths <- par_lengths [index, ]
-        index <- match (names (params), par_lengths$par)
-        is_vec <- !par_lengths$single
-        param_types [is_vec] <- "vector"
+        par_lengths <- par_lengths [index, , drop = FALSE]
+        param_types [match (par_lengths$par, names (params))] <- "vector"
     }
 
     return (param_types)
