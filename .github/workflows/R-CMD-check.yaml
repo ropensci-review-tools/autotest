@@ -14,7 +14,7 @@ name: R-CMD-check
 
 jobs:
   R-CMD-check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     if: "!(contains(github.event.head_commit.message, 'ci skip')||contains(github.event.head_commit.message, 'skip ci'))"
@@ -24,6 +24,12 @@ jobs:
 
       - uses: r-lib/actions/setup-r@v1
 
+      - name: Install dependencies
+        run: |
+          install.packages(c("remotes", "rcmdcheck"))
+          remotes::install_deps(dependencies = TRUE)
+        shell: Rscript {0}
+
       - name: Install system dependencies
         env:
           TEST_ALL: true
@@ -32,13 +38,6 @@ jobs:
           Rscript -e "remotes::install_github('r-hub/sysreqs')"
           sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
           sudo -s eval "$sysreqs"
-
-      - name: Install dependencies
-        run: |
-          install.packages(c("remotes", "rcmdcheck"))
-          remotes::install_deps(dependencies = TRUE)
-          remotes::install_cran("rcmdcheck")
-        shell: Rscript {0}
 
       - name: Check
         env:
