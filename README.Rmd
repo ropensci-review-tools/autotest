@@ -74,7 +74,9 @@ x <- autotest_package ("<package>")
 The argument to `autotest_package()` can either be the name of an installed
 package, or a path to a local directory containing the source for a package.
 The result is a `data.frame` of errors, warnings, and other diagnostic messages
-issued during package `auotest`-ing.
+issued during package `auotest`-ing. See the [main package
+vignette](https://ropenscilabs.github.io/autotest/articles/autotest.html) for
+an introductory tour of the package.
 
 ## What is tested?
 
@@ -101,20 +103,19 @@ print (a [, c ("parameter_type", "operation", "content")], n = Inf)
 
 ## How Does It Work?
 
-The `autotest_package()` function returns the results of implementing all tests
-on a given package, or on specified functions on that package. These results
-only indicate any divergence from expected behaviour, whether unexpected
-errors, warnings, or other behaviour. An ideal result is that
-`autotest_package()` returns nothing (strictly, `NULL`), indicating that all
-tests passed successfully. To see which tests were performed, or to see which
-tests would be performed prior to actually running them, the function has a
-`test` parameter with a default value of `TRUE`. Setting this to `FALSE`
-returns a (generally much larger) `data.frame` of all tests which would be
-conducted on the nominated package.
+The `autotest_package()` function returns by default a list of all tests which
+would be conducted on a package, without actually implementing those tests. The
+function has a parameter, `test`, with a default value of `FALSE`. Setting
+`test = TRUE` then implements all tests, and only returns results from tests
+which diverge from expected behaviour, whether unexpected errors, warnings, or
+other behaviour. An ideal result is that `autotest_package(., test = TRUE)`
+returns nothing (strictly, `NULL`), indicating that all tests passed
+successfully.
 
-Tests can also be selectively specified through the parameters `functions`,
-used to nominate functions to include in tests, or `exclude`, used to nominate
-functions to exclude from tests. The following code illustrates.
+Tests can also be selectively applied to particular functions through the
+parameters `functions`, used to nominate functions to include in tests, or
+`exclude`, used to nominate functions to exclude from tests. The following code
+illustrates.
 
 ```{r stats-var-no-test, fig.show = "hide"}
 x <- autotest_package (package = "stats", functions = "var", test = FALSE)

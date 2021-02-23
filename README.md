@@ -50,7 +50,10 @@ x <- autotest_package ("<package>")
 The argument to `autotest_package()` can either be the name of an
 installed package, or a path to a local directory containing the source
 for a package. The result is a `data.frame` of errors, warnings, and
-other diagnostic messages issued during package `auotest`-ing.
+other diagnostic messages issued during package `auotest`-ing. See the
+[main package
+vignette](https://ropenscilabs.github.io/autotest/articles/autotest.html)
+for an introductory tour of the package.
 
 ## What is tested?
 
@@ -70,8 +73,8 @@ autotest_types ()
 #>  6 dummy replace_r… <NA>    <NA>      rectangular    Replace cl… "(Should… TRUE 
 #>  7 dummy vector_to… <NA>    <NA>      vector         Convert ve… "(Should… TRUE 
 #>  8 dummy vector_cu… <NA>    <NA>      vector         Custom cla… "(Should… TRUE 
-#>  9 dummy trivial_n… <NA>    <NA>      numeric        Add trivia… "(Should… TRUE 
-#> 10 dummy int_as_nu… <NA>    <NA>      single integer Integer va… "(Should… TRUE 
+#>  9 dummy double_is… <NA>    <NA>      numeric        Check whet… "int par… TRUE 
+#> 10 dummy trivial_n… <NA>    <NA>      numeric        Add trivia… "(Should… TRUE 
 #> # … with 15 more rows
 ```
 
@@ -99,12 +102,12 @@ print (a [, c ("parameter_type", "operation", "content")], n = Inf)
 #>  6 rectangular        Replace class with new class "(Should yield same result)" 
 #>  7 vector             Convert vector input to lis… "(Should yield same result)" 
 #>  8 vector             Custom class definitions fo… "(Should yield same result)" 
-#>  9 numeric            Add trivial noise to numeri… "(Should yield same result)" 
-#> 10 single integer     Integer value converted to … "(Should yield same result)" 
-#> 11 single logical     Substitute integer values f… "(Function call should still…
-#> 12 single character   random character string as … "Should error"               
-#> 13 single character   Change case                  "(Should yield same result)" 
-#> 14 single integer     Ascertain permissible range  "Should either be unrestrict…
+#>  9 numeric            Check whether double is onl… "int parameters should have …
+#> 10 numeric            Add trivial noise to numeri… "(Should yield same result)" 
+#> 11 single integer     Integer value converted to … "(Should yield same result)" 
+#> 12 single logical     Substitute integer values f… "(Function call should still…
+#> 13 single character   random character string as … "Should error"               
+#> 14 single character   Change case                  "(Should yield same result)" 
 #> 15 single integer     Ascertain permissible range  "Should either be unrestrict…
 #> 16 single integer     Length 2 vector for length … "Should trigger message, war…
 #> 17 single name or fo… Unquoted name/formula as qu… "Capture any warnings or err…
@@ -120,22 +123,19 @@ print (a [, c ("parameter_type", "operation", "content")], n = Inf)
 
 ## How Does It Work?
 
-The `autotest_package()` function returns the results of implementing
-all tests on a given package, or on specified functions on that package.
-These results only indicate any divergence from expected behaviour,
+The `autotest_package()` function returns by default a list of all tests
+which would be conducted on a package, without actually implementing
+those tests. The function has a parameter, `test`, with a default value
+of `FALSE`. Setting `test = TRUE` then implements all tests, and only
+returns results from tests which diverge from expected behaviour,
 whether unexpected errors, warnings, or other behaviour. An ideal result
-is that `autotest_package()` returns nothing (strictly, `NULL`),
-indicating that all tests passed successfully. To see which tests were
-performed, or to see which tests would be performed prior to actually
-running them, the function has a `test` parameter with a default value
-of `TRUE`. Setting this to `FALSE` returns a (generally much larger)
-`data.frame` of all tests which would be conducted on the nominated
-package.
+is that `autotest_package(., test = TRUE)` returns nothing (strictly,
+`NULL`), indicating that all tests passed successfully.
 
-Tests can also be selectively specified through the parameters
-`functions`, used to nominate functions to include in tests, or
-`exclude`, used to nominate functions to exclude from tests. The
-following code illustrates.
+Tests can also be selectively applied to particular functions through
+the parameters `functions`, used to nominate functions to include in
+tests, or `exclude`, used to nominate functions to exclude from tests.
+The following code illustrates.
 
 ``` r
 x <- autotest_package (package = "stats", functions = "var", test = FALSE)
@@ -147,7 +147,7 @@ x <- autotest_package (package = "stats", functions = "var", test = FALSE)
 #> ✔ [3 / 4]: cov
 #> ✔ [4 / 4]: cov
 print (x)
-#> # A tibble: 122 x 9
+#> # A tibble: 112 x 9
 #>    type  test_name fn_name parameter parameter_type operation content test 
 #>    <chr> <chr>     <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
 #>  1 dummy int_as_n… var     x         integer vector Integer … (Shoul… TRUE 
@@ -160,15 +160,15 @@ print (x)
 #>  8 dummy return_s… var     (return … (return objec… Check th… <NA>    TRUE 
 #>  9 dummy return_v… var     (return … (return objec… Check th… <NA>    TRUE 
 #> 10 dummy return_d… var     (return … (return objec… Check wh… <NA>    TRUE 
-#> # … with 112 more rows, and 1 more variable: yaml_hash <chr>
+#> # … with 102 more rows, and 1 more variable: yaml_hash <chr>
 ```
 
 Testing the `var` function also tests `cor` and `cov`, because the
 package works by scraping the documented examples from the associated
 `.Rd` help file, and `?var` shows that the help topic is `cor`, and
 includes the three functions, `var`, `cor`, and `cov`. That result
-details the 122 tests which would be applied to the `var` function from
-the `stats` package. These 122 tests yield the following results when
+details the 112 tests which would be applied to the `var` function from
+the `stats` package. These 112 tests yield the following results when
 actually applied:
 
 ``` r
@@ -183,34 +183,35 @@ print (y)
 #> # A tibble: 16 x 9
 #>    type  test_name fn_name parameter parameter_type operation content test 
 #>    <chr> <chr>     <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
-#>  1 diag… vector_t… var     x         vector         Convert … "Funct… TRUE 
-#>  2 diag… vector_t… var     y         vector         Convert … "Funct… TRUE 
-#>  3 diag… vector_t… cor     x         vector         Convert … "Funct… TRUE 
-#>  4 diag… vector_t… cor     y         vector         Convert … "Funct… TRUE 
-#>  5 diag… single_c… cor     use       single charac… upper-ca… "is ca… TRUE 
-#>  6 diag… single_c… cor     method    single charac… upper-ca… "is ca… TRUE 
-#>  7 diag… single_c… cor     use       single charac… upper-ca… "is ca… TRUE 
-#>  8 diag… single_c… cor     method    single charac… upper-ca… "is ca… TRUE 
-#>  9 diag… single_c… cov     use       single charac… upper-ca… "is ca… TRUE 
-#> 10 diag… single_c… cov     method    single charac… upper-ca… "is ca… TRUE 
-#> 11 diag… single_c… cov     use       single charac… upper-ca… "is ca… TRUE 
-#> 12 diag… single_c… cov     method    single charac… upper-ca… "is ca… TRUE 
-#> 13 diag… single_c… cov     use       single charac… upper-ca… "is ca… TRUE 
-#> 14 diag… single_c… cov     method    single charac… upper-ca… "is ca… TRUE 
-#> 15 warn… par_is_d… var     use       <NA>           Check th… "Examp… TRUE 
-#> 16 warn… par_is_d… cov     y         <NA>           Check th… "Examp… TRUE 
+#>  1 diag… vector_t… var     x         vector         Convert … Functi… TRUE 
+#>  2 diag… int_as_n… var     x         integer vector Integer … Functi… TRUE 
+#>  3 diag… int_as_n… var     y         integer vector Integer … Functi… TRUE 
+#>  4 diag… vector_t… var     y         vector         Convert … Functi… TRUE 
+#>  5 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
+#>  6 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE 
+#>  7 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
+#>  8 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE 
+#>  9 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
+#> 10 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
+#> 11 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
+#> 12 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
+#> 13 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
+#> 14 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
+#> 15 warn… par_is_d… var     use       <NA>           Check th… Exampl… TRUE 
+#> 16 warn… par_is_d… cov     y         <NA>           Check th… Exampl… TRUE 
 #> # … with 1 more variable: yaml_hash <chr>
 ```
 
-And only 16 of the original 122 tests produced unexpected behaviour.
+And only 16 of the original 112 tests produced unexpected behaviour.
 There were in fact only three kinds of tests which produced these 16
 results:
 
 ``` r
 unique (y$operation)
 #> [1] "Convert vector input to list-columns"      
-#> [2] "upper-case character parameter"            
-#> [3] "Check that parameter usage is demonstrated"
+#> [2] "Integer value converted to numeric"        
+#> [3] "upper-case character parameter"            
+#> [4] "Check that parameter usage is demonstrated"
 ```
 
 The first involves conversion of a vector to a list-column
@@ -233,25 +234,27 @@ y <- autotest_package (package = "stats", functions = "var",
 #> ✔ [3 / 4]: cov
 #> ✔ [4 / 4]: cov
 print (y)
-#> # A tibble: 16 x 9
+#> # A tibble: 18 x 9
 #>    type  test_name fn_name parameter parameter_type operation content test 
 #>    <chr> <chr>     <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
 #>  1 no_t… vector_t… var     x         vector         Convert … (Shoul… FALSE
-#>  2 no_t… vector_t… var     y         vector         Convert … (Shoul… FALSE
-#>  3 no_t… vector_t… cor     x         vector         Convert … (Shoul… FALSE
-#>  4 no_t… vector_t… cor     y         vector         Convert … (Shoul… FALSE
-#>  5 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
-#>  6 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE 
+#>  2 diag… int_as_n… var     x         integer vector Integer … Functi… TRUE 
+#>  3 diag… int_as_n… var     y         integer vector Integer … Functi… TRUE 
+#>  4 no_t… vector_t… var     y         vector         Convert … (Shoul… FALSE
+#>  5 no_t… vector_t… cor     x         vector         Convert … (Shoul… FALSE
+#>  6 no_t… vector_t… cor     y         vector         Convert … (Shoul… FALSE
 #>  7 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
 #>  8 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE 
-#>  9 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
-#> 10 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
+#>  9 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
+#> 10 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE 
 #> 11 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
 #> 12 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
 #> 13 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
 #> 14 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
-#> 15 warn… par_is_d… var     use       <NA>           Check th… Exampl… TRUE 
-#> 16 warn… par_is_d… cov     y         <NA>           Check th… Exampl… TRUE 
+#> 15 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
+#> 16 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
+#> 17 warn… par_is_d… var     use       <NA>           Check th… Exampl… TRUE 
+#> 18 warn… par_is_d… cov     y         <NA>           Check th… Exampl… TRUE 
 #> # … with 1 more variable: yaml_hash <chr>
 ```
 
