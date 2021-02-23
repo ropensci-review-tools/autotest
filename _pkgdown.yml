@@ -1,0 +1,15 @@
+url: https://ropenscilabs.github.io/autotest
+
+reference:
+- title: Main functions
+  contents:
+  - has_concept("main_functions")
+- title: Functions for YAML templates
+  contents:
+  - has_concept("yaml")
+- title: testthat expectations
+  contents:
+  - has_concept("expectations")
+- title: autotest class definition
+  contents:
+  - has_concept("class")
