@@ -165,7 +165,12 @@ previous "diagnostic".
 
 ## Can `autotest` automatically create tests in my `tests` directory?
 
-Not yet, but that should be possible soon. Stay tuned ...
+Not yet, but that should be possible soon. In the meantime, there are
+[`testthat`](https://testthat.r-lib.org) expectations, listed in the [main
+package
+functions](https://ropenscilabs.github.io/autotest/reference/index.html), which
+enable `autotest` to be used in a package's test suite.
+
 
 ## Prior work
 
