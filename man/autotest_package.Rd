@@ -38,3 +38,8 @@ defaults to \code{TRUE}. Setting any tests to \code{FALSE} will avoid running th
 Automatically test an entire package by converting examples to \code{yaml} format
 and submitting each to the \link{autotest_yaml} function.
 }
+\seealso{
+Other main_functions: 
+\code{\link{autotest_types}()}
+}
+\concept{main_functions}

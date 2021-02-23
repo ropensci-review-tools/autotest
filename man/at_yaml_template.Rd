@@ -16,6 +16,7 @@ Generate a 'yaml' template for an 'autotest'.
 }
 \seealso{
 Other yaml: 
-\code{\link{autotest_yaml}()}
+\code{\link{autotest_yaml}()},
+\code{\link{examples_to_yaml}()}
 }
 \concept{yaml}

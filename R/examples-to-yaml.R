@@ -9,6 +9,7 @@
 #' be obtained.
 #' @param exclude Names of functions to exclude from 'yaml' template
 #' @inheritParams autotest_package
+#' @family yaml
 #' @export
 examples_to_yaml <- function (package = NULL,
                               functions = NULL,

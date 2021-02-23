@@ -152,6 +152,7 @@ autotest_single_yaml <- function (yaml = NULL,
 #' @param exclude Optional character vector containing names of any functions of
 #' nominated package to be excluded from 'autotesting'.
 #' @inheritParams autotest_yaml
+#' @family main_functions
 #' @export
 autotest_package <- function (package = ".",
                               functions = NULL,
@@ -237,6 +238,7 @@ fn_from_yaml <- function (yaml) {
 #' @return An `autotest` object with each row listing one unique type of test
 #' which can be applied to every parameter (of the appropriate class) of each
 #' function.
+#' @family main_functions
 #'
 #' @export
 autotest_types <- function (notest = NULL) {

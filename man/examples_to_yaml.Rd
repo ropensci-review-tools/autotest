@@ -26,3 +26,9 @@ Convert examples for a specified package, optionally restricted to one or
 more specified functions, to a list of 'autotest' 'yaml' objects to use to
 automatically test package.
 }
+\seealso{
+Other yaml: 
+\code{\link{at_yaml_template}()},
+\code{\link{autotest_yaml}()}
+}
+\concept{yaml}
