@@ -31,7 +31,7 @@ This vignette demonstrates the easiest way to use `autotest`, which is to apply
 it continuously through the entire process of package development. The best way
 to understand the process is to obtain a local copy of the vignette itself from
 [this
-link](https://github.com/ropenscilabs/autotest/blob/master/vignettes/autotest-package.Rmd),
+link](https://github.com/ropenscilabs/autotest/blob/master/vignettes/autotest.Rmd),
 and step through the code. We begin by constructing a simple package in the
 local
 [`tempdir()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/tempfile.html).
