@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.806</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.810</span>
       </span>
     </div>
 
@@ -81,7 +81,7 @@
       <h1 data-toc-skip>Control of tests</h1>
                         <h4 data-toc-skip class="author">Mark Padgham</h4>
             
-            <h4 data-toc-skip class="date">2021-02-22</h4>
+            <h4 data-toc-skip class="date">2021-02-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ropenscilabs/autotest/blob/master/vignettes/autotest-control.Rmd" class="external-link"><code>vignettes/autotest-control.Rmd</code></a></small>
       <div class="hidden name"><code>autotest-control.Rmd</code></div>
@@ -90,7 +90,7 @@
 
     
     
-<p>The <a href="https://ropenscilabs.github.io/autotest/articles/autotest.html" class="external-link">first vignette</a> demonstrates the process of applying <code>autotest</code> at all stages of package development. This vignette provides additional information for those applying <code>autotest</code> to already developed packages, in particular through describing how tests can be selectively applied to a package. By default the <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html" class="external-link"><code>autotest_package()</code> function</a> tests an entire package, but testing can also be restricted to specified functions only. This vignette will demonstrate application to a few functions from the <a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/00Index.html" class="external-link"><code>stats</code> package</a>, starting by loading the package.</p>
+<p>The <a href="https://ropenscilabs.github.io/autotest/articles/autotest.html">first vignette</a> demonstrates the process of applying <code>autotest</code> at all stages of package development. This vignette provides additional information for those applying <code>autotest</code> to already developed packages, in particular through describing how tests can be selectively applied to a package. By default the <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html"><code>autotest_package()</code> function</a> tests an entire package, but testing can also be restricted to specified functions only. This vignette will demonstrate application to a few functions from the <a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/00Index.html" class="external-link"><code>stats</code> package</a>, starting by loading the package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span> <span class="op">(</span><span class="va"><a href="https://github.com/ropenscilabs/autotest" class="external-link">autotest</a></span><span class="op">)</span></code></pre></div>
 <div id="rd-files-example-code-and-the-autotest-workflow" class="section level2">
@@ -184,14 +184,14 @@
 <li>Identify all points at which those functions are called;</li>
 <li>Identify all objects passed to those values, including values, classes, attributes, and other properties.</li>
 <li>Identify any other parameters not explicitly passed in example code, but defined via default value;</li>
-<li>Mutate the values of all parameters according to the kinds of test described in <a href="https://ropenscilabs.github.io/autotest/reference/autotest_types.html" class="external-link"><code>autotest_types()</code></a>.</li>
+<li>Mutate the values of all parameters according to the kinds of test described in <a href="https://ropenscilabs.github.io/autotest/reference/autotest_types.html"><code>autotest_types()</code></a>.</li>
 </ol>
 <p>Calling <code><a href="../reference/autotest_package.html">autotest_package(..., test = FALSE)</a></code> implements the first 5 of those 6 steps, and returns data on all possible mutations of each parameter, while setting <code>test = TRUE</code> actually passes the mutated parameters to the specified functions, and returns reports on any unexpected behaviour.</p>
 </div>
 <div id="autotest-ing-the-statscov-function" class="section level2">
 <h2 class="hasAnchor">
 <a href="#autotest-ing-the-statscov-function" class="anchor"></a>3. <code>autotest</code>-ing the <code>stats::cov</code> function</h2>
-<p>The preceding sections describe how <code>autotest</code> actually works, while the present section demonstrates how the package is typically used in practice. As demonstrated in the <a href="https://ropenscilabs.github.io/autotest/" class="external-link"><code>README</code></a>, information on all tests implemented within the package can be obtained by calling the <a href="https://ropenscilabs.github.io/autotest/reference/autotest_types.html" class="external-link"><code>autotest_types()</code> function</a>. The main function for testing package is <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html" class="external-link"><code>autotest_package()</code></a>. The nominated package can be either an installed package, or the full path to a local directory containing a package’s source code. By default all <code>.Rd</code> files of a package are tested, with restriction to specified functions possible either by nominating functions to exclude from testing (via the <code>exclude</code> parameter), or functions to include (via the <code>functions</code> parameter). The <code>functions</code> parameter is intended to enable testing only of specified functions, while the <code>exclude</code> parameter is intended to enable testing of all functions except those specified with this parameter. Specifying values for both of these parameters is not generally recommended.</p>
+<p>The preceding sections describe how <code>autotest</code> actually works, while the present section demonstrates how the package is typically used in practice. As demonstrated in the <a href="https://ropenscilabs.github.io/autotest/"><code>README</code></a>, information on all tests implemented within the package can be obtained by calling the <a href="https://ropenscilabs.github.io/autotest/reference/autotest_types.html"><code>autotest_types()</code> function</a>. The main function for testing package is <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html"><code>autotest_package()</code></a>. The nominated package can be either an installed package, or the full path to a local directory containing a package’s source code. By default all <code>.Rd</code> files of a package are tested, with restriction to specified functions possible either by nominating functions to exclude from testing (via the <code>exclude</code> parameter), or functions to include (via the <code>functions</code> parameter). The <code>functions</code> parameter is intended to enable testing only of specified functions, while the <code>exclude</code> parameter is intended to enable testing of all functions except those specified with this parameter. Specifying values for both of these parameters is not generally recommended.</p>
 <div id="listing-tests-without-conducting-them" class="section level3">
 <h3 class="hasAnchor">
 <a href="#listing-tests-without-conducting-them" class="anchor"></a>3.1 Listing tests without conducting them</h3>
@@ -210,18 +210,18 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span> <span class="op">(</span><span class="va">xf</span><span class="op">)</span></code></pre></div>
 <pre><code>#&gt; # A tibble: 112 x 9
-#&gt;    type  test_name fn_name parameter parameter_type operation content test 
-#&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt;
-#&gt;  1 dummy int_as_n… var     x         integer vector Integer … (Shoul… TRUE 
-#&gt;  2 dummy vector_c… var     x         vector         Custom c… (Shoul… TRUE 
-#&gt;  3 dummy vector_t… var     x         vector         Convert … (Shoul… TRUE 
-#&gt;  4 dummy negate_l… var     na.rm     single logical Negate d… (Funct… TRUE 
-#&gt;  5 dummy subst_in… var     na.rm     single logical Substitu… (Funct… TRUE 
-#&gt;  6 dummy subst_ch… var     na.rm     single logical Substitu… should… TRUE 
-#&gt;  7 dummy single_p… var     na.rm     single logical Length 2… Should… TRUE 
-#&gt;  8 dummy return_s… var     (return … (return objec… Check th… &lt;NA&gt;    TRUE 
-#&gt;  9 dummy return_v… var     (return … (return objec… Check th… &lt;NA&gt;    TRUE 
-#&gt; 10 dummy return_d… var     (return … (return objec… Check wh… &lt;NA&gt;    TRUE 
+#&gt;    type  test_name  fn_name parameter  parameter_type operation  content   test 
+#&gt;    &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;     &lt;lgl&gt;
+#&gt;  1 dummy int_as_nu… var     x          integer vector Integer v… (Should … TRUE 
+#&gt;  2 dummy vector_cu… var     x          vector         Custom cl… (Should … TRUE 
+#&gt;  3 dummy vector_to… var     x          vector         Convert v… (Should … TRUE 
+#&gt;  4 dummy negate_lo… var     na.rm      single logical Negate de… (Functio… TRUE 
+#&gt;  5 dummy subst_int… var     na.rm      single logical Substitut… (Functio… TRUE 
+#&gt;  6 dummy subst_cha… var     na.rm      single logical Substitut… should t… TRUE 
+#&gt;  7 dummy single_pa… var     na.rm      single logical Length 2 … Should t… TRUE 
+#&gt;  8 dummy return_su… var     (return o… (return objec… Check tha… &lt;NA&gt;      TRUE 
+#&gt;  9 dummy return_va… var     (return o… (return objec… Check tha… &lt;NA&gt;      TRUE 
+#&gt; 10 dummy return_de… var     (return o… (return objec… Check whe… &lt;NA&gt;      TRUE 
 #&gt; # … with 102 more rows, and 1 more variable: yaml_hash &lt;chr&gt;</code></pre>
 <p>The object returned from <code><a href="../reference/autotest_package.html">autotest_package()</a></code> is a simple <a href="https://tibble.tidyverse.org" class="external-link"><code>tibble</code></a>, with each row detailing one test which would be applied to the each of the listed functions and parameters. Because no tests were conducted, all tests will generally have a <code>type</code> of <code>"dummy"</code>. In this case, however, we see the following:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -256,24 +256,24 @@
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span> <span class="op">(</span><span class="va">xt</span><span class="op">)</span></code></pre></div>
 <pre><code>#&gt; # A tibble: 16 x 9
-#&gt;    type  test_name fn_name parameter parameter_type operation content test 
-#&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt;
-#&gt;  1 diag… vector_t… var     x         vector         Convert … Functi… TRUE 
-#&gt;  2 diag… int_as_n… var     x         integer vector Integer … Functi… TRUE 
-#&gt;  3 diag… int_as_n… var     y         integer vector Integer … Functi… TRUE 
-#&gt;  4 diag… vector_t… var     y         vector         Convert … Functi… TRUE 
-#&gt;  5 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
-#&gt;  6 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE 
-#&gt;  7 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
-#&gt;  8 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE 
-#&gt;  9 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
-#&gt; 10 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
-#&gt; 11 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
-#&gt; 12 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
-#&gt; 13 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
-#&gt; 14 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
-#&gt; 15 warn… par_is_d… var     use       &lt;NA&gt;           Check th… Exampl… TRUE 
-#&gt; 16 warn… par_is_d… cov     y         &lt;NA&gt;           Check th… Exampl… TRUE 
+#&gt;    type   test_name  fn_name parameter parameter_type operation  content   test 
+#&gt;    &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;     &lt;lgl&gt;
+#&gt;  1 diagn… vector_to… var     x         vector         Convert v… Function… TRUE 
+#&gt;  2 diagn… int_as_nu… var     x         integer vector Integer v… Function… TRUE 
+#&gt;  3 diagn… int_as_nu… var     y         integer vector Integer v… Function… TRUE 
+#&gt;  4 diagn… vector_to… var     y         vector         Convert v… Function… TRUE 
+#&gt;  5 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE 
+#&gt;  6 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE 
+#&gt;  7 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE 
+#&gt;  8 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE 
+#&gt;  9 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
+#&gt; 10 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
+#&gt; 11 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
+#&gt; 12 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
+#&gt; 13 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
+#&gt; 14 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
+#&gt; 15 warni… par_is_de… var     use       &lt;NA&gt;           Check tha… Examples… TRUE 
+#&gt; 16 warni… par_is_de… cov     y         &lt;NA&gt;           Check tha… Examples… TRUE 
 #&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</code></pre>
 <p>And the 110 tests yielded 16 unexpected responses. The best way to understand these results is to examine the object in detail, typically through <code><a href="https://rdrr.io/r/utils/edit.html" class="external-link">edit(xt)</a></code>, or equivalently in RStudio, clicking on the listed object. The different types of tests which produced unexpected responses were:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -287,12 +287,12 @@
 <span class="co">#&gt;                                          2 </span>
 <span class="co">#&gt;             upper-case character parameter </span>
 <span class="co">#&gt;                                         10</span></code></pre></div>
-<p>Two of those reflect the previous results regarding parameters unable to be tested, while the remainder come from only two types of tests. Information on the precise results is contained in the <code>content</code> column, although in this case it is fairly straightforward to see that the operation “upper case character parameter” arises because the <code>use</code> and <code>method</code> parameters of the <code>cor</code> and <code>cov</code> functions are case-dependent, and are only accepted in lower case form. The other operation is the conversion of vectors to list-column format, as described in the <a href="https://ropenscilabs.github.io/autotest/articles/autotest.html" class="external-link">first vignette</a>.</p>
+<p>Two of those reflect the previous results regarding parameters unable to be tested, while the remainder come from only two types of tests. Information on the precise results is contained in the <code>content</code> column, although in this case it is fairly straightforward to see that the operation “upper case character parameter” arises because the <code>use</code> and <code>method</code> parameters of the <code>cor</code> and <code>cov</code> functions are case-dependent, and are only accepted in lower case form. The other operation is the conversion of vectors to list-column format, as described in the <a href="https://ropenscilabs.github.io/autotest/articles/autotest.html">first vignette</a>.</p>
 </div>
 <div id="controlling-which-tests-are-conducted" class="section level3">
 <h3 class="hasAnchor">
 <a href="#controlling-which-tests-are-conducted" class="anchor"></a>3.4 Controlling which tests are conducted</h3>
-<p>The <code>test</code> parameter of the <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html" class="external-link"><code>autotest_package()</code> function</a> can be used to control whether all tests are conducted or not. Finer-level control over tests can be achieved by specifying the <code>test_data</code> parameter. This parameter must be an object of class <code>autotest_package</code>, as returned by either the <a href="https://ropenscilabs.github.io/autotest/reference/autotest_types.html" class="external-link"><code>autotest_types()</code></a>] or [<code>autotest_package()](https://ropenscilabs.github.io/autotest/reference/autotest_package.html) functions. The former of these is the function which specifies all unique tests, and so returns a relatively small</code>tibble` of 25 rows. The following lines demonstrate how to switch off the list-column test for all functions and parameters:</p>
+<p>The <code>test</code> parameter of the <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html"><code>autotest_package()</code> function</a> can be used to control whether all tests are conducted or not. Finer-level control over tests can be achieved by specifying the <code>test_data</code> parameter. This parameter must be an object of class <code>autotest_package</code>, as returned by either the <a href="https://ropenscilabs.github.io/autotest/reference/autotest_types.html"><code>autotest_types()</code></a>] or [<code>autotest_package()](https://ropenscilabs.github.io/autotest/reference/autotest_package.html) functions. The former of these is the function which specifies all unique tests, and so returns a relatively small</code>tibble` of 25 rows. The following lines demonstrate how to switch off the list-column test for all functions and parameters:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">types</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autotest_types.html">autotest_types</a></span><span class="op">(</span><span class="op">)</span>
 <span class="va">types</span><span class="op">$</span><span class="va">test</span> <span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span> <span class="op">(</span><span class="st">"list_col"</span>, <span class="va">types</span><span class="op">$</span><span class="va">test_name</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span>
@@ -309,29 +309,29 @@
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span> <span class="op">(</span><span class="va">xt2</span><span class="op">)</span></code></pre></div>
 <pre><code>#&gt; # A tibble: 18 x 9
-#&gt;    type  test_name fn_name parameter parameter_type operation content test 
-#&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt;
-#&gt;  1 no_t… vector_t… var     x         vector         Convert … (Shoul… FALSE
-#&gt;  2 diag… int_as_n… var     x         integer vector Integer … Functi… TRUE 
-#&gt;  3 diag… int_as_n… var     y         integer vector Integer … Functi… TRUE 
-#&gt;  4 no_t… vector_t… var     y         vector         Convert … (Shoul… FALSE
-#&gt;  5 no_t… vector_t… cor     x         vector         Convert … (Shoul… FALSE
-#&gt;  6 no_t… vector_t… cor     y         vector         Convert … (Shoul… FALSE
-#&gt;  7 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
-#&gt;  8 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE 
-#&gt;  9 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
-#&gt; 10 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE 
-#&gt; 11 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
-#&gt; 12 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
-#&gt; 13 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
-#&gt; 14 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
-#&gt; 15 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
-#&gt; 16 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
-#&gt; 17 warn… par_is_d… var     use       &lt;NA&gt;           Check th… Exampl… TRUE 
-#&gt; 18 warn… par_is_d… cov     y         &lt;NA&gt;           Check th… Exampl… TRUE 
+#&gt;    type   test_name  fn_name parameter parameter_type operation  content   test 
+#&gt;    &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;     &lt;lgl&gt;
+#&gt;  1 no_te… vector_to… var     x         vector         Convert v… (Should … FALSE
+#&gt;  2 diagn… int_as_nu… var     x         integer vector Integer v… Function… TRUE 
+#&gt;  3 diagn… int_as_nu… var     y         integer vector Integer v… Function… TRUE 
+#&gt;  4 no_te… vector_to… var     y         vector         Convert v… (Should … FALSE
+#&gt;  5 no_te… vector_to… cor     x         vector         Convert v… (Should … FALSE
+#&gt;  6 no_te… vector_to… cor     y         vector         Convert v… (Should … FALSE
+#&gt;  7 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE 
+#&gt;  8 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE 
+#&gt;  9 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE 
+#&gt; 10 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE 
+#&gt; 11 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
+#&gt; 12 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
+#&gt; 13 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
+#&gt; 14 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
+#&gt; 15 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
+#&gt; 16 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
+#&gt; 17 warni… par_is_de… var     use       &lt;NA&gt;           Check tha… Examples… TRUE 
+#&gt; 18 warni… par_is_de… cov     y         &lt;NA&gt;           Check tha… Examples… TRUE 
 #&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</code></pre>
-<p>The result now has four rows with <code>test == FALSE</code>, and <code>type == "no_test"</code>, indicating that these tests were not actually conducted. That also makes apparent the role of these <code>test</code> flags. When initially calling <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html" class="external-link"><code>autotest_package()</code></a> with default <code>test = FALSE</code>, the result contains a <code>test</code> column in which all values are <code>TRUE</code>. Although potentially perplexing at first, this value must be understood in relation to the <code>type</code> column. A <code>type</code> of <code>"dummy"</code> indicates that a test has not been conducted, in which case <code>test = TRUE</code> is a control flag used to determine what would be conducted if these data were submitted as the <code>test_data</code> parameter. For all <code>type</code> values other than <code>"dummy"</code>, the <code>test</code> column specifies whether or not each test was actually conducted.</p>
-<p>The preceding example showed how the results of <a href="https://ropenscilabs.github.io/autotest/reference/autotest_types.html" class="external-link"><code>autotest_types()</code></a> can be used to control which tests are implemented for an entire package. Finer-scale control can be achieved by modifying individual rows of the full table returned by <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html" class="external-link"><code>autotest_package()</code></a>. The following code demonstrates by showing how list-column tests can be switched off only for particular functions, starting again with the <code>xf</code> data of dummy tests generated above.</p>
+<p>The result now has four rows with <code>test == FALSE</code>, and <code>type == "no_test"</code>, indicating that these tests were not actually conducted. That also makes apparent the role of these <code>test</code> flags. When initially calling <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html"><code>autotest_package()</code></a> with default <code>test = FALSE</code>, the result contains a <code>test</code> column in which all values are <code>TRUE</code>. Although potentially perplexing at first, this value must be understood in relation to the <code>type</code> column. A <code>type</code> of <code>"dummy"</code> indicates that a test has not been conducted, in which case <code>test = TRUE</code> is a control flag used to determine what would be conducted if these data were submitted as the <code>test_data</code> parameter. For all <code>type</code> values other than <code>"dummy"</code>, the <code>test</code> column specifies whether or not each test was actually conducted.</p>
+<p>The preceding example showed how the results of <a href="https://ropenscilabs.github.io/autotest/reference/autotest_types.html"><code>autotest_types()</code></a> can be used to control which tests are implemented for an entire package. Finer-scale control can be achieved by modifying individual rows of the full table returned by <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html"><code>autotest_package()</code></a>. The following code demonstrates by showing how list-column tests can be switched off only for particular functions, starting again with the <code>xf</code> data of dummy tests generated above.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">xf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>,
                         functions <span class="op">=</span> <span class="st">"cor"</span><span class="op">)</span>
@@ -355,24 +355,24 @@
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span> <span class="op">(</span><span class="va">xt3</span><span class="op">)</span></code></pre></div>
 <pre><code>#&gt; # A tibble: 16 x 9
-#&gt;    type  test_name fn_name parameter parameter_type operation content test 
-#&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt;
-#&gt;  1 no_t… vector_t… var     x         vector         Convert … (Shoul… FALSE
-#&gt;  2 diag… int_as_n… var     x         integer vector Integer … Functi… TRUE 
-#&gt;  3 diag… int_as_n… var     y         integer vector Integer … Functi… TRUE 
-#&gt;  4 no_t… vector_t… var     y         vector         Convert … (Shoul… FALSE
-#&gt;  5 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
-#&gt;  6 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE 
-#&gt;  7 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE 
-#&gt;  8 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE 
-#&gt;  9 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
-#&gt; 10 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
-#&gt; 11 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
-#&gt; 12 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
-#&gt; 13 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE 
-#&gt; 14 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE 
-#&gt; 15 warn… par_is_d… var     use       &lt;NA&gt;           Check th… Exampl… TRUE 
-#&gt; 16 warn… par_is_d… cov     y         &lt;NA&gt;           Check th… Exampl… TRUE 
+#&gt;    type   test_name  fn_name parameter parameter_type operation  content   test 
+#&gt;    &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;     &lt;lgl&gt;
+#&gt;  1 no_te… vector_to… var     x         vector         Convert v… (Should … FALSE
+#&gt;  2 diagn… int_as_nu… var     x         integer vector Integer v… Function… TRUE 
+#&gt;  3 diagn… int_as_nu… var     y         integer vector Integer v… Function… TRUE 
+#&gt;  4 no_te… vector_to… var     y         vector         Convert v… (Should … FALSE
+#&gt;  5 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE 
+#&gt;  6 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE 
+#&gt;  7 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE 
+#&gt;  8 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE 
+#&gt;  9 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
+#&gt; 10 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
+#&gt; 11 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
+#&gt; 12 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
+#&gt; 13 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
+#&gt; 14 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
+#&gt; 15 warni… par_is_de… var     use       &lt;NA&gt;           Check tha… Examples… TRUE 
+#&gt; 16 warni… par_is_de… cov     y         &lt;NA&gt;           Check tha… Examples… TRUE 
 #&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</code></pre>
 <p>These procedures illustrate the three successively finer levels of control over tests, by switching them off for:</p>
 <ol style="list-style-type: decimal">
@@ -392,8 +392,8 @@
 <li>
 <code>expect_autotest_testdata</code>, to be used when specific tests are switched off.</li>
 </ul>
-<p>Using these requires adding <code>autotest</code> to the <code>Suggests</code> list of your package’s <code>DESCRIPTION</code> file, along with <code>testthat</code>. Note that the use of testing frameworks other than <a href="https://testthat.r-lib.org" class="external-link"><code>testthat</code></a> is possible through writing custom expectations for the output of <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html" class="external-link"><code>autotest_package()</code></a>, but that is not considered here.</p>
-<p>To use these expectations, you must first decide which, if any, tests you judge to be not applicable to your package, and switch them off following the procedure described above (that is, at the package level through modifying the <code>test</code> flag of the object returned from <a href="https://ropenscilabs.github.io/autotest/reference/autotest_types.html" class="external-link"><code>autotest_types()</code></a>, or at finer function- or parameter-levels by modifying equivalent values in the object returned from <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html" class="external-link"><code>autotest_package(..., test = FALSE)</code></a>. These objects must then be passed as the <code>test_data</code> parameter to <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html" class="external-link"><code>autotest_package()</code></a>. If you consider all tests to be applicable, then <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html" class="external-link"><code>autotest_package()</code></a> can be called without specifying this parameter.</p>
+<p>Using these requires adding <code>autotest</code> to the <code>Suggests</code> list of your package’s <code>DESCRIPTION</code> file, along with <code>testthat</code>. Note that the use of testing frameworks other than <a href="https://testthat.r-lib.org" class="external-link"><code>testthat</code></a> is possible through writing custom expectations for the output of <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html"><code>autotest_package()</code></a>, but that is not considered here.</p>
+<p>To use these expectations, you must first decide which, if any, tests you judge to be not applicable to your package, and switch them off following the procedure described above (that is, at the package level through modifying the <code>test</code> flag of the object returned from <a href="https://ropenscilabs.github.io/autotest/reference/autotest_types.html"><code>autotest_types()</code></a>, or at finer function- or parameter-levels by modifying equivalent values in the object returned from <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html"><code>autotest_package(..., test = FALSE)</code></a>. These objects must then be passed as the <code>test_data</code> parameter to <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html"><code>autotest_package()</code></a>. If you consider all tests to be applicable, then <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html"><code>autotest_package()</code></a> can be called without specifying this parameter.</p>
 <p>If you switch tests off via a <code>test_data</code> parameter, then the <code>expect_autotest</code> expectation requires you to append an additional column to the <code>test_data</code> object called <code>"note"</code> (case-insensitive), and include a note for each row which has <code>test = FALSE</code> explaining why those tests have been switched off. Lines in your test directory should look something like this:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span> <span class="op">(</span><span class="va"><a href="https://testthat.r-lib.org" class="external-link">testthat</a></span><span class="op">)</span> <span class="co"># as called in your test suite</span>
@@ -410,7 +410,7 @@
 <div id="finer-control-over-testing-expectations" class="section level3">
 <h3 class="hasAnchor">
 <a href="#finer-control-over-testing-expectations" class="anchor"></a>4.2 Finer control over testing expectations</h3>
-<p>The two expectations shown above call the <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html" class="external-link"><code>autotest_package()</code></a> function internally, and assert that the results follow the expected pattern. There are also three additional <a href="https://testthat.r-lib.org" class="external-link"><code>testthat</code></a> expectations which can be applied to pre-generated <code>autotest</code> objects, to allow for finer control over testing expectations. These are:</p>
+<p>The two expectations shown above call the <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html"><code>autotest_package()</code></a> function internally, and assert that the results follow the expected pattern. There are also three additional <a href="https://testthat.r-lib.org" class="external-link"><code>testthat</code></a> expectations which can be applied to pre-generated <code>autotest</code> objects, to allow for finer control over testing expectations. These are:</p>
 <ul>
 <li>
 <code>expect_autotest_no_err</code> to expect no errors in results from <code><a href="../reference/autotest_package.html">autotest_package()</a></code>;</li>

@@ -34,7 +34,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.806</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.810</span>
       </span>
     </div>
 
@@ -127,7 +127,7 @@
 <span class="co">#&gt;  9 dummy trivial_n… &lt;NA&gt;    &lt;NA&gt;      numeric        Add trivia… "(Should… TRUE </span>
 <span class="co">#&gt; 10 dummy int_as_nu… &lt;NA&gt;    &lt;NA&gt;      single integer Integer va… "(Should… TRUE </span>
 <span class="co">#&gt; # … with 15 more rows</span></code></pre></div>
-<p>That functions returns a <a href="https://tibble.tidyverse.org" class="external-link"><code>tibble</code></a> describing 25 unique tests. All <code>autotest</code> functions return these same kinds of objects. The table returned from <a href="https://ropenscilabs.github.io/autotest/reference/autotest_types.html" class="external-link"><code>autotest_types()</code></a> can be used to selectively switch tests off by setting values in the <code>test</code> column to <code>FALSE</code>, as demonstrated below.</p>
+<p>That functions returns a <a href="https://tibble.tidyverse.org" class="external-link"><code>tibble</code></a> describing 25 unique tests. All <code>autotest</code> functions return these same kinds of objects. The table returned from <a href="https://ropenscilabs.github.io/autotest/reference/autotest_types.html"><code>autotest_types()</code></a> can be used to selectively switch tests off by setting values in the <code>test</code> column to <code>FALSE</code>, as demonstrated below.</p>
 <p>Descriptions of each test can be readily extracted from the results of that function:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_types.html">autotest_types</a></span> <span class="op">(</span><span class="op">)</span>
