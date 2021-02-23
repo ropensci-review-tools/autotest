@@ -19,6 +19,7 @@
 #' @param quiet If 'FALSE', provide printed output on screen.
 #' @return An `autotest_pkg` object, derived from a \pkg{tibble}, detailing
 #' instances of unexpected behaviour for every parameter of every function.
+#' @family yaml
 #'
 #' @examples
 #' \dontrun{

@@ -46,3 +46,8 @@ yaml_list <- examples_to_yaml (package = "stats", functions = "reshape")
 res <- autotest_yaml (yaml = yaml_list)
 }
 }
+\seealso{
+Other yaml: 
+\code{\link{at_yaml_template}()}
+}
+\concept{yaml}

@@ -17,3 +17,11 @@ tests which are not to be run on the local package.}
 Expect \code{autotest_package()} to be clear of errors with some tests switched
 off, and to have note column explaining why those tests are not run.
 }
+\seealso{
+Other expectations: 
+\code{\link{expect_autotest_no_err}()},
+\code{\link{expect_autotest_no_testdata}()},
+\code{\link{expect_autotest_no_warn}()},
+\code{\link{expect_autotest_notes}()}
+}
+\concept{expectations}

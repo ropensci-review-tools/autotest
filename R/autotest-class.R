@@ -1,5 +1,8 @@
 #' autotest_obj class definition
 #'
+#' This function exists only to provide the class definitions for test objects,
+#' and is not intended to be called directly.
+#'
 #' @param package Name of package for which object is to be constructed.
 #' @param package_loc Location of package on local system (for source packages
 #' only)
@@ -15,6 +18,7 @@
 #' with `test = TRUE`, without actually running them.
 #' @param quiet If `FALSE`, issue progress and other messages during testing of
 #' object.
+#' @family class
 #'
 #' @export
 autotest_obj <- function (package = NA_character_,

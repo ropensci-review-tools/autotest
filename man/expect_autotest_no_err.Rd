@@ -15,3 +15,11 @@ expect_autotest_no_err(object)
 \description{
 Expect \code{autotest_package()} to be clear of errors
 }
+\seealso{
+Other expectations: 
+\code{\link{expect_autotest_no_testdata}()},
+\code{\link{expect_autotest_no_warn}()},
+\code{\link{expect_autotest_notes}()},
+\code{\link{expect_autotest_testdata}()}
+}
+\concept{expectations}

@@ -46,5 +46,7 @@ with \code{test = TRUE}, without actually running them.}
 object.}
 }
 \description{
-autotest_obj class definition
+This function exists only to provide the class definitions for test objects,
+and is not intended to be called directly.
 }
+\concept{class}

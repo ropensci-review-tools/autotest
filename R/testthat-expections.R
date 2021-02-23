@@ -6,6 +6,7 @@
 #'
 #' @param object Not used here, but required for `testthat` expectations
 #' @return (invisibly) The autotest object
+#' @family expectations
 #' @export
 expect_autotest_no_testdata <- function (object = NULL) {
 
@@ -31,6 +32,7 @@ expect_autotest_no_testdata <- function (object = NULL) {
 #' @param object An `autotest_package` object with a `test` column flagging
 #' tests which are not to be run on the local package.
 #' @return (invisibly) The autotest object
+#' @family expectations
 #' @export
 expect_autotest_testdata <- function (object) {
 
@@ -82,6 +84,7 @@ expect_autotest_testdata <- function (object) {
 #'
 #' @param object An `autotest` object to be tested
 #' @return (invisibly) The same object
+#' @family expectations
 #' @export
 expect_autotest_no_err <- function (object) {
 
@@ -104,6 +107,7 @@ expect_autotest_no_err <- function (object) {
 #'
 #' @param object An `autotest` object to be tested
 #' @return (invisibly) The same object
+#' @family expectations
 #' @export
 expect_autotest_no_warn <- function (object) {
 
@@ -126,6 +130,7 @@ expect_autotest_no_warn <- function (object) {
 #' column explaining why tests have been switched off.
 #'
 #' @param object An `autotest` object to be tested
+#' @family expectations
 #' @export
 expect_autotest_notes <- function (object) {
 

@@ -13,3 +13,11 @@ expect_autotest_notes(object)
 Expect \code{test_data} param of \code{autotest_package} to have additional \code{note}
 column explaining why tests have been switched off.
 }
+\seealso{
+Other expectations: 
+\code{\link{expect_autotest_no_err}()},
+\code{\link{expect_autotest_no_testdata}()},
+\code{\link{expect_autotest_no_warn}()},
+\code{\link{expect_autotest_testdata}()}
+}
+\concept{expectations}

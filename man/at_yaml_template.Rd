@@ -14,3 +14,8 @@ parameter will be used to specify directory only.}
 \description{
 Generate a 'yaml' template for an 'autotest'.
 }
+\seealso{
+Other yaml: 
+\code{\link{autotest_yaml}()}
+}
+\concept{yaml}

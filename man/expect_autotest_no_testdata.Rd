@@ -15,3 +15,11 @@ expect_autotest_no_testdata(object = NULL)
 \description{
 Expect \code{autotest_package()} to be clear of errors with no tests switched off
 }
+\seealso{
+Other expectations: 
+\code{\link{expect_autotest_no_err}()},
+\code{\link{expect_autotest_no_warn}()},
+\code{\link{expect_autotest_notes}()},
+\code{\link{expect_autotest_testdata}()}
+}
+\concept{expectations}
