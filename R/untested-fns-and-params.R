@@ -133,11 +133,8 @@ test_untested_params.list <- function (exs = NULL, res_in = NULL, ...) {
     return (rbind (res_in, res))
 }
 
-test_undocumented_params <- function (x = NULL, ...) {
-    UseMethod ("test_undocumented_params", x)
-}
-
-test_undocumented_params.NULL <- function (x = NULL, ...) {
+# no method dispatch for these
+undocumented_params_NULL <- function () { # nolint
 
     report_object (type = "dummy",
                    test_name = "par_is_documented",
@@ -145,7 +142,18 @@ test_undocumented_params.NULL <- function (x = NULL, ...) {
                    operation = "Check that parameter is documented")
 }
 
-test_undocumented_params.autotest_obj <- function (x, ...) { # nolint
+param_docs_match_input_NULL <- function (this_class) { # nolint
+
+    report_object (type = "dummy",
+                   test_name = "par_matches_docs",
+                   content = paste0 ("Parameter documentation does not ",
+                                     "describe class of [", this_class, "]"),
+                   operation = paste0 ("Check that documentation matches ",
+                                       "class of input parameter"))
+}
+
+
+test_param_documentation <- function (x) {
 
     ret <- NULL
 
@@ -155,13 +163,26 @@ test_undocumented_params.autotest_obj <- function (x, ...) { # nolint
         rd_desc <- get_Rd_param (x$package_loc,
                                  x$fn,
                                  names (x$params) [x$i])
+
         if (is.na (rd_desc)) {
 
-            this_ret <- test_undocumented_params.NULL ()
+            this_ret <- undocumented_params_NULL ()
             this_ret$type <- "warning"
             this_ret$fn_name <- x$fn
             this_ret$parameter <- names (x$params) [x$i]
             ret <- rbind (ret, this_ret)
+
+        } else if (x$param_types [p] == "tabular" | is.na (x$param_types [p])) {
+
+            this_class <- class (x$params [[p]])
+            if (!grepl (this_class, rd_desc)) {
+
+                this_ret <- param_docs_match_input_NULL (this_class)
+                this_ret$type <- "warning"
+                this_ret$fn_name <- x$fn
+                this_ret$parameter <- names (x$params) [x$i]
+                ret <- rbind (ret, this_ret)
+            }
         }
     }
 
