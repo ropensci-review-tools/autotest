@@ -15,9 +15,7 @@ test_that("pkg", {
               package <- make_pkg ()
               xf <- autotest_package (package = package)
               expect_true (all (xf$test))
-              types <- table (xf$type)
-              expect_true (all (names (types) %in% c ("dummy", "warning")))
-              expect_equal (as.integer (types [names (types) == "warning"]), 1L)
+              expect_true (all (xf$type == "dummy"))
 
               xt <- autotest_package (package = package, test = TRUE)
               expect_true (all (xt$test))

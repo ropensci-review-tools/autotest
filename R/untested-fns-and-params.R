@@ -164,6 +164,37 @@ test_param_documentation.NULL <- function (x = NULL, ...) {
 
 test_param_documentation.autotest_obj <- function (x) { # nolint
 
+    if (!x$test)
+        ret <- test_param_docs_notest (x)
+    else
+        ret <- test_param_docs_test (x)
+
+    return (ret)
+}
+
+test_param_docs_notest <- function (x) {
+
+    ret <- NULL
+
+    for (p in seq_along (x$params)) {
+
+        this_ret <- undocumented_params_NULL ()
+        this_ret$fn_name <- x$fn
+        this_ret$parameter <- names (x$params) [p]
+        this_ret$content <- NA_character_
+        ret <- rbind (ret, this_ret)
+
+        this_ret <- param_docs_match_input_NULL ()
+        this_ret$fn_name <- x$fn
+        this_ret$parameter <- names (x$params) [p]
+        ret <- rbind (ret, this_ret)
+    }
+
+    return (ret)
+}
+
+test_param_docs_test <- function (x) {
+
     ret <- NULL
 
     for (p in seq_along (x$params)) {
