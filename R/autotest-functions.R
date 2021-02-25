@@ -250,7 +250,8 @@ autotest_types <- function (notest = NULL) {
                   autotest_single (),
                   autotest_return (),
                   test_untested_params (),
-                  test_fns_wo_example ())
+                  test_fns_wo_example (),
+                  test_param_documentation ())
     res <- tibble::tibble (res)
 
     class (res) <- c ("autotest_package", class (res))

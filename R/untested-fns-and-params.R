@@ -146,14 +146,23 @@ param_docs_match_input_NULL <- function (this_class) { # nolint
 
     report_object (type = "dummy",
                    test_name = "par_matches_docs",
-                   content = paste0 ("Parameter documentation does not ",
-                                     "describe class of [", this_class, "]"),
                    operation = paste0 ("Check that documentation matches ",
                                        "class of input parameter"))
 }
 
 
-test_param_documentation <- function (x) {
+test_param_documentation <- function (x = NULL, ...) {
+
+    UseMethod ("test_param_documentation", x)
+}
+
+test_param_documentation.NULL <- function (x = NULL, ...) {
+
+    rbind (undocumented_params_NULL (),
+           param_docs_match_input_NULL ())
+}
+
+test_param_documentation.autotest_obj <- function (x) { # nolint
 
     ret <- NULL
 
@@ -177,7 +186,11 @@ test_param_documentation <- function (x) {
             this_class <- class (x$params [[p]])
             if (!grepl (this_class, rd_desc)) {
 
-                this_ret <- param_docs_match_input_NULL (this_class)
+                this_ret <- param_docs_match_input_NULL ()
+                this_ret$content <- paste0 ("Parameter documentation does ",
+                                            "not describe class of [",
+                                            this_class,
+                                            "]")
                 this_ret$type <- "warning"
                 this_ret$fn_name <- x$fn
                 this_ret$parameter <- names (x$params) [x$i]
