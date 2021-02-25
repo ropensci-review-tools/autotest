@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.0.2.002
+Version: 0.0.2.003
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -23,6 +23,7 @@ Imports:
     rlang,
     testthat,
     tibble,
+    withr,
     yaml
 Suggests: 
     devtools,

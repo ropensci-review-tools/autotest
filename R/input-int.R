@@ -294,15 +294,22 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # 
     if (x$test) {
         f <- tempfile (fileext = ".txt")
         out1 <- catch_all_msgs (f, x$fn, x$params)
+
+        seed <- sample.int (.Machine$integer.max, 1L)
+
         if (length (out1) == 0) {
             junk <- utils::capture.output (
-                out1 <- suppressWarnings (do.call (x$fn, x$params))
+                out1 <- suppressWarnings (
+                            withr::with_seed (seed,
+                                              do.call (x$fn, x$params)))
                 )
             x$params [[x$i]] <- x$params [[x$i]] + 0.001
             out2 <- catch_all_msgs (f, x$fn, x$params)
             if (length (out2) == 0) {
                 junk <- utils::capture.output (
-                    out2 <- suppressWarnings (do.call (x$fn, x$params))
+                    out2 <- suppressWarnings (
+                                withr::with_seed (seed,
+                                                 do.call (x$fn, x$params)))
                     )
 
                 # Note that out1 can carry the `attr(., "is_int")`, so may not

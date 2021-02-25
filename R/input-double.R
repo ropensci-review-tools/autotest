@@ -101,8 +101,12 @@ double_noise <- function (x) {
 
     res <- NULL
 
-    res0 <- tryCatch (do.call (x$fn, x$params),
-                      error = function (e) NULL)
+    seed <- sample.int (.Machine$integer.max, 1L)
+
+    withr::with_seed (seed, {
+        res0 <- tryCatch (do.call (x$fn, x$params),
+                          error = function (e) NULL)
+                   })
 
     if (!is.vector (res0))
         return (NULL) # can only test effects of noise on simple vector outputs
@@ -111,8 +115,11 @@ double_noise <- function (x) {
 
     x$params [[x$i]] <- x$params [[x$i]] +
         stats::runif (length (x$params [[x$i]])) * 10 * .Machine$double.eps
-    res1 <- tryCatch (do.call (x$fn, x$params),
-                     error = function (e) NULL)
+
+    withr::with_seed (seed, {
+        res1 <- tryCatch (do.call (x$fn, x$params),
+                         error = function (e) NULL)
+                      })
 
     if (!is.null (res0) & !is.null (res1)) {
         different <- length (res0) != length (res1)
