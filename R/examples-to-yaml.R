@@ -929,7 +929,7 @@ add_params_to_yaml <- function (x, yaml, fn) {
                 # range expressions like `x:y` can not be left, because `:` is
                 # YAML field delimiter, so
                 val_j <- x [[i]] [j, 2]
-                if (grepl (":", val_j)) {
+                if (grepl ("[0-9]:[0-9]", val_j)) {
                     val_j <- eval (parse (text = val_j))
                     val_j <- paste0 ("[",
                                      paste0 (val_j, collapse = ", "),
