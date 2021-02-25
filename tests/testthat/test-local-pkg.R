@@ -15,12 +15,13 @@ test_that("pkg", {
               package <- make_pkg ()
               xf <- autotest_package (package = package)
               expect_true (all (xf$test))
-              expect_true (all (xf$type == "dummy"))
+              types <- table (xf$type)
+              expect_true (all (names (types) %in% c ("dummy", "warning")))
+              expect_equal (as.integer (types [names (types) == "warning"]), 1L)
 
               xt <- autotest_package (package = package, test = TRUE)
               expect_true (all (xt$test))
-              expect_true (all (xt$type == "diagnostic"))
-
-              #n <- test_rect_compare_outputs.NULL ()
-              #expect_true (all (n$test_name %in% xt$test_name))
+              types <- table (xt$type)
+              expect_true (all (names (types) %in% c ("diagnostic", "warning")))
+              expect_equal (as.integer (types [names (types) == "warning"]), 1L)
 })
