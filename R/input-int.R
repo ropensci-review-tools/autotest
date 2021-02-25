@@ -306,6 +306,7 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # 
             x$params [[x$i]] <- x$params [[x$i]] + 0.001
             out2 <- catch_all_msgs (f, x$fn, x$params)
             if (length (out2) == 0) {
+                Sys.sleep (0.5) # in case Sys.time is used
                 junk <- utils::capture.output (
                     out2 <- suppressWarnings (
                                 withr::with_seed (seed,

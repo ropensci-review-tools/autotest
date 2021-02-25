@@ -116,6 +116,7 @@ double_noise <- function (x) {
     x$params [[x$i]] <- x$params [[x$i]] +
         stats::runif (length (x$params [[x$i]])) * 10 * .Machine$double.eps
 
+    Sys.sleep (0.5) # in case Sys.time is used
     res1 <- tryCatch (
                 withr::with_seed (seed,
                                   do.call (x$fn, x$params)),
