@@ -94,6 +94,12 @@ get_param_lists <- function (package) {
         params [[i]]$fn_name <- fn_names [i]
     params <- do.call (rbind, params)
 
+    if (is.null (params))
+        params <- data.frame (param = character (0),
+                              descr = character (0),
+                              rdname = character (0),
+                              fn_name = character (0))
+
     return (params)
 }
 m_get_param_lists <- memoise::memoise (get_param_lists)
