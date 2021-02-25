@@ -132,3 +132,38 @@ test_untested_params.list <- function (exs = NULL, res_in = NULL, ...) {
 
     return (rbind (res_in, res))
 }
+
+test_undocumented_params <- function (x = NULL, ...) {
+    UseMethod ("test_undocumented_params", x)
+}
+
+test_undocumented_params.NULL <- function (x = NULL, ...) {
+
+    report_object (type = "dummy",
+                   test_name = "par_is_documented",
+                   content = "Examples do not document this parameter",
+                   operation = "Check that parameter is documented")
+}
+
+test_undocumented_params.autotest_obj <- function (x, ...) { # nolint
+
+    ret <- NULL
+
+    for (p in seq_along (x$params)) {
+
+        x$i <- p
+        rd_desc <- get_Rd_param (x$package_loc,
+                                 x$fn,
+                                 names (x$params) [x$i])
+        if (is.na (rd_desc)) {
+
+            this_ret <- test_undocumented_params.NULL ()
+            this_ret$type <- "warning"
+            this_ret$fn_name <- x$fn
+            this_ret$parameter <- names (x$params) [x$i]
+            ret <- rbind (ret, this_ret)
+        }
+    }
+
+    return (ret)
+}

@@ -123,6 +123,8 @@ autotest_single_yaml <- function (yaml = NULL,
 
         reports <- rbind (reports, autotest_return (test_obj, test_data))
 
+        reports <- rbind (reports, test_undocumented_params (test_obj))
+
         if (!quiet)
             message (cli::col_green (cli::symbol$tick, " ", this_fn))
     }
