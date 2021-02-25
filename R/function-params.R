@@ -112,7 +112,8 @@ get_Rd_param <- function (package, fn_name, param_name) { # nolint
     }
 
     tags <- vapply (rd, function (i) attr (i, "Rd_tag"), character (1))
-    rd <- rd [[which (tags == "\\arguments")]]
+    if ("\\arguments" %in% tags)
+        rd <- rd [[which (tags == "\\arguments")]]
     index <- vapply (rd, function (i) attr (i, "Rd_tag"), character (1))
     rd <- rd [which (index == "\\item")]
 
