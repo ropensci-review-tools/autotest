@@ -105,8 +105,8 @@ single_int_range <- function (x) {
                 content <- paste0 ("Parameter [",
                                    names (x$params) [x$i],
                                    "] defines only one positive or negative ",
-                                   "limit; plese either specify both lower and ",
-                                   "upper limits, or that values must be ",
+                                   "limit; plese either specify both lower ",
+                                   "and upper limits, or that values must be ",
                                    "'positive' or 'negative'")
                 res <- res_out
                 res$content <- content
