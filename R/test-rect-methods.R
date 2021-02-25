@@ -82,6 +82,8 @@ test_rect_as_other.autotest_obj <- function (x, test_data = NULL, ...) { # nolin
     }
 
     ret <- these_tests [which (!these_tests$test), ]
+    if (nrow (ret) == 0)
+        ret <- NULL
     these_tests <- these_tests [which (these_tests$test), ]
 
     if (x$test) {
