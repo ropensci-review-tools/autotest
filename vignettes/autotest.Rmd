@@ -225,7 +225,7 @@ autotest_package (path, test = TRUE)
 An alternative, and frequently better way, is to ensure and document specific
 control over permissible ranges, as in the following revision of our function.
 
-```{r}
+```{r input-range}
 code <- c ("#' my_function",
            "#'",
            "#' @param x An input between 0 and 10",
@@ -373,6 +373,7 @@ the above, potentially dangerous, line, `x <- unlist (x)` with a simple
 results.
 
 
+
 ## Return results and documentation
 
 Functions which return complicated results, such as objects with specific
@@ -383,16 +384,16 @@ return objects, demonstrating a vector input (`length(x) > 1`) in the example
 to avoid messages regarding length checks an integer ranges.
 
 ```{r return-val}
-code <- c ("#' my_function2",
+code <- c ("#' my_function3",
            "#'",
            "#' @param x An input",
            "#' @examples",
-           "#' y <- my_function2 (x = 1:2)",
+           "#' y <- my_function3 (x = 1:2)",
            "#' @export",
-           "my_function2 <- function (x) {",
+           "my_function3 <- function (x) {",
            "  return (datasets::iris)",
            "}")
-writeLines (code, file.path (path, "R", "myfn2.R"))
+writeLines (code, file.path (path, "R", "myfn3.R"))
 roxygen2::roxygenise (path) # need to update docs with seed param
 x5 <- autotest_package (path, test = TRUE)
 DT::datatable (x5, options = list (dom = "t"))
@@ -405,7 +406,7 @@ the returned value. Let's insert a description to see the effect.
 code <- c (code [1:3],
            "#' @return The iris data set as dataframe",
            code [4:length (code)])
-writeLines (code, file.path (path, "R", "myfn2.R"))
+writeLines (code, file.path (path, "R", "myfn3.R"))
 roxygen2::roxygenise (path) # need to update docs with seed param
 x6 <- autotest_package (path, test = TRUE)
 DT::datatable (x6, options = list (dom = "t"))
@@ -418,10 +419,41 @@ generate clean `autotest` results.
 
 ```{r iris-update}
 code [4] <- "#' @return The iris data set as data.frame"
-writeLines (code, file.path (path, "R", "myfn2.R"))
+writeLines (code, file.path (path, "R", "myfn3.R"))
 roxygen2::roxygenise (path) # need to update docs with seed param
 autotest_package (path, test = TRUE)
 ```
+
+### Documentation of input parameters
+
+Similar checks are performed on the documentation of input parameters, as
+demonstrated by the following modified version of the preceding function.
+
+```{r input-checks}
+code <- c ("#' my_function3",
+           "#'",
+           "#' @param x An input",
+           "#' @return The iris data set as data.frame",
+           "#' @examples",
+           "#' y <- my_function3 (x = datasets::iris)",
+           "#' @export",
+           "my_function3 <- function (x) {",
+           "  return (x)",
+           "}")
+writeLines (code, file.path (path, "R", "myfn3.R"))
+roxygen2::roxygenise (path) # need to update docs with seed param
+x7 <- autotest_package (path, test = TRUE)
+DT::datatable (x7, options = list (dom = "t"))
+```
+
+This warning again indicates precisely how it can be rectified, for example by
+replacing the third line with
+
+```{r input-fix, eval = FALSE}
+code [3] <- "#' @param x An input which can be a data.frame"
+```
+
+
 
 ## General Procedure
 
