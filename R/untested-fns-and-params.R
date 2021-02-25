@@ -184,7 +184,10 @@ test_param_documentation.autotest_obj <- function (x) { # nolint
         } else if (x$param_types [p] == "tabular" | is.na (x$param_types [p])) {
 
             this_class <- class (x$params [[p]])
-            if (!grepl (this_class, rd_desc)) {
+            class_in_desc <- vapply (this_class, function (i)
+                                     grepl (i, rd_desc),
+                                     logical (1))
+            if (!any (class_in_desc)) {
 
                 this_ret <- param_docs_match_input_NULL ()
                 this_ret$content <- paste0 ("Parameter documentation does ",
