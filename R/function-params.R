@@ -81,16 +81,16 @@ get_Rd_value <- function (package, fn_name) { # nolint
     # Then get actual value by converting to text:
     f <- tempfile (fileext = ".txt")
     tools::Rd2txt (rd, out = f, outputEncoding = "UTF-8")
-    val_txt <- gsub ("\\_\\\b", "", readLines (f))
-    sec_index <- grep ("^[[:alpha:]]", val_txt)
-    i0 <- grep ("^Value:$", val_txt)
+    rd_txt <- gsub ("\\_\\\b", "", readLines (f))
+    sec_index <- grep ("^[[:alpha:]].*:$", rd_txt)
+    i0 <- grep ("^Value:$", rd_txt)
     if (i0 == max (sec_index)) {
-        index <- (i0 + 1):length (val_txt)
+        index <- (i0 + 1):length (rd_txt)
     } else {
         i1 <- sec_index [which (sec_index > i0) [1]]
         index <- (i0 + 1):(i1 - 1)
     }
-    val <- val_txt [index]
+    val <- rd_txt [index]
 
     return (val)
 }
