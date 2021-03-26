@@ -71,7 +71,8 @@ autotest_single.autotest_obj <- function (x, test_data = NULL, ...) {
             res <- rbind (res, test_single_name (x, test_data))
             if (val_type %in% c ("name", "formula"))
                 check_vec <- FALSE
-        }
+        } else
+            check_vec <- FALSE
 
         # check response to vector input:
         if (check_vec) {

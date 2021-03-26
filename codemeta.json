@@ -5,18 +5,18 @@
   ],
   "@type": "SoftwareSourceCode",
   "identifier": "autotest",
-  "description": "Automatic testing of R packages via a simple YAML\n    schema.",
+  "description": "Automatic testing of R packages via a simple YAML schema.",
   "name": "autotest: Automatic Package Testing",
   "codeRepository": "https://github.com/ropenscilabs/autotest",
   "issueTracker": "https://github.com/ropenscilabs/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.2.019",
+  "version": "0.0.2.20",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.0.3 (2020-10-10)",
+  "runtimePlatform": "R version 4.0.4 (2021-02-15)",
   "author": [
     {
       "@type": "Person",
@@ -297,7 +297,7 @@
       "sameAs": "https://CRAN.R-project.org/package=yaml"
     }
   ],
-  "fileSize": "16693.041KB",
+  "fileSize": "349.297KB",
   "contIntegration": "https://codecov.io/gh/ropenscilabs/autotest",
   "developmentStatus": "https://www.repostatus.org/#concept",
   "readme": "https://github.com/ropenscilabs/autotest/blob/main/README.md"
