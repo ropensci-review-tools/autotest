@@ -58,7 +58,7 @@ yaml_handlers <- function () {
         if (substr (tolower (x), 1, 1) == "n")
             return (x)
         else
-            return (TRUE)
+            return (FALSE)
     }
 
     int_handler <- function (x) {
