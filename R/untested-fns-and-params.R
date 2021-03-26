@@ -164,10 +164,10 @@ test_param_documentation.NULL <- function (x = NULL, ...) {
 
 test_param_documentation.autotest_obj <- function (x) { # nolint
 
-    if (!x$test)
-        ret <- test_param_docs_notest (x)
-    else
+    if (x$test)
         ret <- test_param_docs_test (x)
+    else
+        ret <- test_param_docs_notest (x)
 
     return (ret)
 }
