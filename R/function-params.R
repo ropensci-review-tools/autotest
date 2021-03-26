@@ -73,17 +73,24 @@ get_Rd_value <- function (package, fn_name) { # nolint
     }
 
 
+    # just to check whether there is a return value:
     val <- get_Rd_metadata (rd, "value")
     if (length (val) == 0)
         return (NULL)
 
-    val <- strsplit (val, "\\n") [[1]]
-    index <- which (grepl ("^list\\(", val))
-    val [index] <- vapply (val [index], function (i)
-                           paste0 (unlist (eval (parse (text = i))),
-                                   collapse = " "),
-                           character (1))
-    val <- gsub ("\\s+", " ", paste0 (val, collapse = " "))
+    # Then get actual value by converting to text:
+    f <- tempfile (fileext = ".txt")
+    tools::Rd2txt (rd, out = f, outputEncoding = "UTF-8")
+    val_txt <- gsub ("\\_\\\b", "", readLines (f))
+    sec_index <- grep ("^[[:alpha:]]", val_txt)
+    i0 <- grep ("^Value:$", val_txt)
+    if (i0 == max (sec_index)) {
+        index <- (i0 + 1):length (val_txt)
+    } else {
+        i1 <- sec_index [which (sec_index > i0) [1]]
+        index <- (i0 + 1):(i1 - 1)
+    }
+    val <- val_txt [index]
 
     return (val)
 }

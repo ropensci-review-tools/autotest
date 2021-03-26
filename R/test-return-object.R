@@ -188,7 +188,7 @@ test_return_has_class.autotest_obj <- function (x, test_data = NULL) { # nolint
             okay <- TRUE
             if (!is.null (cl)) {
                 okay <- vapply (cl, function (i)
-                                grepl (i, Rd_value),
+                                any (grepl (i, Rd_value)),
                                 logical (1))
             }
 
@@ -255,7 +255,7 @@ test_return_primary_val_matches_desc.autotest_obj <- function (x, test_data = NU
             chk <- TRUE
             if (!is.null (attr (retobj, "class"))) {
                 chk <- vapply (attr (retobj, "class"), function (i)
-                               grepl (i, Rd_value),
+                               any (grepl (i, Rd_value)),
                                logical (1))
             }
 
