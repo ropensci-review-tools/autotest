@@ -13,7 +13,7 @@ get_pkg_functions <- function (package) {
         suppressWarnings (
             fns <- lapply (man_dir, function (i)
                            get_Rd_metadata (tools::parse_Rd (i), "alias"))
-            )
+                         )
         fns <- unique (unlist (fns))
     } else {
         # package is dir to temp installed version in covr, so:
@@ -26,8 +26,12 @@ get_pkg_functions <- function (package) {
                                       error = function (err) NA_character_)
                  out_fn <- tryCatch (class (utils::getFromNamespace (i, pkg)) [1],
                                      error = function (err) NA_character_)
-                 out <- c (out_obj, out_fn)
+                 out <- unique (c (out_obj, out_fn))
                  out <- out [which (!is.na (out))]
+                 if (length (out) > 1) {
+                     warning ("Object [", i, "] has multiple classes")
+                     out <- out [1]
+                 }
                  if (length (out) == 0)
                      out <- NA_character_
                  return (out)   },
