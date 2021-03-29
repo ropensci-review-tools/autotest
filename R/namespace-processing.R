@@ -21,10 +21,18 @@ get_pkg_functions <- function (package) {
         fns <- ls (paste0 ("package:", package))
     }
 
-    fn_classes <- vapply (fns, function (i)
-                          tryCatch (class (get (i, envir = e)) [1],
-                                    error = function (err) NA_character_),
-                          character (1))
+    fn_classes <- vapply (fns, function (i) {
+                 out_obj <- tryCatch (class (get (i, envir = e)) [1],
+                                      error = function (err) NA_character_)
+                 out_fn <- tryCatch (class (utils::getFromNamespace (i, pkg)) [1],
+                                     error = function (err) NA_character_)
+                 out <- c (out_obj, out_fn)
+                 out <- out [which (!is.na (out))]
+                 if (length (out) == 0)
+                     out <- NA_character_
+                 return (out)   },
+                 character (1))
+
     fns <- fns [grep ("[Ff]unction|standardGeneric", fn_classes)]
 
     other_fns <- fns_from_other_pkgs (package)
