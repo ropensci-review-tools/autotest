@@ -911,13 +911,15 @@ add_default_vals_to_params <- function (x, package) {
                     fmls <- fmls [index]
 
                     # formal args may specify all admissable values, from which
-                    # only the first is extracted here
+                    # only the first is extracted here where appropriate. (Args
+                    # may also be functions, calls, formulas, names, and other
+                    # things which are not vectors)
                     fmls <- lapply (fmls, function (j) {
                                         out <- eval (j, envir = this_env)
-                                        if (methods::is (out, "function"))
-                                            out <- j
-                                        else
+                                        if (is.vector (out))
                                             out <- out [1]
+                                        else
+                                            out <- j
                                         return (out)    })
 
                     # Escaped version of `\` is `\\\\`, so all instances need to
@@ -982,6 +984,9 @@ add_params_to_yaml <- function (x, yaml, fn) {
                     val_j <- paste0 ("[",
                                      paste0 (val_j, collapse = ", "),
                                      "]")
+                } else if (is.list (val_j)) {
+                    if (is.function (val_j [[1]]))
+                        val_j <- paste0 ("\'", val_j, "\'")
                 }
                 yaml <- c (yaml,
                            paste0 (yaml_indent (3),
