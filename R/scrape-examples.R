@@ -480,7 +480,7 @@ rm_dontrun_lines <- function (x, is_source = TRUE, dontrun = TRUE,
         while (length (n) > 0) {
             n_end <- n [1] + match_curlies (x [n [1]:length (x)])
             if (exclude_not_run)
-                x <- x [- (n [1] + seq (n_end) - 1)]
+                x <- x [- (n [1]:n_end)]
             else
                 x <- x [-c (n [1], n_end)]
             n <- grep (txt, x)
