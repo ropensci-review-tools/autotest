@@ -61,7 +61,11 @@ test_return_success.autotest_obj <- function (x, test_data = NULL, ...) { # noli
 
     if (x$test) {
 
-        retobj <- m_capture_return_object (x)
+        # pkgs with examples for internal fns have to have their namespace
+        # (re-)loaded which prompts a warning via memoise
+        suppressWarnings (
+                          retobj <- m_capture_return_object (x)
+        )
 
         if (methods::is (retobj, "error")) {
             ret$type <- "error"
@@ -182,7 +186,11 @@ test_return_has_class.autotest_obj <- function (x, test_data = NULL) { # nolint
                                    "] does not describe return value")
         } else {
 
-            retobj <- m_capture_return_object (x)
+            # pkgs with examples for internal fns have to have their namespace
+            # (re-)loaded which prompts a warning via memoise
+            suppressWarnings (
+                              retobj <- m_capture_return_object (x)
+                              )
 
             cl <- attr (retobj, "class")
             okay <- TRUE
@@ -250,7 +258,11 @@ test_return_primary_val_matches_desc.autotest_obj <- function (x, test_data = NU
                                    "] does not describe return value")
         } else {
 
-            retobj <- m_capture_return_object (x)
+            # pkgs with examples for internal fns have to have their namespace
+            # (re-)loaded which prompts a warning via memoise
+            suppressWarnings (
+                              retobj <- m_capture_return_object (x)
+                              )
 
             chk <- TRUE
             if (!is.null (attr (retobj, "class"))) {
