@@ -82,12 +82,21 @@ untested_params <- function (exs) {
     }
 
     fns <- unique (names (pars))
+
+    this_env <- as.environment (paste0 ("package:", package))
+    # add any internal fns which also have examples
+    this_env <- add_internal_fns_to_namespace (this_env, exs)
+    # and remove any internal (`:::`) namespace adresses from fns
+    index <- grep ("\\:\\:\\:", fns)
+    fns [index] <- unlist (regmatches (fns [index],
+                               gregexpr ("(?<=\\:\\:\\:).*", fns [index],
+                                         perl = TRUE)))
+
     pars_f <- lapply (fns, function (f) {
                           pars_f <- pars [which (names (pars) == f)]
                           unique (unlist (pars_f))    })
     names (pars_f) <- fns
-
-    this_env <- as.environment (paste0 ("package:", package))
+    
     fmls <- lapply (fns, function (f)
                     names (formals (f, envir = this_env)))
     fmls <- lapply (seq_along (fmls), function (i) {
@@ -234,4 +243,33 @@ test_param_docs_test <- function (x) {
     }
 
     return (ret)
+}
+
+#' @param e package namespace environment
+#' @noRd
+add_internal_fns_to_namespace <- function (e, exs) {
+
+    pkg <- strsplit (attr (e, "name"), ":") [[1]] [2]
+
+    fns <- lapply (exs, function (i) {
+                        y <- yaml::yaml.load (i,
+                                              handlers = yaml_handlers ())
+                        unique (vapply (y$functions, names, character (1)))
+                          })
+    fns <- unique (unlist (fns))
+    fns <- grep ("\\:\\:\\:", fns, value = TRUE)
+    if (length (fns) > 0) {
+            fns <- vapply (fns, function (i) {
+                               regmatches (i,
+                                           gregexpr ("(?<=\\:\\:\\:).*", i,
+                                                     perl = TRUE)) [[1]]
+                          }, character (1),
+                          USE.NAMES = FALSE)
+            for (f in fns) {
+                tmp_fn <- utils::getFromNamespace (f, pkg)
+                e [[f]] <- tmp_fn
+            }
+    }
+
+    return (e)
 }
