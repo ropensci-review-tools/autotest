@@ -14,7 +14,7 @@ log_all_msgs <- function (con, this_fn, params = NULL) {
                                 if (is.null (params))
                                    eval (call (this_fn), envir = en)
                                 else
-                                    do.call (this_fn, params),
+                                    do.call (this_fn, params, quote = TRUE),
                                error = function(e) {
                                    write (toString (e),
                                           con,
