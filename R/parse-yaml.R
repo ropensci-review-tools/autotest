@@ -116,6 +116,13 @@ parse_one_fn <- function (x, f, yaml) {
     i <- x$functions [[f]] [[1]]
     nms <- get_fn_names (x, f)
 
+    # rm all other fns from yaml except 'f':
+    yfns <- grep (paste0 ("^", yaml_indent (1), "-\\s[[:alpha:]]"), yaml)
+    yfns_end <- c (yfns [-1] - 1, length (yaml))
+    index <- yfns [f]:yfns_end [f]
+    yaml <- c (yaml [1:(yfns [1] - 1)],
+               yaml [index])
+
     # check whether character variables are quoted:
     pars <- i [[which (nms == "parameters") [1]]]$parameters
     is_char <- which (vapply (pars, function (j)
@@ -123,13 +130,9 @@ parse_one_fn <- function (x, f, yaml) {
     # then check whether yaml vals are quoted:
     index <- grep ("- parameters:$", yaml)
     if (length (index) > 0) {
-        if (f < length (x$functions)) {
-            index <- index [f]:(index [f + 1] - 2)
-        } else {
-            index <- index [f]:length (yaml)
-        }
+        
+        yaml2 <- yaml [(index [1] + 1):length (yaml)] # the parameters
 
-        yaml2 <- yaml [index]
         for (p in is_char) {
             ystr <- paste0 ("- ", names (pars [[p]]), ":")
             # specific processing because yaml itself reserves "null"
@@ -139,7 +142,7 @@ parse_one_fn <- function (x, f, yaml) {
                                   strsplit (yaml2 [grep (ystr, yaml2)],
                                             ystr) [[1]] [2])
             if (!grepl ("\"|\'", yaml_version)) {
-                is_formula <- !is.na (pmatch (names (pars [[p]]), "formula")) |
+                is_formula <- !is.na (pmatch (names (pars [[p]]), "formula")) &
                     grepl ("~", paste0 (pars [[p]]))
                 if (is_formula) {
                     pars [[p]] [[1]] <- as.formula (pars [[p]] [[1]])
