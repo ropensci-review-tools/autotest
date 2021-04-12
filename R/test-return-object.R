@@ -94,7 +94,7 @@ capture_return_object <- function (x) {
 
     suppressMessages (
         o <- utils::capture.output (
-            retobj <- tryCatch (do.call (x$fn, x$params),
+            retobj <- tryCatch (do.call (x$fn, x$params, quote = TRUE),
                                 warning = function (w) w,
                                 error = function (e) e)
             )
