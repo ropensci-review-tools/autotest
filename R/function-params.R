@@ -31,10 +31,7 @@ get_params <- function (res, i, this_fn) {
             )
     pkg_env <- as.environment (paste0 ("package:", res$package))
     if (grepl (":::", this_fn)) { # internal fn, so attach to pkg_env
-        this_fn <- regmatches (this_fn,
-                               gregexpr ("(?<=\\:\\:\\:).*",
-                                         this_fn,
-                                         perl = TRUE)) [[1]]
+        this_fn <- rm_internal_namespace (this_fn)
         tmp_fn <- utils::getFromNamespace (this_fn, res$package)
         pkg_env [[this_fn]] <- tmp_fn
     }

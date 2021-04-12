@@ -114,6 +114,9 @@ autotest_single_yaml <- function (yaml = NULL,
                                   quiet = quiet)
 
         test_obj <- add_int_attrs (test_obj, int_val)
+        if (grepl ("\\:\\:\\:", test_obj$fn)) {
+            test_obj$fn <- rm_internal_namespace (test_obj$fn)
+        }
 
         reports <- rbind (reports, autotest_rectangular (test_obj, test_data))
 

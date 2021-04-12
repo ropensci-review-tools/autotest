@@ -826,10 +826,7 @@ assign_names_to_params <- function (x, pkg) {
         # assign any internal fns used in exs to pkg namespace
         fn_name <- names (x) [i]
         if (grepl (":::", fn_name)) {
-            fn_name <- regmatches (fn_name,
-                                   gregexpr ("(?<=\\:\\:\\:).*",
-                                             fn_name,
-                                             perl = TRUE)) [[1]]
+            fn_name <- rm_internal_namespace (fn_name)
             tmp_fn <- utils::getFromNamespace (fn_name, pkg)
             pkg_env [[fn_name]] <- tmp_fn
         }
@@ -886,10 +883,7 @@ add_default_vals_to_params <- function (x, package) {
                     this_fn <- names (x) [i]
                     these_pars <- x [[i]] [, 1]
                     if (grepl (":::", this_fn)) {
-                        this_fn <- regmatches (this_fn,
-                                               gregexpr ("(?<=\\:\\:\\:).*",
-                                                         this_fn,
-                                                         perl = TRUE)) [[1]]
+                        this_fn <- rm_internal_namespace (this_fn)
                         tmp_fn <- utils::getFromNamespace (this_fn, package)
                         this_env [[this_fn]] <- tmp_fn
                     }
