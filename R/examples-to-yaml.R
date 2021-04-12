@@ -203,7 +203,8 @@ one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x,
     x <- x [seq (max (fn_calls))]
 
     x_content <- extract_primary_call_content (x,
-                                        unique (c (fn, fn_short, aliases)))
+                                        unique (c (fn, fn_short, aliases)),
+                                        pkg)
     if (length (x_content) == 0)
         return (NULL)
 
@@ -505,7 +506,7 @@ chk_fn_calls_are_primary <- function (x, fn, fn_short, aliases) {
 #' @return Named list each item of which is names by the function it calls, and
 #' contains a string representing the content of the primary call.
 #' @noRd
-extract_primary_call_content <- function (x, aliases) {
+extract_primary_call_content <- function (x, aliases, pkg) {
 
     for (a in aliases)
         x <- gsub (paste0 (a, "\\s?"), a, x)
@@ -539,6 +540,19 @@ extract_primary_call_content <- function (x, aliases) {
                             # last symbol must be function call:
                             xp$text [syms [length (syms)]] },
                             character (1))
+    # check whether those fn_calls are internal, and append/retain `:::` if so:
+    fn_calls <- vapply (seq_along (fn_calls), function (i) {
+                            fout <- fn_calls [i]
+                            pos <- regexpr (fout, x_i)
+                            if (pos < 4)
+                                return (fout)
+
+                            x_i <- x [i]
+                            if (substring (x [i], pos - 3, pos - 1) == ":::") {
+                                fout <- paste0 (pkg, ":::", fout)
+                            }
+                            return (fout)
+                            }, character (1))
 
     # check whether any function calls are parts of other functions (like in
     # ?Normal for erf), and replace nominated fn variable with 1.
@@ -810,7 +824,18 @@ assign_names_to_params <- function (x, pkg) {
     pkg_env <- as.environment (paste0 ("package:", pkg))
     all_nms <- NULL
     for (i in seq (x)) {
-        pars <- formals (fun = names (x) [i], envir = pkg_env)
+        # assign any internal fns used in exs to pkg namespace
+        fn_name <- names (x) [i]
+        if (grepl (":::", fn_name)) {
+            fn_name <- regmatches (fn_name,
+                                   gregexpr ("(?<=\\:\\:\\:).*",
+                                             fn_name,
+                                             perl = TRUE)) [[1]]
+            tmp_fn <- utils::getFromNamespace (fn_name, pkg)
+            pkg_env [[fn_name]] <- tmp_fn
+        }
+
+        pars <- formals (fun = fn_name, envir = pkg_env)
         nms <- names (pars)
         all_nms <- unique (c (all_nms, nms))
         if (any (is.na (x [[i]] [, 1]))) { # first column hold parameter names
@@ -833,8 +858,14 @@ assign_names_to_params <- function (x, pkg) {
     # line which calls the primary function with `lapply`, `map`, or something
     # like that. These are virtually impossible to parse, so are caught and
     # removed here. (First element of ex will be NA for fns which have no args.)
-    x <- lapply (x, function (i) i [which (i [, 1] %in% all_nms |
-                                           is.na (i [, 1])), , drop = FALSE])
+    # Note that this allows for partial matching of argument names
+    x <- lapply (x, function (i) {
+                     index_in <- i [, 1] %in% all_nms
+                     index_na <- is.na (i [, 1])
+                     index_pmatch <- !is.na (pmatch (i [, 1], all_nms))
+                     index <- which (index_in | index_na | index_pmatch)
+                     return (i [index, , drop = FALSE])
+                     })
 
     # Default values of double quotes must also be replaced with escape
     # characters. Parameters may also be called "null" (like
@@ -855,8 +886,19 @@ add_default_vals_to_params <- function (x, package) {
     xout <- lapply (seq_along (x), function (i) {
                     this_fn <- names (x) [i]
                     these_pars <- x [[i]] [, 1]
+                    if (grepl (":::", this_fn)) {
+                        this_fn <- regmatches (this_fn,
+                                               gregexpr ("(?<=\\:\\:\\:).*",
+                                                         this_fn,
+                                                         perl = TRUE)) [[1]]
+                        tmp_fn <- utils::getFromNamespace (this_fn, package)
+                        this_env [[this_fn]] <- tmp_fn
+                    }
+
                     fmls <- formals (this_fn, envir = this_env)
-                    fmls <- fmls [which (!names (fmls) %in% these_pars)]
+                    index <- pmatch (these_pars, names (fmls))
+                    fmls <- fmls [-index [which (!is.na (index))]]
+                    #fmls <- fmls [which (!names (fmls) %in% these_pars)]
                     fmls <- fmls [which (vapply (fmls,
                                                  length,
                                                  integer (1)) > 0)]
@@ -871,7 +913,14 @@ add_default_vals_to_params <- function (x, package) {
 
                     # formal args may specify all admissable values, from which
                     # only the first is extracted here
-                    fmls <- lapply (fmls, function (j) eval (j) [1])
+                    fmls <- lapply (fmls, function (j) {
+                                        out <- eval (j, envir = this_env)
+                                        if (methods::is (out, "function"))
+                                            out <- j
+                                        else
+                                            out <- out [1]
+                                        return (out)    })
+
                     # Escaped version of `\` is `\\\\`, so all instances need to
                     # be replaced in order to represent valid yaml. These are
                     # subsequently reduced later because R's `parse` function
@@ -881,7 +930,7 @@ add_default_vals_to_params <- function (x, package) {
                                     if (is.character (j)) {
                                         j <- gsub ("\\", "\\\\", j,
                                                    fixed = TRUE)
-                                        j <- paste0 ('\"', j, '\"')
+                                        j <- paste0 ("\"", j, "\"")
                                     }
                                     return (j)  })
                     # convert any single-val integer-mode fmls to "1L"-format
