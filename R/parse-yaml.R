@@ -139,8 +139,11 @@ parse_one_fn <- function (x, f, yaml) {
                                   strsplit (yaml2 [grep (ystr, yaml2)],
                                             ystr) [[1]] [2])
             if (!grepl ("\"|\'", yaml_version)) {
-                if (!grepl ("formula", names (pars [[p]]),
-                            ignore.case = TRUE)) {
+                is_formula <- !is.na (pmatch (names (pars [[p]]), "formula")) |
+                    grepl ("~", paste0 (pars [[p]]))
+                if (is_formula) {
+                    pars [[p]] [[1]] <- as.formula (pars [[p]] [[1]])
+                } else {
                     pars [[p]] [[1]] <- as.name (pars [[p]] [[1]])
                 }
             }
