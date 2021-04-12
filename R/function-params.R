@@ -104,7 +104,10 @@ get_Rd_param <- function (package, fn_name, param_name) { # nolint
 
     if (pkg_is_source (package)) {
 
-        f <- file.path (package, "man", paste0 (fn_name, ".Rd"))
+        a <- m_fns_to_topics (package = package)
+        f <- file.path (package,
+                        "man",
+                        a$name [a$alias == fn_name])
         suppressWarnings (
             rd <- tools::parse_Rd (f)
             )
