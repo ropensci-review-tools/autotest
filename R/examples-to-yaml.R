@@ -543,11 +543,10 @@ extract_primary_call_content <- function (x, aliases, pkg) {
     # check whether those fn_calls are internal, and append/retain `:::` if so:
     fn_calls <- vapply (seq_along (fn_calls), function (i) {
                             fout <- fn_calls [i]
-                            pos <- regexpr (fout, x_i)
+                            pos <- regexpr (fout, x [i])
                             if (pos < 4)
                                 return (fout)
 
-                            x_i <- x [i]
                             if (substring (x [i], pos - 3, pos - 1) == ":::") {
                                 fout <- paste0 (pkg, ":::", fout)
                             }
