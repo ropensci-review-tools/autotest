@@ -130,7 +130,7 @@ parse_one_fn <- function (x, f, yaml) {
     # then check whether yaml vals are quoted:
     index <- grep ("- parameters:$", yaml)
     if (length (index) > 0) {
-        
+
         yaml2 <- yaml [(index [1] + 1):length (yaml)] # the parameters
 
         for (p in is_char) {
@@ -141,9 +141,17 @@ parse_one_fn <- function (x, f, yaml) {
             yaml_version <- gsub ("^\\s+", "",
                                   strsplit (yaml2 [grep (ystr, yaml2)],
                                             ystr) [[1]] [2])
+
             if (!grepl ("\"|\'", yaml_version)) {
-                is_formula <- !is.na (pmatch (names (pars [[p]]), "formula")) &
-                    grepl ("~", paste0 (pars [[p]]))
+
+                is_formula <- grepl ("~", paste0 (pars [[p]]))
+                if (is_formula) {
+                    f <- tempfile ()
+                    is_formula <- is.null (catch_all_msgs (tempfile (),
+                                                           "as.formula",
+                                                           pars [[p]]))
+                }
+
                 if (is_formula) {
                     pars [[p]] [[1]] <- as.formula (pars [[p]] [[1]])
                 } else {
