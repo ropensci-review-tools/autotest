@@ -149,7 +149,7 @@ parse_one_fn <- function (x, f, yaml) {
                     f <- tempfile ()
                     is_formula <- is.null (catch_all_msgs (tempfile (),
                                                            "as.formula",
-                                                           pars [[p]]))
+                                                           unname (pars [[p]])))
                 }
 
                 if (is_formula) {
