@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2.032</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2.047</span>
       </span>
     </div>
 
@@ -81,7 +81,7 @@
       <h1 data-toc-skip>Control of tests</h1>
                         <h4 data-toc-skip class="author">Mark Padgham</h4>
             
-            <h4 data-toc-skip class="date">2021-04-12</h4>
+            <h4 data-toc-skip class="date">2021-04-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ropenscilabs/autotest/blob/master/vignettes/autotest-control.Rmd" class="external-link"><code>vignettes/autotest-control.Rmd</code></a></small>
       <div class="hidden name"><code>autotest-control.Rmd</code></div>
@@ -255,21 +255,21 @@
 #&gt; ✔ [4 / 4]: cov</code></pre>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span> <span class="op">(</span><span class="va">xt</span><span class="op">)</span></code></pre></div>
-<pre><code>#&gt; # A tibble: 28 x 9
+<pre><code>#&gt; # A tibble: 29 x 9
 #&gt;    type   test_name fn_name parameter parameter_type operation  content    test 
 #&gt;    &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;      &lt;lgl&gt;
-#&gt;  1 diagn… vector_t… var     x         vector         Convert v… Function … TRUE 
-#&gt;  2 warni… par_is_d… var     x         &lt;NA&gt;           Check tha… Examples … TRUE 
-#&gt;  3 warni… par_is_d… var     na.rm     &lt;NA&gt;           Check tha… Examples … TRUE 
-#&gt;  4 diagn… int_as_n… var     x         integer vector Integer v… Function … TRUE 
-#&gt;  5 diagn… int_as_n… var     y         integer vector Integer v… Function … TRUE 
-#&gt;  6 diagn… vector_t… var     y         vector         Convert v… Function … TRUE 
-#&gt;  7 warni… par_is_d… var     y         &lt;NA&gt;           Check tha… Examples … TRUE 
-#&gt;  8 diagn… single_c… cor     use       single charac… upper-cas… is case d… TRUE 
-#&gt;  9 diagn… single_c… cor     method    single charac… upper-cas… is case d… TRUE 
-#&gt; 10 diagn… single_c… cor     use       single charac… upper-cas… is case d… TRUE 
-#&gt; # … with 18 more rows, and 1 more variable: yaml_hash &lt;chr&gt;</code></pre>
-<p>And the 148 tests yielded 28 unexpected responses. The best way to understand these results is to examine the object in detail, typically through <code><a href="https://rdrr.io/r/utils/edit.html" class="external-link">edit(xt)</a></code>, or equivalently in RStudio, clicking on the listed object. The different types of tests which produced unexpected responses were:</p>
+#&gt;  1 diagn… vector_t… var     x         vector         Convert v… "Function… TRUE 
+#&gt;  2 warni… par_is_d… var     x         &lt;NA&gt;           Check tha… "Examples… TRUE 
+#&gt;  3 warni… par_is_d… var     na.rm     &lt;NA&gt;           Check tha… "Examples… TRUE 
+#&gt;  4 diagn… int_as_n… var     x         integer vector Integer v… "Function… TRUE 
+#&gt;  5 diagn… vector_t… var     x         vector         Convert v… "Function… TRUE 
+#&gt;  6 diagn… int_as_n… var     y         integer vector Integer v… "Function… TRUE 
+#&gt;  7 diagn… vector_t… var     y         vector         Convert v… "Function… TRUE 
+#&gt;  8 warni… par_is_d… var     y         &lt;NA&gt;           Check tha… "Examples… TRUE 
+#&gt;  9 diagn… single_c… cor     use       single charac… upper-cas… "is case … TRUE 
+#&gt; 10 diagn… single_c… cor     method    single charac… upper-cas… "is case … TRUE 
+#&gt; # … with 19 more rows, and 1 more variable: yaml_hash &lt;chr&gt;</code></pre>
+<p>And the 148 tests yielded 29 unexpected responses. The best way to understand these results is to examine the object in detail, typically through <code><a href="https://rdrr.io/r/utils/edit.html" class="external-link">edit(xt)</a></code>, or equivalently in RStudio, clicking on the listed object. The different types of tests which produced unexpected responses were:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span> <span class="op">(</span><span class="va">xt</span><span class="op">$</span><span class="va">operation</span><span class="op">)</span>
 <span class="co">#&gt; </span>
@@ -278,7 +278,7 @@
 <span class="co">#&gt; Check that parameter usage is demonstrated </span>
 <span class="co">#&gt;                                          2 </span>
 <span class="co">#&gt;       Convert vector input to list-columns </span>
-<span class="co">#&gt;                                          2 </span>
+<span class="co">#&gt;                                          3 </span>
 <span class="co">#&gt;         Integer value converted to numeric </span>
 <span class="co">#&gt;                                          2 </span>
 <span class="co">#&gt;             upper-case character parameter </span>
