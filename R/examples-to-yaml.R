@@ -891,7 +891,6 @@ add_default_vals_to_params <- function (x, package) {
                     fmls <- formals (this_fn, envir = this_env)
                     index <- pmatch (these_pars, names (fmls))
                     fmls <- fmls [-index [which (!is.na (index))]]
-                    #fmls <- fmls [which (!names (fmls) %in% these_pars)]
                     fmls <- fmls [which (vapply (fmls,
                                                  length,
                                                  integer (1)) > 0)]
@@ -937,7 +936,7 @@ add_default_vals_to_params <- function (x, package) {
                                         return (j)
                                     })
                     out <- cbind (names (fmls),
-                                  unname (do.call (c, fmls)))
+                                  unname (do.call (c, fmls, quote = TRUE)))
                     rbind (x [[i]], out)
         })
     names (xout) <- names (x)
