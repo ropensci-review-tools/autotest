@@ -906,10 +906,12 @@ add_default_vals_to_params <- function (x, package) {
                     # formal args may specify all admissable values, from which
                     # only the first is extracted here where appropriate. (Args
                     # may also be functions, calls, formulas, names, and other
-                    # things which are not vectors)
+                    # things which are not vectors. The special case is things
+                    # like control parameter lists, which are vectors but also
+                    # lists.)
                     fmls <- lapply (fmls, function (j) {
                                         out <- eval (j, envir = this_env)
-                                        if (is.vector (out))
+                                        if (is.vector (out) & !is.list (out))
                                             out <- out [1]
                                         else
                                             out <- j
