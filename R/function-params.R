@@ -279,8 +279,10 @@ clean_final_pars_list <- function (params, pars, nms) {
                 else
                     return (i)
             })
-    pars <- pars [which (!nms %in% names (params))]
-    nms <- nms [which (!nms %in% names (params))]
+    index <- pmatch (names (params), nms)
+    index <- index [which (!is.na (index))]
+    pars <- pars [-index]
+    nms <- nms [-index]
     # That can then be used to check that any with non-default values have been
     # provided:
     if (any (pars == "MISSING")) {
