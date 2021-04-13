@@ -227,7 +227,10 @@ pass_rect_as_other <- function (x, test_data = NULL) {
             junk <- utils::capture.output (
                 val <- suppressWarnings (
                             suppressMessages (
-                                do.call (x$fn, x$params, envir = x$env)
+                                do.call (x$fn,
+                                         x$params,
+                                         envir = x$env,
+                                         quote = TRUE)
                                 ))
             )
             nm <- paste0 ("val-", gsub ("^.*::", "", other [o]))
@@ -260,7 +263,8 @@ pass_one_rect_as_other <- function (x,
     ret <- NULL
 
     x$params [[x$i]] <- do.call (eval (parse (text = other)),
-                                 x$params [[x$i]])
+                                 x$params [[x$i]],
+                                 quote = TRUE)
     f <- tempfile ()
     msgs <- catch_all_msgs (f, x$fn, x$params)
 
@@ -379,7 +383,8 @@ do_extend_rect_class_struct <- function (x) {
         o <- utils::capture.output (
                 temp <- suppressWarnings (do.call (x$fn,
                                                    x$params,
-                                                   envir = x$env))
+                                                   envir = x$env,
+                                                   quote = TRUE))
         )
         assign ("val-newclass", temp, envir = x$env)
 
