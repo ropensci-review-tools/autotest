@@ -547,11 +547,17 @@ rm_plot_lines <- function (x) {
     plotlines <- vapply (x, function (i) {
                              i <- gsub ("\\%", "%", i, fixed = TRUE)
                              p <- utils::getParseData (parse (text = i))
-                             s <- which (p$token == "SYMBOL_FUNCTION_CALL")
+                             s <- which (p$token == "SYMBOL_FUNCTION_CALL" &
+                                         grepl ("plot|summary|print", p$text))
                              ret <- FALSE
-                             if (length (s) > 0)
-                                 ret <- grepl ("plot|summary|print",
-                                               p$text [s [1]])
+                             if (length (s) > 0) {
+                                 ret <- TRUE
+                                 # only include if its not part of another fn
+                                 if (any (p$token == "FUNCTION")) {
+                                     ret <- which (p$token ==
+                                                   "FUNCTION") [1] > s [1]
+                                 }
+                             }
                              return (ret)   },
 
                              logical (1),
