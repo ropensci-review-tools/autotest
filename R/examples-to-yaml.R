@@ -670,6 +670,7 @@ split_content_at_commas <- function (x) {
 rm_commas_in_qts <- function (commas, s) {
 
     qts <- gregexpr ("\"", s) [[1]]
+    qts <- qts [qts > 0]
     comma_seq <- rbind (c (1, commas),
                         c (commas + 1, nchar (s)))
     comma_seq <- apply (comma_seq, 1, function (i)
