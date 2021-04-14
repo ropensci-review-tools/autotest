@@ -599,6 +599,7 @@ extract_primary_call_content <- function (x, aliases, pkg) {
 split_content_at_commas <- function (x) {
 
     x <- lapply (x, function (i) {
+
                      i <- gsub ("^\\(|\\)$", "", i)
                      index1 <- gregexpr ("\\(", i) [[1]]
                      index2 <- gregexpr ("\\)", i) [[1]]
@@ -610,8 +611,11 @@ split_content_at_commas <- function (x) {
                      # that has [open1, close1, open2, close2, ...], so convert
                      # to sequences of all characters within square brackets:
                      if (length (br) == 2) {
+
                          index_br <- (br [1]:br [2])
+
                      } else if (length (br > 2)) {
+
                          index_br <- 2 * seq (length (br) / 2)
                          index_br <- cbind (br [index_br - 1], br [index_br])
                          index_br <- apply (index_br, 1, function (i)
@@ -629,8 +633,11 @@ split_content_at_commas <- function (x) {
                      index1 <- index1 [index1 > 0]
                      index2 <- index2 [index2 > 0]
                      commas <- commas [commas > 0]
+
                      if (length (index1) > 0 & length (index2) > 0) {
+
                         for (j in seq_along (index1)) {
+
                             index <- which (commas > index1 [j] &
                                             commas < index2 [j])
                             commas <- commas [which (!seq_along (commas) %in%
@@ -638,10 +645,16 @@ split_content_at_commas <- function (x) {
                          }
                      }
 
-                     commas <- rm_commas_in_qts (commas, i)
+                     ret <- i
 
-                     apply (commas, 1, function (j)
-                            substring (i, j [1], j [2]))
+                     if (length (commas) > 0) {
+                         commas <- rm_commas_in_qts (commas, i)
+
+                         ret <- apply (commas, 1, function (j)
+                                       substring (i, j [1], j [2]))
+                     }
+
+                     return (ret)
                       })
 
     return (x)
