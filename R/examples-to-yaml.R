@@ -982,6 +982,9 @@ add_default_vals_to_params <- function (x, package) {
         })
     names (xout) <- names (x)
 
+    # rm any which then have no parameters:
+    xout <- xout [which (vapply (xout, nrow, integer (1)) > 0)]
+
     return (xout)
 }
 
