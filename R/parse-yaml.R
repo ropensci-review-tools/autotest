@@ -153,7 +153,7 @@ parse_one_fn <- function (x, f, yaml) {
                 }
 
                 if (is_formula) {
-                    pars [[p]] [[1]] <- as.formula (pars [[p]] [[1]])
+                    pars [[p]] [[1]] <- stats::as.formula (pars [[p]] [[1]])
                 } else {
                     pars [[p]] [[1]] <- as.name (pars [[p]] [[1]])
                 }
