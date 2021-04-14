@@ -126,16 +126,29 @@ get_Rd_param <- function (package, fn_name, param_name) { # nolint
         rd <- x [[paste0 (fn_name, ".Rd")]]
     }
 
-    tags <- vapply (rd, function (i) attr (i, "Rd_tag"), character (1))
-    if ("\\arguments" %in% tags)
-        rd <- rd [[which (tags == "\\arguments")]]
-    index <- vapply (rd, function (i) attr (i, "Rd_tag"), character (1))
-    rd <- rd [which (index == "\\item")]
+    index <- vapply (rd, function (i)
+                     attr (i, "Rd_tag") == "\\arguments",
+                     logical (1))
+    index <- which (index)
+    if (length (index) == 0) {
+        return (NULL)
+    } else if (length (index) == 1) {
+        rd <- rd [[index]]
+    } else {
+        rd <- rd [index]
+    }
 
-    params <- vapply (rd, function (i) as.character (i [[1]]), character (1))
+    # rm just list items that are just line breaks
+    len <- vapply (rd, length, integer (1))
+    rd <- rd [which (len > 1)]
+    rd <- lapply (rd, unlist)
+    params <- vapply (rd, function (i) i [1], character (1))
+    rd <- vapply (rd, function (i) paste0 (i [-1], collapse = ""),
+                  character (1))
+
     ret <- NA_character_
     if (param_name %in% params)
-        ret <- as.character (rd [[which (params == param_name)]] [[2]] [[1]])
+        ret <- rd [which (params == param_name)]
     return (ret)
 }
 
