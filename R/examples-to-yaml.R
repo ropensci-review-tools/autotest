@@ -645,18 +645,46 @@ split_content_at_commas <- function (x) {
                                                      index)]
                          }
                      }
-                     # do not split if the value is in double quotes
-                     if (grepl ("^\"", i) & grepl ("\"$", i))
-                         commas <- cbind (1, nchar (i))
-                     else
-                         commas <- cbind (c (1, commas + 1),
-                                          c (commas - 1, nchar (i)))
+
+                     commas <- rm_commas_in_qts (commas, i)
 
                      apply (commas, 1, function (j)
                             substring (i, j [1], j [2]))
                       })
 
     return (x)
+}
+
+#' reduce vector of comma positions to only those which are not contained within
+#' quotation marks. Also transform result to matrix with each row having [start,
+#' end] positions of sequences between commas.
+#'
+#' @param commas vector of positions of all commas
+#' @param s The string containing the commas
+#' @noRd
+rm_commas_in_qts <- function (commas, s) {
+
+    qts <- gregexpr ("\"", s) [[1]]
+    comma_seq <- rbind (c (1, commas),
+                        c (commas + 1, nchar (s)))
+    comma_seq <- apply (comma_seq, 1, function (i)
+                        i [1]:i [2])
+    f <- lapply (seq_along (comma_seq), function (i)
+                 rep (i, length (comma_seq [[i]])))
+    f <- unlist (f)
+    qts_grp <- f [qts]
+    n <- vapply (split (qts_grp, f = factor (qts_grp)),
+                 length,
+                 integer (1),
+                 USE.NAMES = FALSE)
+    is_even <- n %% 2 == 0
+    if (any (!is_even)) {
+        rm_seq <- unlist (comma_seq [!is_even])
+        commas <- commas [!which (commas %in% rm_seq)]
+    }
+
+    cbind (c (1, commas + 1),
+           c (commas - 1, unname (nchar (s))))
 }
 
 #' @param x content of primary function calls split into separate parameters,
