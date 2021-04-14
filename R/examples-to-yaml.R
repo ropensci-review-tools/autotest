@@ -743,6 +743,7 @@ split_args_at_equals <- function (x) {
                                            ret <- c (substring (j, 1, idx - 1),
                                              substring (j, idx + 1, nchar (j)))
                                    }
+                                ret <- gsub ("^\\s+|\\s+$", "", ret)
                                 return (ret)
                             })
                 do.call (rbind, res)  })
@@ -848,7 +849,9 @@ get_preprocess_lines <- function (x) {
 #' order) given names
 #' @noRd
 assign_names_to_params <- function (x, pkg) {
+
     pkg_env <- as.environment (paste0 ("package:", pkg))
+
     all_nms <- NULL
     for (i in seq (x)) {
         # assign any internal fns used in exs to pkg namespace
@@ -878,18 +881,21 @@ assign_names_to_params <- function (x, pkg) {
                      i [, 2] <- gsub ("^\\s?|\\s?$", "", i [, 2])
                      return (i)    })
 
+    # rm any parameters with names that do not correspond to stated values.
     # this may sometimes fail with non-trival calls, such as starting an example
     # line which calls the primary function with `lapply`, `map`, or something
     # like that. These are virtually impossible to parse, so are caught and
     # removed here. (First element of ex will be NA for fns which have no args.)
     # Note that this allows for partial matching of argument names
-    x <- lapply (x, function (i) {
-                     index_in <- i [, 1] %in% all_nms
-                     index_na <- is.na (i [, 1])
-                     index_pmatch <- !is.na (pmatch (i [, 1], all_nms))
-                     index <- which (index_in | index_na | index_pmatch)
-                     return (i [index, , drop = FALSE])
-                     })
+    if (!"..." %in% names (pars)) {
+        x <- lapply (x, function (i) {
+                         index_in <- i [, 1] %in% all_nms
+                         index_na <- is.na (i [, 1])
+                         index_pmatch <- !is.na (pmatch (i [, 1], all_nms))
+                         index <- which (index_in | index_na | index_pmatch)
+                         return (i [index, , drop = FALSE])
+                         })
+    }
 
     # Default values of double quotes must also be replaced with escape
     # characters. Parameters may also be called "null" (like
