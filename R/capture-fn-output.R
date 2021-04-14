@@ -10,6 +10,11 @@ log_all_msgs <- function (con, this_fn, params = NULL) {
 
     o <- utils::capture.output ({
         en <- new.env ()
+        if (grepl (":::", this_fn)) {
+            # internal fns can't be called via do.call:
+            this_fn <- strsplit (this_fn, ":::") [[1]]
+            this_fn <- utils::getFromNamespace (this_fn [2], this_fn [1])
+        }
         x <- tryCatch (withCallingHandlers (
                                 if (is.null (params))
                                    eval (call (this_fn), envir = en)
