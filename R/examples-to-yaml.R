@@ -585,14 +585,6 @@ extract_primary_call_content <- function (x, aliases, pkg) {
 
     x <- split_content_at_commas (x)
 
-    # then replace any variables defined in functions with default values of 1
-    #if (length (fn_index) > 0) {
-    #    x [fn_index] <- lapply (seq_along (fn_index), function (i) {
-    #                                gsub (fn_pars [[i]],
-    #                                      "1",
-    #                                      x [[fn_index [i] ]])  }) # nolint
-    #}
-
     return (x)
 }
 
