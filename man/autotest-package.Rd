@@ -6,8 +6,7 @@
 \alias{_PACKAGE}
 \title{autotest: Automatic Package Testing}
 \description{
-Automatic testing of R packages via a simple YAML
-    schema.
+Automatic testing of R packages via a simple YAML schema.
 }
 \seealso{
 Useful links:
