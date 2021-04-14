@@ -102,9 +102,10 @@ get_Rd_value <- function (package, fn_name) { # nolint
 
 get_Rd_param <- function (package, fn_name, param_name) { # nolint
 
+    a <- m_fns_to_topics (package = package)
+
     if (pkg_is_source (package)) {
 
-        a <- m_fns_to_topics (package = package)
         f <- file.path (package,
                         "man",
                         a$name [a$alias == fn_name])
@@ -123,7 +124,7 @@ get_Rd_param <- function (package, fn_name, param_name) { # nolint
                                dir = package)
         }
 
-        rd <- x [[paste0 (fn_name, ".Rd")]]
+        rd <- x [[a$name [a$alias == fn_name]]]
     }
 
     index <- vapply (rd, function (i)
