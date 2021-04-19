@@ -671,10 +671,16 @@ rm_commas_in_qts <- function (commas, s) {
 
     qts <- gregexpr ("\"", s) [[1]]
     qts <- qts [qts > 0]
-    comma_seq <- rbind (c (1, commas),
-                        c (commas + 1, nchar (s)))
+    comma_seq <- cbind (c (1, commas + 1),
+                        c (commas, nchar (s)))
     comma_seq <- apply (comma_seq, 1, function (i)
                         i [1]:i [2])
+    if (is.matrix (comma_seq)) {
+        cs <- list ()
+        for (i in seq (ncol (comma_seq)))
+            cs [[i]] <- comma_seq [, i]
+        comma_seq <- cs
+    }
     f <- lapply (seq_along (comma_seq), function (i)
                  rep (i, length (comma_seq [[i]])))
     f <- unlist (f)
