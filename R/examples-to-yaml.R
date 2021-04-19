@@ -190,7 +190,11 @@ one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x,
 
     x <- split_piped_lines (x)
     # Then add any lines prior to main function call to pre-processing:
-    fn_calls <- grep (paste0 (paste0 (aliases, "\\s?\\("), collapse = "|"), x)
+    fn_calls <- grep (paste0 (paste0 (aliases_to_grep_form (aliases),
+                                      "\\s?\\("),
+                              collapse = "|"),
+                      x)
+
     if (fn_calls [1] > 1) {
         for (i in seq (fn_calls [1] - 1)) {
             yaml <- c (yaml, paste0 (yaml_indent (3), "- '", x [i], "'"))
@@ -199,7 +203,11 @@ one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x,
     }
     # And remove any lines after final function call which may have arisen
     # through splitting piped lines
-    fn_calls <- grep (paste0 (paste0 (aliases, "\\s?\\("), collapse = "|"), x)
+    fn_calls <- grep (paste0 (paste0 (aliases_to_grep_form (aliases),
+                                      "\\s?\\("),
+                              collapse = "|"),
+                      x)
+
     x <- x [seq (max (fn_calls))]
 
     x_content <- extract_primary_call_content (x,
@@ -279,7 +287,11 @@ find_function_calls <- function (x, fn, aliases) {
     } else {
         fn_here <- fn
         if (!is.null (aliases))
-            fn_here <- paste0 (fn, "|", paste0 (aliases, collapse = "|"))
+        {
+            fn_here <- paste0 (fn, "|",
+                               paste0 (aliases_to_grep_form (aliases),
+                                       collapse = "|"))
+        }
         fn_calls <- grep (fn_here, x)
     }
 
@@ -508,12 +520,14 @@ chk_fn_calls_are_primary <- function (x, fn, fn_short, aliases) {
 #' @noRd
 extract_primary_call_content <- function (x, aliases, pkg) {
 
-    for (a in aliases)
+    a_grep <- aliases_to_grep_form (aliases)
+
+    for (a in a_grep)
         x <- gsub (paste0 (a, "\\s?"), a, x)
 
     # find break points of primary function calls, and extend up to first
     # enclosing bracket
-    br1 <- lapply (aliases, function (a) {
+    br1 <- lapply (a_grep, function (a) {
                        g <- paste0 (a, "\\(")
                        f <- vapply (gregexpr (g, x), function (i)
                                     i [1],
@@ -1136,4 +1150,12 @@ rm_prepro_only <- function (x) {
                           logical (1),
                           USE.NAMES = FALSE)
     return (x [which (has_params)])
+}
+
+aliases_to_grep_form <- function (a) {
+
+    a <- gsub ("\\.", "\\\\.", a)
+    a <- gsub ("\\[", "\\\\[", a)
+    a <- gsub ("\\_", "\\\\_", a)
+    return (a)
 }
