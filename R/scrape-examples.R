@@ -92,7 +92,11 @@ get_fn_exs <- function (package, rd_name, topic, rm_seed = TRUE,
     # concatenate any example lines which do not call the actual function or
     # it's aliases into effective preprocessing lines for subsequent function
     # calls.
-    aliases <- paste0 (get_fn_aliases (package, rd_name), collapse = "|")
+    aliases <- get_fn_aliases (package, rd_name)
+    aliases <- gsub ("\\.", "\\\\.", aliases)
+    aliases <- gsub ("\\[", "\\\\[", aliases) # sub-set only ever has "["
+    aliases <- gsub ("\\_", "\\\\_", aliases)
+    aliases <- paste0 (aliases, collapse = "|")
     index <- vapply (exs, function (i) any (grepl (aliases, i)), logical (1))
     if (length (fns) == 2) { # when it's a dispatch method
         index2 <- vapply (exs, function (i)
