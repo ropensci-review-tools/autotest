@@ -668,6 +668,14 @@ split_content_at_commas <- function (x) {
                                        substring (i, j [1], j [2]))
                      }
 
+                     # rm any expression delimiters ("{...}"):
+                     ret <- vapply (ret, function (i)
+                                    gsub ("(^\\s?\\{\\s?)|(\\s?\\}\\s?$)",
+                                          "",
+                                          i),
+                                    character (1))
+
+
                      return (ret)
                       })
 
