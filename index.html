@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2.064</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2.065</span>
       </span>
     </div>
 
@@ -81,12 +81,12 @@
 
 <div id="autotest" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#autotest" class="anchor"></a>autotest</h1></div>
+<a href="#autotest" class="anchor" aria-hidden="true"></a>autotest</h1></div>
 <p>Automatic mutation testing of R packages. Mutation in the sense of mutating inputs (parameters) to function calls, rather than mutation of underlying code (see, for example, <a href="https://github.com/ropensci/mutant" class="external-link"><code>mutant</code></a> for that). <code>autotest</code> primarily works by scraping documented examples for all functions, and mutating the parameters input to those functions.</p>
 <p><strong>This package is very unstable and subject to ongoing development (Feb, 2021)</strong></p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
+<a href="#installation" class="anchor" aria-hidden="true"></a>Installation</h2>
 <p>Not yet on CRAN, so must be installed from remote repository host systems using any one of the following options:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("remotes")</span>
@@ -100,7 +100,7 @@
 </div>
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
-<a href="#usage" class="anchor"></a>Usage</h2>
+<a href="#usage" class="anchor" aria-hidden="true"></a>Usage</h2>
 <p>The simply way to use the package is</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="st">"&lt;package&gt;"</span><span class="op">)</span></code></pre></div>
@@ -108,7 +108,7 @@
 </div>
 <div id="what-is-tested" class="section level2">
 <h2 class="hasAnchor">
-<a href="#what-is-tested" class="anchor"></a>What is tested?</h2>
+<a href="#what-is-tested" class="anchor" aria-hidden="true"></a>What is tested?</h2>
 <p>The package includes a function which lists all tests currently implemented.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/autotest_types.html">autotest_types</a></span> <span class="op">(</span><span class="op">)</span>
@@ -162,8 +162,8 @@
 </div>
 <div id="how-does-it-work" class="section level2">
 <h2 class="hasAnchor">
-<a href="#how-does-it-work" class="anchor"></a>How Does It Work?</h2>
-<p>The <code><a href="reference/autotest_package.html">autotest_package()</a></code> function returns by default a list of all tests which would be conducted on a package, without actually implementing those tests. The function has a parameter, <code>test</code>, with a default value of <code>FALSE</code>. Setting <code>test = TRUE</code> then implements all tests, and only returns results from tests which diverge from expected behaviour, whether unexpected errors, warnings, or other behaviour. An ideal result is that <code><a href="reference/autotest_package.html">autotest_package(., test = TRUE)</a></code> returns nothing (strictly, <code>NULL</code>), indicating that all tests passed successfully.</p>
+<a href="#how-does-it-work" class="anchor" aria-hidden="true"></a>How Does It Work?</h2>
+<p>The <code><a href="reference/autotest_package.html">autotest_package()</a></code> function returns by default a list of all tests which would be conducted on a package, without actually implementing those tests. The function has a parameter, <code>test</code>, with a default value of <code>FALSE</code>. Setting <code>test = TRUE</code> then implements all tests, and only returns results from tests which diverge from expected behaviour, whether unexpected errors, warnings, or other behaviour. An ideal result is that <code>autotest_package(., test = TRUE)</code> returns nothing (strictly, <code>NULL</code>), indicating that all tests passed successfully.</p>
 <p>Tests can also be selectively applied to particular functions through the parameters <code>functions</code>, used to nominate functions to include in tests, or <code>exclude</code>, used to nominate functions to exclude from tests. The following code illustrates.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>, functions <span class="op">=</span> <span class="st">"var"</span>, test <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
@@ -264,12 +264,12 @@
 </div>
 <div id="can-autotest-automatically-create-tests-in-my-tests-directory" class="section level2">
 <h2 class="hasAnchor">
-<a href="#can-autotest-automatically-create-tests-in-my-tests-directory" class="anchor"></a>Can <code>autotest</code> automatically create tests in my <code>tests</code> directory?</h2>
+<a href="#can-autotest-automatically-create-tests-in-my-tests-directory" class="anchor" aria-hidden="true"></a>Can <code>autotest</code> automatically create tests in my <code>tests</code> directory?</h2>
 <p>Not yet, but that should be possible soon. In the meantime, there are <a href="https://testthat.r-lib.org" class="external-link"><code>testthat</code></a> expectations, listed in the <a href="https://ropenscilabs.github.io/autotest/reference/index.html">main package functions</a>, which enable <code>autotest</code> to be used in a package’s test suite.</p>
 </div>
 <div id="prior-work" class="section level2">
 <h2 class="hasAnchor">
-<a href="#prior-work" class="anchor"></a>Prior work</h2>
+<a href="#prior-work" class="anchor" aria-hidden="true"></a>Prior work</h2>
 <ol style="list-style-type: decimal">
 <li>The <a href="https://github.com/great-expectations/great_expectations" class="external-link"><code>great-expectations</code></a> framework for python, described in <a href="https://medium.com/@expectgreatdata/down-with-pipeline-debt-introducing-great-expectations-862ddc46782a" class="external-link">this medium article</a>.</li>
 <li>

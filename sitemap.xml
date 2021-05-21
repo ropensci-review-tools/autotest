@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://ropenscilabs.github.io/autotest/404.html</loc>
+  </url>
+  <url>
+    <loc>https://ropenscilabs.github.io/autotest/articles/autotest-control.html</loc>
+  </url>
+  <url>
+    <loc>https://ropenscilabs.github.io/autotest/articles/autotest.html</loc>
+  </url>
+  <url>
+    <loc>https://ropenscilabs.github.io/autotest/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://ropenscilabs.github.io/autotest/authors.html</loc>
+  </url>
+  <url>
     <loc>https://ropenscilabs.github.io/autotest/index.html</loc>
   </url>
   <url>
@@ -40,9 +55,6 @@
     <loc>https://ropenscilabs.github.io/autotest/reference/expect_autotest_testdata.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/articles/autotest-control.html</loc>
-  </url>
-  <url>
-    <loc>https://ropenscilabs.github.io/autotest/articles/autotest.html</loc>
+    <loc>https://ropenscilabs.github.io/autotest/reference/index.html</loc>
   </url>
 </urlset>
