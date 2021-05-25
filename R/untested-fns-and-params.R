@@ -232,7 +232,7 @@ test_param_docs_test <- function (x) {
                 this_ret <- param_docs_match_input_NULL ()
                 this_ret$content <- paste0 ("Parameter documentation does ",
                                             "not describe class of [",
-                                            this_class,
+                                            paste0 (this_class, collapse = ", "),
                                             "]")
                 this_ret$type <- "warning"
                 this_ret$fn_name <- x$fn
