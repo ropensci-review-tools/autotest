@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2.066</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2.067</span>
       </span>
     </div>
 
@@ -81,7 +81,7 @@
       <h1 data-toc-skip>Control of tests</h1>
                         <h4 data-toc-skip class="author">Mark Padgham</h4>
             
-            <h4 data-toc-skip class="date">2021-05-21</h4>
+            <h4 data-toc-skip class="date">2021-05-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ropenscilabs/autotest/blob/master/vignettes/autotest-control.Rmd" class="external-link"><code>vignettes/autotest-control.Rmd</code></a></small>
       <div class="hidden name"><code>autotest-control.Rmd</code></div>
@@ -148,7 +148,7 @@
 #&gt; 
 #&gt; ## swM := "swiss" with  3 "missing"s :
 #&gt; swM &lt;- swiss
-#&gt; colnames(swM) &lt;- abbreviate(colnames(swiss), min=6)
+#&gt; colnames(swM) &lt;- abbreviate(colnames(swiss), minlength=6)
 #&gt; swM[1,2] &lt;- swM[7,3] &lt;- swM[25,5] &lt;- NA # create 3 "missing"
 #&gt; 
 #&gt; ## Consider all 5 "use" cases :
