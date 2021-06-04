@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2.070</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2.071</span>
       </span>
     </div>
 
@@ -255,27 +255,26 @@
 #&gt; ✔ [4 / 4]: cov</code></pre>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span> <span class="op">(</span><span class="va">xt</span><span class="op">)</span></code></pre></div>
-<pre><code>#&gt; # A tibble: 16 x 9
+<pre><code>#&gt; # A tibble: 15 x 9
 #&gt;    type   test_name  fn_name parameter parameter_type operation  content   test 
 #&gt;    &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;     &lt;lgl&gt;
-#&gt;  1 diagn… int_as_nu… var     x         integer vector Integer v… "Functio… TRUE 
+#&gt;  1 diagn… vector_to… var     x         vector         Convert v… "Functio… TRUE 
 #&gt;  2 diagn… vector_to… var     x         vector         Convert v… "Functio… TRUE 
-#&gt;  3 diagn… vector_to… var     x         vector         Convert v… "Functio… TRUE 
-#&gt;  4 diagn… vector_to… var     y         vector         Convert v… "Functio… TRUE 
-#&gt;  5 diagn… single_ch… cor     use       single charac… upper-cas… "is case… TRUE 
-#&gt;  6 diagn… single_ch… cor     method    single charac… upper-cas… "is case… TRUE 
-#&gt;  7 diagn… single_ch… cor     use       single charac… upper-cas… "is case… TRUE 
-#&gt;  8 diagn… single_ch… cor     method    single charac… upper-cas… "is case… TRUE 
-#&gt;  9 diagn… single_ch… cov     use       single charac… upper-cas… "is case… TRUE 
-#&gt; 10 diagn… single_ch… cov     method    single charac… upper-cas… "is case… TRUE 
-#&gt; 11 diagn… single_ch… cov     use       single charac… upper-cas… "is case… TRUE 
-#&gt; 12 diagn… single_ch… cov     method    single charac… upper-cas… "is case… TRUE 
-#&gt; 13 diagn… single_ch… cov     use       single charac… upper-cas… "is case… TRUE 
-#&gt; 14 diagn… single_ch… cov     method    single charac… upper-cas… "is case… TRUE 
-#&gt; 15 warni… par_is_de… var     use       &lt;NA&gt;           Check tha… "Example… TRUE 
-#&gt; 16 warni… par_is_de… cov     y         &lt;NA&gt;           Check tha… "Example… TRUE 
+#&gt;  3 diagn… vector_to… var     y         vector         Convert v… "Functio… TRUE 
+#&gt;  4 diagn… single_ch… cor     use       single charac… upper-cas… "is case… TRUE 
+#&gt;  5 diagn… single_ch… cor     method    single charac… upper-cas… "is case… TRUE 
+#&gt;  6 diagn… single_ch… cor     use       single charac… upper-cas… "is case… TRUE 
+#&gt;  7 diagn… single_ch… cor     method    single charac… upper-cas… "is case… TRUE 
+#&gt;  8 diagn… single_ch… cov     use       single charac… upper-cas… "is case… TRUE 
+#&gt;  9 diagn… single_ch… cov     method    single charac… upper-cas… "is case… TRUE 
+#&gt; 10 diagn… single_ch… cov     use       single charac… upper-cas… "is case… TRUE 
+#&gt; 11 diagn… single_ch… cov     method    single charac… upper-cas… "is case… TRUE 
+#&gt; 12 diagn… single_ch… cov     use       single charac… upper-cas… "is case… TRUE 
+#&gt; 13 diagn… single_ch… cov     method    single charac… upper-cas… "is case… TRUE 
+#&gt; 14 warni… par_is_de… var     use       &lt;NA&gt;           Check tha… "Example… TRUE 
+#&gt; 15 warni… par_is_de… cov     y         &lt;NA&gt;           Check tha… "Example… TRUE 
 #&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</code></pre>
-<p>And the 148 tests yielded 16 unexpected responses. The best way to understand these results is to examine the object in detail, typically through <code>edit(xt)</code>, or equivalently in RStudio, clicking on the listed object. The different types of tests which produced unexpected responses were:</p>
+<p>And the 148 tests yielded 15 unexpected responses. The best way to understand these results is to examine the object in detail, typically through <code>edit(xt)</code>, or equivalently in RStudio, clicking on the listed object. The different types of tests which produced unexpected responses were:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span> <span class="op">(</span><span class="va">xt</span><span class="op">$</span><span class="va">operation</span><span class="op">)</span>
 <span class="co">#&gt; </span>
@@ -283,8 +282,6 @@
 <span class="co">#&gt;                                          2 </span>
 <span class="co">#&gt;       Convert vector input to list-columns </span>
 <span class="co">#&gt;                                          3 </span>
-<span class="co">#&gt;         Integer value converted to numeric </span>
-<span class="co">#&gt;                                          1 </span>
 <span class="co">#&gt;             upper-case character parameter </span>
 <span class="co">#&gt;                                         10</span></code></pre></div>
 <p>Two of those reflect the previous results regarding parameters unable to be tested, while the remainder come from only two types of tests. Information on the precise results is contained in the <code>content</code> column, although in this case it is fairly straightforward to see that the operation “upper case character parameter” arises because the <code>use</code> and <code>method</code> parameters of the <code>cor</code> and <code>cov</code> functions are case-dependent, and are only accepted in lower case form. The other operation is the conversion of vectors to list-column format, as described in the <a href="https://ropenscilabs.github.io/autotest/articles/autotest.html">first vignette</a>.</p>
@@ -308,26 +305,25 @@
 #&gt; ✔ [4 / 4]: cov</code></pre>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span> <span class="op">(</span><span class="va">xt2</span><span class="op">)</span></code></pre></div>
-<pre><code>#&gt; # A tibble: 17 x 9
+<pre><code>#&gt; # A tibble: 16 x 9
 #&gt;    type   test_name  fn_name parameter parameter_type operation  content   test 
 #&gt;    &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;     &lt;lgl&gt;
-#&gt;  1 diagn… int_as_nu… var     x         integer vector Integer v… Function… TRUE 
-#&gt;  2 no_te… vector_to… var     x         vector         Convert v… (Should … FALSE
-#&gt;  3 no_te… vector_to… var     y         vector         Convert v… (Should … FALSE
-#&gt;  4 no_te… vector_to… cor     x         vector         Convert v… (Should … FALSE
-#&gt;  5 no_te… vector_to… cor     y         vector         Convert v… (Should … FALSE
-#&gt;  6 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE 
-#&gt;  7 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE 
-#&gt;  8 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE 
-#&gt;  9 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE 
-#&gt; 10 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
-#&gt; 11 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
-#&gt; 12 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
-#&gt; 13 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
-#&gt; 14 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
-#&gt; 15 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
-#&gt; 16 warni… par_is_de… var     use       &lt;NA&gt;           Check tha… Examples… TRUE 
-#&gt; 17 warni… par_is_de… cov     y         &lt;NA&gt;           Check tha… Examples… TRUE 
+#&gt;  1 no_te… vector_to… var     x         vector         Convert v… (Should … FALSE
+#&gt;  2 no_te… vector_to… var     y         vector         Convert v… (Should … FALSE
+#&gt;  3 no_te… vector_to… cor     x         vector         Convert v… (Should … FALSE
+#&gt;  4 no_te… vector_to… cor     y         vector         Convert v… (Should … FALSE
+#&gt;  5 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE 
+#&gt;  6 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE 
+#&gt;  7 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE 
+#&gt;  8 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE 
+#&gt;  9 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
+#&gt; 10 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
+#&gt; 11 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
+#&gt; 12 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
+#&gt; 13 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
+#&gt; 14 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
+#&gt; 15 warni… par_is_de… var     use       &lt;NA&gt;           Check tha… Examples… TRUE 
+#&gt; 16 warni… par_is_de… cov     y         &lt;NA&gt;           Check tha… Examples… TRUE 
 #&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</code></pre>
 <p>The result now has four rows with <code>test == FALSE</code>, and <code>type == "no_test"</code>, indicating that these tests were not actually conducted. That also makes apparent the role of these <code>test</code> flags. When initially calling <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html"><code>autotest_package()</code></a> with default <code>test = FALSE</code>, the result contains a <code>test</code> column in which all values are <code>TRUE</code>. Although potentially perplexing at first, this value must be understood in relation to the <code>type</code> column. A <code>type</code> of <code>"dummy"</code> indicates that a test has not been conducted, in which case <code>test = TRUE</code> is a control flag used to determine what would be conducted if these data were submitted as the <code>test_data</code> parameter. For all <code>type</code> values other than <code>"dummy"</code>, the <code>test</code> column specifies whether or not each test was actually conducted.</p>
 <p>The preceding example showed how the results of <a href="https://ropenscilabs.github.io/autotest/reference/autotest_types.html"><code>autotest_types()</code></a> can be used to control which tests are implemented for an entire package. Finer-scale control can be achieved by modifying individual rows of the full table returned by <a href="https://ropenscilabs.github.io/autotest/reference/autotest_package.html"><code>autotest_package()</code></a>. The following code demonstrates by showing how list-column tests can be switched off only for particular functions, starting again with the <code>xf</code> data of dummy tests generated above.</p>
@@ -353,24 +349,23 @@
 #&gt; ✔ [4 / 4]: cov</code></pre>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span> <span class="op">(</span><span class="va">xt3</span><span class="op">)</span></code></pre></div>
-<pre><code>#&gt; # A tibble: 15 x 9
+<pre><code>#&gt; # A tibble: 14 x 9
 #&gt;    type   test_name  fn_name parameter parameter_type operation  content   test 
 #&gt;    &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;     &lt;lgl&gt;
-#&gt;  1 diagn… int_as_nu… var     x         integer vector Integer v… Function… TRUE 
-#&gt;  2 no_te… vector_to… var     x         vector         Convert v… (Should … FALSE
-#&gt;  3 no_te… vector_to… var     y         vector         Convert v… (Should … FALSE
-#&gt;  4 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE 
-#&gt;  5 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE 
-#&gt;  6 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE 
-#&gt;  7 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE 
-#&gt;  8 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
-#&gt;  9 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
-#&gt; 10 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
-#&gt; 11 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
-#&gt; 12 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
-#&gt; 13 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
-#&gt; 14 warni… par_is_de… var     use       &lt;NA&gt;           Check tha… Examples… TRUE 
-#&gt; 15 warni… par_is_de… cov     y         &lt;NA&gt;           Check tha… Examples… TRUE 
+#&gt;  1 no_te… vector_to… var     x         vector         Convert v… (Should … FALSE
+#&gt;  2 no_te… vector_to… var     y         vector         Convert v… (Should … FALSE
+#&gt;  3 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE 
+#&gt;  4 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE 
+#&gt;  5 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE 
+#&gt;  6 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE 
+#&gt;  7 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
+#&gt;  8 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
+#&gt;  9 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
+#&gt; 10 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
+#&gt; 11 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
+#&gt; 12 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
+#&gt; 13 warni… par_is_de… var     use       &lt;NA&gt;           Check tha… Examples… TRUE 
+#&gt; 14 warni… par_is_de… cov     y         &lt;NA&gt;           Check tha… Examples… TRUE 
 #&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</code></pre>
 <p>These procedures illustrate the three successively finer levels of control over tests, by switching them off for:</p>
 <ol style="list-style-type: decimal">
