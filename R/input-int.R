@@ -317,7 +317,7 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # 
                 # be identical to out2
                 no_change <- TRUE
                 if (is.numeric (out1) & is.numeric (out2)) {
-                    if (max (abs (out1 - out2)) > .Machine$double.eps)
+                    if (max (abs (out1 - out2)) > (100 * .Machine$double.eps))
                         no_change <- FALSE
                 } else {
                     no_change <- length (setdiff (out1, out2)) == 0
