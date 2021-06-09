@@ -26,8 +26,8 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 
 [![R build
-status](https://github.com/ropenscilabs/autotest/workflows/R-CMD-check/badge.svg)](https://github.com/ropenscilabs/autotest/actions?query=workflow%3AR-CMD-check)
-[![codecov](https://codecov.io/gh/ropenscilabs/autotest/branch/master/graph/badge.svg)](https://codecov.io/gh/ropenscilabs/autotest)
+status](https://github.com/ropensci-review-tools/autotest/workflows/R-CMD-check/badge.svg)](https://github.com/ropensci-review-tools/autotest/actions?query=workflow%3AR-CMD-check)
+[![codecov](https://codecov.io/gh/ropensci-review-tools/autotest/branch/master/graph/badge.svg)](https://codecov.io/gh/ropensci-review-tools/autotest)
 [![Project Status:
 Concept](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
 <!-- badges: end -->
@@ -53,7 +53,7 @@ any one of the following options:
 remotes::install_git("https://git.sr.ht/~mpadge/autotest")
 remotes::install_bitbucket("mpadge/autotest")
 remotes::install_gitlab("mpadge/autotest")
-remotes::install_github("ropenscilabs/autotest")
+remotes::install_github("ropensci-review-tools/autotest")
 ```
 
 The package can then be loaded the usual way:
@@ -75,7 +75,7 @@ The argument to `autotest_package()` can either be the name of an installed
 package, or a path to a local directory containing the source for a package.
 The result is a `data.frame` of errors, warnings, and other diagnostic messages
 issued during package `auotest`-ing. See the [main package
-vignette](https://ropenscilabs.github.io/autotest/articles/autotest.html) for
+vignette](https://ropensci-review-tools.github.io/autotest/articles/autotest.html) for
 an introductory tour of the package.
 
 ## What is tested?
@@ -89,7 +89,7 @@ autotest_types ()
 That functions returns a [`tibble`](https://tibble.tidyverse.org) describing
 `r nrow(autotest_types())` unique tests. All `autotest` functions return these
 same kinds of objects. The table returned from
-[`autotest_types()`](https://ropenscilabs.github.io/autotest/reference/autotest_types.html)
+[`autotest_types()`](https://ropensci-review-tools.github.io/autotest/reference/autotest_types.html)
 can be used to selectively switch tests off by setting values in the `test`
 column to `FALSE`, as demonstrated below.
 
@@ -168,8 +168,8 @@ previous "diagnostic".
 Not yet, but that should be possible soon. In the meantime, there are
 [`testthat`](https://testthat.r-lib.org) expectations, listed in the [main
 package
-functions](https://ropenscilabs.github.io/autotest/reference/index.html), which
-enable `autotest` to be used in a package's test suite.
+functions](https://ropensci-review-tools.github.io/autotest/reference/index.html),
+which enable `autotest` to be used in a package's test suite.
 
 
 ## Prior work

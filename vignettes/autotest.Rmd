@@ -31,7 +31,7 @@ This vignette demonstrates the easiest way to use `autotest`, which is to apply
 it continuously through the entire process of package development. The best way
 to understand the process is to obtain a local copy of the vignette itself from
 [this
-link](https://github.com/ropenscilabs/autotest/blob/master/vignettes/autotest.Rmd),
+link](https://github.com/ropensci-review-tools/autotest/blob/master/vignettes/autotest.Rmd),
 and step through the code. We begin by constructing a simple package in the
 local
 [`tempdir()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/tempfile.html).
@@ -128,7 +128,7 @@ DT::datatable (x1, options = list (dom = "t"))
 
 The first thing to notice is the first column, which has `test_type = "dummy"`
 for all rows. The [`autotest_package()`
-function](https://ropenscilabs.github.io/autotest/reference/autotest_package.html)
+function](https://ropensci-review-tools.github.io/autotest/reference/autotest_package.html)
 has a parameter `test` with a default value of `FALSE`, so that the default
 call demonstrated above does not actually implement the tests, rather it
 returns an object listing all tests that would be performed with actually doing
