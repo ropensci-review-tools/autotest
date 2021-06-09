@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2.071</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2.072</span>
       </span>
     </div>
 
@@ -60,7 +60,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/ropenscilabs/autotest/">
+  <a href="https://github.com/ropensci-review-tools/autotest/">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -83,7 +83,7 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#autotest" class="anchor" aria-hidden="true"></a>autotest</h1></div>
 <p>Automatic mutation testing of R packages. Mutation in the sense of mutating inputs (parameters) to function calls, rather than mutation of underlying code (see, for example, <a href="https://github.com/ropensci/mutant" class="external-link"><code>mutant</code></a> for that). <code>autotest</code> primarily works by scraping documented examples for all functions, and mutating the parameters input to those functions.</p>
-<p><strong>This package is very unstable and subject to ongoing development (Feb, 2021)</strong></p>
+<p><strong>This package is very unstable and subject to ongoing development (Jun, 2021)</strong></p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor" aria-hidden="true"></a>Installation</h2>
@@ -93,10 +93,10 @@
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_git.html" class="external-link">install_git</a></span><span class="op">(</span><span class="st">"https://git.sr.ht/~mpadge/autotest"</span><span class="op">)</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_bitbucket.html" class="external-link">install_bitbucket</a></span><span class="op">(</span><span class="st">"mpadge/autotest"</span><span class="op">)</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_gitlab.html" class="external-link">install_gitlab</a></span><span class="op">(</span><span class="st">"mpadge/autotest"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"ropenscilabs/autotest"</span><span class="op">)</span></code></pre></div>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"ropensci-review-tools/autotest"</span><span class="op">)</span></code></pre></div>
 <p>The package can then be loaded the usual way:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span> <span class="op">(</span><span class="va"><a href="https://github.com/ropenscilabs/autotest" class="external-link">autotest</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span> <span class="op">(</span><span class="va"><a href="https://github.com/ropensci-review-tools/autotest" class="external-link">autotest</a></span><span class="op">)</span></code></pre></div>
 </div>
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
@@ -104,7 +104,7 @@
 <p>The simply way to use the package is</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="st">"&lt;package&gt;"</span><span class="op">)</span></code></pre></div>
-<p>The argument to <code><a href="reference/autotest_package.html">autotest_package()</a></code> can either be the name of an installed package, or a path to a local directory containing the source for a package. The result is a <code>data.frame</code> of errors, warnings, and other diagnostic messages issued during package <code>auotest</code>-ing. See the <a href="https://ropenscilabs.github.io/autotest/articles/autotest.html">main package vignette</a> for an introductory tour of the package.</p>
+<p>The argument to <code><a href="reference/autotest_package.html">autotest_package()</a></code> can either be the name of an installed package, or a path to a local directory containing the source for a package. The result is a <code>data.frame</code> of errors, warnings, and other diagnostic messages issued during package <code>auotest</code>-ing. See the <a href="https://ropensci-review-tools.github.io/autotest/articles/autotest.html">main package vignette</a> for an introductory tour of the package.</p>
 </div>
 <div id="what-is-tested" class="section level2">
 <h2 class="hasAnchor">
@@ -112,7 +112,7 @@
 <p>The package includes a function which lists all tests currently implemented.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/autotest_types.html">autotest_types</a></span> <span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 25 x 8</span>
+<span class="co">#&gt; # A tibble: 27 x 8</span>
 <span class="co">#&gt;    type  test_name  fn_name parameter parameter_type operation   content   test </span>
 <span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;       &lt;chr&gt;     &lt;lgl&gt;</span>
 <span class="co">#&gt;  1 dummy rect_as_o… &lt;NA&gt;    &lt;NA&gt;      rectangular    Convert on… "check f… TRUE </span>
@@ -125,13 +125,13 @@
 <span class="co">#&gt;  8 dummy vector_cu… &lt;NA&gt;    &lt;NA&gt;      vector         Custom cla… "(Should… TRUE </span>
 <span class="co">#&gt;  9 dummy double_is… &lt;NA&gt;    &lt;NA&gt;      numeric        Check whet… "int par… TRUE </span>
 <span class="co">#&gt; 10 dummy trivial_n… &lt;NA&gt;    &lt;NA&gt;      numeric        Add trivia… "(Should… TRUE </span>
-<span class="co">#&gt; # … with 15 more rows</span></code></pre></div>
-<p>That functions returns a <a href="https://tibble.tidyverse.org" class="external-link"><code>tibble</code></a> describing 25 unique tests. All <code>autotest</code> functions return these same kinds of objects. The table returned from <a href="https://ropenscilabs.github.io/autotest/reference/autotest_types.html"><code>autotest_types()</code></a> can be used to selectively switch tests off by setting values in the <code>test</code> column to <code>FALSE</code>, as demonstrated below.</p>
+<span class="co">#&gt; # … with 17 more rows</span></code></pre></div>
+<p>That functions returns a <a href="https://tibble.tidyverse.org" class="external-link"><code>tibble</code></a> describing 27 unique tests. All <code>autotest</code> functions return these same kinds of objects. The table returned from <a href="https://ropensci-review-tools.github.io/autotest/reference/autotest_types.html"><code>autotest_types()</code></a> can be used to selectively switch tests off by setting values in the <code>test</code> column to <code>FALSE</code>, as demonstrated below.</p>
 <p>Descriptions of each test can be readily extracted from the results of that function:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_types.html">autotest_types</a></span> <span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span> <span class="op">(</span><span class="va">a</span> <span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span> <span class="op">(</span><span class="st">"parameter_type"</span>, <span class="st">"operation"</span>, <span class="st">"content"</span><span class="op">)</span><span class="op">]</span>, n <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 25 x 3</span>
+<span class="co">#&gt; # A tibble: 27 x 3</span>
 <span class="co">#&gt;    parameter_type     operation                    content                      </span>
 <span class="co">#&gt;    &lt;chr&gt;              &lt;chr&gt;                        &lt;chr&gt;                        </span>
 <span class="co">#&gt;  1 rectangular        Convert one rectangular cla… "check for error/warning mes…</span>
@@ -158,7 +158,9 @@
 <span class="co">#&gt; 22 (return object)    Check whether description o…  &lt;NA&gt;                        </span>
 <span class="co">#&gt; 23 (return object)    Compare class of return val…  &lt;NA&gt;                        </span>
 <span class="co">#&gt; 24 &lt;NA&gt;               Check that parameter usage … "Examples do not demonstrate…</span>
-<span class="co">#&gt; 25 &lt;NA&gt;               Identify functions without …  &lt;NA&gt;</span></code></pre></div>
+<span class="co">#&gt; 25 &lt;NA&gt;               Identify functions without …  &lt;NA&gt;                        </span>
+<span class="co">#&gt; 26 &lt;NA&gt;               Check that parameter is doc… "Examples do not document th…</span>
+<span class="co">#&gt; 27 &lt;NA&gt;               Check that documentation ma…  &lt;NA&gt;</span></code></pre></div>
 </div>
 <div id="how-does-it-work" class="section level2">
 <h2 class="hasAnchor">
@@ -175,21 +177,21 @@
 <span class="co">#&gt; ✔ [3 / 4]: cov</span>
 <span class="co">#&gt; ✔ [4 / 4]: cov</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span> <span class="op">(</span><span class="va">x</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 112 x 9</span>
-<span class="co">#&gt;    type  test_name fn_name parameter parameter_type operation content test </span>
-<span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt;</span>
-<span class="co">#&gt;  1 dummy int_as_n… var     x         integer vector Integer … (Shoul… TRUE </span>
-<span class="co">#&gt;  2 dummy vector_c… var     x         vector         Custom c… (Shoul… TRUE </span>
-<span class="co">#&gt;  3 dummy vector_t… var     x         vector         Convert … (Shoul… TRUE </span>
-<span class="co">#&gt;  4 dummy negate_l… var     na.rm     single logical Negate d… (Funct… TRUE </span>
-<span class="co">#&gt;  5 dummy subst_in… var     na.rm     single logical Substitu… (Funct… TRUE </span>
-<span class="co">#&gt;  6 dummy subst_ch… var     na.rm     single logical Substitu… should… TRUE </span>
-<span class="co">#&gt;  7 dummy single_p… var     na.rm     single logical Length 2… Should… TRUE </span>
-<span class="co">#&gt;  8 dummy return_s… var     (return … (return objec… Check th… &lt;NA&gt;    TRUE </span>
-<span class="co">#&gt;  9 dummy return_v… var     (return … (return objec… Check th… &lt;NA&gt;    TRUE </span>
-<span class="co">#&gt; 10 dummy return_d… var     (return … (return objec… Check wh… &lt;NA&gt;    TRUE </span>
-<span class="co">#&gt; # … with 102 more rows, and 1 more variable: yaml_hash &lt;chr&gt;</span></code></pre></div>
-<p>Testing the <code>var</code> function also tests <code>cor</code> and <code>cov</code>, because the package works by scraping the documented examples from the associated <code>.Rd</code> help file, and <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">?var</a></code> shows that the help topic is <code>cor</code>, and includes the three functions, <code>var</code>, <code>cor</code>, and <code>cov</code>. That result details the 112 tests which would be applied to the <code>var</code> function from the <code>stats</code> package. These 112 tests yield the following results when actually applied:</p>
+<span class="co">#&gt; # A tibble: 150 x 9</span>
+<span class="co">#&gt;    type  test_name  fn_name parameter  parameter_type operation  content   test </span>
+<span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;     &lt;lgl&gt;</span>
+<span class="co">#&gt;  1 dummy int_as_nu… var     x          integer vector Integer v… (Should … TRUE </span>
+<span class="co">#&gt;  2 dummy vector_cu… var     x          vector         Custom cl… (Should … TRUE </span>
+<span class="co">#&gt;  3 dummy vector_to… var     x          vector         Convert v… (Should … TRUE </span>
+<span class="co">#&gt;  4 dummy negate_lo… var     na.rm      single logical Negate de… (Functio… TRUE </span>
+<span class="co">#&gt;  5 dummy subst_int… var     na.rm      single logical Substitut… (Functio… TRUE </span>
+<span class="co">#&gt;  6 dummy subst_cha… var     na.rm      single logical Substitut… should t… TRUE </span>
+<span class="co">#&gt;  7 dummy single_pa… var     na.rm      single logical Length 2 … Should t… TRUE </span>
+<span class="co">#&gt;  8 dummy return_su… var     (return o… (return objec… Check tha… &lt;NA&gt;      TRUE </span>
+<span class="co">#&gt;  9 dummy return_va… var     (return o… (return objec… Check tha… &lt;NA&gt;      TRUE </span>
+<span class="co">#&gt; 10 dummy return_de… var     (return o… (return objec… Check whe… &lt;NA&gt;      TRUE </span>
+<span class="co">#&gt; # … with 140 more rows, and 1 more variable: yaml_hash &lt;chr&gt;</span></code></pre></div>
+<p>Testing the <code>var</code> function also tests <code>cor</code> and <code>cov</code>, because the package works by scraping the documented examples from the associated <code>.Rd</code> help file, and <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">?var</a></code> shows that the help topic is <code>cor</code>, and includes the three functions, <code>var</code>, <code>cor</code>, and <code>cov</code>. That result details the 150 tests which would be applied to the <code>var</code> function from the <code>stats</code> package. These 150 tests yield the following results when actually applied:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>, functions <span class="op">=</span> <span class="st">"var"</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; ── autotesting stats ──</span>
@@ -199,33 +201,31 @@
 <span class="co">#&gt; ✔ [3 / 4]: cov</span>
 <span class="co">#&gt; ✔ [4 / 4]: cov</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span> <span class="op">(</span><span class="va">y</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 16 x 9</span>
-<span class="co">#&gt;    type  test_name fn_name parameter parameter_type operation content test </span>
-<span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt;</span>
-<span class="co">#&gt;  1 diag… vector_t… var     x         vector         Convert … Functi… TRUE </span>
-<span class="co">#&gt;  2 diag… int_as_n… var     x         integer vector Integer … Functi… TRUE </span>
-<span class="co">#&gt;  3 diag… int_as_n… var     y         integer vector Integer … Functi… TRUE </span>
-<span class="co">#&gt;  4 diag… vector_t… var     y         vector         Convert … Functi… TRUE </span>
-<span class="co">#&gt;  5 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt;  6 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt;  7 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt;  8 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt;  9 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt; 10 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt; 11 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt; 12 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt; 13 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt; 14 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt; 15 warn… par_is_d… var     use       &lt;NA&gt;           Check th… Exampl… TRUE </span>
-<span class="co">#&gt; 16 warn… par_is_d… cov     y         &lt;NA&gt;           Check th… Exampl… TRUE </span>
+<span class="co">#&gt; # A tibble: 15 x 9</span>
+<span class="co">#&gt;    type   test_name  fn_name parameter parameter_type operation  content   test </span>
+<span class="co">#&gt;    &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;     &lt;lgl&gt;</span>
+<span class="co">#&gt;  1 diagn… vector_to… var     x         vector         Convert v… "Functio… TRUE </span>
+<span class="co">#&gt;  2 diagn… vector_to… var     x         vector         Convert v… "Functio… TRUE </span>
+<span class="co">#&gt;  3 diagn… vector_to… var     y         vector         Convert v… "Functio… TRUE </span>
+<span class="co">#&gt;  4 diagn… single_ch… cor     use       single charac… upper-cas… "is case… TRUE </span>
+<span class="co">#&gt;  5 diagn… single_ch… cor     method    single charac… upper-cas… "is case… TRUE </span>
+<span class="co">#&gt;  6 diagn… single_ch… cor     use       single charac… upper-cas… "is case… TRUE </span>
+<span class="co">#&gt;  7 diagn… single_ch… cor     method    single charac… upper-cas… "is case… TRUE </span>
+<span class="co">#&gt;  8 diagn… single_ch… cov     use       single charac… upper-cas… "is case… TRUE </span>
+<span class="co">#&gt;  9 diagn… single_ch… cov     method    single charac… upper-cas… "is case… TRUE </span>
+<span class="co">#&gt; 10 diagn… single_ch… cov     use       single charac… upper-cas… "is case… TRUE </span>
+<span class="co">#&gt; 11 diagn… single_ch… cov     method    single charac… upper-cas… "is case… TRUE </span>
+<span class="co">#&gt; 12 diagn… single_ch… cov     use       single charac… upper-cas… "is case… TRUE </span>
+<span class="co">#&gt; 13 diagn… single_ch… cov     method    single charac… upper-cas… "is case… TRUE </span>
+<span class="co">#&gt; 14 warni… par_is_de… var     use       &lt;NA&gt;           Check tha… "Example… TRUE </span>
+<span class="co">#&gt; 15 warni… par_is_de… cov     y         &lt;NA&gt;           Check tha… "Example… TRUE </span>
 <span class="co">#&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</span></code></pre></div>
-<p>And only 16 of the original 112 tests produced unexpected behaviour. There were in fact only three kinds of tests which produced these 16 results:</p>
+<p>And only 15 of the original 150 tests produced unexpected behaviour. There were in fact only three kinds of tests which produced these 15 results:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span> <span class="op">(</span><span class="va">y</span><span class="op">$</span><span class="va">operation</span><span class="op">)</span>
 <span class="co">#&gt; [1] "Convert vector input to list-columns"      </span>
-<span class="co">#&gt; [2] "Integer value converted to numeric"        </span>
-<span class="co">#&gt; [3] "upper-case character parameter"            </span>
-<span class="co">#&gt; [4] "Check that parameter usage is demonstrated"</span></code></pre></div>
+<span class="co">#&gt; [2] "upper-case character parameter"            </span>
+<span class="co">#&gt; [3] "Check that parameter usage is demonstrated"</span></code></pre></div>
 <p>The first involves conversion of a vector to a list-column representation (via <code>I(as.list(&lt;vec&gt;))</code>). Relatively few packages accept this kind of input, even though doing so is relatively straightforward. The following lines demonstrate how these tests can be switched off when <code>autotest</code>-ing a package. The <code><a href="reference/autotest_types.html">autotest_types()</a></code> function, used above to extract information on all types of tests, also accepts a single argument listing the <code>test_name</code> entries of any tests which are to be switched off.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">types</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_types.html">autotest_types</a></span> <span class="op">(</span>notest <span class="op">=</span> <span class="st">"vector_to_list_col"</span><span class="op">)</span>
@@ -238,34 +238,32 @@
 <span class="co">#&gt; ✔ [3 / 4]: cov</span>
 <span class="co">#&gt; ✔ [4 / 4]: cov</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span> <span class="op">(</span><span class="va">y</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 18 x 9</span>
-<span class="co">#&gt;    type  test_name fn_name parameter parameter_type operation content test </span>
-<span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt;</span>
-<span class="co">#&gt;  1 no_t… vector_t… var     x         vector         Convert … (Shoul… FALSE</span>
-<span class="co">#&gt;  2 diag… int_as_n… var     x         integer vector Integer … Functi… TRUE </span>
-<span class="co">#&gt;  3 diag… int_as_n… var     y         integer vector Integer … Functi… TRUE </span>
-<span class="co">#&gt;  4 no_t… vector_t… var     y         vector         Convert … (Shoul… FALSE</span>
-<span class="co">#&gt;  5 no_t… vector_t… cor     x         vector         Convert … (Shoul… FALSE</span>
-<span class="co">#&gt;  6 no_t… vector_t… cor     y         vector         Convert … (Shoul… FALSE</span>
-<span class="co">#&gt;  7 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt;  8 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt;  9 diag… single_c… cor     use       single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt; 10 diag… single_c… cor     method    single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt; 11 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt; 12 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt; 13 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt; 14 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt; 15 diag… single_c… cov     use       single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt; 16 diag… single_c… cov     method    single charac… upper-ca… is cas… TRUE </span>
-<span class="co">#&gt; 17 warn… par_is_d… var     use       &lt;NA&gt;           Check th… Exampl… TRUE </span>
-<span class="co">#&gt; 18 warn… par_is_d… cov     y         &lt;NA&gt;           Check th… Exampl… TRUE </span>
+<span class="co">#&gt; # A tibble: 16 x 9</span>
+<span class="co">#&gt;    type   test_name  fn_name parameter parameter_type operation  content   test </span>
+<span class="co">#&gt;    &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;     &lt;lgl&gt;</span>
+<span class="co">#&gt;  1 no_te… vector_to… var     x         vector         Convert v… (Should … FALSE</span>
+<span class="co">#&gt;  2 no_te… vector_to… var     y         vector         Convert v… (Should … FALSE</span>
+<span class="co">#&gt;  3 no_te… vector_to… cor     x         vector         Convert v… (Should … FALSE</span>
+<span class="co">#&gt;  4 no_te… vector_to… cor     y         vector         Convert v… (Should … FALSE</span>
+<span class="co">#&gt;  5 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE </span>
+<span class="co">#&gt;  6 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE </span>
+<span class="co">#&gt;  7 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE </span>
+<span class="co">#&gt;  8 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE </span>
+<span class="co">#&gt;  9 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE </span>
+<span class="co">#&gt; 10 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE </span>
+<span class="co">#&gt; 11 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE </span>
+<span class="co">#&gt; 12 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE </span>
+<span class="co">#&gt; 13 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE </span>
+<span class="co">#&gt; 14 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE </span>
+<span class="co">#&gt; 15 warni… par_is_de… var     use       &lt;NA&gt;           Check tha… Examples… TRUE </span>
+<span class="co">#&gt; 16 warni… par_is_de… cov     y         &lt;NA&gt;           Check tha… Examples… TRUE </span>
 <span class="co">#&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</span></code></pre></div>
 <p>Those tests are still returned from <code><a href="reference/autotest_package.html">autotest_package()</a></code>, but with <code>test = FALSE</code> to indicate they were not run, and a <code>type</code> of “no_test” rather than the previous “diagnostic”.</p>
 </div>
 <div id="can-autotest-automatically-create-tests-in-my-tests-directory" class="section level2">
 <h2 class="hasAnchor">
 <a href="#can-autotest-automatically-create-tests-in-my-tests-directory" class="anchor" aria-hidden="true"></a>Can <code>autotest</code> automatically create tests in my <code>tests</code> directory?</h2>
-<p>Not yet, but that should be possible soon. In the meantime, there are <a href="https://testthat.r-lib.org" class="external-link"><code>testthat</code></a> expectations, listed in the <a href="https://ropenscilabs.github.io/autotest/reference/index.html">main package functions</a>, which enable <code>autotest</code> to be used in a package’s test suite.</p>
+<p>Not yet, but that should be possible soon. In the meantime, there are <a href="https://testthat.r-lib.org" class="external-link"><code>testthat</code></a> expectations, listed in the <a href="https://ropensci-review-tools.github.io/autotest/reference/index.html">main package functions</a>, which enable <code>autotest</code> to be used in a package’s test suite.</p>
 </div>
 <div id="prior-work" class="section level2">
 <h2 class="hasAnchor">
@@ -286,9 +284,9 @@
     <div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/ropenscilabs/autotest/">https://​github.com/​ropenscilabs/​autotest/​</a>
+<li>Browse source code at <br><a href="https://github.com/ropensci-review-tools/autotest/">https://​github.com/​ropensci-review-tools/​autotest/​</a>
 </li>
-<li>Report a bug at <br><a href="https://github.com/ropenscilabs/autotest/issues">https://​github.com/​ropenscilabs/​autotest/​issues</a>
+<li>Report a bug at <br><a href="https://github.com/ropensci-review-tools/autotest/issues">https://​github.com/​ropensci-review-tools/​autotest/​issues</a>
 </li>
 </ul>
 </div>
@@ -311,8 +309,8 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/ropenscilabs/autotest/actions?query=workflow%3AR-CMD-check" class="external-link"><img src="https://github.com/ropenscilabs/autotest/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
-<li><a href="https://codecov.io/gh/ropenscilabs/autotest" class="external-link"><img src="https://codecov.io/gh/ropenscilabs/autotest/branch/master/graph/badge.svg" alt="codecov"></a></li>
+<li><a href="https://github.com/ropensci-review-tools/autotest/actions?query=workflow%3AR-CMD-check" class="external-link"><img src="https://github.com/ropensci-review-tools/autotest/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://codecov.io/gh/ropensci-review-tools/autotest" class="external-link"><img src="https://codecov.io/gh/ropensci-review-tools/autotest/branch/master/graph/badge.svg" alt="codecov"></a></li>
 <li><a href="https://www.repostatus.org/#concept" class="external-link"><img src="https://www.repostatus.org/badges/latest/concept.svg" alt="Project Status: Concept"></a></li>
 </ul>
 </div>

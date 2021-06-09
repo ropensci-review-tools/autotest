@@ -1,60 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/404.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/404.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/articles/autotest-control.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/articles/autotest-control.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/articles/autotest.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/articles/autotest.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/articles/index.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/authors.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/authors.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/index.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/index.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/reference/at_yaml_template.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/reference/at_yaml_template.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/reference/autotest-package.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/reference/autotest-package.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/reference/autotest_obj.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/reference/autotest_obj.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/reference/autotest_package.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/reference/autotest_package.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/reference/autotest_types.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/reference/autotest_types.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/reference/autotest_yaml.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/reference/autotest_yaml.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/reference/examples_to_yaml.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/reference/examples_to_yaml.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/reference/expect_autotest_no_err.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/reference/expect_autotest_no_err.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/reference/expect_autotest_no_testdata.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/reference/expect_autotest_no_testdata.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/reference/expect_autotest_no_warn.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/reference/expect_autotest_no_warn.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/reference/expect_autotest_notes.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/reference/expect_autotest_notes.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/reference/expect_autotest_testdata.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/reference/expect_autotest_testdata.html</loc>
   </url>
   <url>
-    <loc>https://ropenscilabs.github.io/autotest/reference/index.html</loc>
+    <loc>https://ropensci-review-tools.github.io/autotest/reference/index.html</loc>
   </url>
 </urlset>
