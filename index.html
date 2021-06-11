@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2.072</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2.073</span>
       </span>
     </div>
 
@@ -87,22 +87,30 @@
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor" aria-hidden="true"></a>Installation</h2>
-<p>Not yet on CRAN, so must be installed from remote repository host systems using any one of the following options:</p>
+<p>The easiest way to install this package is via the associated <a href="https://ropensci-review-tools.r-universe.dev/ui#builds" class="external-link"><code>r-universe</code></a>. As shown there, simply enable the universe with</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>
+    ropenscireviewtools <span class="op">=</span> <span class="st">"https://ropensci-review-tools.r-universe.dev"</span>,
+    CRAN <span class="op">=</span> <span class="st">"https://cloud.r-project.org"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>And then install the usual way with,</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"autotest"</span><span class="op">)</span></code></pre></div>
+<p>Alternatively, the package can be installed by running one of the following lines:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("remotes")</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_git.html" class="external-link">install_git</a></span><span class="op">(</span><span class="st">"https://git.sr.ht/~mpadge/autotest"</span><span class="op">)</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_bitbucket.html" class="external-link">install_bitbucket</a></span><span class="op">(</span><span class="st">"mpadge/autotest"</span><span class="op">)</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_gitlab.html" class="external-link">install_gitlab</a></span><span class="op">(</span><span class="st">"mpadge/autotest"</span><span class="op">)</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"ropensci-review-tools/autotest"</span><span class="op">)</span></code></pre></div>
 <p>The package can then be loaded the usual way:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span> <span class="op">(</span><span class="va"><a href="https://github.com/ropensci-review-tools/autotest" class="external-link">autotest</a></span><span class="op">)</span></code></pre></div>
 </div>
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor" aria-hidden="true"></a>Usage</h2>
 <p>The simply way to use the package is</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span><span class="st">"&lt;package&gt;"</span><span class="op">)</span></code></pre></div>
 <p>The argument to <code><a href="reference/autotest_package.html">autotest_package()</a></code> can either be the name of an installed package, or a path to a local directory containing the source for a package. The result is a <code>data.frame</code> of errors, warnings, and other diagnostic messages issued during package <code>auotest</code>-ing. See the <a href="https://ropensci-review-tools.github.io/autotest/articles/autotest.html">main package vignette</a> for an introductory tour of the package.</p>
 </div>
@@ -110,7 +118,7 @@
 <h2 class="hasAnchor">
 <a href="#what-is-tested" class="anchor" aria-hidden="true"></a>What is tested?</h2>
 <p>The package includes a function which lists all tests currently implemented.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/autotest_types.html">autotest_types</a></span> <span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 27 x 8</span>
 <span class="co">#&gt;    type  test_name  fn_name parameter parameter_type operation   content   test </span>
@@ -128,7 +136,7 @@
 <span class="co">#&gt; # … with 17 more rows</span></code></pre></div>
 <p>That functions returns a <a href="https://tibble.tidyverse.org" class="external-link"><code>tibble</code></a> describing 27 unique tests. All <code>autotest</code> functions return these same kinds of objects. The table returned from <a href="https://ropensci-review-tools.github.io/autotest/reference/autotest_types.html"><code>autotest_types()</code></a> can be used to selectively switch tests off by setting values in the <code>test</code> column to <code>FALSE</code>, as demonstrated below.</p>
 <p>Descriptions of each test can be readily extracted from the results of that function:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_types.html">autotest_types</a></span> <span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span> <span class="op">(</span><span class="va">a</span> <span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span> <span class="op">(</span><span class="st">"parameter_type"</span>, <span class="st">"operation"</span>, <span class="st">"content"</span><span class="op">)</span><span class="op">]</span>, n <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 27 x 3</span>
@@ -167,7 +175,7 @@
 <a href="#how-does-it-work" class="anchor" aria-hidden="true"></a>How Does It Work?</h2>
 <p>The <code><a href="reference/autotest_package.html">autotest_package()</a></code> function returns by default a list of all tests which would be conducted on a package, without actually implementing those tests. The function has a parameter, <code>test</code>, with a default value of <code>FALSE</code>. Setting <code>test = TRUE</code> then implements all tests, and only returns results from tests which diverge from expected behaviour, whether unexpected errors, warnings, or other behaviour. An ideal result is that <code>autotest_package(., test = TRUE)</code> returns nothing (strictly, <code>NULL</code>), indicating that all tests passed successfully.</p>
 <p>Tests can also be selectively applied to particular functions through the parameters <code>functions</code>, used to nominate functions to include in tests, or <code>exclude</code>, used to nominate functions to exclude from tests. The following code illustrates.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>, functions <span class="op">=</span> <span class="st">"var"</span>, test <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── autotesting stats ──</span>
@@ -192,7 +200,7 @@
 <span class="co">#&gt; 10 dummy return_de… var     (return o… (return objec… Check whe… &lt;NA&gt;      TRUE </span>
 <span class="co">#&gt; # … with 140 more rows, and 1 more variable: yaml_hash &lt;chr&gt;</span></code></pre></div>
 <p>Testing the <code>var</code> function also tests <code>cor</code> and <code>cov</code>, because the package works by scraping the documented examples from the associated <code>.Rd</code> help file, and <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">?var</a></code> shows that the help topic is <code>cor</code>, and includes the three functions, <code>var</code>, <code>cor</code>, and <code>cov</code>. That result details the 150 tests which would be applied to the <code>var</code> function from the <code>stats</code> package. These 150 tests yield the following results when actually applied:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>, functions <span class="op">=</span> <span class="st">"var"</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; ── autotesting stats ──</span>
 <span class="co">#&gt; </span>
@@ -221,13 +229,13 @@
 <span class="co">#&gt; 15 warni… par_is_de… cov     y         &lt;NA&gt;           Check tha… "Example… TRUE </span>
 <span class="co">#&gt; # … with 1 more variable: yaml_hash &lt;chr&gt;</span></code></pre></div>
 <p>And only 15 of the original 150 tests produced unexpected behaviour. There were in fact only three kinds of tests which produced these 15 results:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span> <span class="op">(</span><span class="va">y</span><span class="op">$</span><span class="va">operation</span><span class="op">)</span>
 <span class="co">#&gt; [1] "Convert vector input to list-columns"      </span>
 <span class="co">#&gt; [2] "upper-case character parameter"            </span>
 <span class="co">#&gt; [3] "Check that parameter usage is demonstrated"</span></code></pre></div>
 <p>The first involves conversion of a vector to a list-column representation (via <code>I(as.list(&lt;vec&gt;))</code>). Relatively few packages accept this kind of input, even though doing so is relatively straightforward. The following lines demonstrate how these tests can be switched off when <code>autotest</code>-ing a package. The <code><a href="reference/autotest_types.html">autotest_types()</a></code> function, used above to extract information on all types of tests, also accepts a single argument listing the <code>test_name</code> entries of any tests which are to be switched off.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">types</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_types.html">autotest_types</a></span> <span class="op">(</span>notest <span class="op">=</span> <span class="st">"vector_to_list_col"</span><span class="op">)</span>
 <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>, functions <span class="op">=</span> <span class="st">"var"</span>,
                        test <span class="op">=</span> <span class="cn">TRUE</span>, test_data <span class="op">=</span> <span class="va">types</span><span class="op">)</span>
