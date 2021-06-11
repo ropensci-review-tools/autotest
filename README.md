@@ -23,8 +23,24 @@ mutating the parameters input to those functions.
 
 ## Installation
 
-Not yet on CRAN, so must be installed from remote repository host
-systems using any one of the following options:
+The easiest way to install this package is via the associated
+[`r-universe`](https://ropensci-review-tools.r-universe.dev/ui#builds).
+As shown there, simply enable the universe with
+
+``` r
+options(repos = c(
+    ropenscireviewtools = "https://ropensci-review-tools.r-universe.dev",
+    CRAN = "https://cloud.r-project.org"))
+```
+
+And then install the usual way with,
+
+``` r
+install.packages("autotest")
+```
+
+Alternatively, the package can be installed by running one of the
+following lines:
 
 ``` r
 # install.packages("remotes")
