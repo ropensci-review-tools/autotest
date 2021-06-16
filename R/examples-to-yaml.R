@@ -89,6 +89,7 @@ examples_to_yaml <- function (package = NULL,
 }
 
 preload_package <- function (package) {
+
     if (pkg_is_source (package)) {
 
         pkg_name <- get_package_name (package)
@@ -99,13 +100,17 @@ preload_package <- function (package) {
 
         # TODO: Use g to get hash of HEAD
         #g <- rprojroot::find_root (rprojroot::is_git_root, path = package)
+
     } else if (!basename (package) == package) {
+
         # pkgs installed in tmp_loc via covr
         library (basename (package),
                  lib.loc = package,
                  character.only = TRUE)
         pkg_name <- basename (package)
+
     } else {
+
         ip <- data.frame (utils::installed.packages (),
                           stringsAsFactors = FALSE)
         if (!package %in% ip$Package) {
@@ -122,7 +127,9 @@ preload_package <- function (package) {
 
 # combine lists of `functions` to include and `exclude` into single vector
 exclude_functions <- function (package, functions, exclude = NULL) {
+
     if (!is.null (functions)) {
+
         fns <- m_get_pkg_functions (package)
         if (!all (functions %in% fns)) {
             functions <- functions [which (!functions %in% fns)]
@@ -249,6 +256,7 @@ clean_ex_code <- function (x) {
 #' `options()$autotest_yaml_indent
 #' @noRd
 yaml_indent <- function (n = 1) {
+
     paste0 (rep (" ", n * options()$autotest_yaml_indent), collapse = "")
 }
 
@@ -258,7 +266,9 @@ yaml_indent <- function (n = 1) {
 #' object on which dispatch is implemented.
 #' @noRd
 get_function_short_name <- function (fn, is_dispatch) {
+
     fn_short <- fn
+
     if (is_dispatch &
         any (grepl ("[[:alpha:]]\\.[[:alpha:]]", fn))) {
             fn_short <- gsub ("\\..*$", "", fn)
@@ -273,6 +283,7 @@ get_function_short_name <- function (fn, is_dispatch) {
 #' @return Index of lines in `x` which call the primary function or its alises
 #' @noRd
 find_function_calls <- function (x, fn, aliases) {
+
     is_dispatch <- attr (x, "is_dispatch")
 
     fn_calls <- 1 # dummy value that is never carried through
@@ -306,7 +317,9 @@ find_function_calls <- function (x, fn, aliases) {
 #' appended
 #' @noRd
 add_preprocessing_to_yaml <- function (x, yaml, fn_calls, prev_fns) {
+
     if (fn_calls [1] > 1) {
+
         yaml <- c (yaml,
                    paste0 (yaml_indent (2), "- preprocess:"))
         # add any pre-processing lines from prev_fns
@@ -329,10 +342,12 @@ add_preprocessing_to_yaml <- function (x, yaml, fn_calls, prev_fns) {
 #' removed, along with any terminal bounding brackets
 #' @noRd
 rm_comments_and_brackets <- function (x) {
+
     x <- gsub ("\\s$", "", gsub ("\\#.*", "", x)) # rm comments
     index <- grep ("^\\(", x) # only lines which start with a bracket
     if (length (index) > 0)
         x [index] <- gsub ("^\\(|\\)$", "", x [index])
+
     return (x)
 }
 
@@ -342,9 +357,11 @@ rm_comments_and_brackets <- function (x) {
 #' potentially be used as pre-processing lines of subsequent calls.
 #' @noRd
 terminal_prepro_lines <- function (x, fn_calls) {
+
     xpre <- NULL
     if (max (fn_calls) < length (x))
         xpre <- x [(max (fn_calls) + 1):length (x)]
+
     return (xpre)
 }
 
@@ -355,7 +372,9 @@ terminal_prepro_lines <- function (x, fn_calls) {
 #' `library` calls appended to "preprocess" stage, and removed from `x`.
 #' @noRd
 library_calls_to_yaml <- function (x, has_prepro, yaml) {
+
     if (any (grepl ("^library\\s?\\(", x))) {
+
         index <- grep ("^library\\s?\\(", x)
         libs <- unlist (lapply (x [index], function (i)
                                 strsplit (i, "\\)\\s?;") [[1]] [1]))
@@ -364,6 +383,7 @@ library_calls_to_yaml <- function (x, has_prepro, yaml) {
                        paste0 (yaml_indent (2), "- preprocess:"))
             has_prepro <- TRUE
         }
+
         for (l in libs)
             yaml <- c (yaml,
                        paste0 (yaml_indent (3), "- '", l, "'"))
@@ -393,9 +413,12 @@ parse_primary_fn_calls <- function (x, yaml, aliases, has_prepro) {
     rm_fns <- c ("stopifnot")
 
     for (xi in x) {
+
         p <- utils::getParseData (parse (text = xi))
         syms <- which (p$token == "SYMBOL_FUNCTION_CALL")
+
         if (any (syms)) {
+
             index <- which (p$token %in% c ("LEFT_ASSIGN", "EQ_ASSIGN"))
             if (!p$text [syms [1]] %in% aliases &
                 p$text [syms [1]] %in% rm_fns) {
@@ -403,6 +426,7 @@ parse_primary_fn_calls <- function (x, yaml, aliases, has_prepro) {
                 rm_lines <- c (rm_lines, xi)
 
             } else if (length (index) > 0) {
+
                 if (index [1] < syms [1]) {
 
                     if (!has_prepro) {
@@ -426,6 +450,7 @@ parse_primary_fn_calls <- function (x, yaml, aliases, has_prepro) {
 #' function calls.
 #' @noRd
 prepro_return_values <- function (x, yaml, aliases, has_prepro) {
+
     prepro <- vapply (x, function (i) {
                           p <- utils::getParseData (parse (text = i))
                           ret <- FALSE
@@ -446,11 +471,14 @@ prepro_return_values <- function (x, yaml, aliases, has_prepro) {
                               }
                           }
                           return (ret)  }, logical (1), USE.NAMES = FALSE)
+
     if (any (prepro)) {
+
         if (!has_prepro) {
             yaml <- c (yaml,
                        paste0 (yaml_indent (2), "- preprocess:"))
         }
+
         for (i in which (prepro)) {
             newpre <- paste0 (yaml_indent (3), "- '", x [i], "'")
             if (!newpre %in% yaml)
@@ -468,12 +496,16 @@ prepro_return_values <- function (x, yaml, aliases, has_prepro) {
 #' lines appended as internal pre-processing (non-terminal)
 #' @noRd
 terminal_prepro_to_yaml <- function (xpre, yaml, has_prepro) {
+
     if (!is.null (xpre)) {
+
         if (!has_prepro) {
+
             yaml <- c (yaml,
                        paste0 (yaml_indent (2), "- preprocess:"))
             has_prepro <- TRUE
         }
+
         for (i in xpre)
             yaml <- c (yaml, paste0 (yaml_indent (3), "- '", i, "'"))
     }
@@ -485,6 +517,7 @@ terminal_prepro_to_yaml <- function (xpre, yaml, has_prepro) {
 #' function or its aliases.
 #' @noRd
 chk_fn_calls_are_primary <- function (x, fn, fn_short, aliases) {
+
     chk <- vapply (x, function (i) {
                        p <- tryCatch (
                                 utils::getParseData (parse (text = i)),
@@ -726,7 +759,9 @@ rm_commas_in_qts <- function (commas, s) {
 #' @return Same content but with assignment operations removed
 #' @noRd
 rm_assignment_operators <- function (x, fn) {
+
     for (i in seq_along (x)) {
+
         p <- tryCatch (utils::getParseData (parse (text = x [[i]])),
                        error = function (e) NULL)
         if (is.null (p))
@@ -749,11 +784,17 @@ rm_assignment_operators <- function (x, fn) {
 #' values
 #' @noRd
 split_args_at_equals <- function (x) {
+
     lapply (x, function (i) {
+
                 res <- lapply (i, function (j) {
-                                   if (!grepl ("=", j) | grepl ("^\"", j))
+
+                                   if (!grepl ("=", j) | grepl ("^\"", j)) {
+
                                        ret <- c (NA_character_, j)
-                                   else {
+
+                                   } else {
+
                                        # split at first "=", presume all others
                                        # to be internal list items or the like
                                        idx <- regexpr ("=", j)
@@ -777,9 +818,11 @@ split_args_at_equals <- function (x) {
                                            ret <- c (substring (j, 1, idx - 1),
                                              substring (j, idx + 1, nchar (j)))
                                    }
+
                                 ret <- gsub ("^\\s+|\\s+$", "", ret)
                                 return (ret)
                             })
+
                 do.call (rbind, res)  })
 }
 
@@ -787,17 +830,25 @@ split_args_at_equals <- function (x) {
 #' pre-processing steps.
 #' @noRd
 add_prev_prepro <- function (x, yaml, fn, prev_fns) {
+
     pp <- prev_preprocess (prev_fns, fn)
     po <- prev_objects (pp)
+
     for (i in seq_along (x)) {
+
         if (any (po %in% x [[i]] [, 2])) {
+
             # add those pre-processing steps
             iend <- length (yaml)
+
             if (any (grepl ("preprocess:$", yaml))) {
+
                 istart <- grep ("preprocess:$", yaml)
                 prepro <- yaml [istart:iend]
                 yaml_top <- yaml [1:(istart - 1)]
+
             } else {
+
                 prepro <- paste0 (yaml_indent (2), "- preprocess:")
                 yaml_top <- yaml [1:iend]
             }
@@ -809,6 +860,7 @@ add_prev_prepro <- function (x, yaml, fn, prev_fns) {
                                paste0 (yaml_indent (3), "- '", i, "'"),
                                character (1),
                                USE.NAMES = FALSE)
+
             this_prepro <- c (prepro [1], this_pp)
             if (length (prepro) > 1)
                 this_prepro <- c (this_prepro, prepro [2:length (prepro)])
@@ -825,7 +877,9 @@ add_prev_prepro <- function (x, yaml, fn, prev_fns) {
 # Get preprocessing steps from previously constructed yaml representations of
 # examples
 prev_preprocess <- function (prev_fns, fn) {
+
     lapply (prev_fns, function (i) {
+
                 out <- yaml::yaml.load (i)$functions
                 out <- unlist (lapply (out, function (j)
                                        j [[fn]] [[1]]$preprocess))
@@ -834,43 +888,52 @@ prev_preprocess <- function (prev_fns, fn) {
 }
 
 get_assign_position <- function (x) {
+
     vapply (x, function (i) {
+
         index1 <- regexpr ("<-", i)
         index2 <- regexpr ("=", i)
         br <- regexpr ("\\(", i)
         index1 [index1 < 0 | index1 > br] <- .Machine$integer.max
         index2 [index2 < 0 | index2 > br] <- .Machine$integer.max
         min (c (index1, index2))    },
+
         integer (1),
         USE.NAMES = FALSE)
 }
 
 # Get names of previous objects assigned by prev_preprocess steps
 prev_objects <- function (prev_preprocesses) {
+
     res <- lapply (prev_preprocesses, function (i) {
                        ap <- get_assign_position (i)
                        vapply (seq_along (i), function (j)
                                substring (i [j], 1, ap [j] - 1),
                                character (1))
         })
+
     unique (unlist (res))
 }
 
 get_preprocess_lines <- function (x) {
+
     if (length (x) == 0)
         return (NULL)
 
     ret <- lapply (x, function (i) {
+
                        pre_index <- grep ("preprocess:", i)
                        par_index <- grep ("parameters:", i)
                        # prev_fns can have only pre-pro without parameters, so:
                        if (length (par_index) == 0)
                            par_index <- rep (length (i) + 1, length (pre_index))
                        res <- NULL
+
                        for (j in seq_along (pre_index)) {
                            index <- (pre_index [j] + 1):(par_index [j] - 1)
                            res <- c (res, i [index])
                        }
+
                        return (res [which (!duplicated (res))])
         })
     ret <- unlist (ret)
@@ -888,6 +951,7 @@ assign_names_to_params <- function (x, pkg) {
 
     all_nms <- NULL
     for (i in seq (x)) {
+
         # assign any internal fns used in exs to pkg namespace
         fn_name <- names (x) [i]
         if (grepl (":::", fn_name)) {
@@ -899,7 +963,9 @@ assign_names_to_params <- function (x, pkg) {
         pars <- formals (fun = fn_name, envir = pkg_env)
         nms <- names (pars)
         all_nms <- unique (c (all_nms, nms))
+
         if (any (is.na (x [[i]] [, 1]))) { # first column hold parameter names
+
             other_nms <- nms [which (!nms %in% x [[i]] [, 1])]
             # other_nms will be NULL for fns which have no args
             if (!all (is.null (other_nms))) {
@@ -922,6 +988,7 @@ assign_names_to_params <- function (x, pkg) {
     # removed here. (First element of ex will be NA for fns which have no args.)
     # Note that this allows for partial matching of argument names
     if (!"..." %in% names (pars)) {
+
         x <- lapply (x, function (i) {
                          index_in <- i [, 1] %in% all_nms
                          index_na <- is.na (i [, 1])
@@ -936,6 +1003,7 @@ assign_names_to_params <- function (x, pkg) {
     # changepoint::decision), yet this is a reserved yaml word, so must be
     # quoted.
     x <- lapply (x, function (i) {
+
                      i [which (i [, 2] == ""), 2] <- "\"\""
                      i [which (i [, 1] == "null"), 1] <- "\"null\""
                      return (i)    })
@@ -948,6 +1016,7 @@ add_default_vals_to_params <- function (x, package) {
     this_env <- as.environment (paste0 ("package:", package))
 
     xout <- lapply (seq_along (x), function (i) {
+
                     this_fn <- names (x) [i]
                     these_pars <- x [[i]] [, 1]
                     if (grepl (":::", this_fn)) {
@@ -1031,6 +1100,7 @@ add_params_to_yaml <- function (x, yaml, fn) {
     yaml <- yaml [1:(fn_start - 1)]
 
     for (i in seq_along (x)) {
+
         pre [1] <- paste0 (yaml_indent (1), "- ", names (x) [i], ":")
         yaml <- c (yaml,
                    pre,
@@ -1038,10 +1108,13 @@ add_params_to_yaml <- function (x, yaml, fn) {
         # functions with no parameters - these are not processed in any
         # autotests
         if (nrow (x [[i]]) == 1 & all (is.na (x [[i]] [, 1]))) {
+
             yaml <- c (yaml,
                        paste0 (yaml_indent (3), "- (none)"))
         } else {
+
             for (j in seq (nrow (x [[i]]))) {
+
                 # range expressions like `x:y` can not be left, because `:` is
                 # YAML field delimiter, so
                 val_j <- x [[i]] [j, 2]
@@ -1068,6 +1141,7 @@ add_params_to_yaml <- function (x, yaml, fn) {
 }
 
 get_fn_aliases <- function (pkg, fn_name) {
+
     if (pkg_is_source (pkg))
         return (get_aliases_source (pkg, fn_name))
     else
@@ -1081,10 +1155,13 @@ get_aliases_non_source <- function (pkg, fn_name) {
         loc <- file.path (R.home (), "library", pkg, "help", pkg)
     else
         loc <- file.path (pkg, "help", basename (pkg))
+
     e <- new.env ()
     chk <- lazyLoad (loc, envir = e) # nolint
     fns <- ls (envir = e)
+
     all_aliases <- lapply (fns, function (i) {
+
                            rd <- get (i, envir = e)
                            is_alias <- vapply (rd, function (j)
                                 attr (j, "Rd_tag") == "\\alias",
@@ -1096,9 +1173,13 @@ get_aliases_non_source <- function (pkg, fn_name) {
 
     has_fn_name <- which (vapply (all_aliases, function (i)
                                   fn_name %in% i, logical (1)))
+
     if (length (has_fn_name) > 0) {
+
         aliases <- unname (unlist (all_aliases [has_fn_name]))
+
         classes <- vapply (aliases, function (i) {
+
                                pkg_env <- as.environment (paste0 ("package:",
                                                             basename (pkg)))
                                i_get <- tryCatch (get (i, envir = pkg_env),
@@ -1116,6 +1197,7 @@ get_aliases_non_source <- function (pkg, fn_name) {
 
 
 get_aliases_source <- function (pkg, fn_name) {
+
     f <- file.path (pkg, "man", paste0 (fn_name, ".Rd"))
     x <- readLines (f, warn = FALSE)
 
@@ -1133,6 +1215,7 @@ get_aliases_source <- function (pkg, fn_name) {
 #' those class restrictions to `yaml` if so.
 #' @noRd
 add_class_descriptions <- function (yaml, package) {
+
     classes <- param_classes_in_desc (yaml, package)
     index <- which (!is.na (classes$class_in_desc))
     if (length (index) > 0) {
@@ -1153,6 +1236,7 @@ add_class_descriptions <- function (yaml, package) {
 #'
 #' @noRd
 rm_prepro_only <- function (x) {
+
     has_params <- vapply (x, function (i)
                           any (grepl ("- parameters:$", i)),
                           logical (1),
