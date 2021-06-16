@@ -117,7 +117,7 @@ parse_one_fn <- function (x, f, yaml) {
     nms <- get_fn_names (x, f)
 
     # rm all other fns from yaml except 'f':
-    yfns <- grep (paste0 ("^", yaml_indent (1), "-\\s[^\\s]"), yaml)
+    yfns <- grep (paste0 ("^", yaml_indent (1), "-\\s[^\\s]*"), yaml)
     yfns_end <- c (yfns [-1] - 1, length (yaml))
     index <- yfns [f]:yfns_end [f]
     yaml <- c (yaml [1:(yfns [1] - 1)],
