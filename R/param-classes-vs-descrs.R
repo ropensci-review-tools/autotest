@@ -3,7 +3,9 @@
 #' meaning this will not necessarily catch all
 #' @noRd
 parse_one_params <- function (p) {
+
     nm_desc <- vapply (p, function (i) {
+
                            res <- tryCatch (eval (parse (text = i)),
                                             error = function (e) NULL)
                            # TODO: Use `formals` to at least have names of all
@@ -20,7 +22,9 @@ parse_one_params <- function (p) {
                            c (name, desc)
                            return (c (name, desc)) },
                            character (2), USE.NAMES = FALSE)
+
     index <- apply (nm_desc, 2, function (i) !all (is.na (i)))
+
     data.frame (param = nm_desc [1, index],
                 descr = nm_desc [2, index],
                 stringsAsFactors = FALSE)
@@ -37,6 +41,7 @@ parse_one_params <- function (p) {
 get_param_lists <- function (package) {
 
     if (pkg_is_source (package)) {
+
         f <- file.path (package, "man")
         flist <- list.files (f, full.names = TRUE, pattern = "*\\.Rd$")
         rdnames <- gsub ("\\.Rd$", "",
@@ -48,20 +53,27 @@ get_param_lists <- function (package) {
                                       collapse = "\n "))
             )
         names (params) <- rdnames
+
         suppressWarnings (
             fn_names <- vapply (flist, function (i)
                                 get_Rd_metadata (tools::parse_Rd (i),
                                                  "alias") [1],
                                 character (1), USE.NAMES = FALSE)
             )
+
     } else {
+
         if (basename (package) == package) {
+
             r <- tools::Rd_db (package = package)
+
         } else {
+
             # packages installed into local tempdir via covr:
             r <- tools::Rd_db (package = basename (package),
                                dir = package)
         }
+
         rdnames <- gsub ("\\.Rd$", "", names (r))
         params <- lapply (r, function (i)
                           paste0 (get_Rd_metadata (i, "arguments"),
@@ -78,6 +90,7 @@ get_param_lists <- function (package) {
     fn_names <- fn_names [index]
 
     params <- lapply (seq_along (params), function (i) {
+
                           res <- parse_one_params (params [[i]])
                           is_empty <- length (res) == 0 | any (dim (res) == 0)
                           if (is_empty)
@@ -161,7 +174,9 @@ param_classes_in_desc <- function (yaml, pkg_full) {
     these_classes <- classes [classes$alias == fn, ]
 
     class_in_desc <- NULL
+
     if (nrow (these_params) > 0) {
+
         class_in_desc <- vapply (seq (nrow (these_params)), function (i) {
                                      class_i <- these_classes$object
                                      these <- these_params$param [i]
@@ -189,6 +204,7 @@ param_classes_in_desc <- function (yaml, pkg_full) {
 }
 
 yaml_param_classes <- function (yaml) {
+
     # reduce to only preprocess and parameters clauses
     yaml <- yaml [-grep ("^[a-z]", yaml)]
     n <- nchar (yaml_indent (1))
@@ -206,7 +222,9 @@ yaml_param_classes <- function (yaml) {
                        return (res) },
                        integer (1))
     index <- sort (c (pre_start - 1L, classes))
+
     par_end <- vapply (par_start, function (i) {
+
                        res <- index [which (index > i) [1]] - 1L
                        if (is.na (res))
                            res <- length (yaml)
@@ -248,6 +266,7 @@ yaml_param_classes <- function (yaml) {
     params <- gsub ("\\s*-\\s?", "", params)
 
     classes <- lapply (seq_along (objs), function (i) {
+
                            res <- tryCatch (
                                      class (eval (parse (text = objs [i]),
                                                   envir = newenv)),
@@ -267,6 +286,7 @@ yaml_param_classes <- function (yaml) {
                            }
                            return (res)
                            })
+
     options (device = dev)
     names (classes) <- params
 
@@ -323,6 +343,7 @@ is_fn_a_constructor <- function (fn,
 #' string of "\<package\>:\<function\>".
 #' @noRd
 param_desc_is_other_fn <- function (pkg, param_descs) {
+
     plist <- get_pkg_deps (pkg)
     for (p in plist)
         if (!paste0 ("package:", p) %in% search ())
@@ -334,15 +355,19 @@ param_desc_is_other_fn <- function (pkg, param_descs) {
 
     # then also get all Rd topics
     topics <- lapply (s, function (i) {
+
                           rd <- tools::Rd_db (gsub ("^package:", "", i))
                           vapply (rd, function (j) get_Rd_metadata (j, "name"),
                                   character (1), USE.NAMES = FALSE)
                              })
+
     for (i in seq_along (allfns)) {
+
         allfns [[i]] <- unique (c (allfns [[i]], topics [[i]]))
     }
 
     match_txt_to_pkg <- function (txt, allfns) {
+
         pkg_index <- vapply (allfns, function (i) any (grepl (txt, i)),
                              logical (1))
         pkgs <- names (pkg_index) [which (pkg_index)]
@@ -361,6 +386,7 @@ param_desc_is_other_fn <- function (pkg, param_descs) {
     }
 
     param_classes <- vapply (param_descs, function (i) {
+
                                  i_s <- gsub ("\"|\'|\`|^.*\\{|\\}$", "",
                                               strsplit (i, " ") [[1]])
                                  res <- vapply (i_s, function (txt) {
@@ -373,8 +399,10 @@ param_desc_is_other_fn <- function (pkg, param_descs) {
                                  if (!is.na (res))
                                      res <- paste0 (res, "::", i_s [index [1]])
                                  return (res)
-                                 }, character (1),
+                                 },
+                                 character (1),
                                  USE.NAMES = FALSE)
+
     return (gsub ("^package:", "", param_classes))
 }
 
@@ -384,6 +412,7 @@ param_desc_is_other_fn <- function (pkg, param_descs) {
 #' to the specified value.
 #' @noRd
 add_class_restriction <- function (yaml, classes) {
+
     if (!any (grepl ("- class:", yaml)))
         yaml <- c (yaml, paste0 (yaml_indent (2), "- class:"))
 
