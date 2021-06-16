@@ -4,7 +4,7 @@ pkgdown_sha: 9ce6af43b55cd21e9563526e12a12d1243657bf6
 articles:
   autotest-control: autotest-control.html
   autotest: autotest.html
-last_built: 2021-06-16T13:02Z
+last_built: 2021-06-16T13:10Z
 urls:
   reference: https://ropensci-review-tools.github.io/autotest/reference
   article: https://ropensci-review-tools.github.io/autotest/articles
