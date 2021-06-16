@@ -1095,7 +1095,7 @@ add_default_vals_to_params <- function (x, package) {
 #' @noRd
 add_params_to_yaml <- function (x, yaml, fn) {
 
-    fn_start <- grep (paste0 ("- ", fn, ":"), yaml)
+    fn_start <- grep (paste0 ("^\\s*- ", fn, ":"), yaml)
     pre <- yaml [fn_start:length (yaml)]
     yaml <- yaml [1:(fn_start - 1)]
 
