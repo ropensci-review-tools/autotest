@@ -13,7 +13,9 @@ get_example_objs <- function (package,
                               run_dontrun = FALSE) {
 
     pkg_name <- get_package_name (package)
+
     if (pkg_is_source (package)) {
+
         if (!paste0 ("package:", pkg_name) %in% search ())
             devtools::load_all (package, export_all = FALSE)
 
@@ -21,9 +23,13 @@ get_example_objs <- function (package,
                              pattern = "\\.Rd$",
                              full.names = TRUE)
     } else {
+
         if (basename (package) == package) {
+
             flist <- tools::Rd_db (package = package)
+
         } else {
+
             # packages installed into local tempdir via covr:
             flist <- tools::Rd_db (package = basename (package),
                                    dir = package)
@@ -34,6 +40,7 @@ get_example_objs <- function (package,
     options (device = NULL) # suppress plot output
     suppressWarnings (
         objs <- lapply (flist, function (i) {
+
                             ret <- example_objects (i,
                                                     run_dontrun,
                                                     run_donttest)
@@ -69,8 +76,11 @@ get_example_objs <- function (package,
                         stringsAsFactors = FALSE)
 
     if (nrow (objs) == 0) {
+
         objs <- NULL
+
     } else {
+
         names (objs) <- c ("alias", "object")
         exclude_these <- c ("gg", "ggplot")
         objs <- objs [which (!objs$object %in% exclude_these), ]
