@@ -22,8 +22,15 @@ get_pkg_functions <- function (package) {
     }
 
     fn_classes <- vapply (fns, function (i) {
-                 out_obj <- tryCatch (class (get (i, envir = e)) [1],
+
+                 out_obj <- tryCatch (get (i, envir = e),
                                       error = function (err) NA_character_)
+                 # fns in package namespace have 'srcref' as an attribute:
+                 if (is.null (attributes(out_obj)))
+                     out_obj <- NULL
+                 else
+                     out_obj <- class (out_obj) [1]
+
                  out_fn <- tryCatch (class (utils::getFromNamespace (i, pkg)) [1],
                                      error = function (err) NA_character_)
                  out <- unique (c (out_obj, out_fn))
@@ -72,7 +79,9 @@ is_pkg_same <- function (package) {
 #' memoising.
 #' @noRd
 fns_without_examples <- function (package) {
+
     if (pkg_is_source (package)) {
+
         man_dir <- list.files (file.path (package, "man"), pattern = "\\.Rd$",
                                full.names = TRUE)
         ex_alias <- lapply (man_dir, function (i) {
@@ -83,6 +92,7 @@ fns_without_examples <- function (package) {
                                       aliases = get_Rd_metadata (rd, "alias"))
                                })
     } else {
+
         if (basename (package) == package) {
             rd <- tools::Rd_db (package = package)
         } else {
