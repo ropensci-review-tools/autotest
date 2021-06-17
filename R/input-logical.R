@@ -177,7 +177,7 @@ subst_for_logical <- function (x = NULL, subst = "integer") {
                            names (x$params) [x$i],
                            " of function [",
                            x$fn,
-                           "] is assumed to be logical, ",
+                           "] is only used as a logical, ",
                            "but responds to ",
                            subst,
                            " input")

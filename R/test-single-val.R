@@ -143,9 +143,10 @@ test_single_length.autotest_obj <- function (x, val_type, test_data = NULL) { # 
                                    names (x$params) [x$i],
                                    "] of function [",
                                    x$fn,
-                                   "] is assumed to be a single ",
+                                   "] is only used a single ",
                                    val_type,
-                                   ", but responds to vectors of length > 1")
+                                   " value, ",
+                                   "but responds to vectors of length > 1")
         }
     }
 
