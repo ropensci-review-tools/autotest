@@ -577,7 +577,10 @@ extract_primary_call_content <- function (x, aliases, pkg) {
                        })
     names (br1) <- a_grep
     br1 <- do.call (rbind, br1)
-    index <- apply (br1, 2, function (i) which (!is.na (i)))
+    index <- apply (br1, 2, function (i)
+                    ifelse (any (any (!is.na (i))),
+                            which (!is.na (i)),
+                            NA_integer_))
     fn_nms <- a_grep [index]
 
     br1 <- apply (br1, 2, function (i)
@@ -611,7 +614,7 @@ extract_primary_call_content <- function (x, aliases, pkg) {
                             }
                             return (fout)
                             }, character (1))
-    index <- which (fn_calls == "")
+    index <- which (fn_calls == "" & !is.na (fn_nms))
     fn_calls [index] <- fn_nms [index]
 
     # check whether any function calls are parts of other functions (like in
