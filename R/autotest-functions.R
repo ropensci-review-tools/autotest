@@ -219,7 +219,7 @@ autotest_package <- function (package = ".",
 
     }
 
-    return (res)
+    return (order_at_rows (res))
 }
 
 # Extract function name from yaml; used only to screen dump in autootest_package
@@ -271,4 +271,17 @@ autotest_types <- function (notest = NULL) {
     }
 
     return (res)
+}
+
+order_at_rows <- function (x) {
+
+    type_order <- c ("error", "warning", "diagnostic", "message",
+                     "dummy", "no_test")
+    index <- data.frame (index = seq (nrow (x)),
+                         type = match (x$type, type_order))
+    index <- index [order (index$type), ]
+    x <- x [index$index, ]
+    rownames (x) <- NULL
+
+    return (x)
 }
