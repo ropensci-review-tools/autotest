@@ -413,18 +413,67 @@ param_desc_is_other_fn <- function (pkg, param_descs) {
 #' @noRd
 add_class_restriction <- function (yaml, classes) {
 
-    if (!any (grepl ("- class:", yaml)))
-        yaml <- c (yaml, paste0 (yaml_indent (2), "- class:"))
-
     if (classes$parameter [1] == "null")
         classes$parameter [1] <- "\"null\""
 
+    index <- grep ("^\\s+", yaml)
+    yaml_head <- yaml [seq_along (yaml) [-index]]
+    yaml <- yaml [index]
 
-    yaml <- c (yaml,
-               paste0 (yaml_indent (3),
-                       "- ",
-                       classes$parameter [1],
-                       ": ",
-                       classes$class_in_desc [1]))
+    i <- nchar (yaml_indent (1))
+    ptn <- paste0 ("^", paste0 (rep ("\\s", i), collapse = ""), "-")
+    index1 <- grep (ptn, yaml)
+    index2 <- c (index1 [-1] - 1, length (yaml))
+    index <- cbind (index1, index2)
+    index <- lapply (seq (nrow (index)), function (i)
+                     rep (i, index [i, 2] - index [i, 1] + 1))
+    index <- do.call (c, index)
+
+    yaml <- split (yaml, f = as.factor (index))
+
+    yaml <- lapply (yaml, function (y) {
+
+        i <- nchar (yaml_indent (2))
+        ptn <- paste0 ("^", paste0 (rep ("\\s", i), collapse = ""), "-")
+        yaml_type_indx <- grep (ptn, y)
+        yaml_param_indx <- grep (paste0 (ptn, "\\s+parameters:"), y)
+
+        yaml_params <- classes$parameter
+
+        if (length (yaml_param_indx) > 0) {
+
+            index <- which (yaml_type_indx > yaml_param_indx [1]) [1]
+            if (is.na (index)) {
+                yaml_param_indx <- seq (yaml_param_indx [1] + 1, length (y))
+            } else {
+                yaml_param_indx <- seq (yaml_param_indx [1] + 1,
+                                        yaml_type_indx [index] - 1)
+            }
+            yaml_params <- vapply (strsplit (y [yaml_param_indx], "\\:\\s+"),
+                                   function (j) gsub ("^\\s*-\\s", "", j [1]),
+                                   character (1))
+        }
+
+        class_index <- which (classes$parameter %in% yaml_params)
+
+        if (length (class_index) > 0) {
+
+            yadd <- NULL
+            if (!any (grepl ("- class:", y)))
+                yadd <- paste0 (yaml_indent (2), "- class:")
+            yadd <- c (yadd,
+                       paste0 (yaml_indent (3),
+                               "- ",
+                               classes$parameter [class_index],
+                               ": ",
+                               classes$class_in_desc [class_index]))
+
+            y <- c (y, yadd)
+        }
+
+        return (y)  })
+
+    yaml <- c (yaml_head, unname (do.call (c, yaml)))
+
     return (yaml)
 }
