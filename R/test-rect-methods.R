@@ -33,9 +33,14 @@ autotest_rectangular.autotest_obj <- function (x, test_data = NULL, ...) { # nol
         x$i <- r
 
         x$class <- NULL
-        if (names (x$params) [r] %in% names (x$classes))
+        if (names (x$params) [r] %in% names (x$classes)) {
+
             x$class <- x$classes [[match (names (x$params) [r],
                                           names (x$classes))]]
+            # then only proceed if class is not explicitly restricted:
+            if (!x$class %in% c ("data.table", "tbl_df", "data.table"))
+                next
+        }
 
         ret <- rbind (ret, test_rect_as_other (x, test_data))
 
