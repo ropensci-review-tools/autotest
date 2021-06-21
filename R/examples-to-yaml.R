@@ -289,6 +289,7 @@ find_function_calls <- function (x, fn, aliases) {
     fn_calls <- 1 # dummy value that is never carried through
     if (is_dispatch &
         any (grepl ("[[:alpha:]]\\.[[:alpha:]]", fn))) {
+
             fn_short <- gsub ("\\..*$", "", fn)
             fn_calls <- grep (paste0 (fn, "|", fn_short), x)
             if (!is.null (aliases)) {
@@ -296,13 +297,16 @@ find_function_calls <- function (x, fn, aliases) {
                 fn_calls <- unique (c (fn_calls, grep (fn_here, x)))
             }
     } else {
+
         fn_here <- fn
-        if (!is.null (aliases))
-        {
+
+        if (!is.null (aliases)) {
+
             fn_here <- paste0 (fn, "|",
                                paste0 (aliases_to_grep_form (aliases),
                                        collapse = "|"))
         }
+
         fn_calls <- grep (fn_here, x)
     }
 
