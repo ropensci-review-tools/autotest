@@ -9,6 +9,8 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
 
     load_libraries (yaml)
 
+    yaml <- preprocess_yaml (yaml)
+
     x <- yaml::yaml.load (yaml, handlers = yaml_handlers ())
 
     x <- rm_no_param_fns (x)
@@ -37,6 +39,27 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
           parameters = parameters,
           preprocess = preprocess,
           classes = classes)
+}
+
+#' Necessary preprocessing steps for yaml to parse succesfully.
+#'
+#' Incorporates the following:
+#' 1. Any values which begin with "!" must be escape-quoted, because `yaml`
+#' ignores those completely and returns an empty field
+#' @noRd
+preprocess_yaml <- function (yaml) {
+
+    y <- gsub ("\\'.*\\'", "", yaml)
+    index <- grep ("\\:\\s+\\!", y)
+    if (length (index) > 0) {
+        yi <- vapply (yaml [index], function (i) {
+                          x <- strsplit (i, "\\:\\s+\\!") [[1]]
+                          paste0 (x [1], ": \'!", x [2], "\'")
+          }, character (1))
+        yaml [index] <- yi
+    }
+
+    return (yaml)
 }
 
 #' handlers for yaml parsing
