@@ -573,7 +573,11 @@ extract_primary_call_content <- function (x, aliases, pkg) {
                        })
 
     br1 <- apply (do.call (rbind, br1), 2, function (i)
-                  min (i [which (!is.na (i))]))
+                  ifelse (!any (!is.na (i)),
+                          NA_integer_,
+                          min (i [which (!is.na (i))])))
+    br1 [is.na (br1)] <- nchar (x) [is.na (br1)]
+
     # those may still include assignment operators or similar, so extract actual
     # fn calls by parsing expressions
     fn_calls <- vapply (seq_along (br1), function (i) {
@@ -628,7 +632,7 @@ extract_primary_call_content <- function (x, aliases, pkg) {
     names (x) <- fn_calls
 
     # any failied getParseData from above is rejected here:
-    x <- x [which (!names (x) == "")]
+    x <- x [which (!(names (x) == "" | is.na (x)))]
 
     x <- split_content_at_commas (x)
 
