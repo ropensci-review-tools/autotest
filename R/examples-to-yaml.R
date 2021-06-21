@@ -531,8 +531,8 @@ chk_fn_calls_are_primary <- function (x, fn, fn_short, aliases) {
                        if (!is.null (p))
                            index <- which (p$token == "SYMBOL_FUNCTION_CALL")
                        if (length (index) > 0) {
-                           ret <- (p$text [index [1]] %in% aliases |
-                                   p$text [index [1]] == fn_short)
+                           ret <- any (p$text [index] %in% aliases |
+                                       p$text [index] == fn_short)
                            if (any (grepl ("apply|map", p$text [index]))) {
                                # can also be part of *apply or *map functions,
                                # yet `getParseData` only parses these as SYMBOL
