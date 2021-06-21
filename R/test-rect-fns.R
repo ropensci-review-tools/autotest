@@ -282,7 +282,7 @@ pass_one_rect_as_other <- function (x,
         ret$test_name <- template$test_name
     }
 
-    return (ret)
+    return (ret [!duplicated (ret), ])
 }
 
 #' Return a grid of all pairwise comparisons of classes for rectangular objects,
@@ -370,6 +370,7 @@ do_extend_rect_class_struct <- function (x) {
         msg_out <- add_msg_output (NULL,
                                    msgs,
                                    types = c ("warning", "error"))
+        msg_out <- msg_out [!duplicated (msg_out), ]
 
         ret <- test_rect_extend_class.NULL ()
         ret$type <- msg_out$type
