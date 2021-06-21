@@ -30,7 +30,7 @@ test_that ("examples_to_yaml", {
     exclude <- exclude_functions (package, functions, exclude)
     exs <- examples_to_yaml (package, exclude = exclude)
     expect_is (exs, "list")
-    expect_length (exs, 4)
+    expect_length (exs, 6L)
     expect_true (all (names (exs) == "var"))
 })
 

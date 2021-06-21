@@ -575,8 +575,12 @@ extract_primary_call_content <- function (x, aliases, pkg) {
                                b [[i]] [which (b [[i]] > f [i]) [1]],
                                integer (1))
                        })
+    names (br1) <- a_grep
+    br1 <- do.call (rbind, br1)
+    index <- apply (br1, 2, function (i) which (!is.na (i)))
+    fn_nms <- a_grep [index]
 
-    br1 <- apply (do.call (rbind, br1), 2, function (i)
+    br1 <- apply (br1, 2, function (i)
                   ifelse (!any (!is.na (i)),
                           NA_integer_,
                           min (i [which (!is.na (i))])))
@@ -607,6 +611,8 @@ extract_primary_call_content <- function (x, aliases, pkg) {
                             }
                             return (fout)
                             }, character (1))
+    index <- which (fn_calls == "")
+    fn_calls [index] <- fn_nms [index]
 
     # check whether any function calls are parts of other functions (like in
     # ?Normal for erf), and replace nominated fn variable with 1.
