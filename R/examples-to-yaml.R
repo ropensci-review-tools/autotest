@@ -156,7 +156,7 @@ exclude_functions <- function (package, functions, exclude = NULL) {
 one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x,
                             aliases = NULL, prev_fns = NULL) {
 
-    res <- process_example_code (x, pkg, fn, aliases, prev_fns)
+    res <- parse_example_code (x, pkg, fn, aliases, prev_fns)
     # res is a list of (x, yaml)
 
     fn_short <- get_function_short_name (fn, attr (x, "is_dispatch"))
@@ -180,13 +180,13 @@ one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x,
     return (yaml)
 }
 
-#' process example code
+#' parse example code
 #'
 #' @param x Initial (unprocessed) lines of one example
 #' @return List with a modified version of `x` able to be converted to 'yaml'
 #' representation, and in initial 'yaml' version of the example code.
 #' @noRd
-process_example_code <- function (x, pkg, fn, aliases, prev_fns) {
+parse_example_code <- function (x, pkg, fn, aliases, prev_fns) {
 
     x <- clean_ex_code (x)
 
