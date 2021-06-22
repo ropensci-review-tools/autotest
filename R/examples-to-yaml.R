@@ -156,6 +156,38 @@ exclude_functions <- function (package, functions, exclude = NULL) {
 one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x,
                             aliases = NULL, prev_fns = NULL) {
 
+    res <- process_example_code (x, pkg, fn, aliases, prev_fns)
+    # res is a list of (x, yaml)
+
+    fn_short <- get_function_short_name (fn, attr (x, "is_dispatch"))
+    x_content <- extract_primary_call_content (res$x,
+                                        unique (c (fn, fn_short, aliases)),
+                                        pkg)
+    if (length (x_content) == 0)
+        return (NULL)
+
+    x_content <- rm_assignment_operators (x_content, fn)
+    x_content <- split_args_at_equals (x_content)
+
+    yaml <- add_prev_prepro (x_content, res$yaml, fn, prev_fns)
+    yaml <- yaml [which (!duplicated (yaml))]
+
+    x_content <- assign_names_to_params (x_content, pkg)
+    x_content <- add_default_vals_to_params (x_content, pkg)
+
+    yaml <- add_params_to_yaml (x_content, yaml, fn)
+
+    return (yaml)
+}
+
+#' process example code
+#'
+#' @param x Initial (unprocessed) lines of one example
+#' @return List with a modified version of `x` able to be converted to 'yaml'
+#' representation, and in initial 'yaml' version of the example code.
+#' @noRd
+process_example_code <- function (x, pkg, fn, aliases, prev_fns) {
+
     x <- clean_ex_code (x)
 
     yaml <- c (paste0 ("package: ", pkg),
@@ -193,7 +225,7 @@ one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x,
     x <- unlist (lapply (x, function (i) strip_if_cond (i)))
     x <- chk_fn_calls_are_primary (x, fn, fn_short, aliases)
     if (length (x) == 0) # yaml may still have prepro lines, so return those
-        return (yaml)
+        return (list (x = NULL, yaml = yaml))
 
     x <- split_piped_lines (x)
     # Then add any lines prior to main function call to pre-processing:
@@ -217,24 +249,7 @@ one_ex_to_yaml <- function (pkg, pkg_full, fn, rdname, x,
 
     x <- x [seq (max (fn_calls))]
 
-    x_content <- extract_primary_call_content (x,
-                                        unique (c (fn, fn_short, aliases)),
-                                        pkg)
-    if (length (x_content) == 0)
-        return (NULL)
-
-    x_content <- rm_assignment_operators (x_content, fn)
-    x_content <- split_args_at_equals (x_content)
-
-    yaml <- add_prev_prepro (x_content, yaml, fn, prev_fns)
-    yaml <- yaml [which (!duplicated (yaml))]
-
-    x_content <- assign_names_to_params (x_content, pkg)
-    x_content <- add_default_vals_to_params (x_content, pkg)
-
-    yaml <- add_params_to_yaml (x_content, yaml, fn)
-
-    return (yaml)
+    return (list (x = x, yaml = yaml))
 }
 
 #' clean any expressions that do not parse via parse_Rd.
