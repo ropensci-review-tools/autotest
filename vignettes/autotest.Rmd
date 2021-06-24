@@ -128,7 +128,7 @@ DT::datatable (x1, options = list (dom = "t"))
 
 The first thing to notice is the first column, which has `test_type = "dummy"`
 for all rows. The [`autotest_package()`
-function](https://ropensci-review-tools.github.io/autotest/reference/autotest_package.html)
+function](https://docs.ropensci.org/autotest/reference/autotest_package.html)
 has a parameter `test` with a default value of `FALSE`, so that the default
 call demonstrated above does not actually implement the tests, rather it
 returns an object listing all tests that would be performed with actually doing
