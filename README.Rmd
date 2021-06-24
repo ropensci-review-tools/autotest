@@ -92,7 +92,7 @@ The argument to `autotest_package()` can either be the name of an installed
 package, or a path to a local directory containing the source for a package.
 The result is a `data.frame` of errors, warnings, and other diagnostic messages
 issued during package `auotest`-ing. See the [main package
-vignette](https://ropensci-review-tools.github.io/autotest/articles/autotest.html) for
+vignette](https://docs.ropensci.org/autotest/articles/autotest.html) for
 an introductory tour of the package.
 
 ## What is tested?
@@ -106,7 +106,7 @@ autotest_types ()
 That functions returns a [`tibble`](https://tibble.tidyverse.org) describing
 `r nrow(autotest_types())` unique tests. All `autotest` functions return these
 same kinds of objects. The table returned from
-[`autotest_types()`](https://ropensci-review-tools.github.io/autotest/reference/autotest_types.html)
+[`autotest_types()`](https://docs.ropensci.org/autotest/reference/autotest_types.html)
 can be used to selectively switch tests off by setting values in the `test`
 column to `FALSE`, as demonstrated below.
 
@@ -185,7 +185,7 @@ previous "diagnostic".
 Not yet, but that should be possible soon. In the meantime, there are
 [`testthat`](https://testthat.r-lib.org) expectations, listed in the [main
 package
-functions](https://ropensci-review-tools.github.io/autotest/reference/index.html),
+functions](https://docs.ropensci.org/autotest/reference/index.html),
 which enable `autotest` to be used in a package's test suite.
 
 
