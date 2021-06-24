@@ -28,13 +28,13 @@ knitr::opts_chunk$set(
 ```
 
 The [first
-vignette](https://ropensci-review-tools.github.io/autotest/articles/autotest.html)
+vignette](https://docs.ropensci.org/autotest/articles/autotest.html)
 demonstrates the process of applying `autotest` at all stages of package
 development. This vignette provides additional information for those applying
 `autotest` to already developed packages, in particular through describing how
 tests can be selectively applied to a package. By default the
 [`autotest_package()`
-function](https://ropensci-review-tools.github.io/autotest/reference/autotest_package.html)
+function](https://docs.ropensci.org/autotest/reference/autotest_package.html)
 tests an entire package, but testing can also be restricted to specified
 functions only. This vignette will demonstrate application to a few functions
 from the [`stats`
@@ -118,7 +118,7 @@ example section according to the following general steps:
    defined via default value;
 6. Mutate the values of all parameters according to the kinds of test described
    in
-   [`autotest_types()`](https://ropensci-review-tools.github.io/autotest/reference/autotest_types.html).
+   [`autotest_types()`](https://docs.ropensci.org/autotest/reference/autotest_types.html).
 
 Calling `autotest_package(..., test = FALSE)` implements the first 5 of those
 6 steps, and returns data on all possible mutations of each parameter, while
@@ -131,12 +131,12 @@ functions, and returns reports on any unexpected behaviour.
 The preceding sections describe how `autotest` actually works, while the
 present section demonstrates how the package is typically used in practice. As
 demonstrated in the
-[`README`](https://ropensci-review-tools.github.io/autotest/), information on
+[`README`](https://docs.ropensci.org/autotest/), information on
 all tests implemented within the package can be obtained by calling the
 [`autotest_types()`
-function](https://ropensci-review-tools.github.io/autotest/reference/autotest_types.html).
+function](https://docs.ropensci.org/autotest/reference/autotest_types.html).
 The main function for testing package is
-[`autotest_package()`](https://ropensci-review-tools.github.io/autotest/reference/autotest_package.html).
+[`autotest_package()`](https://docs.ropensci.org/autotest/reference/autotest_package.html).
 The nominated package can be either an installed package, or the full path to
 a local directory containing a package's source code. By default all `.Rd`
 files of a package are tested, with restriction to specified functions possible
@@ -244,20 +244,20 @@ parameter" arises because the `use` and `method` parameters of the `cor` and
 `cov` functions are case-dependent, and are only accepted in lower case form.
 The other operation is the conversion of vectors to list-column format, as
 described in the [first
-vignette](https://ropensci-review-tools.github.io/autotest/articles/autotest.html).
+vignette](https://docs.ropensci.org/autotest/articles/autotest.html).
 
 
 ### 3.4 Controlling which tests are conducted
 
 The `test` parameter of the [`autotest_package()`
-function](https://ropensci-review-tools.github.io/autotest/reference/autotest_package.html)
+function](https://docs.ropensci.org/autotest/reference/autotest_package.html)
 can be used to control whether all tests are conducted or not. Finer-level
 control over tests can be achieved by specifying the `test_data` parameter.
 This parameter must be an object of class `autotest_package`, as returned by
 either the
-[`autotest_types()`](https://ropensci-review-tools.github.io/autotest/reference/autotest_types.html)]
+[`autotest_types()`](https://docs.ropensci.org/autotest/reference/autotest_types.html)]
 or
-[`autotest_package()](https://ropensci-review-tools.github.io/autotest/reference/autotest_package.html)
+[`autotest_package()](https://docs.ropensci.org/autotest/reference/autotest_package.html)
 functions. The former of these is the function which specifies all unique
 tests, and so returns a relatively small `tibble` of `r nrow(autotest_types())`
 rows. The following lines demonstrate how to switch off the list-column test
@@ -290,7 +290,7 @@ print (xt2)
 The result now has four rows with `test == FALSE`, and `type == "no_test"`,
 indicating that these tests were not actually conducted. That also makes
 apparent the role of these `test` flags. When initially calling 
-[`autotest_package()`](https://ropensci-review-tools.github.io/autotest/reference/autotest_package.html)
+[`autotest_package()`](https://docs.ropensci.org/autotest/reference/autotest_package.html)
 with default `test = FALSE`, the result contains a `test` column in which all
 values are `TRUE`. Although potentially perplexing at first, this value must be
 understood in relation to the `type` column. A `type` of `"dummy"` indicates
@@ -300,11 +300,11 @@ the `test_data` parameter. For all `type` values other than `"dummy"`, the
 `test` column specifies whether or not each test was actually conducted.
 
 The preceding example showed how the results of 
-[`autotest_types()`](https://ropensci-review-tools.github.io/autotest/reference/autotest_types.html)
+[`autotest_types()`](https://docs.ropensci.org/autotest/reference/autotest_types.html)
 can be used to control which tests are implemented for an entire package.
 Finer-scale control can be achieved by modifying individual rows of the full
 table returned by
-[`autotest_package()`](https://ropensci-review-tools.github.io/autotest/reference/autotest_package.html).
+[`autotest_package()`](https://docs.ropensci.org/autotest/reference/autotest_package.html).
 The following code demonstrates by showing how list-column tests can be
 switched off only for
 particular functions, starting again with the `xf` data of dummy tests
@@ -356,21 +356,21 @@ Using these requires adding `autotest` to the `Suggests` list of your package's
 `DESCRIPTION` file, along with `testthat`. Note that the use of testing
 frameworks other than [`testthat`](https://testthat.r-lib.org) is possible
 through writing custom expectations for the output of
-[`autotest_package()`](https://ropensci-review-tools.github.io/autotest/reference/autotest_package.html),
+[`autotest_package()`](https://docs.ropensci.org/autotest/reference/autotest_package.html),
 but that is not considered here.
 
 To use these expectations, you must first decide which, if any, tests you judge
 to be not applicable to your package, and switch them off following the
 procedure described above (that is, at the package level through modifying the
 `test` flag of the object returned from
-[`autotest_types()`](https://ropensci-review-tools.github.io/autotest/reference/autotest_types.html),
+[`autotest_types()`](https://docs.ropensci.org/autotest/reference/autotest_types.html),
 or at finer function- or parameter-levels by modifying equivalent values in the
 object returned from [`autotest_package(..., test
-= FALSE)`](https://ropensci-review-tools.github.io/autotest/reference/autotest_package.html).
+= FALSE)`](https://docs.ropensci.org/autotest/reference/autotest_package.html).
 These objects must then be passed as the `test_data` parameter to
-[`autotest_package()`](https://ropensci-review-tools.github.io/autotest/reference/autotest_package.html).
+[`autotest_package()`](https://docs.ropensci.org/autotest/reference/autotest_package.html).
 If you consider all tests to be applicable, then
-[`autotest_package()`](https://ropensci-review-tools.github.io/autotest/reference/autotest_package.html)
+[`autotest_package()`](https://docs.ropensci.org/autotest/reference/autotest_package.html)
 can be called without specifying this parameter.
 
 If you switch tests off via a `test_data` parameter, then the
@@ -404,7 +404,7 @@ expect_success (expect_autotest_no_testdata ())
 ### 4.2 Finer control over testing expectations
 
 The two expectations shown above call the 
-[`autotest_package()`](https://ropensci-review-tools.github.io/autotest/reference/autotest_package.html)
+[`autotest_package()`](https://docs.ropensci.org/autotest/reference/autotest_package.html)
 function internally, and assert that the results follow the expected pattern.
 There are also three additional [`testthat`](https://testthat.r-lib.org)
 expectations which can be applied to pre-generated `autotest` objects, to allow for finer control over testing expectations. These are:
