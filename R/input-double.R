@@ -103,10 +103,14 @@ double_noise <- function (x) {
 
     seed <- sample.int (.Machine$integer.max, 1L)
 
-    res0 <- tryCatch (
-                withr::with_seed (seed,
-                                  do.call (x$fn, x$params)),
-                      error = function (e) NULL)
+    suppressWarnings (
+
+        res0 <- tryCatch (
+                    withr::with_seed (seed,
+                                      do.call (x$fn, x$params)),
+                          error = function (e) NULL)
+
+    )
 
     if (!is.vector (res0))
         return (NULL) # can only test effects of noise on simple vector outputs
