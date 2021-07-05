@@ -13,11 +13,9 @@ Concept](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repo
 # autotest
 
 Automatic mutation testing of R packages. Mutation in the sense of
-mutating inputs (parameters) to function calls, rather than mutation of
-underlying code (see, for example,
-[`mutant`](https://github.com/ropensci/mutant) for that). `autotest`
-primarily works by scraping documented examples for all functions, and
-mutating the parameters input to those functions.
+mutating inputs (parameters) to function calls. `autotest` primarily
+works by scraping documented examples for all functions, and mutating
+the parameters input to those functions.
 
 ## Installation
 
@@ -276,4 +274,6 @@ which enable `autotest` to be used in a package’s test suite.
     article](https://medium.com/@expectgreatdata/down-with-pipeline-debt-introducing-great-expectations-862ddc46782a).
 2.  [`QuickCheck`](https://hackage.haskell.org/package/QuickCheck) for
     Haskell
-3.  [`mutate`](https://github.com/mbj/mutant) for ruby.
+3.  [`mutate`](https://github.com/mbj/mutant) for ruby
+4.  [`mutant`](https://github.com/ropensci/mutant) for mutation of R
+    code itself
