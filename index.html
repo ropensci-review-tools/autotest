@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">autotest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2.106</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2.110</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
 
 <div id="autotest-" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#autotest-" class="anchor" aria-hidden="true"></a>autotest <a href="https://docs.ropensci.org/autotest"><img src="reference/figures/autotest.png" align="right" height="200" width="200"></a>
+<a href="#autotest-" class="anchor" aria-hidden="true"></a>autotest <a href="https://docs.ropensci.org/autotest"><img src="reference/figures/autotest.png" align="right" height="210" width="182"></a>
 </h1></div>
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
@@ -184,6 +184,7 @@
 <p>Tests can also be selectively applied to particular functions through the parameters <code>functions</code>, used to nominate functions to include in tests, or <code>exclude</code>, used to nominate functions to exclude from tests. The following code illustrates.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>, functions <span class="op">=</span> <span class="st">"var"</span>, test <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="co">#&gt; ---[1 / 1]---</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── autotesting stats ──</span>
 <span class="co">#&gt; </span>
@@ -199,7 +200,7 @@
 <span class="co">#&gt;    &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;     &lt;lgl&gt;</span>
 <span class="co">#&gt;  1 warni… par_is_de… var     use       &lt;NA&gt;           Check tha… Examples… TRUE </span>
 <span class="co">#&gt;  2 warni… par_is_de… cov     y         &lt;NA&gt;           Check tha… Examples… TRUE </span>
-<span class="co">#&gt;  3 dummy  int_as_nu… var     x         integer vector Integer v… (Should … TRUE </span>
+<span class="co">#&gt;  3 dummy  trivial_n… var     x         numeric        Add trivi… (Should … TRUE </span>
 <span class="co">#&gt;  4 dummy  vector_cu… var     x         vector         Custom cl… (Should … TRUE </span>
 <span class="co">#&gt;  5 dummy  vector_to… var     x         vector         Convert v… (Should … TRUE </span>
 <span class="co">#&gt;  6 dummy  negate_lo… var     na.rm     single logical Negate de… (Functio… TRUE </span>
@@ -211,6 +212,7 @@
 <p>Testing the <code>var</code> function also tests <code>cor</code> and <code>cov</code>, because the package works by scraping the documented examples from the associated <code>.Rd</code> help file, and <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">?var</a></code> shows that the help topic is <code>cor</code>, and includes the three functions, <code>var</code>, <code>cor</code>, and <code>cov</code>. That result details the 206 tests which would be applied to the <code>var</code> function from the <code>stats</code> package. These 206 tests yield the following results when actually applied:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>, functions <span class="op">=</span> <span class="st">"var"</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">#&gt; ---[1 / 1]---</span>
 <span class="co">#&gt; ── autotesting stats ──</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ✔ [1 / 6]: var</span>
@@ -254,6 +256,7 @@
 <code class="sourceCode R"><span class="va">types</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_types.html">autotest_types</a></span> <span class="op">(</span>notest <span class="op">=</span> <span class="st">"vector_to_list_col"</span><span class="op">)</span>
 <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autotest_package.html">autotest_package</a></span> <span class="op">(</span>package <span class="op">=</span> <span class="st">"stats"</span>, functions <span class="op">=</span> <span class="st">"var"</span>,
                        test <span class="op">=</span> <span class="cn">TRUE</span>, test_data <span class="op">=</span> <span class="va">types</span><span class="op">)</span>
+<span class="co">#&gt; ---[1 / 1]---</span>
 <span class="co">#&gt; ── autotesting stats ──</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ✔ [1 / 6]: var</span>
