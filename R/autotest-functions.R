@@ -96,6 +96,7 @@ autotest_single_yaml <- function (yaml = NULL,
     reports <- NULL
 
     for (i in seq_along (res$parameters)) {
+
         this_fn <- names (res$parameters) [i]
         params <- get_params (res, i, this_fn)
         params <- params [which (params != "NULL")]
@@ -114,6 +115,7 @@ autotest_single_yaml <- function (yaml = NULL,
                                   quiet = quiet)
 
         test_obj <- add_int_attrs (test_obj, int_val)
+
         if (grepl ("\\:\\:\\:", test_obj$fn)) {
             test_obj$fn <- rm_internal_namespace (test_obj$fn)
         }
