@@ -630,7 +630,7 @@ extract_primary_call_content <- function (x, aliases, pkg) {
                             return (fout)
                             }, character (1))
     index <- which (fn_calls == "" & !is.na (fn_nms))
-    fn_calls [index] <- fn_nms [index]
+    fn_calls [index] <- vapply (fn_nms [index], ungrep_names, character (1))
 
     # check whether any function calls are parts of other functions (like in
     # ?Normal for erf), and replace nominated fn variable with 1.
@@ -1281,5 +1281,17 @@ aliases_to_grep_form <- function (a) {
     a <- gsub ("\\.", "\\\\.", a)
     a <- gsub ("\\[", "\\\\[", a)
     a <- gsub ("\\_", "\\\\_", a)
+
+    return (a)
+}
+
+# the reverse of the above:
+ungrep_names <- function (a) {
+
+    a <- gsub ("\\\\.", "\\.", a)
+    if (grepl ("\\[", a))
+        a <- gsub ("\\\\[", "\\[", a)
+    a <- gsub ("\\\\_", "\\_", a)
+
     return (a)
 }
