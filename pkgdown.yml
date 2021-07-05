@@ -1,10 +1,10 @@
 pandoc: 2.7.3
 pkgdown: 1.6.1.9001
-pkgdown_sha: 51268b0d9cb0588d7a6404a2b8ef4ee19c435e89
+pkgdown_sha: 0328c6c9129896e5e2f555a864a71e6b014b5366
 articles:
-  autotest-control: autotest-control.html
-  autotest: autotest.html
-last_built: 2021-07-05T08:43Z
+  autotest-control: articles/autotest-control.html
+  autotest: articles/autotest.html
+last_built: 2021-07-05T10:13Z
 urls:
   reference: https://docs.ropensci.org/autotest/reference
   article: https://docs.ropensci.org/autotest/articles
