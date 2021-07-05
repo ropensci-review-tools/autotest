@@ -4,6 +4,7 @@
 ^makefile$
 ^aaa.Rmd$
 ^vignettes/makefile$
+data-raw/
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.github$
