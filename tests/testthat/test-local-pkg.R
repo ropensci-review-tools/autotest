@@ -21,5 +21,5 @@ test_that("pkg", {
               expect_true (all (xt$test))
               types <- table (xt$type)
               expect_true (all (names (types) %in% c ("diagnostic", "warning")))
-              expect_equal (as.integer (types [names (types) == "warning"]), 1L)
+              expect_equal (as.integer (types [names (types) == "diagnostic"]), 3L)
 })
