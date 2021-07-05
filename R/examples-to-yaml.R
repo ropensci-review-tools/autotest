@@ -1151,10 +1151,13 @@ add_params_to_yaml <- function (x, yaml, fn) {
                 # YAML field delimiter, so
                 val_j <- x [[i]] [j, 2]
                 if (grepl ("[0-9]:[0-9]", val_j)) {
-                    val_j <- eval (parse (text = val_j))
-                    val_j <- paste0 ("[",
-                                     paste0 (val_j, collapse = ", "),
-                                     "]")
+                    g <- gregexpr ("[0-9]+:[0-9]+", val_j)
+                    val_g0 <- regmatches (val_j, g)
+                    val_g1 <- paste0 ("c(",
+                                      paste0 (eval (parse (text = val_g0)),
+                                              collapse = ","),
+                                      ")")
+                    val_j <- gsub (val_g0, val_g1, val_j)
                 } else if (is.list (val_j)) {
                     if (is.function (val_j [[1]]))
                         val_j <- paste0 ("\'", val_j, "\'")
