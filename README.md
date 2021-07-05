@@ -1,4 +1,4 @@
-# autotest <a href='https://docs.ropensci.org/autotest'><img src='man/figures/autotest.png' align="right" height=200 width=200></a>
+# autotest <a href='https://docs.ropensci.org/autotest'><img src='man/figures/autotest.png' align="right" height=210 width=182></a>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
@@ -159,6 +159,7 @@ The following code illustrates.
 
 ``` r
 x <- autotest_package (package = "stats", functions = "var", test = FALSE)
+#> ---[1 / 1]---
 #> 
 #> ── autotesting stats ──
 #> 
@@ -174,7 +175,7 @@ print (x)
 #>    <chr>  <chr>      <chr>   <chr>     <chr>          <chr>      <chr>     <lgl>
 #>  1 warni… par_is_de… var     use       <NA>           Check tha… Examples… TRUE 
 #>  2 warni… par_is_de… cov     y         <NA>           Check tha… Examples… TRUE 
-#>  3 dummy  int_as_nu… var     x         integer vector Integer v… (Should … TRUE 
+#>  3 dummy  trivial_n… var     x         numeric        Add trivi… (Should … TRUE 
 #>  4 dummy  vector_cu… var     x         vector         Custom cl… (Should … TRUE 
 #>  5 dummy  vector_to… var     x         vector         Convert v… (Should … TRUE 
 #>  6 dummy  negate_lo… var     na.rm     single logical Negate de… (Functio… TRUE 
@@ -195,6 +196,7 @@ actually applied:
 
 ``` r
 y <- autotest_package (package = "stats", functions = "var", test = TRUE)
+#> ---[1 / 1]---
 #> ── autotesting stats ──
 #> 
 #> ✔ [1 / 6]: var
@@ -253,6 +255,7 @@ switched off.
 types <- autotest_types (notest = "vector_to_list_col")
 y <- autotest_package (package = "stats", functions = "var",
                        test = TRUE, test_data = types)
+#> ---[1 / 1]---
 #> ── autotesting stats ──
 #> 
 #> ✔ [1 / 6]: var

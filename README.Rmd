@@ -1,5 +1,5 @@
 
-# autotest <a href='https://docs.ropensci.org/autotest'><img src='man/figures/autotest.png' align="right" height=200 width=200></a>
+# autotest <a href='https://docs.ropensci.org/autotest'><img src='man/figures/autotest.png' align="right" height=210 width=182></a>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
