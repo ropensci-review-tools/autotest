@@ -89,15 +89,15 @@ single_or_vec <- function (res) {
 
         pars <- res$parameters [names (res$parameters) == f]
         pars <- lapply (pars, function (i) {
-                    nms <- names (i [[1]])
+                    nms <- names (unlist (i))
                     lens <- vapply (nms, function (j) {
-                                ij <- i [[1]] [[j]]
+                                ij <- unlist (i) [[j]]
                                 out <- length (ij)
                                 if (methods::is (ij, "name")) {
                                     tmp <- tryCatch (
                                             eval (parse (text = ij)),
                                             error = function (e) NULL)
-                                    if (!is.null (out))
+                                    if (!is.null (tmp))
                                         out <- length (tmp)
                                 }
                                 return (out)
