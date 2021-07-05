@@ -49,14 +49,6 @@ path <- file.path (tempdir (), "demo")
 usethis::create_package (path, check_name = FALSE, open = FALSE)
 ```
 
-We also set our license to GPL3, to avoid needing an extra "License" file.
-
-```{r license}
-wd <- setwd (path)
-usethis::use_gpl3_license ()
-setwd (wd)
-```
-
 The structure looks like this:
 
 ```{r dir_tree}
