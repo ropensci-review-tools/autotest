@@ -177,11 +177,12 @@ get_int_range <- function (this_fn, params, i) {
                            "specified/default input [",
                            names (params) [i], " = ",
                            params [[i]], "]")
+
         ret <- test_single_int_range.NULL ()
         ret$type <- "diagnostic"
-        res$fn_name <- this_fn
-        res$parameter <- names (params) [i]
-        res$content <- content
+        ret$fn_name <- this_fn
+        ret$parameter <- names (params) [i]
+        ret$content <- content
 
         return (ret)
     }
