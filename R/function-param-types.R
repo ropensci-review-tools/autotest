@@ -89,12 +89,22 @@ single_or_vec <- function (res) {
 
         pars <- res$parameters [names (res$parameters) == f]
         pars <- lapply (pars, function (i) {
-                            nms <- names (i [[1]])
-                            lens <- vapply (nms, function (j)
-                                            length (i [[1]] [[j]]),
-                                            integer (1))
-                            data.frame (name = nms,
-                                        len = lens) })
+                    nms <- names (i [[1]])
+                    lens <- vapply (nms, function (j) {
+                                ij <- i [[1]] [[j]]
+                                out <- length (ij)
+                                if (methods::is (ij, "name")) {
+                                    tmp <- tryCatch (
+                                            eval (parse (text = ij)),
+                                            error = function (e) NULL)
+                                    if (!is.null (out))
+                                        out <- length (tmp)
+                                }
+                                return (out)
+                            },
+                            integer (1))
+                    data.frame (name = nms,
+                                len = lens) })
 
         pars <- data.frame (do.call (rbind, unname (pars)))
         pars <- lapply (split (pars, f = as.factor (pars$name)),
