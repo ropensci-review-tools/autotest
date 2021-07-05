@@ -362,7 +362,10 @@ do_extend_rect_class_struct <- function (x) {
 
     x$params [[x$i]] <- structure (p_i, class = c ("newclass", class (p_i)))
 
-    msgs <- catch_all_msgs (x$f, x$fn, x$params)
+    ftmp <- tempfile ()
+    msgs <- catch_all_msgs (ftmp, x$fn, x$params)
+    chk <- file.remove (ftmp)
+
     if (!is.null (msgs)) {
         msgs$parameter <- rep (names (x$params) [x$i], nrow (msgs))
         msgs$parameter_type <- "general tabular"
