@@ -265,8 +265,9 @@ pass_one_rect_as_other <- function (x,
     x$params [[x$i]] <- do.call (eval (parse (text = other)),
                                  x$params [[x$i]],
                                  quote = TRUE)
-    f <- tempfile ()
-    msgs <- catch_all_msgs (f, x$fn, x$params)
+    ftmp <- tempfile ()
+    msgs <- catch_all_msgs (ftmp, x$fn, x$params)
+    chk <- file.remove (ftmp) # nolint
 
     if (!is.null (msgs)) {
         msgs$parameter <- rep (names (x$params) [x$i], nrow (msgs))
@@ -364,7 +365,7 @@ do_extend_rect_class_struct <- function (x) {
 
     ftmp <- tempfile ()
     msgs <- catch_all_msgs (ftmp, x$fn, x$params)
-    chk <- file.remove (ftmp)
+    chk <- file.remove (ftmp) # nolint
 
     if (!is.null (msgs)) {
         msgs$parameter <- rep (names (x$params) [x$i], nrow (msgs))
