@@ -7,6 +7,8 @@ is_int <- function (p) {
     #        p_is_int <- TRUE
     if (!p_is_int)
         p_is_int <- is.integer (p)
+    if (!p_is_int & "is_int" %in% names (attributes (p)))
+        p_is_int <- attr (p, "is_int")
 
     return (p_is_int)
 }
