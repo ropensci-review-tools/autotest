@@ -19,9 +19,6 @@ underlying code (see, for example,
 primarily works by scraping documented examples for all functions, and
 mutating the parameters input to those functions.
 
-**This package is very unstable and subject to ongoing development (Jul,
-2021)**
-
 ## Installation
 
 The easiest way to install this package is via the associated
@@ -65,11 +62,23 @@ The simply way to use the package is
 x <- autotest_package ("<package>")
 ```
 
-The argument to `autotest_package()` can either be the name of an
-installed package, or a path to a local directory containing the source
-for a package. The result is a `data.frame` of errors, warnings, and
-other diagnostic messages issued during package `auotest`-ing. See the
-[main package
+The main argument to the [`autotest_package()`
+function](https://docs.ropensci.org/autotest/reference/autotest_package.html)
+can either be the name of an installed package, or a path to a local
+directory containing the source for a package. The result is a
+`data.frame` of errors, warnings, and other diagnostic messages issued
+during package `auotest`-ing. The function has an additional parameter,
+`functions`, to restrict tests to specified functions only.
+
+By default,
+[`autotest_package()`](https://docs.ropensci.org/autotest/reference/autotest_package.html)
+returns a list of all tests applied to a package without actually
+running them. To implement those tests, set the parameter `test` to
+`TRUE`. Results are only returned for tests in which functions do not
+behave as expected, whether through triggering errors, warnings, or
+other behaviour as described below. The ideal behaviour of
+`autotest_package()` is to return nothing (or strictly, `NULL`),
+indicating that all tests passed successfully. See the [main package
 vignette](https://docs.ropensci.org/autotest/articles/autotest.html) for
 an introductory tour of the package.
 
@@ -97,69 +106,28 @@ autotest_types ()
 ```
 
 That functions returns a [`tibble`](https://tibble.tidyverse.org)
-describing 27 unique tests. All `autotest` functions return these same
-kinds of objects. The table returned from
+describing 27 unique tests. The default behaviour of
+[`autotest_package()`](https://docs.ropensci.org/autotest/reference/autotest_package.html)
+with `test = FALSE` uses these test types to identify which tests will
+be applied to each parameter and function. The table returned from
 [`autotest_types()`](https://docs.ropensci.org/autotest/reference/autotest_types.html)
 can be used to selectively switch tests off by setting values in the
 `test` column to `FALSE`, as demonstrated below.
 
-Descriptions of each test can be readily extracted from the results of
-that function:
-
-``` r
-a <- autotest_types ()
-print (a [, c ("parameter_type", "operation", "content")], n = Inf)
-#> # A tibble: 27 x 3
-#>    parameter_type     operation                    content                      
-#>    <chr>              <chr>                        <chr>                        
-#>  1 rectangular        Convert one rectangular cla… "check for error/warning mes…
-#>  2 rectangular        Convert one rectangular cla… "expect dimensions are same "
-#>  3 rectangular        Convert one rectangular cla… "expect column names are ret…
-#>  4 rectangular        Convert one rectangular cla… "expect all columns retain i…
-#>  5 rectangular        Extend existent class with … "(Should yield same result)" 
-#>  6 rectangular        Replace class with new class "(Should yield same result)" 
-#>  7 vector             Convert vector input to lis… "(Should yield same result)" 
-#>  8 vector             Custom class definitions fo… "(Should yield same result)" 
-#>  9 numeric            Check whether double is onl… "int parameters should have …
-#> 10 numeric            Add trivial noise to numeri… "(Should yield same result)" 
-#> 11 single integer     Integer value converted to … "(Should yield same result)" 
-#> 12 single logical     Substitute integer values f… "(Function call should still…
-#> 13 single character   random character string as … "Should error"               
-#> 14 single character   Change case                  "(Should yield same result)" 
-#> 15 single integer     Ascertain permissible range  "Should either be unrestrict…
-#> 16 single integer     Length 2 vector for length … "Should trigger message, war…
-#> 17 single name or fo… Unquoted name/formula as qu… "Capture any warnings or err…
-#> 18 single logical     Substitute character values… "should trigger warning or e…
-#> 19 single logical     Negate default value of log… "(Function call should still…
-#> 20 (return object)    Check that function success…  <NA>                        
-#> 21 (return object)    Check that description has …  <NA>                        
-#> 22 (return object)    Check whether description o…  <NA>                        
-#> 23 (return object)    Compare class of return val…  <NA>                        
-#> 24 <NA>               Check that parameter usage … "Examples do not demonstrate…
-#> 25 <NA>               Identify functions without …  <NA>                        
-#> 26 <NA>               Check that parameter is doc… "Examples do not document th…
-#> 27 <NA>               Check that documentation ma…  <NA>
-```
-
 ## How Does It Work?
 
-The `autotest_package()` function returns by default a list of all tests
-which would be conducted on a package, without actually implementing
-those tests. The function has a parameter, `test`, with a default value
-of `FALSE`. Setting `test = TRUE` then implements all tests, and only
-returns results from tests which diverge from expected behaviour,
-whether unexpected errors, warnings, or other behaviour. An ideal result
-is that `autotest_package(., test = TRUE)` returns nothing (strictly,
-`NULL`), indicating that all tests passed successfully.
+The package works by scraping documented examples from all `.Rd` help
+files, and using those to identify the types of all parameters to all
+functions. Usage therefore first requires that the usage of all
+parameters be demonstrated in example code.
 
-Tests can also be selectively applied to particular functions through
-the parameters `functions`, used to nominate functions to include in
-tests, or `exclude`, used to nominate functions to exclude from tests.
-The following code illustrates.
+As described above, tests can also be selectively applied to particular
+functions through the parameters `functions`, used to nominate functions
+to include in tests, or `exclude`, used to nominate functions to exclude
+from tests. The following code illustrates.
 
 ``` r
 x <- autotest_package (package = "stats", functions = "var", test = FALSE)
-#> ---[1 / 1]---
 #> 
 #> ── autotesting stats ──
 #> 
@@ -186,17 +154,15 @@ print (x)
 #> # … with 196 more rows, and 1 more variable: yaml_hash <chr>
 ```
 
-Testing the `var` function also tests `cor` and `cov`, because the
-package works by scraping the documented examples from the associated
-`.Rd` help file, and `?var` shows that the help topic is `cor`, and
-includes the three functions, `var`, `cor`, and `cov`. That result
-details the 206 tests which would be applied to the `var` function from
-the `stats` package. These 206 tests yield the following results when
-actually applied:
+Testing the `var` function also tests `cor` and `cov`, because these are
+all documented within a single `.Rd` help file. Typing `?var` shows that
+the help topic is `cor`, and that the examples include the three
+functions, `var`, `cor`, and `cov`. That result details the 206 tests
+which would be applied to the `var` function from the `stats` package.
+These 206 tests yield the following results when actually applied:
 
 ``` r
 y <- autotest_package (package = "stats", functions = "var", test = TRUE)
-#> ---[1 / 1]---
 #> ── autotesting stats ──
 #> 
 #> ✔ [1 / 6]: var
@@ -232,7 +198,7 @@ print (y)
 ```
 
 And only 19 of the original 206 tests produced unexpected behaviour.
-There were in fact only three kinds of tests which produced these 19
+There were in fact only 3 kinds of tests which produced these 19
 results:
 
 ``` r
@@ -242,7 +208,7 @@ unique (y$operation)
 #> [3] "upper-case character parameter"
 ```
 
-The first involves conversion of a vector to a list-column
+One of these involves conversion of a vector to a list-column
 representation (via `I(as.list(<vec>))`). Relatively few packages accept
 this kind of input, even though doing so is relatively straightforward.
 The following lines demonstrate how these tests can be switched off when
@@ -255,7 +221,6 @@ switched off.
 types <- autotest_types (notest = "vector_to_list_col")
 y <- autotest_package (package = "stats", functions = "var",
                        test = TRUE, test_data = types)
-#> ---[1 / 1]---
 #> ── autotesting stats ──
 #> 
 #> ✔ [1 / 6]: var
