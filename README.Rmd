@@ -1,13 +1,5 @@
 
----
-title: "autotest"
-output:
-  rmarkdown::html_vignette:
-    self_contained: no
-
-  md_document:
-    variant: markdown_github
----
+# autotest <a href='https://docs.ropensci.org/autotest'><img src='man/figures/autotest.png' align="right" height=200 width=200></a>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 

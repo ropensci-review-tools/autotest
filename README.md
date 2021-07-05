@@ -1,11 +1,4 @@
----
-output:
-  md_document:
-    variant: markdown\_github
-  rmarkdown::html_vignette:
-    self_contained: no
-title: autotest
----
+# autotest <a href='https://docs.ropensci.org/autotest'><img src='man/figures/autotest.png' align="right" height=200 width=200></a>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
@@ -26,7 +19,7 @@ underlying code (see, for example,
 primarily works by scraping documented examples for all functions, and
 mutating the parameters input to those functions.
 
-**This package is very unstable and subject to ongoing development (Jun,
+**This package is very unstable and subject to ongoing development (Jul,
 2021)**
 
 ## Installation
