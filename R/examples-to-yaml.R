@@ -1079,7 +1079,9 @@ add_default_vals_to_params <- function (x, package) {
                     # like control parameter lists, which are vectors but also
                     # lists.)
                     fmls <- lapply (fmls, function (j) {
-                                        out <- eval (j, envir = this_env)
+                                        out <- tryCatch (
+                                                    eval (j, envir = this_env),
+                                                    error = function (e) NULL)
                                         if (is.vector (out) & !is.list (out))
                                             out <- out [1]
                                         else
