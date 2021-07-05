@@ -1,6 +1,7 @@
 
 # extracts the i-th list of complete parameters from the result of a parsed yaml
 get_params <- function (res, i, this_fn) {
+
     p <- res$parameters [[i]]
     p_keys <- vapply (p, function (i) names (i), character (1))
     # vals as list to allow different types of data
@@ -15,7 +16,10 @@ get_params <- function (res, i, this_fn) {
     pre <- res$preprocess [[i]]
     e <- new.env ()
     for (p in pre) {
-        expr <- parse (text = gsub ("`", "", p))
+        # remove "`" except if they name list items
+        if (!grepl ("\\$`", p))
+            p <- gsub ("`", "", p)
+        expr <- parse (text = p)
         suppressMessages (
             tmp <- tryCatch (utils::capture.output (eval (expr, envir = e)),
                              error = function (e) NULL)
