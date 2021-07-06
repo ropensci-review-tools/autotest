@@ -14,8 +14,14 @@ autotest_package(
 )
 }
 \arguments{
-\item{package}{Name of package to be 'autotested'. If not specified, default
-presumes current directory is within package to be tested.}
+\item{package}{Name of package, as either
+\enumerate{
+\item Path to local package source
+\item Name of installed package
+\item Full path to location of installed package if not on \link{.libPaths}, or
+\item Default which presumes current directory is within package to be
+tested.
+}}
 
 \item{functions}{Optional character vector containing names of functions of
 nominated package to be included in 'autotesting'.}

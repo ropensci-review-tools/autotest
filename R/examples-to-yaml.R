@@ -4,7 +4,6 @@
 #' more specified functions, to a list of 'autotest' 'yaml' objects to use to
 #' automatically test package.
 #'
-#' @param package Name of package for which 'yaml' is to be generated.
 #' @param functions If specified, names of functions from which examples are to
 #' be obtained.
 #' @param exclude Names of functions to exclude from 'yaml' template

@@ -12,7 +12,14 @@ examples_to_yaml(
 )
 }
 \arguments{
-\item{package}{Name of package for which 'yaml' is to be generated.}
+\item{package}{Name of package, as either
+\enumerate{
+\item Path to local package source
+\item Name of installed package
+\item Full path to location of installed package if not on \link{.libPaths}, or
+\item Default which presumes current directory is within package to be
+tested.
+}}
 
 \item{functions}{If specified, names of functions from which examples are to
 be obtained.}

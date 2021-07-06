@@ -11,6 +11,7 @@ Automatic testing of R packages via a simple YAML schema.
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://docs.ropensci.org/autotest/}
   \item \url{https://github.com/ropensci-review-tools/autotest}
   \item Report bugs at \url{https://github.com/ropensci-review-tools/autotest/issues}
 }
