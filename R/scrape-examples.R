@@ -129,6 +129,7 @@ get_fn_exs <- function (package, rd_name, topic, rm_seed = TRUE,
 
 
 get_example_lines <- function (package, rd_name) {
+
     ex <- NULL
 
     if (!pkg_is_source (package)) {
@@ -136,6 +137,7 @@ get_example_lines <- function (package, rd_name) {
         ex <- get_example_lines_installed (package, rd_name)
 
     } else {
+
         ex <- get_example_lines_source (package, rd_name)
         if (!is.null (ex))
             load_all_if_needed (package)
@@ -150,25 +152,35 @@ get_example_lines <- function (package, rd_name) {
 
 get_example_lines_installed <- function (package, rd_name) {
 
+    if (dir.exists (package))
+        package <- utils::tail (strsplit (package, .Platform$file.sep) [[1]], 1)
+
+    libloc <- pkg_lib_path (package, root = TRUE)
+
     # example called for function which have no help file trigger warnings
     tryCatch (utils::example (eval (substitute (rd_name)),
                               package = package,
                               character.only = TRUE,
                               give.lines = TRUE,
-                              lib.loc = .libPaths ()),
+                              lib.loc = libloc),
               warning = function (w) NULL)
 }
 
 get_example_lines_source <- function (package, rd_name) {
+
     f <- file.path (package, "man", paste0 (rd_name, ".Rd"))
     ex <- readLines (f, warn = FALSE)
     ex_start <- grep ("^\\\\examples\\{", ex)
+
     if (length (ex_start) > 0) {
+
         ex <- ex [ex_start:length (ex)]
 
         ex_end <- match_curlies (ex)
         ex <- ex [2:ex_end]
+
     } else {
+
         ex <- NULL
     }
 

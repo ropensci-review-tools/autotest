@@ -105,7 +105,7 @@ preload_package <- function (package) {
 
         # pkgs installed in tmp_loc via covr
         library (basename (package),
-                 lib.loc = package,
+                 lib.loc = normalizePath (file.path (package, "..")),
                  character.only = TRUE)
         pkg_name <- basename (package)
 
@@ -1179,19 +1179,27 @@ add_params_to_yaml <- function (x, yaml, fn) {
 
 get_fn_aliases <- function (pkg, fn_name) {
 
-    if (pkg_is_source (pkg))
+    if (pkg_is_source (pkg)) {
+
         return (get_aliases_source (pkg, fn_name))
-    else
+
+    } else {
+
         return (get_aliases_non_source (pkg, fn_name))
+    }
 }
 
 # first get all aliases for all functions in package:
 get_aliases_non_source <- function (pkg, fn_name) {
 
-    if (basename (pkg) == pkg)
-        loc <- file.path (R.home (), "library", pkg, "help", pkg)
-    else
+    if (basename (pkg) == pkg) {
+
+        loc <- file.path (pkg_lib_path (pkg, root = FALSE), "help", pkg)
+
+    } else {
+
         loc <- file.path (pkg, "help", basename (pkg))
+    }
 
     e <- new.env ()
     chk <- lazyLoad (loc, envir = e) # nolint

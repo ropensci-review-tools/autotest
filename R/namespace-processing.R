@@ -125,11 +125,21 @@ fns_without_examples <- function (package) {
 }
 
 fns_from_other_pkgs <- function (package) {
+
     if (pkg_is_source (package)) {
+
         fp <- file.path (package)
+
+    } else if (!basename (package) == package) {
+
+        fp <- package
+
     } else {
-        fp <- file.path (R.home (), "library", package)
+
+        fp <- pkg_lib_path (package, root = FALSE)
+
     }
+
     namespace_file <- file.path (fp, "NAMESPACE")
     if (!file.exists (namespace_file))
         stop ("There is no NAMESPACE file at [", fp, "]")

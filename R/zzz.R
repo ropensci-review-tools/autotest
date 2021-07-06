@@ -91,6 +91,27 @@ pkg_is_source <- function (package) {
     return (is_source)
 }
 
+pkg_lib_path <- function (package, root = FALSE) {
+
+    if (dir.exists (package))
+        package <- utils::tail (strsplit (package, .Platform$file.sep) [[1]], 1)
+
+    if (!paste0 ("package:", package) %in% search ())
+        stop ("Package [", package, "] is not loaded")
+
+    sp <- vapply (searchpaths (), function (i)
+                  utils::tail (strsplit (i, .Platform$file.sep) [[1]], 1),
+                  character (1),
+                  USE.NAMES = TRUE)
+
+    path <- names (sp) [which (sp == package)]
+
+    if (root)
+        path <- normalizePath (file.path (path, ".."))
+
+    return (path)
+}
+
 get_git_hash <- function (package) {
 
     ret <- NULL
@@ -131,8 +152,17 @@ get_pkg_deps <- function (pkg, suggests = FALSE) {
         if (suggests)
             deps <- c (deps, get_deps (desc, "Suggests"))
     } else {
+
         ip <- data.frame (utils::installed.packages (),
                           stringsAsFactors = FALSE)
+        if (!pkg %in% ip$Package) {
+
+            lib <- c (.libPaths (), pkg_lib_path (pkg, root = TRUE))
+
+            ip <- data.frame (utils::installed.packages (lib.loc = lib),
+                              stringsAsFactors = FALSE)
+        }
+
         deps <- strsplit (ip$Depends [ip$Package == pkg], ", ") [[1]]
         deps <- gsub ("\\s*\\(.*$", "", deps [!is.na (deps)])
         imports <- strsplit (ip$Imports [ip$Package == pkg], ", ") [[1]]
