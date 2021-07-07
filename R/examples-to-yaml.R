@@ -103,9 +103,11 @@ preload_package <- function (package) {
     } else if (!basename (package) == package) {
 
         # pkgs installed in tmp_loc via covr
-        library (basename (package),
-                 lib.loc = normalizePath (file.path (package, "..")),
-                 character.only = TRUE)
+        suppressMessages (
+            library (basename (package),
+                     lib.loc = normalizePath (file.path (package, "..")),
+                     character.only = TRUE)
+            )
         pkg_name <- basename (package)
 
     } else {
