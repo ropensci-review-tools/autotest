@@ -70,6 +70,7 @@ get_fn_exs <- function (package, rd_name, topic, rm_seed = TRUE,
     if (length (ex) == 0)
         return (NULL)
 
+    ex <- remove_comments (ex)
     ex <- preprocess_example_lines (ex, exclude_not_run, is_source)
 
     if (length (ex) == 0)
@@ -225,16 +226,17 @@ get_package_name <- function (package) {
     return (pkg_name)
 }
 
-#' A few preprocessing cleaning operations for example code lines
+#' Remove comments from code lines
 #'
-#' @param ex Example lines from one '.Rd' file
-#' @return Cleaned version of ex
+#' Comments are only removed if they are not within quotations.
+#' This requires first generating sequences of character indices within
+#' quotations.
+#'
+#' @param ex Examples lines from one .Rd file
+#' @return ex with all trailing comments removed
 #' @noRd
-preprocess_example_lines <- function (ex, exclude_not_run, is_source) {
+remove_comments <- function (ex) {
 
-    # remove comments and empty lines, but only if they are not within
-    # quotations. This requires first generating sequences of character indices
-    # within quotations.
     qts <- gregexpr ("\"|\'", ex)
     ln_nums <- lapply (seq_along (qts), function (i)
                        rep (i, length (qts [[i]])))
@@ -277,6 +279,16 @@ preprocess_example_lines <- function (ex, exclude_not_run, is_source) {
                       ex [i] <- strsplit (ex [1], 1, cmt [[i]] [1] - 1) [[1]] [1]
                   return (ex [i])
                   }, character (1))
+
+    return (ex)
+}
+
+#' A few preprocessing cleaning operations for example code lines
+#'
+#' @param ex Example lines from one '.Rd' file
+#' @return Cleaned version of ex
+#' @noRd
+preprocess_example_lines <- function (ex, exclude_not_run, is_source) {
 
     ex <- ex [which (!grepl ("^\\s?$", ex))]
 

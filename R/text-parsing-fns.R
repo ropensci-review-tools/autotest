@@ -12,13 +12,6 @@ match_brackets <- function (x, curly = FALSE) {
         collapse_sym <- "; "
     }
 
-    # get rid of any comments:
-    x <- vapply (x, function (i) gsub ("\\#.*", "", i),
-                 character (1),
-                 USE.NAMES = FALSE)
-    # remove empty lines
-    x <- x [which (!grepl ("^\\s?$", x))]
-
     brseq <- bracket_sequences (x, open_sym, close_sym, both_sym)
     br_open <- brseq$br_open
     br_closed <- brseq$br_closed
