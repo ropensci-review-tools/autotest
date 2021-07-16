@@ -164,6 +164,10 @@ quote_sequences <- function (x) {
                        rep (i, length (qts [[i]])))
     qts <- cbind (unlist (ln_nums), unlist (qts))
     qts <- qts [which (qts [, 2] > 0), ]
+
+    if (nrow (qts) == 0L)
+        return (NULL)
+
     index <- seq (nrow (qts) / 2) * 2 - 1
     qts <- cbind (qts [index, , drop = FALSE],
                   qts [index + 1, , drop = FALSE])
