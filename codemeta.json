@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/ropensci-review-tools/autotest",
   "issueTracker": "https://github.com/ropensci-review-tools/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.2.128",
+  "version": "0.0.2.129",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",

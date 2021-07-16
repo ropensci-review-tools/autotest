@@ -251,7 +251,7 @@ remove_comments <- function (ex) {
                   })
     ex <- vapply (seq_along (cmt), function (i) {
                   if (cmt [[i]] [1] > 0)
-                      ex [i] <- strsplit (ex [1], 1, cmt [[i]] [1] - 1) [[1]] [1]
+                      ex [i] <- substring (ex [i], 1, cmt [[i]] [1] - 1)
                   return (ex [i])
                   }, character (1))
 
