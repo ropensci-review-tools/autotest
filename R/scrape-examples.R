@@ -237,7 +237,17 @@ get_package_name <- function (package) {
 #' @noRd
 remove_comments <- function (ex) {
 
-    qts <- gregexpr ("\"|\'", ex)
+    qts <- gregexpr ("\\\"|\\\'", ex)
+    qts_not_esc <- gregexpr ("'", ex)
+    qts <- lapply (seq_along (qts), function (i) {
+                   if (qts [[i]] [1] > 0) {
+                       qts [[i]] <- qts [[i]] [which (!qts [[i]] %in%
+                                                      qts_not_esc [[i]])]
+                   }
+                   if (length (qts [[i]]) == 0)
+                       qts [[i]] <- -1L
+                   return (qts [[i]])
+                              })
     ln_nums <- lapply (seq_along (qts), function (i)
                        rep (i, length (qts [[i]])))
     qts <- cbind (unlist (ln_nums), unlist (qts))
