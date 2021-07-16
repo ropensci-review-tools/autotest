@@ -40,9 +40,42 @@ defaults to \code{TRUE}. Setting any tests to \code{FALSE} will avoid running th
 
 \item{quiet}{If 'FALSE', provide printed output on screen.}
 }
+\value{
+An \code{autotest_package} object which is derived from a \pkg{tibble}
+\code{tbl_df} object. This has one row for each test, and the following nine
+columns:
+\enumerate{
+\item \code{type} The type of result, either "dummy" for \code{test = FALSE}, or one
+of "error", "warning", "diagnostic", or "message".
+\item \code{test_name} Name of each test
+\item \code{fn_name} Name of function being tested
+\item \code{parameter} Name of parameter being tested
+\item \code{parameter_type} Expected type of parameter as identified by
+\code{autotest}.
+\item \code{operation} Description of the test
+\item \code{content} For \code{test = FALSE}, the expected behaviour of the test; for
+\code{test = TRUE}, the observed discrepancy with that expected behaviour
+\item \code{test} If \code{FALSE} (default), list all tests without implementing them,
+otherwise implement all tests.
+\item \verb{yaml_hash' A unique hash which may be be used to extract the }yaml`
+specification of each test.
+}
+Some columns may contain NA values, as explained in the Note.
+}
 \description{
 Automatically test an entire package by converting examples to \code{yaml} format
 and submitting each to the \link{autotest_yaml} function.
+}
+\note{
+Some columns may contain NA values, including:
+\itemize{
+\item \code{parameer} and \code{parameter_type}, for tests applied to entire
+functions, such as tests of return values.
+\item \code{test_name} for warnings or errors generated through "normal"
+function calls generated directly from example code, in which case \code{type}
+will be "warning" or "error", and \code{content} will contain the content of
+the corresponding message.
+}
 }
 \seealso{
 Other main_functions: 

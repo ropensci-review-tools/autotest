@@ -165,6 +165,36 @@ autotest_single_yaml <- function (yaml = NULL,
 #' @param exclude Optional character vector containing names of any functions of
 #' nominated package to be excluded from 'autotesting'.
 #' @inheritParams autotest_yaml
+#' @return An `autotest_package` object which is derived from a \pkg{tibble}
+#' `tbl_df` object. This has one row for each test, and the following nine
+#' columns:
+#' \enumerate{
+#'    \item `type` The type of result, either "dummy" for `test = FALSE`, or one
+#'    of "error", "warning", "diagnostic", or "message".
+#'    \item `test_name` Name of each test
+#'    \item `fn_name` Name of function being tested
+#'    \item `parameter` Name of parameter being tested
+#'    \item `parameter_type` Expected type of parameter as identified by
+#'    `autotest`.
+#'    \item `operation` Description of the test
+#'    \item `content` For `test = FALSE`, the expected behaviour of the test; for
+#'    `test = TRUE`, the observed discrepancy with that expected behaviour
+#'    \item `test` If `FALSE` (default), list all tests without implementing them,
+#'    otherwise implement all tests.
+#'    \item `yaml_hash' A unique hash which may be be used to extract the `yaml`
+#'    specification of each test.
+#' }
+#' Some columns may contain NA values, as explained in the Note.
+#'
+#' @note Some columns may contain NA values, including:
+#' \itemize{
+#'    \item `parameer` and `parameter_type`, for tests applied to entire
+#'    functions, such as tests of return values.
+#'    \item `test_name` for warnings or errors generated through "normal"
+#'    function calls generated directly from example code, in which case `type`
+#'    will be "warning" or "error", and `content` will contain the content of
+#'    the corresponding message.
+#' }
 #' @family main_functions
 #' @export
 autotest_package <- function (package = ".",
