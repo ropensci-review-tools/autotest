@@ -184,6 +184,8 @@ quote_sequences <- function (x) {
     linenums <- apply (qts, 1, function (i) i [1])
 
     qts <- apply (qts, 1, function (i) as.vector (seq (i [2], i [4])))
+    if (!is.list (qts)) # apply when all vecs have same length
+        qts <- lapply (list (qts), function (i) as.vector (i))
     names (qts) <- linenums
 
     return (qts)
@@ -198,7 +200,7 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
                        as.integer (i [i >= 0]))
 
     # remove any that are inside quotations, like L#44 in stats::spline
-    # code taken from scape_examples/remove_comments:
+    qts <- quote_sequences (x)
     quotes <- gregexpr ("\"|\'", x)
     for (i in seq (x)) {
         if (any (quotes [[i]] > 0)) {
