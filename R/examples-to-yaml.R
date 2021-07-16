@@ -357,13 +357,15 @@ add_preprocessing_to_yaml <- function (x, yaml, fn_calls, prev_fns) {
     return (yaml)
 }
 
+#' Actually remove brackets only, as comments have already been removed
+#'
 #' @param x Lines of example code
 #' @return Potentially modified version of `x` with comments at end of line
 #' removed, along with any terminal bounding brackets
 #' @noRd
 rm_comments_and_brackets <- function (x) {
 
-    x <- gsub ("\\s$", "", gsub ("\\#.*", "", x)) # rm comments
+    x <- gsub ("\\s$", "", x)
     index <- grep ("^\\(", x) # only lines which start with a bracket
     if (length (index) > 0)
         x [index] <- gsub ("^\\(|\\)$", "", x [index])
