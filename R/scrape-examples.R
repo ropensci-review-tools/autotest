@@ -231,8 +231,53 @@ get_package_name <- function (package) {
 #' @return Cleaned version of ex
 #' @noRd
 preprocess_example_lines <- function (ex, exclude_not_run, is_source) {
-    # remove comments and empty lines
-    ex <- gsub ("\\#.*$", "", ex)
+
+    # remove comments and empty lines, but only if they are not within
+    # quotations. This requires first generating sequences of character indices
+    # within quotations.
+    qts <- gregexpr ("\"|\'", ex)
+    ln_nums <- lapply (seq_along (qts), function (i)
+                       rep (i, length (qts [[i]])))
+    qts <- cbind (unlist (ln_nums), unlist (qts))
+    qts <- qts [which (qts [, 2] > 0), ]
+    index <- seq (nrow (qts) / 2) * 2 - 1
+    qts <- cbind (qts [index, , drop = FALSE],
+                  qts [index + 1, , drop = FALSE])
+    # split sequences which extend across multiple lines:
+    index <- which (qts [, 1] != qts [, 3])
+    if (length (index) > 0) {
+        reps <- rep (1, nrow (qts))
+        reps [index] <- 2
+        reps <- rep (seq (nrow (qts)), times = reps)
+        qts <- qts [reps, ]
+        index <- which (duplicated (qts))
+        qts [index - 1, 3] <- qts [index - 1, 1]
+        qts [index - 1, 4] <- nchar (ex [qts [index - 1, 1]])
+        qts [index, 1] <- qts [index, 3]
+        qts [index, 2] <- 1
+    }
+
+    linenums <- apply (qts, 1, function (i) i [1])
+
+    qts <- apply (qts, 1, function (i) as.vector (seq (i [2], i [4])))
+    names (qts) <- linenums
+
+    cmt <- gregexpr ("\\#", ex)
+    cmt <- lapply (seq_along (cmt), function (i) {
+                   if (i %in% names (qts)) {
+                       qts_i <- sort (unname (unlist (qts [names (qts) == i])))
+                       cmt [[i]] <- cmt [[i]] [which (!cmt [[i]] %in% qts_i)]
+                       if (length (cmt [[i]]) == 0)
+                           cmt [[i]] <- -1
+                   }
+                   return (cmt [[i]])
+                  })
+    ex <- vapply (seq_along (cmt), function (i) {
+                  if (cmt [[i]] [1] > 0)
+                      ex [i] <- strsplit (ex [1], 1, cmt [[i]] [1] - 1) [[1]] [1]
+                  return (ex [i])
+                  }, character (1))
+
     ex <- ex [which (!grepl ("^\\s?$", ex))]
 
     # Cut Rd lines down to example code only
