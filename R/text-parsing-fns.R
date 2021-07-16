@@ -185,7 +185,7 @@ quote_sequences <- function (x) {
 
     qts <- apply (qts, 1, function (i) as.vector (seq (i [2], i [4])))
     if (!is.list (qts)) # apply when all vecs have same length
-        qts <- lapply (list (qts), function (i) as.vector (i))
+        qts <- lapply (apply (qts, 2, function (i) list (i)), unlist)
     names (qts) <- linenums
 
     return (qts)
