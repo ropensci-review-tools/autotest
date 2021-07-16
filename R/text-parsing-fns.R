@@ -141,6 +141,54 @@ catch_curly_else <- function (x) {
     return (x)
 }
 
+#' Get sequences of line & character numbers within quotations
+#'
+#' @param x Lines of code
+#' @return List of sequence indices, one for each line of `x`, identifying
+#' characters within quotations
+#' @noRd
+quote_sequences <- function (x) {
+
+    qts <- gregexpr ("\\\"|\\\'", x)
+    qts_not_esc <- gregexpr ("'", x)
+    qts <- lapply (seq_along (qts), function (i) {
+                   if (qts [[i]] [1] > 0) {
+                       qts [[i]] <- qts [[i]] [which (!qts [[i]] %in%
+                                                      qts_not_esc [[i]])]
+                   }
+                   if (length (qts [[i]]) == 0)
+                       qts [[i]] <- -1L
+                   return (qts [[i]])
+                              })
+    ln_nums <- lapply (seq_along (qts), function (i)
+                       rep (i, length (qts [[i]])))
+    qts <- cbind (unlist (ln_nums), unlist (qts))
+    qts <- qts [which (qts [, 2] > 0), ]
+    index <- seq (nrow (qts) / 2) * 2 - 1
+    qts <- cbind (qts [index, , drop = FALSE],
+                  qts [index + 1, , drop = FALSE])
+    # split sequences which extend across multiple lines:
+    index <- which (qts [, 1] != qts [, 3])
+    if (length (index) > 0) {
+        reps <- rep (1, nrow (qts))
+        reps [index] <- 2
+        reps <- rep (seq (nrow (qts)), times = reps)
+        qts <- qts [reps, ]
+        index <- which (duplicated (qts))
+        qts [index - 1, 3] <- qts [index - 1, 1]
+        qts [index - 1, 4] <- nchar (x [qts [index - 1, 1]])
+        qts [index, 1] <- qts [index, 3]
+        qts [index, 2] <- 1
+    }
+
+    linenums <- apply (qts, 1, function (i) i [1])
+
+    qts <- apply (qts, 1, function (i) as.vector (seq (i [2], i [4])))
+    names (qts) <- linenums
+
+    return (qts)
+}
+
 bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
 
     # `gregexpr` return -1 for no match; these are removed here
@@ -150,6 +198,7 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
                        as.integer (i [i >= 0]))
 
     # remove any that are inside quotations, like L#44 in stats::spline
+    # code taken from scape_examples/remove_comments:
     quotes <- gregexpr ("\"|\'", x)
     for (i in seq (x)) {
         if (any (quotes [[i]] > 0)) {
@@ -261,6 +310,7 @@ nested_sequences <- function (br_open, br_closed) {
 # prior to standard "match_brackets" calls.
 # example: stats::approx
 parse_expressions <- function (x) {
+
     brseq <- bracket_sequences (x,
                                 open_sym = "\\{",
                                 close_sym = "\\}",

@@ -237,42 +237,7 @@ get_package_name <- function (package) {
 #' @noRd
 remove_comments <- function (ex) {
 
-    qts <- gregexpr ("\\\"|\\\'", ex)
-    qts_not_esc <- gregexpr ("'", ex)
-    qts <- lapply (seq_along (qts), function (i) {
-                   if (qts [[i]] [1] > 0) {
-                       qts [[i]] <- qts [[i]] [which (!qts [[i]] %in%
-                                                      qts_not_esc [[i]])]
-                   }
-                   if (length (qts [[i]]) == 0)
-                       qts [[i]] <- -1L
-                   return (qts [[i]])
-                              })
-    ln_nums <- lapply (seq_along (qts), function (i)
-                       rep (i, length (qts [[i]])))
-    qts <- cbind (unlist (ln_nums), unlist (qts))
-    qts <- qts [which (qts [, 2] > 0), ]
-    index <- seq (nrow (qts) / 2) * 2 - 1
-    qts <- cbind (qts [index, , drop = FALSE],
-                  qts [index + 1, , drop = FALSE])
-    # split sequences which extend across multiple lines:
-    index <- which (qts [, 1] != qts [, 3])
-    if (length (index) > 0) {
-        reps <- rep (1, nrow (qts))
-        reps [index] <- 2
-        reps <- rep (seq (nrow (qts)), times = reps)
-        qts <- qts [reps, ]
-        index <- which (duplicated (qts))
-        qts [index - 1, 3] <- qts [index - 1, 1]
-        qts [index - 1, 4] <- nchar (ex [qts [index - 1, 1]])
-        qts [index, 1] <- qts [index, 3]
-        qts [index, 2] <- 1
-    }
-
-    linenums <- apply (qts, 1, function (i) i [1])
-
-    qts <- apply (qts, 1, function (i) as.vector (seq (i [2], i [4])))
-    names (qts) <- linenums
+    qts <- quote_sequences (ex)
 
     cmt <- gregexpr ("\\#", ex)
     cmt <- lapply (seq_along (cmt), function (i) {
