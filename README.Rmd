@@ -2,7 +2,7 @@
 title: "autotest"
 output:
   md_document:
-    variant: markdown_github
+    variant: gfm
 
   rmarkdown::html_vignette:
     self_contained: no
