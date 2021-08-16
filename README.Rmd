@@ -1,3 +1,12 @@
+---
+title: "autotest"
+output:
+  md_document:
+    variant: markdown_github
+
+  rmarkdown::html_vignette:
+    self_contained: no
+---
 
 # autotest <a href='https://docs.ropensci.org/autotest'><img src='man/figures/autotest.png' align="right" height=210 width=182></a>
 
@@ -23,8 +32,6 @@ status](https://github.com/ropensci-review-tools/autotest/workflows/R-CMD-check/
 [![Project Status:
 Concept](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
 <!-- badges: end -->
-
-# autotest
 
 
 Automatic mutation testing of R packages. Mutation in the sense of mutating

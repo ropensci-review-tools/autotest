@@ -10,8 +10,6 @@ status](https://github.com/ropensci-review-tools/autotest/workflows/R-CMD-check/
 Concept](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
 <!-- badges: end -->
 
-# autotest
-
 Automatic mutation testing of R packages. Mutation in the sense of
 mutating inputs (parameters) to function calls. `autotest` primarily
 works by scraping documented examples for all functions, and mutating
@@ -87,7 +85,7 @@ implemented.
 
 ``` r
 autotest_types ()
-#> # A tibble: 27 x 8
+#> # A tibble: 27 × 8
 #>    type  test_name  fn_name parameter parameter_type operation   content   test 
 #>    <chr> <chr>      <chr>   <chr>     <chr>          <chr>       <chr>     <lgl>
 #>  1 dummy rect_as_o… <NA>    <NA>      rectangular    Convert on… "check f… TRUE 
@@ -136,28 +134,28 @@ x <- autotest_package (package = "stats", functions = "var", test = FALSE)
 #> ✔ [5 / 6]: cov
 #> ✔ [6 / 6]: cor
 print (x)
-#> # A tibble: 206 x 9
-#>    type   test_name  fn_name parameter parameter_type operation  content   test 
-#>    <chr>  <chr>      <chr>   <chr>     <chr>          <chr>      <chr>     <lgl>
-#>  1 warni… par_is_de… var     use       <NA>           Check tha… Examples… TRUE 
-#>  2 warni… par_is_de… cov     y         <NA>           Check tha… Examples… TRUE 
-#>  3 dummy  trivial_n… var     x         numeric        Add trivi… (Should … TRUE 
-#>  4 dummy  vector_cu… var     x         vector         Custom cl… (Should … TRUE 
-#>  5 dummy  vector_to… var     x         vector         Convert v… (Should … TRUE 
-#>  6 dummy  negate_lo… var     na.rm     single logical Negate de… (Functio… TRUE 
-#>  7 dummy  subst_int… var     na.rm     single logical Substitut… (Functio… TRUE 
-#>  8 dummy  subst_cha… var     na.rm     single logical Substitut… should t… TRUE 
-#>  9 dummy  single_pa… var     na.rm     single logical Length 2 … Should t… TRUE 
-#> 10 dummy  return_su… var     (return … (return objec… Check tha… <NA>      TRUE 
-#> # … with 196 more rows, and 1 more variable: yaml_hash <chr>
+#> # A tibble: 185 × 9
+#>    type    test_name  fn_name parameter parameter_type operation  content  test 
+#>    <chr>   <chr>      <chr>   <chr>     <chr>          <chr>      <chr>    <lgl>
+#>  1 warning par_is_de… var     use       <NA>           Check tha… Example… TRUE 
+#>  2 warning par_is_de… cov     y         <NA>           Check tha… Example… TRUE 
+#>  3 dummy   trivial_n… var     x         numeric        Add trivi… (Should… TRUE 
+#>  4 dummy   vector_cu… var     x         vector         Custom cl… (Should… TRUE 
+#>  5 dummy   vector_to… var     x         vector         Convert v… (Should… TRUE 
+#>  6 dummy   negate_lo… var     na.rm     single logical Negate de… (Functi… TRUE 
+#>  7 dummy   subst_int… var     na.rm     single logical Substitut… (Functi… TRUE 
+#>  8 dummy   subst_cha… var     na.rm     single logical Substitut… should … TRUE 
+#>  9 dummy   single_pa… var     na.rm     single logical Length 2 … Should … TRUE 
+#> 10 dummy   return_su… var     (return … (return objec… Check tha… <NA>     TRUE 
+#> # … with 175 more rows, and 1 more variable: yaml_hash <chr>
 ```
 
 Testing the `var` function also tests `cor` and `cov`, because these are
 all documented within a single `.Rd` help file. Typing `?var` shows that
 the help topic is `cor`, and that the examples include the three
-functions, `var`, `cor`, and `cov`. That result details the 206 tests
+functions, `var`, `cor`, and `cov`. That result details the 185 tests
 which would be applied to the `var` function from the `stats` package.
-These 206 tests yield the following results when actually applied:
+These 185 tests yield the following results when actually applied:
 
 ``` r
 y <- autotest_package (package = "stats", functions = "var", test = TRUE)
@@ -170,40 +168,32 @@ y <- autotest_package (package = "stats", functions = "var", test = TRUE)
 #> ✔ [5 / 6]: cov
 #> ✔ [6 / 6]: cor
 print (y)
-#> # A tibble: 19 x 9
-#>    type   test_name  fn_name parameter parameter_type operation  content   test 
-#>    <chr>  <chr>      <chr>   <chr>     <chr>          <chr>      <chr>     <lgl>
-#>  1 warni… par_is_de… var     use       <NA>           Check tha… "Example… TRUE 
-#>  2 warni… par_is_de… cov     y         <NA>           Check tha… "Example… TRUE 
-#>  3 diagn… vector_to… var     x         vector         Convert v… "Functio… TRUE 
-#>  4 diagn… vector_to… var     x         vector         Convert v… "Functio… TRUE 
-#>  5 diagn… vector_to… var     y         vector         Convert v… "Functio… TRUE 
-#>  6 diagn… single_ch… cor     use       single charac… upper-cas… "is case… TRUE 
-#>  7 diagn… single_ch… cor     method    single charac… upper-cas… "is case… TRUE 
-#>  8 diagn… single_ch… cor     method    single charac… upper-cas… "is case… TRUE 
-#>  9 diagn… single_ch… cor     use       single charac… upper-cas… "is case… TRUE 
-#> 10 diagn… single_ch… cor     use       single charac… upper-cas… "is case… TRUE 
-#> 11 diagn… single_ch… cor     method    single charac… upper-cas… "is case… TRUE 
-#> 12 diagn… single_ch… cov     use       single charac… upper-cas… "is case… TRUE 
-#> 13 diagn… single_ch… cov     method    single charac… upper-cas… "is case… TRUE 
-#> 14 diagn… single_ch… cov     use       single charac… upper-cas… "is case… TRUE 
-#> 15 diagn… single_ch… cov     method    single charac… upper-cas… "is case… TRUE 
-#> 16 diagn… single_ch… cov     use       single charac… upper-cas… "is case… TRUE 
-#> 17 diagn… single_ch… cov     method    single charac… upper-cas… "is case… TRUE 
-#> 18 diagn… single_ch… cor     method    single charac… upper-cas… "is case… TRUE 
-#> 19 diagn… single_ch… cor     use       single charac… upper-cas… "is case… TRUE 
-#> # … with 1 more variable: yaml_hash <chr>
+#> # A tibble: 23 × 9
+#>    type       test_name fn_name parameter parameter_type operation content test 
+#>    <chr>      <chr>     <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
+#>  1 warning    par_is_d… var     use       <NA>           Check th… "Examp… TRUE 
+#>  2 warning    par_is_d… cov     y         <NA>           Check th… "Examp… TRUE 
+#>  3 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
+#>  4 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
+#>  5 diagnostic vector_t… var     y         vector         Convert … "Funct… TRUE 
+#>  6 diagnostic single_c… cor     use       single charac… upper-ca… "is ca… TRUE 
+#>  7 diagnostic single_c… cor     method    single charac… upper-ca… "is ca… TRUE 
+#>  8 diagnostic vector_c… cor     x         vector         Custom c… "Funct… TRUE 
+#>  9 diagnostic single_c… cor     method    single charac… upper-ca… "is ca… TRUE 
+#> 10 diagnostic single_c… cor     use       single charac… upper-ca… "is ca… TRUE 
+#> # … with 13 more rows, and 1 more variable: yaml_hash <chr>
 ```
 
-And only 19 of the original 206 tests produced unexpected behaviour.
-There were in fact only 3 kinds of tests which produced these 19
+And only 23 of the original 185 tests produced unexpected behaviour.
+There were in fact only 4 kinds of tests which produced these 23
 results:
 
 ``` r
 unique (y$operation)
 #> [1] "Check that parameter usage is demonstrated"
 #> [2] "Convert vector input to list-columns"      
-#> [3] "upper-case character parameter"
+#> [3] "upper-case character parameter"            
+#> [4] "Custom class definitions for vector input"
 ```
 
 One of these involves conversion of a vector to a list-column
@@ -228,34 +218,24 @@ y <- autotest_package (package = "stats", functions = "var",
 #> ✔ [5 / 6]: cov
 #> ✔ [6 / 6]: cor
 print (y)
-#> # A tibble: 20 x 9
-#>    type   test_name  fn_name parameter parameter_type operation  content   test 
-#>    <chr>  <chr>      <chr>   <chr>     <chr>          <chr>      <chr>     <lgl>
-#>  1 warni… par_is_de… var     use       <NA>           Check tha… Examples… TRUE 
-#>  2 warni… par_is_de… cov     y         <NA>           Check tha… Examples… TRUE 
-#>  3 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE 
-#>  4 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE 
-#>  5 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE 
-#>  6 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE 
-#>  7 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE 
-#>  8 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE 
-#>  9 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
-#> 10 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
-#> 11 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
-#> 12 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
-#> 13 diagn… single_ch… cov     use       single charac… upper-cas… is case … TRUE 
-#> 14 diagn… single_ch… cov     method    single charac… upper-cas… is case … TRUE 
-#> 15 diagn… single_ch… cor     method    single charac… upper-cas… is case … TRUE 
-#> 16 diagn… single_ch… cor     use       single charac… upper-cas… is case … TRUE 
-#> 17 no_te… vector_to… var     x         vector         Convert v… (Should … FALSE
-#> 18 no_te… vector_to… var     y         vector         Convert v… (Should … FALSE
-#> 19 no_te… vector_to… cor     x         vector         Convert v… (Should … FALSE
-#> 20 no_te… vector_to… cor     y         vector         Convert v… (Should … FALSE
-#> # … with 1 more variable: yaml_hash <chr>
+#> # A tibble: 28 × 9
+#>    type       test_name fn_name parameter parameter_type operation content test 
+#>    <chr>      <chr>     <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
+#>  1 warning    par_is_d… var     use       <NA>           Check th… Exampl… TRUE 
+#>  2 warning    par_is_d… cov     y         <NA>           Check th… Exampl… TRUE 
+#>  3 diagnostic single_c… cor     use       single charac… upper-ca… is cas… TRUE 
+#>  4 diagnostic single_c… cor     method    single charac… upper-ca… is cas… TRUE 
+#>  5 diagnostic vector_c… cor     x         vector         Custom c… Functi… TRUE 
+#>  6 diagnostic single_c… cor     method    single charac… upper-ca… is cas… TRUE 
+#>  7 diagnostic single_c… cor     use       single charac… upper-ca… is cas… TRUE 
+#>  8 diagnostic single_c… cor     use       single charac… upper-ca… is cas… TRUE 
+#>  9 diagnostic single_c… cor     method    single charac… upper-ca… is cas… TRUE 
+#> 10 diagnostic vector_c… cov     x         vector         Custom c… Functi… TRUE 
+#> # … with 18 more rows, and 1 more variable: yaml_hash <chr>
 ```
 
 Those tests are still returned from `autotest_package()`, but with
-`test = FALSE` to indicate they were not run, and a `type` of “no\_test”
+`test = FALSE` to indicate they were not run, and a `type` of “no_test”
 rather than the previous “diagnostic”.
 
 ## Can `autotest` automatically create tests in my `tests` directory?
