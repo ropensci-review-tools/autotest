@@ -1304,10 +1304,11 @@ aliases_to_grep_form <- function (a) {
 # the reverse of the above:
 ungrep_names <- function (a) {
 
-    a <- gsub ("\\\\.", "\\.", a)
+    a <- gsub ("\\.", ".", a, fixed = TRUE)
     if (grepl ("\\[", a))
-        a <- gsub ("\\\\[", "\\[", a)
-    a <- gsub ("\\\\_", "\\_", a)
+        a <- gsub ("\\[", "[", a, fixed = TRUE)
+    a <- gsub ("\\_", "_", a, fixed = TRUE)
 
     return (a)
+
 }
