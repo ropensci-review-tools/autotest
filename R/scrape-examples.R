@@ -578,8 +578,11 @@ rm_not_parseable <- function (x) {
                                  p <- tryCatch (
                                             eval (parse (text = i),
                                                   envir = this_env),
-                                            error = function (err) NULL)
-                                 return (!is.null (p))
+                                            error = function (err) "error")
+                                 is_err <- FALSE
+                                 if (is.character (p))
+                                     is_err <- identical (p, "error")
+                                 return (!is_err)
                                }, logical (1), USE.NAMES = FALSE)
     ))) # end capture.output and suppressMessages/Warnings
 
