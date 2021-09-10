@@ -257,3 +257,9 @@ which enable `autotest` to be used in a package’s test suite.
 3.  [`mutate`](https://github.com/mbj/mutant) for ruby
 4.  [`mutant`](https://github.com/ropensci/mutant) for mutation of R
     code itself
+
+# Code of Conduct
+
+Please note that this package is released with a [Contributor Code of
+Conduct](https://ropensci.org/code-of-conduct/). By contributing to this
+project, you agree to abide by its terms.
