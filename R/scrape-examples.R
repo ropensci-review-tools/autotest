@@ -76,7 +76,7 @@ get_fn_exs <- function (package, rd_name, topic, rm_seed = TRUE,
     if (length (ex) == 0)
         return (NULL)
 
-    ex <- clean_example_lines (ex)
+    ex <- clean_example_lines (ex, get_package_name (package))
     ex <- transform_single_quotes (ex)
 
     fns <- find_fn_call_points (topic, package)
@@ -284,7 +284,7 @@ preprocess_example_lines <- function (ex, exclude_not_run, is_source) {
     return (ex)
 }
 
-clean_example_lines <- function (ex) {
+clean_example_lines <- function (ex, pkg_name) {
 
     ex <- join_at_operators (ex)
     ex <- parse_expressions (ex)
@@ -297,7 +297,7 @@ clean_example_lines <- function (ex) {
     for (double_quote in c (TRUE, FALSE))
         ex <- multi_line_quotes (ex, double_quote = double_quote)
     ex <- join_function_lines (ex)
-    ex <- rm_not_parseable (ex)
+    ex <- rm_not_parseable (ex, pkg_name)
     ex <- rm_plot_lines (ex)
 
     return (ex)
@@ -558,7 +558,7 @@ rm_dontrun_lines <- function (x, is_source = TRUE, dontrun = TRUE,
 #' themselves be wrapped in `try`, because `try` within `tryCatch` does not work
 #' as expected.
 #' @noRd
-rm_not_parseable <- function (x) {
+rm_not_parseable <- function (x, pkg_name) {
 
     index <- grep ("^\\s?try\\s?\\(", x)
     if (any (index)) {
@@ -568,7 +568,8 @@ rm_not_parseable <- function (x) {
     dev <- options()$"device"
     options (device = NULL) # suppress plot output
 
-    this_env <- new.env ()
+    p_txt <- paste0 ("package:", pkg_name)
+    this_env <- new.env (parent = as.environment (p_txt))
 
     junk <- utils::capture.output (
                 suppressMessages (
