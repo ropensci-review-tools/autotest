@@ -1,12 +1,15 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.0.2.144
+Version: 0.0.2.145
 Authors@R: 
-    person(given = "Mark",
-           family = "Padgham",
-           role = c("aut", "cre"),
-           email = "mark.padgham@email.com",
-           comment = c(ORCID = "0000-0003-2172-5265"))
+    c(person(given = "Mark",
+             family = "Padgham",
+             role = c("aut", "cre"),
+             email = "mark.padgham@email.com",
+             comment = c(ORCID = "0000-0003-2172-5265")),
+      person(given = "Jouni",
+             family = "Helske",
+             role = "ctb"))
 Description: Automatic testing of R packages via a simple YAML schema.
 License: GPL-3
 URL: https://docs.ropensci.org/autotest/,
