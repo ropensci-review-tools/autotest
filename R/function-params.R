@@ -89,7 +89,7 @@ get_Rd_value <- function (package, fn_name) { # nolint
 
     # Then get actual value by converting to text:
     f <- tempfile (fileext = ".txt")
-    tools::Rd2txt (rd, out = f, outputEncoding = "UTF-8")
+    tools::Rd2txt (rd, out = f)
     rd_txt <- gsub ("\\_\\\b", "", readLines (f))
     sec_index <- grep ("^[[:alpha:]].*:$", rd_txt)
     i0 <- grep ("^Value:$", rd_txt)
