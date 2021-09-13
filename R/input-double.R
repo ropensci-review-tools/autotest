@@ -82,17 +82,22 @@ test_double_noise.autotest_obj <- function (x, test_data = NULL, ...) {
 
     res <- NULL
 
+    test_data_off <- FALSE
+
     if (!is.null (test_data)) {
         r <- test_double_noise.NULL ()
         x$test <- test_these_data (test_data, r)
         if (!x$test)
-            res$type <- "no_test"
+            test_data_off <- TRUE
     }
 
     if (x$test)
         res <- double_noise (x)
     else
         res <- dbl_noise_dummy_report (x)
+
+    if (test_data_off)
+        res$type <- "no_test"
 
     return (res)
 }
