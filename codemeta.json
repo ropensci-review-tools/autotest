@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/ropensci-review-tools/autotest",
   "issueTracker": "https://github.com/ropensci-review-tools/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.2.143",
+  "version": "0.0.2.144",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -22,7 +22,8 @@
       "@type": "Person",
       "givenName": "Mark",
       "familyName": "Padgham",
-      "email": "mark.padgham@email.com"
+      "email": "mark.padgham@email.com",
+      "@id": "https://orcid.org/0000-0003-2172-5265"
     }
   ],
   "contributor": {},
@@ -33,7 +34,8 @@
       "@type": "Person",
       "givenName": "Mark",
       "familyName": "Padgham",
-      "email": "mark.padgham@email.com"
+      "email": "mark.padgham@email.com",
+      "@id": "https://orcid.org/0000-0003-2172-5265"
     }
   ],
   "softwareSuggestions": [
@@ -297,11 +299,8 @@
       "sameAs": "https://CRAN.R-project.org/package=yaml"
     }
   ],
-  "fileSize": "17984.668KB",
-  "contIntegration": [
-    "https://github.com/ropensci-review-tools/autotest/actions?query=workflow%3AR-CMD-check",
-    "https://codecov.io/gh/ropensci-review-tools/autotest"
-  ],
+  "fileSize": "14828.491KB",
+  "contIntegration": ["https://github.com/ropensci-review-tools/autotest/actions?query=workflow%3AR-CMD-check", "https://codecov.io/gh/ropensci-review-tools/autotest"],
   "developmentStatus": "https://www.repostatus.org/#concept",
   "readme": "https://github.com/ropensci-review-tools/autotest/blob/main/README.md",
   "relatedLink": "https://docs.ropensci.org/autotest/"
