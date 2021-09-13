@@ -99,7 +99,7 @@ autotest_single_yaml <- function (yaml = NULL,
 
         this_fn <- names (res$parameters) [i]
         params <- get_params (res, i, this_fn)
-        params <- params [which (params != "NULL")]
+        params <- params [which (!(params == "NULL" | names (params) == "..."))]
         param_types <- get_param_types (this_fn, params,
                                         par_lengths)
 
@@ -205,6 +205,7 @@ autotest_package <- function (package = ".",
                               quiet = FALSE) {
 
     package <- dot_to_package (package)
+    pkg_name <- preload_package (package)
 
     exclude <- exclude_functions (package, functions, exclude)
 
