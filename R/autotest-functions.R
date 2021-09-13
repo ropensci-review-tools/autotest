@@ -205,6 +205,7 @@ autotest_package <- function (package = ".",
                               quiet = FALSE) {
 
     package <- dot_to_package (package)
+    pkg_name <- preload_package (package)
 
     exclude <- exclude_functions (package, functions, exclude)
 
