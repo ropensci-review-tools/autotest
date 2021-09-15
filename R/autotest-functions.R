@@ -120,13 +120,16 @@ autotest_single_yaml <- function (yaml = NULL,
             test_obj$fn <- rm_internal_namespace (test_obj$fn)
         }
 
-        reports <- rbind (reports, autotest_rectangular (test_obj, test_data))
+        if (length (params) > 0L) {
 
-        reports <- rbind (reports, autotest_vector (test_obj, test_data))
+            reports <- rbind (reports, autotest_rectangular (test_obj, test_data))
 
-        reports <- rbind (reports, autotest_single (test_obj, test_data))
+            reports <- rbind (reports, autotest_vector (test_obj, test_data))
 
-        reports <- rbind (reports, autotest_return (test_obj, test_data))
+            reports <- rbind (reports, autotest_single (test_obj, test_data))
+
+            reports <- rbind (reports, autotest_return (test_obj, test_data))
+        }
 
         reports <- rbind (reports, test_param_documentation (test_obj))
 
