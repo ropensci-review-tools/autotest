@@ -1007,6 +1007,11 @@ assign_names_to_params <- function (x, pkg) {
                 index <- which (is.na (x [[i]] [, 1]))
                 x [[i]] [index, 1] <- other_nms [seq_along (index)]
             }
+
+            # and rm any params after `...` (#57)
+            dot <- which (x [[i]] [, 1] == "...")
+            if (length (dot) > 0L)
+                x [[i]] <- x [[i]] [seq (max (dot)), , drop = FALSE]
         }
     }
 
