@@ -239,7 +239,7 @@ autotest_package <- function (package = ".",
     res <- res [which (!duplicated (res)), ]
 
     res <- test_untested_params (exs, res)
-    res <- test_fns_wo_example (package, res)
+    res <- test_fns_wo_example (package, res, names (exs))
 
     if (is.null (res))
         return (res)

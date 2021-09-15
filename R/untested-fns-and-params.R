@@ -3,22 +3,24 @@
 #'
 #' Get functions which do not have examples and return as an autotest object.
 #' @noRd
-test_fns_wo_example <- function (package = NULL, res) {
+test_fns_wo_example <- function (package = NULL, res, fn_names) {
     UseMethod ("test_fns_wo_example", package)
 }
 
-test_fns_wo_example.NULL <- function (package = NULL, res) {
+test_fns_wo_example.NULL <- function (package = NULL, res, fn_names) {
 
     report_object (type = "dummy",
                    test_name = "fn_without_example",
                    operation = "Identify functions without documented examples")
 }
 
-test_fns_wo_example.character <- function (package, res) {
+test_fns_wo_example.character <- function (package, res, fn_names) {
 
     r0 <- test_fns_wo_example.NULL ()
 
     no_examples <- fns_without_examples (package) # in namespace-processing
+    no_examples <- no_examples [which (no_examples %in% fn_names)]
+
     # res will be NULL if package has no examples at all
     if (!is.null (res))
         no_examples <- no_examples [no_examples %in% unique (res$fn_name)]
