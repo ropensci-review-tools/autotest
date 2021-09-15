@@ -1137,6 +1137,15 @@ param_classes_from_ex <- function (x, package) {
 
     this_env <- as.environment (paste0 ("package:", package))
 
+    # from ?is.atomic
+    atomic_modes <- c ("logical",
+                       "integer",
+                       "numeric",
+                       "complex",
+                       "character",
+                       "raw",
+                       "NULL")
+
     xout <- lapply (seq_along (x), function (i) {
 
                     this_fn <- names (x) [i]
@@ -1156,7 +1165,8 @@ param_classes_from_ex <- function (x, package) {
                                 return (ret)    },
                                 character (1)   )
                     names (out) <- x [[i]] [, 1]
-                    return (out)
+
+                    return (out [which (!out %in% atomic_modes)])
         })
 }
 
@@ -1168,6 +1178,9 @@ param_classes_from_ex <- function (x, package) {
 #' for each list item of `x`.
 #' @noRd
 add_params_to_yaml <- function (x, yaml, fn) {
+
+    pkg_name <- gsub ("^package\\:\\s?", "",
+                      grep ("^package\\:", yaml, value = TRUE) [1])
 
     fn_start <- grep (paste0 ("^\\s*- ", fn, ":"), yaml)
     pre <- yaml [fn_start:length (yaml)]
@@ -1211,6 +1224,19 @@ add_params_to_yaml <- function (x, yaml, fn) {
                                    ": ",
                                    val_j))
             }
+        }
+
+        # Then add any classes observed from input parameters
+        param_classes <- unlist (param_classes_from_ex (x, pkg_name))
+        if (length (param_classes) > 0L) {
+
+            yaml <- c (yaml,
+                       paste0 (yaml_indent (2), "- classes:"),
+                       paste0 (yaml_indent (3),
+                               "- ",
+                               names (param_classes),
+                               ": ",
+                               unname (param_classes)))
         }
     }
 
@@ -1301,7 +1327,39 @@ get_aliases_source <- function (pkg, fn_name) {
 #' @noRd
 add_class_descriptions <- function (yaml, package) {
 
+    # get any classes from the yaml:
+    n1 <- nchar (yaml_indent (1))
+    n2 <- nchar (yaml_indent (2))
+    index0 <- grep (paste0 ("^\\s{", n1, "}\\-|^\\s{", n2, "}\\-"), yaml)
+    index1 <- grep (paste0 ("^\\s+- classes\\:$"), yaml)
+    prior_classes <- NULL
+
+    if (length (index1) > 0L) {
+
+        index2 <- vapply (index1, function (i)
+                          ifelse (any (index0 > i),
+                                  as.integer (min (index0 [index0 > i])),
+                                  length (yaml)),
+                          integer (1))
+        index <- cbind (index1 + 1L, index2)
+        tmp <- which (index2 < length (yaml))
+        index [tmp, 2] <- index [tmp, 2] - 1L
+
+        index <- apply (index, 1, function (i) seq (i [1], i [2]))
+        if (is.list (index))
+            index <- unlist (index)
+        prior_classes <- unique (gsub ("^\\s+\\-\\s", "", yaml [index]))
+        prior_classes <- do.call (rbind, strsplit (prior_classes, "\\:\\s"))
+    }
+
     classes <- param_classes_in_desc (yaml, package)
+
+    if (!is.null (prior_classes)) { # remove prior_classes entries
+        index <- which (classes$parameter %in% prior_classes [, 1])
+        if (length (index) > 0L)
+            classes <- classes [-index, ]
+    }
+
     index <- which (!is.na (classes$class_in_desc))
     if (length (index) > 0) {
         classes <- classes [index, ]
