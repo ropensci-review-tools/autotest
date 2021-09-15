@@ -1128,6 +1128,38 @@ add_default_vals_to_params <- function (x, package) {
     return (xout)
 }
 
+#' Evaluate example expressions to determine classes of input objects
+#'
+#' @param x Content of primary function calls split into separate parameters.
+#' Only those assigning to named values will have names
+#' @noRd
+param_classes_from_ex <- function (x, package) {
+
+    this_env <- as.environment (paste0 ("package:", package))
+
+    xout <- lapply (seq_along (x), function (i) {
+
+                    this_fn <- names (x) [i]
+                    these_pars <- x [[i]] [, 1]
+                    if (grepl (":::", this_fn)) {
+                        this_fn <- rm_internal_namespace (this_fn)
+                        tmp_fn <- utils::getFromNamespace (this_fn, package)
+                        this_env [[this_fn]] <- tmp_fn
+                    }
+
+                    out <- vapply (x [[i]] [, 2], function (j) {
+                                p <- tryCatch (eval (parse (text = j), envir = this_env),
+                                                 error = function (e) NULL)
+                                ret <- "NULL"
+                                if (!is.null (p))
+                                    ret <- class (p) [1]
+                                return (ret)    },
+                                character (1)   )
+                    names (out) <- x [[i]] [, 1]
+                    return (out)
+        })
+}
+
 #' add to parameters list of yaml, duplicating fn name and preprocessing stages
 #' each time
 #' @param `x` List of arrays of parameter names and values, each of which
