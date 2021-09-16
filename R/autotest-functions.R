@@ -103,8 +103,16 @@ autotest_single_yaml <- function (yaml = NULL,
         param_types <- get_param_types (this_fn, params,
                                         par_lengths)
 
-        param_class <- class (params [[i]])
-        if (param_class %in% atomic_modes ())
+        param_class <- vapply (params,
+                               function (i)
+                                   ifelse (inherits (i, "data.frame"),
+                                           "data.frame",
+                                           class (i) [1]),
+                               character (1))
+        index <- which (!param_class %in% c (atomic_modes (),
+                                             "data.frame"))
+        param_class <- param_class [index]
+        if (length (param_class) == 0L)
             param_class <- NULL
 
         test_obj <- autotest_obj (package = res$package,
