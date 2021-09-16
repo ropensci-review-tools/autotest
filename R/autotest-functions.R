@@ -150,12 +150,18 @@ autotest_single_yaml <- function (yaml = NULL,
     }
 
     if (!is.null (reports)) {
+
         # add hash to reports
         if (is.null (yaml) & !is.null (filename))
             yaml <- readLines (filename)
         reports$yaml_hash <- digest::digest (yaml)
 
         reports <- reports [which (!duplicated (reports)), ]
+
+        # rm "no_test" tests switched off from "test_data"
+        if (test)
+            reports <- reports [which (!reports$type == "no_test"), ]
+
         rownames (reports) <- NULL
     }
 
