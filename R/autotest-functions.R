@@ -103,12 +103,16 @@ autotest_single_yaml <- function (yaml = NULL,
         param_types <- get_param_types (this_fn, params,
                                         par_lengths)
 
+        param_class <- class (params [[i]])
+        if (param_class %in% atomic_modes ())
+            param_class <- NULL
+
         test_obj <- autotest_obj (package = res$package,
                                   package_loc = attr (yaml, "package"),
                                   fn_name = names (res$parameters) [i],
                                   parameters = params,
                                   parameter_types = param_types,
-                                  class = NULL,
+                                  class = param_class,
                                   classes = res$classes [[i]],
                                   env = new.env (),
                                   test = test,
