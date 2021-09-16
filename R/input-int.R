@@ -329,9 +329,9 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # 
                     res$content <- paste0 ("Function [",
                                            x$fn,
                                            "] returns different values when ",
-                                           "parameter ",
+                                           "parameter [",
                                            names (x$params) [x$i],
-                                           "] only demontrated or documented as",
+                                           "] only demonstrated or documented as",
                                            " int-valued is submitted as",
                                            " double.")
                 }
