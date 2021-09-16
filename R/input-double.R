@@ -15,17 +15,22 @@ test_double_is_int.autotest_obj <- function (x, test_data = NULL, ...) { # nolin
 
     res <- NULL
 
+    test_data_off <- FALSE
+
     if (!is.null (test_data)) {
         r <- test_double_is_int.NULL ()
         x$test <- test_these_data (test_data, r)
         if (!x$test)
-            res$type <- "no_test"
+            test_data_off <- TRUE
     }
 
     if (x$test)
         res <- double_is_int (x)
     else
         res <- dbl_is_int_dummy_report (x)
+
+    if (test_data_off)
+        res$type <- "no_test"
 
     return (res)
 }
