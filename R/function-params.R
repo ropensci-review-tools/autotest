@@ -14,26 +14,28 @@ get_params <- function (res, i, this_fn) {
 
     . <- NULL # suppress no visible binding note # nolint
     pre <- res$preprocess [[i]]
-    e <- new.env ()
+
+    pkg_env <- as.environment (paste0 ("package:", res$package))
+
     for (p in pre) {
         # remove "`" except if they name list items
         if (!grepl ("\\$`", p))
             p <- gsub ("`", "", p)
         expr <- parse (text = p)
         suppressMessages (
-            tmp <- tryCatch (utils::capture.output (eval (expr, envir = e)),
+            tmp <- tryCatch (utils::capture.output (eval (expr,
+                                                          envir = pkg_env)),
                              error = function (e) NULL)
         )
     }
 
-    params <- fill_param_vals (p_keys, p_vals, e, res$package)
+    params <- fill_param_vals (p_keys, p_vals, pkg_env, res$package)
 
     # Parse fn definition to get list of all parameters:
     if (!res$package %in% search ())
         suppressMessages (
             library (res$package, character.only = TRUE)
             )
-    pkg_env <- as.environment (paste0 ("package:", res$package))
     if (grepl (":::", this_fn)) { # internal fn, so attach to pkg_env
         this_fn <- rm_internal_namespace (this_fn)
         tmp_fn <- utils::getFromNamespace (this_fn, res$package)
@@ -187,7 +189,7 @@ get_param_descs_source <- function (package, fn) {
     return (descs)
 }
 
-fill_param_vals <- function (p_keys, p_vals, e, package) {
+fill_param_vals <- function (p_keys, p_vals, pkg_env, package) {
 
     params <- list ()
 
@@ -198,7 +200,7 @@ fill_param_vals <- function (p_keys, p_vals, e, package) {
             next
 
         this_val <- get_non_formula_val (this_val,
-                                         e,
+                                         pkg_env,
                                          package,
                                          p_vals,
                                          p)
@@ -215,7 +217,7 @@ fill_param_vals <- function (p_keys, p_vals, e, package) {
 
 # stats::var is a good example where param, `x`, is passed as a formula and
 # evaluated here via !can_get but can_eval.
-get_non_formula_val <- function (this_val, e, package, p_vals, p) {
+get_non_formula_val <- function (this_val, pkg_env, package, p_vals, p) {
 
     if (is.name (this_val)) {
 
@@ -224,19 +226,19 @@ get_non_formula_val <- function (this_val, e, package, p_vals, p) {
         can_get <- !is.null (tryCatch (get (temp_val),
                                        error = function (e) NULL))
         can_eval <- !is.null (tryCatch (eval (parse (text = this_val),
-                                              envir = e),
+                                              envir = pkg_env),
                                         error = function (err) NULL))
 
         if (can_get) {
-            this_val <- get (temp_val, envir = e)
+            this_val <- get (temp_val, envir = pkg_env)
         } else if (can_eval) {
-            this_val <- eval (parse (text = this_val), envir = e)
-        } else if (temp_val %in% ls (envir = e)) {
-            this_val <- get (temp_val, envir = e)
+            this_val <- eval (parse (text = this_val), envir = pkg_env)
+        } else if (temp_val %in% ls (envir = pkg_env)) {
+            this_val <- get (temp_val, envir = pkg_env)
         } else if (temp_val %in%
                    ls (paste0 ("package:", package))) {
             e <- as.environment (paste0 ("package:", package))
-            this_val <- get (temp_val, envir = e)
+            this_val <- get (temp_val, envir = pkg_env)
         } else if (grepl ("::", temp_val)) {
             this_pkg <- strsplit (temp_val, "::") [[1]] [1]
             if (!this_pkg %in% search ())
@@ -251,9 +253,9 @@ get_non_formula_val <- function (this_val, e, package, p_vals, p) {
 
     } else if (is.character (this_val)) {
 
-        if (this_val %in% names (e)) {
+        if (this_val %in% names (pkg_env)) {
             this_val <- parse (text = this_val) %>%
-                eval (envir = e)
+                eval (envir = pkg_env)
         } else if (grepl ("::", this_val)) {
             this_pkg <- strsplit (p_vals [[p]], "::") [[1]] [1]
             if (!this_pkg %in% search ())
