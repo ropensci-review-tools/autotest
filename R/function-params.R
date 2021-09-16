@@ -15,7 +15,11 @@ get_params <- function (res, i, this_fn) {
     . <- NULL # suppress no visible binding note # nolint
     pre <- res$preprocess [[i]]
 
-    pkg_env <- as.environment (paste0 ("package:", res$package))
+    # Environment of all loaded packages:
+    pkgs <- grep ("^package\\:", search (), value = TRUE)
+    envs <- lapply (pkgs, function (i) as.environment (i))
+    names (envs) <- pkgs
+    pkg_env <- list2env (envs)
 
     for (p in pre) {
         # remove "`" except if they name list items
@@ -249,6 +253,9 @@ get_non_formula_val <- function (this_val, pkg_env, package, p_vals, p) {
             this_val <- parse (text = temp_val) %>%
                 eval (envir = as.environment (paste0 ("package:",
                                                       this_pkg)))
+        } else {
+            this_val <- tryCatch (eval (this_val, envir = pkg_env),
+                                  error = function (e) NULL)
         }
 
     } else if (is.character (this_val)) {
