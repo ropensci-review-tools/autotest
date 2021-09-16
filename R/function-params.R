@@ -223,22 +223,22 @@ get_non_formula_val <- function (this_val, pkg_env, package, p_vals, p) {
 
         temp_val <- paste0 (this_val)
 
+        temp_val_get <- tryCatch (get (temp_val, envir = pkg_env),
+                                  error = function (e) NULL)
+        temp_val_eval <- tryCatch (eval (parse (text = this_val),
+                                         envir = pkg_env),
+                                   error = function (err) NULL)
+
         can_get <- !is.null (tryCatch (get (temp_val),
                                        error = function (e) NULL))
         can_eval <- !is.null (tryCatch (eval (parse (text = this_val),
                                               envir = pkg_env),
                                         error = function (err) NULL))
 
-        if (can_get) {
-            this_val <- get (temp_val, envir = pkg_env)
-        } else if (can_eval) {
-            this_val <- eval (parse (text = this_val), envir = pkg_env)
-        } else if (temp_val %in% ls (envir = pkg_env)) {
-            this_val <- get (temp_val, envir = pkg_env)
-        } else if (temp_val %in%
-                   ls (paste0 ("package:", package))) {
-            e <- as.environment (paste0 ("package:", package))
-            this_val <- get (temp_val, envir = pkg_env)
+        if (!is.null (temp_val_get)) {
+            this_val <- temp_val_get
+        } else if (!is.null (temp_val_eval)) {
+            this_val <- temp_val_eval
         } else if (grepl ("::", temp_val)) {
             this_pkg <- strsplit (temp_val, "::") [[1]] [1]
             if (!this_pkg %in% search ())
