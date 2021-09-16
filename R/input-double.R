@@ -18,14 +18,15 @@ test_double_is_int.autotest_obj <- function (x, test_data = NULL, ...) { # nolin
     if (!is.null (test_data)) {
         r <- test_double_is_int.NULL ()
         x$test <- test_these_data (test_data, r)
-        if (!x$test)
-            res$type <- "no_test"
     }
 
     if (x$test)
         res <- double_is_int (x)
     else
         res <- dbl_is_int_dummy_report (x)
+
+    if (!is.null (test_data) & !x$test & !is.null (res))
+        res$type <- "no_test"
 
     return (res)
 }
@@ -85,14 +86,15 @@ test_double_noise.autotest_obj <- function (x, test_data = NULL, ...) {
     if (!is.null (test_data)) {
         r <- test_double_noise.NULL ()
         x$test <- test_these_data (test_data, r)
-        if (!x$test)
-            res$type <- "no_test"
     }
 
     if (x$test)
         res <- double_noise (x)
     else
         res <- dbl_noise_dummy_report (x)
+
+    if (!is.null (test_data) & !x$test & !is.null (res))
+        res$type <- "no_test"
 
     return (res)
 }

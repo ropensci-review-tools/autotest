@@ -37,14 +37,15 @@ test_single_int_range.autotest_obj <- function (x, test_data = NULL, ...) { # no
         # These two tests are coupled, with `test` flags determined by the
         # first only
         x$test <- test_these_data (test_data, r)
-        if (!x$test)
-            res$type <- "no_test"
     }
 
     if (x$test)
         res <- single_int_range (x)
     else
         res <- single_int_dummy_report (x)
+
+    if (!is.null (test_data) & !x$test & !is.null (res))
+        res$type <- "no_test"
 
     return (res)
 }
@@ -288,6 +289,7 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # 
     }
 
     if (x$test) {
+
         f <- tempfile (fileext = ".txt")
         out1 <- catch_all_msgs (f, x$fn, x$params)
 

@@ -13,19 +13,19 @@ test_single_name.NULL <- function (x = NULL, ...) {
 
 test_single_name.autotest_obj <- function (x, test_data = NULL) {
 
-    ret <- test_single_name.NULL ()
+    res <- test_single_name.NULL ()
 
-    ret$fn_name <- x$fn
-    ret$parameter <- names (x$params) [x$i]
+    res$fn_name <- x$fn
+    res$parameter <- names (x$params) [x$i]
 
-    ret$operation <- paste0 ("(unquoted) ",
+    res$operation <- paste0 ("(unquoted) ",
                              class (x$params [[x$i]]) [1],
                              " param as (quoted) character")
 
     if (!is.null (test_data)) {
-        x$test <- test_these_data (test_data, ret)
+        x$test <- test_these_data (test_data, res)
         if (!x$test)
-            ret$type <- "no_test"
+            res$type <- "no_test"
     }
 
     if (x$test) {
@@ -35,12 +35,12 @@ test_single_name.autotest_obj <- function (x, test_data = NULL) {
         x$params [[x$i]] <- as.character (x$params [[x$i]])
         msgs <- catch_all_msgs (f, x$fn, x$params)
         if (!is.null (msgs)) {
-            ret$type <- msgs$type
-            ret$content <- msgs$content
+            res$type <- msgs$type
+            res$content <- msgs$content
         } else {
-            ret <- NULL
+            res <- NULL
         }
     }
 
-    return (ret)
+    return (res)
 }
