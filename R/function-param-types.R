@@ -62,7 +62,9 @@ vector_params <- function (params) {
                            length (i) > 1 &&
                                is.null (dim (i)) &&
                                is.atomic (i) &&
-                               !class (i) %in% c ("call", "formula"),
+                               length (class (i) <= 1L) &&
+                               any (grepl (atomic_modes (collapse = TRUE),
+                                           class (i))),
                            logical (1))))
 }
 
@@ -85,6 +87,9 @@ single_or_vec <- function (res) {
 
     fns <- unique (names (res$parameters))
 
+    pkg_namespace <- paste0 ("package:", res$package)
+    pkg_env <- new.env (parent = as.environment (pkg_namespace))
+
     pars <- lapply (fns, function (f) {
 
         pars <- res$parameters [names (res$parameters) == f]
@@ -95,7 +100,8 @@ single_or_vec <- function (res) {
                                 out <- length (ij)
                                 if (methods::is (ij, "name")) {
                                     tmp <- tryCatch (
-                                            eval (parse (text = ij)),
+                                            eval (parse (text = ij),
+                                                  envir = pkg_env),
                                             error = function (e) NULL)
                                     if (!is.null (tmp))
                                         out <- length (tmp)

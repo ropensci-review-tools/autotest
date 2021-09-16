@@ -99,16 +99,28 @@ autotest_single_yaml <- function (yaml = NULL,
 
         this_fn <- names (res$parameters) [i]
         params <- get_params (res, i, this_fn)
-        params <- params [which (params != "NULL")]
+        params <- params [which (!(params == "NULL" | names (params) == "..."))]
         param_types <- get_param_types (this_fn, params,
                                         par_lengths)
+
+        param_class <- vapply (params,
+                               function (i)
+                                   ifelse (inherits (i, "data.frame"),
+                                           "data.frame",
+                                           class (i) [1]),
+                               character (1))
+        index <- which (!param_class %in% c (atomic_modes (),
+                                             "data.frame"))
+        param_class <- param_class [index]
+        if (length (param_class) == 0L)
+            param_class <- NULL
 
         test_obj <- autotest_obj (package = res$package,
                                   package_loc = attr (yaml, "package"),
                                   fn_name = names (res$parameters) [i],
                                   parameters = params,
                                   parameter_types = param_types,
-                                  class = NULL,
+                                  class = param_class,
                                   classes = res$classes [[i]],
                                   env = new.env (),
                                   test = test,
@@ -120,13 +132,16 @@ autotest_single_yaml <- function (yaml = NULL,
             test_obj$fn <- rm_internal_namespace (test_obj$fn)
         }
 
-        reports <- rbind (reports, autotest_rectangular (test_obj, test_data))
+        if (length (params) > 0L) {
 
-        reports <- rbind (reports, autotest_vector (test_obj, test_data))
+            reports <- rbind (reports, autotest_rectangular (test_obj, test_data))
 
-        reports <- rbind (reports, autotest_single (test_obj, test_data))
+            reports <- rbind (reports, autotest_vector (test_obj, test_data))
 
-        reports <- rbind (reports, autotest_return (test_obj, test_data))
+            reports <- rbind (reports, autotest_single (test_obj, test_data))
+
+            reports <- rbind (reports, autotest_return (test_obj, test_data))
+        }
 
         reports <- rbind (reports, test_param_documentation (test_obj))
 
@@ -236,7 +251,7 @@ autotest_package <- function (package = ".",
     res <- res [which (!duplicated (res)), ]
 
     res <- test_untested_params (exs, res)
-    res <- test_fns_wo_example (package, res)
+    res <- test_fns_wo_example (package, res, names (exs))
 
     if (is.null (res))
         return (res)

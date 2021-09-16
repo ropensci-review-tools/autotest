@@ -72,6 +72,10 @@ test_vec_class_defs.NULL <- function (x = NULL, ...) {
 
 test_vec_class_defs.autotest_obj <- function (x, test_data = NULL) { # nolint
 
+    # only mutate classes of atomic-mode vectors, for which x$class = NULL
+    if (!is.null (x$class))
+        return (NULL)
+
     res0 <- test_vec_class_defs.NULL ()
     res0$fn_name <- x$fn
     res0$parameter <- names (x$params) [x$i]

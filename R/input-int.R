@@ -61,9 +61,6 @@ single_int_range <- function (x) {
     rd <- get_Rd_param (package = x$package_loc,
                         fn_name = x$fn,
                         param_name = names (x$params) [x$i])
-    rd_range <- gregexpr ("[0-9]+", rd)
-    # regmatches returns char(0) for no match, so int(0):
-    rd_range <- as.integer (regmatches (rd, rd_range) [[1]])
 
     res_out <- test_single_int_range.NULL ()
     res_out$type <- "diagnostic"
@@ -72,11 +69,7 @@ single_int_range <- function (x) {
 
     if (!any (is.finite (int_range))) {
 
-        if (any (grepl ("unrestricted", rd, ignore.case = TRUE))) {
-
-            res <- NULL
-
-        } else {
+        if (!any (grepl ("unrestricted", rd, ignore.case = TRUE))) {
 
             content <- paste0 ("Parameter [",
                                names (x$params) [x$i],
@@ -89,20 +82,26 @@ single_int_range <- function (x) {
 
     } else if (!is.null (int_range)) {
 
-        if (length (rd_range) == 0) {
+        # Extract any numbers from param description and presume they specify
+        # some kind of range
+        rd_numbers <- gregexpr ("[0-9]+", rd)
+        # regmatches returns char(0) for no match, so int(0):
+        rd_numbers <- as.integer (regmatches (rd, rd_numbers) [[1]])
 
-            res <- res_out
-            res$content <- paste0 ("Parameter [",
-                                   names (x$params) [x$i],
-                                   "] has no documented range")
+        has_neg_pos <- grepl ("negative|positive", rd, ignore.case = TRUE)
 
-        } else if (length (rd_range) == 1) {
+        res <- NULL
 
-            if (grepl ("negative|positive", rd, ignore.case = TRUE)) {
+        if (!has_neg_pos) {
 
-                res <- NULL
+            if (length (rd_numbers) == 0L) {
 
-            } else {
+                res <- res_out
+                res$content <- paste0 ("Parameter [",
+                                       names (x$params) [x$i],
+                                       "] has no documented range")
+
+            } else if (length (rd_numbers) == 1L) {
 
                 content <- paste0 ("Parameter [",
                                    names (x$params) [x$i],
@@ -112,28 +111,22 @@ single_int_range <- function (x) {
                                    "'positive' or 'negative'")
                 res <- res_out
                 res$content <- content
-            }
 
-        } else {
-
-            if (any (rd_range >= max (int_range)) &
-                any (rd_range <= min (int_range))) {
-
-                res <- NULL
-
-            } else {
+            } else if (!(any (rd_numbers >= max (int_range)) &
+                         any (rd_numbers <= min (int_range)))) {
 
                 content <- paste0 ("Parameter [",
                                    names (x$params) [x$i],
                                    "] responds to approximate ranges of [",
                                    paste0 (int_range, collapse = ", "),
                                    "], yet documents ranges between [",
-                                   paste0 (rd_range, collapse = ", "), "]")
+                                   paste0 (rd_numbers, collapse = ", "), "]")
                 res <- res_out
                 res$content <- content
+
             }
-        }
-    }
+        } # end has_neg_poas
+    } # end else !is.null(int_range)
 
     return (res)
 }
