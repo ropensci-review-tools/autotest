@@ -1137,15 +1137,6 @@ param_classes_from_ex <- function (x, package) {
 
     this_env <- as.environment (paste0 ("package:", package))
 
-    # from ?is.atomic
-    atomic_modes <- c ("logical",
-                       "integer",
-                       "numeric",
-                       "complex",
-                       "character",
-                       "raw",
-                       "NULL")
-
     xout <- lapply (seq_along (x), function (i) {
 
                     this_fn <- names (x) [i]
@@ -1166,7 +1157,7 @@ param_classes_from_ex <- function (x, package) {
                                 character (1)   )
                     names (out) <- x [[i]] [, 1]
 
-                    return (out [which (!out %in% atomic_modes)])
+                    return (out [which (!out %in% atomic_modes ())])
         })
 }
 

@@ -58,21 +58,12 @@ single_params <- function (params) {
 
 vector_params <- function (params) {
 
-    # from ?is.atomic
-    atomic_modes <- c ("logical",
-                       "integer",
-                       "numeric",
-                       "complex",
-                       "character",
-                       "raw",
-                       "NULL")
-
     return (which (vapply (params, function (i)
                            length (i) > 1 &&
                                is.null (dim (i)) &&
                                is.atomic (i) &&
                                length (class (i) <= 1L) &&
-                               any (grepl (paste0 (atomic_modes, collapse = "|"),
+                               any (grepl (atomic_modes (collapse = TRUE),
                                            class (i))),
                            logical (1))))
 }
