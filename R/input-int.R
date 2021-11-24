@@ -132,6 +132,49 @@ single_int_range <- function (x) {
     return (res)
 }
 
+documented_int_range <- function (rd) {
+
+    int_from_rd <- function (rd, ptn) {
+        g <- regmatches (rd, regexpr (ptn, rd))
+        val <- suppressWarnings (
+            as.integer (regmatches (g, regexpr ("[0-9]+", g)))
+            )
+        if (length (val) == 0L) {
+            val <- NA_integer_
+        }
+        return (val)
+    }
+
+    doc_range <- c (-Inf, Inf)
+
+    ptn_lower <- "(more|greater|larger)\\sthan|lower\\slimit\\sof|above"
+    ptn_upper <- "(less|lower|smaller)\\sthan|upper\\slimit\\sof|below"
+
+    if (any (grepl ("negative integer", rd, ignore.case = TRUE))) {
+
+        doc_range [2] <- 0L
+
+    } else if (any (grepl ("positive integer", rd, ignore.case = TRUE))) {
+
+        doc_range [1] <- 0L
+
+    } else if (any (grepl (ptn_lower, rd, ignore.case = TRUE))) {
+
+        val <- int_from_rd (rd, paste0 ("(", ptn_lower, ")\\s[0-9]+"))
+        if (!is.na (val)) {
+            doc_range [1] <- val
+        }
+
+    } else if (any (grepl (ptn_upper, rd, ignore.case = TRUE))) {
+
+        val <- int_from_rd (rd, paste0 ("(", ptn_upper, ")\\s[0-9]+"))
+        if (!is.na (val)) {
+            doc_range [2] <- val
+        }
+    }
+
+    return (doc_range)
+}
 
 get_fn_response <- function (this_fn, params) {
     f <- tempfile (fileext = ".txt")
