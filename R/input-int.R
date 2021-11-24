@@ -201,8 +201,12 @@ stepdown <- function (this_fn, params, i, maxval, step_factor = 10) {
 }
 
 
-# Test int inputs to functions to determine accepted range of inputs.
-get_int_range <- function (this_fn, params, i) {
+#' Test int inputs to functions to determine accepted range of inputs.
+#'
+#' @param test_range Ranges potentially extracted from documented limits to be
+#' used in testing
+#' @noRd
+get_int_range <- function (this_fn, params, i, test_range = c (-Inf, Inf)) {
 
     # if standard call generates an error, then return that as a standard
     # data.frame object. Otherwise return value from the subsequent code is
@@ -224,16 +228,19 @@ get_int_range <- function (this_fn, params, i) {
         return (ret)
     }
 
-    p_i_max <- int_upper_limit (this_fn, params, i)
+    p_i_max <- int_upper_limit (this_fn, params, i, test_range [2])
 
-    p_i <- int_lower_limit (this_fn, params, i)
+    p_i <- int_lower_limit (this_fn, params, i, test_range [1])
 
     return (c (p_i, p_i_max))
 }
 
-int_upper_limit <- function (this_fn, params, i) {
+int_upper_limit <- function (this_fn, params, i, limit) {
 
-    params [[i]] <- .Machine$integer.max
+    if (limit == Inf) {
+        limit <- .Machine$integer.max
+    }
+    params [[i]] <- limit
     maxval <- get_fn_response (this_fn, params)
 
     if (maxval > 1) {
@@ -259,9 +266,12 @@ int_upper_limit <- function (this_fn, params, i) {
     return (p_i_max)
 }
 
-int_lower_limit <- function (this_fn, params, i) {
+int_lower_limit <- function (this_fn, params, i, limit) {
 
-    params [[i]] <- -.Machine$integer.max
+    if (limit == -Inf) {
+        limit <- -.Machine$integer.max
+    }
+    params [[i]] <- limit
     maxval <- get_fn_response (this_fn, params)
 
     if (maxval > 1) {
