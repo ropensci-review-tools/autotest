@@ -52,16 +52,18 @@ test_single_int_range.autotest_obj <- function (x, test_data = NULL, ...) { # no
 
 single_int_range <- function (x) {
 
-    int_range <- get_int_range (x$fn, x$params, x$i)
+    rd <- get_Rd_param (package = x$package_loc,
+                        fn_name = x$fn,
+                        param_name = names (x$params) [x$i])
+
+    doc_range <- documented_int_range (rd)
+
+    int_range <- get_int_range (x$fn, x$params, x$i, doc_range)
 
     if (!is.numeric (int_range)) # call with default parameters errored
         return (int_range)
 
     res <- NULL
-
-    rd <- get_Rd_param (package = x$package_loc,
-                        fn_name = x$fn,
-                        param_name = names (x$params) [x$i])
 
     res_out <- test_single_int_range.NULL ()
     res_out$type <- "diagnostic"
@@ -132,6 +134,11 @@ single_int_range <- function (x) {
     return (res)
 }
 
+#' Get permissible integer range from a given .Rd entry
+#'
+#' @return Vector of two integer values of (lower, upper) limits, with default
+#' of +/- Inf.
+#' @noRd
 documented_int_range <- function (rd) {
 
     int_from_rd <- function (rd, ptn) {
