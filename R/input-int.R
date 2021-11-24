@@ -374,8 +374,8 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # 
                                            "] returns different values when ",
                                            "parameter [",
                                            names (x$params) [x$i],
-                                           "] only demonstrated or documented as",
-                                           " int-valued is submitted as",
+                                           "] only demonstrated or documented ",
+                                           " as int-valued is submitted as",
                                            " double.")
                 }
             } else {
