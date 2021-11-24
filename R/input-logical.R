@@ -91,28 +91,29 @@ test_int_for_logical.autotest_obj <- function (x, test_data = NULL, ...) { # nol
 
     if (x$test) {
         f <- tempfile (fileext = ".txt")
-        # expect substituion by int values to give warnings or errors,
-        # and return FALSE otherwise
+        # Expect substituion by int values to give warnings or errors.
+        # This returns TRUE is there are errors or warnings, otherwise it
+        # returns FALSE.
         chk <- vapply (0L:2L, function (j) {
                            p <- x$params
                            p [[x$i]] <- j
                            msgs <- catch_all_msgs (f, x$fn, p)
-                           val <- TRUE
-                           if (is.null (msgs)) {
-                               # no errors or warnings
-                               val <- FALSE
-                           } else if (!any (msgs$type %in%
-                                            c ("warning", "error"))) {
-                               val <- FALSE
+                           val <- FALSE
+                           if (!is.null (msgs)) {
+                               if (any (msgs$type %in%
+                                        c ("warning", "error"))) {
+                                   val <- TRUE
+                               }
                            }
                            return (val) },
                            logical (1))
         # all `chk` should be TRUE if substituing `int` for `logical` leads to
         # errors/warnings
-        if (!any (chk))
+        if (all (chk)) {
             res <- NULL
-        else
+        } else {
             res$type <- "diagnostic"
+        }
     }
 
     return (res)
