@@ -52,16 +52,18 @@ test_single_int_range.autotest_obj <- function (x, test_data = NULL, ...) { # no
 
 single_int_range <- function (x) {
 
-    int_range <- get_int_range (x$fn, x$params, x$i)
+    rd <- get_Rd_param (package = x$package_loc,
+                        fn_name = x$fn,
+                        param_name = names (x$params) [x$i])
+
+    doc_range <- documented_int_range (rd)
+
+    int_range <- get_int_range (x$fn, x$params, x$i, doc_range)
 
     if (!is.numeric (int_range)) # call with default parameters errored
         return (int_range)
 
     res <- NULL
-
-    rd <- get_Rd_param (package = x$package_loc,
-                        fn_name = x$fn,
-                        param_name = names (x$params) [x$i])
 
     res_out <- test_single_int_range.NULL ()
     res_out$type <- "diagnostic"
@@ -132,6 +134,54 @@ single_int_range <- function (x) {
     return (res)
 }
 
+#' Get permissible integer range from a given .Rd entry
+#'
+#' @return Vector of two integer values of (lower, upper) limits, with default
+#' of +/- Inf.
+#' @noRd
+documented_int_range <- function (rd) {
+
+    int_from_rd <- function (rd, ptn) {
+        g <- regmatches (rd, regexpr (ptn, rd))
+        val <- suppressWarnings (
+            as.integer (regmatches (g, regexpr ("[0-9]+", g)))
+            )
+        if (length (val) == 0L) {
+            val <- NA_integer_
+        }
+        return (val)
+    }
+
+    doc_range <- c (-Inf, Inf)
+
+    ptn_lower <- "(more|greater|larger)\\sthan|lower\\slimit\\sof|above"
+    ptn_upper <- "(less|lower|smaller)\\sthan|upper\\slimit\\sof|below"
+
+    if (any (grepl ("negative integer", rd, ignore.case = TRUE))) {
+
+        doc_range [2] <- 0L
+
+    } else if (any (grepl ("positive integer", rd, ignore.case = TRUE))) {
+
+        doc_range [1] <- 0L
+
+    } else if (any (grepl (ptn_lower, rd, ignore.case = TRUE))) {
+
+        val <- int_from_rd (rd, paste0 ("(", ptn_lower, ")\\s[0-9]+"))
+        if (!is.na (val)) {
+            doc_range [1] <- val
+        }
+
+    } else if (any (grepl (ptn_upper, rd, ignore.case = TRUE))) {
+
+        val <- int_from_rd (rd, paste0 ("(", ptn_upper, ")\\s[0-9]+"))
+        if (!is.na (val)) {
+            doc_range [2] <- val
+        }
+    }
+
+    return (doc_range)
+}
 
 get_fn_response <- function (this_fn, params) {
     f <- tempfile (fileext = ".txt")
@@ -158,8 +208,12 @@ stepdown <- function (this_fn, params, i, maxval, step_factor = 10) {
 }
 
 
-# Test int inputs to functions to determine accepted range of inputs.
-get_int_range <- function (this_fn, params, i) {
+#' Test int inputs to functions to determine accepted range of inputs.
+#'
+#' @param test_range Ranges potentially extracted from documented limits to be
+#' used in testing
+#' @noRd
+get_int_range <- function (this_fn, params, i, test_range = c (-Inf, Inf)) {
 
     # if standard call generates an error, then return that as a standard
     # data.frame object. Otherwise return value from the subsequent code is
@@ -181,16 +235,19 @@ get_int_range <- function (this_fn, params, i) {
         return (ret)
     }
 
-    p_i_max <- int_upper_limit (this_fn, params, i)
+    p_i_max <- int_upper_limit (this_fn, params, i, test_range [2])
 
-    p_i <- int_lower_limit (this_fn, params, i)
+    p_i <- int_lower_limit (this_fn, params, i, test_range [1])
 
     return (c (p_i, p_i_max))
 }
 
-int_upper_limit <- function (this_fn, params, i) {
+int_upper_limit <- function (this_fn, params, i, limit) {
 
-    params [[i]] <- .Machine$integer.max
+    if (limit == Inf) {
+        limit <- .Machine$integer.max
+    }
+    params [[i]] <- limit
     maxval <- get_fn_response (this_fn, params)
 
     if (maxval > 1) {
@@ -216,9 +273,12 @@ int_upper_limit <- function (this_fn, params, i) {
     return (p_i_max)
 }
 
-int_lower_limit <- function (this_fn, params, i) {
+int_lower_limit <- function (this_fn, params, i, limit) {
 
-    params [[i]] <- -.Machine$integer.max
+    if (limit == -Inf) {
+        limit <- -.Machine$integer.max
+    }
+    params [[i]] <- limit
     maxval <- get_fn_response (this_fn, params)
 
     if (maxval > 1) {
@@ -331,8 +391,8 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # 
                                            "] returns different values when ",
                                            "parameter [",
                                            names (x$params) [x$i],
-                                           "] only demonstrated or documented as",
-                                           " int-valued is submitted as",
+                                           "] only demonstrated or documented ",
+                                           " as int-valued is submitted as",
                                            " double.")
                 }
             } else {
