@@ -162,16 +162,14 @@ get_pkg_deps <- function (pkg, suggests = FALSE) {
             ip <- data.frame (utils::installed.packages (lib.loc = lib),
                               stringsAsFactors = FALSE)
         }
-        deps <- strsplit (ip$Depends [ip$Package == pkg], ",|, ") [[1]]
+        deps <- strsplit (ip$Depends [ip$Package == pkg], ",(\\s?)") [[1]]
         deps <- gsub ("\\s*\\(.*$", "", deps [!is.na (deps)])
-        imports <- strsplit (ip$Imports [ip$Package == pkg], ",|, ") [[1]]
+        imports <- strsplit (ip$Imports [ip$Package == pkg], ",(\\s?)") [[1]]
         deps <- c (deps, gsub ("\\s*\\(.*$", "", imports [!is.na (imports)]))
         if (suggests) {
-          s <- strsplit (ip$Suggests [ip$Package == pkg], ",|, ") [[1]]
-          deps <- c (deps, gsub ("\\s*\\(.*$", "", s [!is.na (s)]))
+            s <- strsplit (ip$Suggests [ip$Package == pkg], ",(\\s?)") [[1]]
+            deps <- c (deps, gsub ("\\s*\\(.*$", "", s [!is.na (s)]))
         }
-        deps <- gsub("[\r\n]", "", deps)
-        
     }
     base_pkgs <- c ("stats", "graphics", "grDevices", "utils",
                     "datasets", "methods", "base")
