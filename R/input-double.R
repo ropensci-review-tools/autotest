@@ -132,7 +132,7 @@ double_noise <- function (x) {
         different <- length (res0) != length (res1)
         if (!different)
             different <- max (abs (res0 - res1), na.rm = TRUE) >
-                                (10 * .Machine$double.eps)
+                                (1e6 * .Machine$double.eps)
 
         if (different) {
             res <- test_double_noise.NULL ()
