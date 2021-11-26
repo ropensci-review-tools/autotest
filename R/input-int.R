@@ -157,26 +157,23 @@ documented_int_range <- function (rd) {
     ptn_lower <- "(more|greater|larger)\\sthan|lower\\slimit\\sof|above"
     ptn_upper <- "(less|lower|smaller)\\sthan|upper\\slimit\\sof|below"
 
-    if (any (grepl ("negative integer", rd, ignore.case = TRUE))) {
-
-        doc_range [2] <- 0L
-
-    } else if (any (grepl ("positive integer", rd, ignore.case = TRUE))) {
-
-        doc_range [1] <- 0L
-
-    } else if (any (grepl (ptn_lower, rd, ignore.case = TRUE))) {
-
-        val <- int_from_rd (rd, paste0 ("(", ptn_lower, ")\\s[0-9]+"))
-        if (!is.na (val)) {
-            doc_range [1] <- val
+    # test for the upper bound
+    if (any(grepl("negative integer", rd, ignore.case = TRUE))) {
+        doc_range[2] <- 0L
+    } else if (any(grepl(ptn_upper, rd, ignore.case = TRUE))) {
+        val <- int_from_rd(rd, paste0("(", ptn_upper, ")\\s[0-9]+"))
+        if (!is.na(val)) {
+            doc_range[2] <- val
         }
-
-    } else if (any (grepl (ptn_upper, rd, ignore.case = TRUE))) {
-
-        val <- int_from_rd (rd, paste0 ("(", ptn_upper, ")\\s[0-9]+"))
-        if (!is.na (val)) {
-            doc_range [2] <- val
+    }
+    
+    # test for the lower bound
+    if (any(grepl("positive integer", rd, ignore.case = TRUE))) {
+        doc_range[1] <- 0L
+    } else if (any(grepl(ptn_lower, rd, ignore.case = TRUE))) {
+        val <- int_from_rd(rd, paste0("(", ptn_lower, ")\\s[0-9]+"))
+        if (!is.na(val)) {
+            doc_range[1] <- val
         }
     }
 
