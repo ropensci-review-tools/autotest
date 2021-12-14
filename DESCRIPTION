@@ -38,6 +38,8 @@ Suggests:
     usethis
 VignetteBuilder: 
     knitr
+Remotes:
+    r-lib/desc
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
