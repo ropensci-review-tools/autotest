@@ -10,13 +10,13 @@
   "codeRepository": "https://github.com/ropensci-review-tools/autotest",
   "issueTracker": "https://github.com/ropensci-review-tools/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.2.174",
+  "version": "0.0.2.175",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.1.1 (2021-08-10)",
+  "runtimePlatform": "R version 4.1.2 (2021-11-01)",
   "author": [
     {
       "@type": "Person",
@@ -30,7 +30,8 @@
     {
       "@type": "Person",
       "givenName": "Jouni",
-      "familyName": "Helske"
+      "familyName": "Helske",
+      "@id": "https://orcid.org/0000-0001-7130-793X"
     }
   ],
   "copyrightHolder": {},
@@ -305,11 +306,8 @@
       "sameAs": "https://CRAN.R-project.org/package=yaml"
     }
   ],
-  "fileSize": "14846.934KB",
-  "contIntegration": [
-    "https://github.com/ropensci-review-tools/autotest/actions?query=workflow%3AR-CMD-check",
-    "https://codecov.io/gh/ropensci-review-tools/autotest"
-  ],
+  "fileSize": "14848.762KB",
+  "contIntegration": ["https://github.com/ropensci-review-tools/autotest/actions?query=workflow%3AR-CMD-check", "https://codecov.io/gh/ropensci-review-tools/autotest"],
   "developmentStatus": "https://www.repostatus.org/#concept",
   "readme": "https://github.com/ropensci-review-tools/autotest/blob/main/README.md",
   "relatedLink": "https://docs.ropensci.org/autotest/"
