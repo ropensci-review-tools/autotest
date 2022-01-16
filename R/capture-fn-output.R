@@ -110,9 +110,7 @@ parse_all_msgs <- function (f) {
 
 catch_all_msgs <- function (f, this_fn, params = NULL) {
     con <- file (f, "wt")
-    suppressMessages (
-        x <- log_all_msgs (con, this_fn, params)
-        )
+    x <- log_all_msgs (con, this_fn, params)
     close (con)
     out <- parse_all_msgs (f)
     if (!is.null (out))
