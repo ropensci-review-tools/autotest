@@ -220,7 +220,7 @@ get_package_name <- function (package) {
         pkg_name <- basename (package)
     } else {
         desc <- file.path (package, "DESCRIPTION")
-        pkg_name <- read.dcf (desc, "Package")
+        pkg_name <- as.character (read.dcf (desc, "Package"))
     }
 
     return (pkg_name)
