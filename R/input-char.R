@@ -88,6 +88,11 @@ test_single_char_as_random.autotest_obj <- function (x, test_data = NULL, ...) {
                                         size = 10),
                                 collapse = "")
 
+    if (char_param_is_arbitrary (x)) {
+        x$test <- FALSE
+        res <- NULL
+    }
+
     if (x$test) {
 
         f <- tempfile ()
@@ -102,6 +107,21 @@ test_single_char_as_random.autotest_obj <- function (x, test_data = NULL, ...) {
     }
 
     return (res)
+}
+
+#' Check whether character parameters are effectively arbitrary
+#'
+#' issue #65 from @helske. Arbitrary strings are not mutated to test whether
+#' `match.arg()` is used.
+#' @noRd
+char_param_is_arbitrary <- function (x) {
+
+    rd <- get_Rd_param (package = x$package_loc,
+                        fn_name = x$fn,
+                        param_name = names (x$params) [x$i])
+
+    ptn <- "name|label|text|string|arbitrary"
+    any (grepl (ptn, rd))
 }
 
 # currently not used
