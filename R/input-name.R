@@ -23,7 +23,10 @@ test_single_name.autotest_obj <- function (x, test_data = NULL) {
                              " param as (quoted) character")
 
     if (!is.null (test_data)) {
-        x$test <- test_these_data (test_data, res)
+        test_flag <- test_these_data (test_data, res)
+        if (length (test_flag) == 1L) {
+            x$test <- test_flag
+        }
         if (!x$test)
             res$type <- "no_test"
     }

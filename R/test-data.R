@@ -3,6 +3,8 @@
 #'
 #' Extract flag of test_data$test corresponding to the `autotest_obj` object,
 #' `obj`, which contains function and parameter names.
+#' @return A zero-length parameter if "test_data$test_name" is not in
+#' "obj$test_name"
 #' @noRd
 test_these_data <- function (test_data, obj) {
 

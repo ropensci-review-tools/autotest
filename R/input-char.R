@@ -19,7 +19,10 @@ test_single_char_case_dep.autotest_obj <- function (x, test_data = NULL) { # nol
 
     if (!is.null (test_data)) {
         r <- test_single_char_case_dep.NULL ()
-        x$test <- test_these_data (test_data, r)
+        test_flag <- test_these_data (test_data, r)
+        if (length (test_flag) == 1L) {
+            x$test <- test_flag
+        }
     }
 
     for (lower in c (TRUE, FALSE))
@@ -79,7 +82,10 @@ test_single_char_as_random.autotest_obj <- function (x, test_data = NULL, ...) {
 
     if (!is.null (test_data)) {
         r <- test_single_char_as_random.NULL ()
-        x$test <- test_these_data (test_data, r)
+        test_flag <- test_these_data (test_data, r)
+        if (length (test_flag) == 1L) {
+            x$test <- test_flag
+        }
         if (!x$test)
             res$type <- "no_test"
     }

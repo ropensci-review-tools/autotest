@@ -18,7 +18,10 @@ test_negate_logical.autotest_obj <- function (x, test_data = NULL, ...) { # noli
     res$parameter <- names (x$params) [x$i]
 
     if (!is.null (test_data)) {
-        x$test <- test_these_data (test_data, res)
+        test_flag <- test_these_data (test_data, res)
+        if (length (test_flag) == 1L) {
+            x$test <- test_flag
+        }
         if (!x$test)
             res$type <- "no_test"
     }
@@ -84,7 +87,10 @@ test_int_for_logical.autotest_obj <- function (x, test_data = NULL, ...) { # nol
     res$parameter <- names (x$params) [x$i]
 
     if (!is.null (test_data)) {
-        x$test <- test_these_data (test_data, res)
+        test_flag <- test_these_data (test_data, res)
+        if (length (test_flag) == 1L) {
+            x$test <- test_flag
+        }
         if (!x$test)
             res$type <- "no_test"
     }
@@ -138,7 +144,10 @@ test_char_for_logical.autotest_obj <- function (x = NULL, test_data = NULL, ...)
     res$parameter <- names (x$params) [x$i]
 
     if (!is.null (test_data)) {
-        x$test <- test_these_data (test_data, res)
+        test_flag <- test_these_data (test_data, res)
+        if (length (test_flag) == 1L) {
+            x$test <- test_flag
+        }
         if (!x$test)
             res$type <- "no_test"
     }
