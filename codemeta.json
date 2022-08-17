@@ -1,22 +1,20 @@
 {
-  "@context": [
-    "https://doi.org/10.5063/schema/codemeta-2.0",
-    "http://schema.org"
-  ],
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
   "identifier": "autotest",
   "description": "Automatic testing of R packages via a simple YAML schema.",
   "name": "autotest: Automatic Package Testing",
+  "relatedLink": "https://docs.ropensci.org/autotest/",
   "codeRepository": "https://github.com/ropensci-review-tools/autotest",
   "issueTracker": "https://github.com/ropensci-review-tools/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.2.188",
+  "version": "0.0.2.189",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.1.2 (2021-11-01)",
+  "runtimePlatform": "R version 4.2.1 (2022-06-23)",
   "author": [
     {
       "@type": "Person",
@@ -34,8 +32,6 @@
       "@id": "https://orcid.org/0000-0001-7130-793X"
     }
   ],
-  "copyrightHolder": {},
-  "funder": {},
   "maintainer": [
     {
       "@type": "Person",
@@ -155,8 +151,8 @@
       "sameAs": "https://CRAN.R-project.org/package=usethis"
     }
   ],
-  "softwareRequirements": [
-    {
+  "softwareRequirements": {
+    "1": {
       "@type": "SoftwareApplication",
       "identifier": "cli",
       "name": "cli",
@@ -168,7 +164,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=cli"
     },
-    {
+    "2": {
       "@type": "SoftwareApplication",
       "identifier": "data.table",
       "name": "data.table",
@@ -180,7 +176,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=data.table"
     },
-    {
+    "3": {
       "@type": "SoftwareApplication",
       "identifier": "digest",
       "name": "digest",
@@ -192,7 +188,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=digest"
     },
-    {
+    "4": {
       "@type": "SoftwareApplication",
       "identifier": "here",
       "name": "here",
@@ -204,7 +200,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=here"
     },
-    {
+    "5": {
       "@type": "SoftwareApplication",
       "identifier": "magrittr",
       "name": "magrittr",
@@ -216,7 +212,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=magrittr"
     },
-    {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "memoise",
       "name": "memoise",
@@ -228,12 +224,12 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=memoise"
     },
-    {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "methods",
       "name": "methods"
     },
-    {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "pkgload",
       "name": "pkgload",
@@ -245,7 +241,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=pkgload"
     },
-    {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "rlang",
       "name": "rlang",
@@ -257,7 +253,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=rlang"
     },
-    {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "testthat",
       "name": "testthat",
@@ -269,7 +265,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=testthat"
     },
-    {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "tibble",
       "name": "tibble",
@@ -281,7 +277,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tibble"
     },
-    {
+    "12": {
       "@type": "SoftwareApplication",
       "identifier": "withr",
       "name": "withr",
@@ -293,7 +289,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=withr"
     },
-    {
+    "13": {
       "@type": "SoftwareApplication",
       "identifier": "yaml",
       "name": "yaml",
@@ -304,14 +300,11 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=yaml"
-    }
-  ],
-  "fileSize": "14848.762KB",
-  "contIntegration": [
-    "https://github.com/ropensci-review-tools/autotest/actions?query=workflow%3AR-CMD-check",
-    "https://codecov.io/gh/ropensci-review-tools/autotest"
-  ],
-  "developmentStatus": "https://www.repostatus.org/#concept",
+    },
+    "SystemRequirements": null
+  },
+  "fileSize": "570.294KB",
   "readme": "https://github.com/ropensci-review-tools/autotest/blob/main/README.md",
-  "relatedLink": "https://docs.ropensci.org/autotest/"
+  "contIntegration": ["https://github.com/ropensci-review-tools/autotest/actions?query=workflow%3AR-CMD-check", "https://codecov.io/gh/ropensci-review-tools/autotest"],
+  "developmentStatus": "https://www.repostatus.org/#concept"
 }

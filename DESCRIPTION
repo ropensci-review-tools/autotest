@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.0.2.188
+Version: 0.0.2.189
 Authors@R: c(
     person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2172-5265")),
@@ -38,8 +38,6 @@ Suggests:
     usethis
 VignetteBuilder: 
     knitr
-Remotes:
-    r-lib/desc
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
