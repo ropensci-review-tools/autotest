@@ -206,8 +206,7 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
     # remove any that are inside quotations, like L#44 in stats::spline
     qts <- quote_sequences (x)
     quotes <- gregexpr ("\"|\'", x)
-    multi_line_quote <- FALSE
-    start_multi_line_quote <- TRUE
+    multi_line_quote <- start_multi_line_quote <- FALSE
 
     for (i in seq (x)) {
         if (multi_line_quote && !start_multi_line_quote) {
