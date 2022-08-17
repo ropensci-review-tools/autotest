@@ -242,6 +242,10 @@ roxygen2::roxygenise (path)
 autotest_package (path, test = TRUE)
 ```
 
+Respective limits of ranges may be specified with any of the following words:
+
+- Lower limits: "more", "greater", "larger than", "lower limit of", "above" 
+- Upper limits: "less", "lower", "smaller than", "upper limit of", "below" 
 
 
 ## Vector input
