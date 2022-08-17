@@ -14,9 +14,8 @@ test_that("match_brackets", {
 
               x <- c ("some (stuff '(in brackets ",
                       "and)' close that one) done")
-              expect_error (match_brackets (x),
-                            "NA/NaN argument")
-
+              res <- match_brackets (x)
+              expect_length (res, 1)
 })
 
 test_that ("unmatched brackets", {
