@@ -206,23 +206,62 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
     # remove any that are inside quotations, like L#44 in stats::spline
     qts <- quote_sequences (x)
     quotes <- gregexpr ("\"|\'", x)
+    multi_line_quote <- FALSE
+    start_multi_line_quote <- TRUE
+
     for (i in seq (x)) {
-        if (any (quotes [[i]] > 0)) {
+        if (multi_line_quote && !start_multi_line_quote) {
+            if (any (quotes [[i]]) > 0L) {
+                qindex <- seq (1L, quotes [[i]] [1])
+                if (length (br_open [[i]]) > 0L) {
+                    br_open [[i]] <- br_open [[i]] [!br_open [[i]] %in% qindex]
+                }
+                if (length (br_closed [[i]]) > 0L) {
+                    br_closed [[i]] <- br_closed [[i]] [!br_closed [[i]] %in% qindex]
+                }
+                multi_line_quote <- FALSE
+            } else {
+                br_open [[i]] <- br_closed [[i]] <- integer (0L)
+            }
+        } else if (any (quotes [[i]] > 0)) {
             index <- seq (length (quotes [[i]]) / 2) * 2
             qstart <- quotes [[i]] [index - 1]
             qend <- quotes [[i]] [index]
-            qindex <- unlist (lapply (seq_along (qstart), function (i)
-                                      qstart [i]:qend [i]))
-            br_open [[i]] <- br_open [[i]] [!br_open [[i]] %in% qindex]
-            br_closed [[i]] <- br_closed [[i]] [!br_closed [[i]] %in% qindex]
+            qstart_1 <- utils::tail (qstart, 1L)
+            qend_1 <- utils::tail (qend, 1L)
+
+            if (!multi_line_quote && !is.na (qstart_1) && is.na (qend_1)) {
+                multi_line_quote <- TRUE
+                start_multi_line_quote <- TRUE
+            } else if (is.na (qstart_1) && !is.na (qend_1)) {
+                multi_line_quote <- FALSE
+            } 
+
+            if (!multi_line_quote || (multi_line_quote && start_multi_line_quote)) {
+
+                if (start_multi_line_quote) {
+                    qindex <- seq (max (qstart), nchar (x) [i])
+                    start_multi_line_quote <- FALSE
+                } else {
+                    qindex <- unlist (lapply (seq_along (qstart), function (i)
+                                              qstart [i]:qend [i]))
+                }
+                if (length (br_open [[i]]) > 0L) {
+                    br_open [[i]] <- br_open [[i]] [!br_open [[i]] %in% qindex]
+                }
+                if (length (br_closed [[i]]) > 0L) {
+                    br_closed [[i]] <- br_closed [[i]] [!br_closed [[i]] %in% qindex]
+                }
+            }
         }
     }
 
     # examples may have rogue brackets, like in stats::spline, where it arises
     # in a plot axis label (line#62)
-    if (length (unlist (br_open)) != length (unlist (br_closed)))
+    if (length (unlist (br_open)) != length (unlist (br_closed))) {
         return (list (br_open = NA,
                       br_closed = NA))
+    }
 
     # Remove all instances of matched brackets on one line
     for (i in seq (x)) {
