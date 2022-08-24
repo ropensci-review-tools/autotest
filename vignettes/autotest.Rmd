@@ -9,6 +9,7 @@ output:
         toc_float: true
         number_sections: false
         theme: flatly
+always_allow_html: true
 vignette: >
   %\VignetteIndexEntry{How to use autotest}
   %\VignetteEngine{knitr::rmarkdown}
