@@ -64,11 +64,16 @@ documentation lines, and use the [`roxygenise()`
 function](https://roxygen2.r-lib.org/reference/roxygenize.html) to create the
 corresponding `man` files.
 
+`autotest` works by parsing and running "example" code from function
+documentation, so our code needs to include at least one example line.
+
 ```{r first-fn}
 code <- c ("#' my_function",
            "#'",
            "#' @param x An input",
            "#' @return Something else",
+           "#' @examples",
+           "#' y <- my_function (x = 1)",
            "#' @export",
            "my_function <- function (x) {",
            "  return (x + 1)",
@@ -102,23 +107,6 @@ here.
 DT::datatable (x0, options = list (dom = "t")) # display table only
 ```
 
-## Adding examples to our code
-
-That tells us straight away that we need to add an example to our function
-documentation. So let's do that by inserting extra lines into the `code`
-defined above, and see what happens.
-
-```{r autotest-FALSE}
-code <- c (code [1:4],
-           "#' @examples",
-           "#' y <- my_function (x = 1)",
-           code [5:length (code)])
-writeLines (code, file.path (path, "R", "myfn.R"))
-roxygen2::roxygenise (path)
-x1 <- autotest_package (path)
-DT::datatable (x1, options = list (dom = "t"))
-```
-
 The first thing to notice is the first column, which has `test_type = "dummy"`
 for all rows. The [`autotest_package()`
 function](https://docs.ropensci.org/autotest/reference/autotest_package.html)
@@ -128,11 +116,11 @@ returns an object listing all tests that would be performed with actually doing
 so. Applying the tests by setting `test = TRUE` gives the following result.
 
 ```{r autotest-TRUE}
-x2 <- autotest_package (path, test = TRUE)
-DT::datatable (x2, options = list (dom = "t"))
+x1 <- autotest_package (path, test = TRUE)
+DT::datatable (x1, options = list (dom = "t"))
 ```
 
-Of the `r nrow(x1)` tests which were performed, only `r nrow(x2)` yielded
+Of the `r nrow(x0)` tests which were performed, only `r nrow(x1)` yielded
 unexpected behaviour. The first indicates that the parameter `x` has only been
 used as an integer, yet was not specified as such. The second states that the
 parameter `x` is "assumed to be a single numeric". `autotest` does its best to
@@ -183,8 +171,8 @@ Note what happens if we instead specify that parameter as an integer (`x =
 code [6] <- gsub ("1\\.", "1L", code [6])
 writeLines (code, file.path (path, "R", "myfn.R"))
 roxygen2::roxygenise (path)
-x3 <- autotest_package (path, test = TRUE)
-DT::datatable (x3, options = list (dom = "t"))
+x2 <- autotest_package (path, test = TRUE)
+DT::datatable (x2, options = list (dom = "t"))
 ```
 
 That then generates two additional messages, the second of which reflects an
@@ -281,8 +269,8 @@ presuming `integer` representations for any parameters for which all values are
 whole numbers, regardless of `storage.mode`.
 
 ```{r autotest-TRUE3}
-x4 <- autotest_package (path, test = TRUE)
-DT::datatable (x4, options = list (dom = "t"))
+x3 <- autotest_package (path, test = TRUE)
+DT::datatable (x3, options = list (dom = "t"))
 ```
 
 ### List-column conversion
@@ -392,8 +380,8 @@ code <- c ("#' my_function3",
            "}")
 writeLines (code, file.path (path, "R", "myfn3.R"))
 roxygen2::roxygenise (path) # need to update docs with seed param
-x5 <- autotest_package (path, test = TRUE)
-DT::datatable (x5, options = list (dom = "t"))
+x4 <- autotest_package (path, test = TRUE)
+DT::datatable (x4, options = list (dom = "t"))
 ```
 
 Several new diagnostic messages are then issued regarding the description of
@@ -405,8 +393,8 @@ code <- c (code [1:3],
            code [4:length (code)])
 writeLines (code, file.path (path, "R", "myfn3.R"))
 roxygen2::roxygenise (path) # need to update docs with seed param
-x6 <- autotest_package (path, test = TRUE)
-DT::datatable (x6, options = list (dom = "t"))
+x5 <- autotest_package (path, test = TRUE)
+DT::datatable (x5, options = list (dom = "t"))
 ```
 
 That result still contains a couple of diagnostic messages, but it is now
@@ -439,8 +427,8 @@ code <- c ("#' my_function3",
            "}")
 writeLines (code, file.path (path, "R", "myfn3.R"))
 roxygen2::roxygenise (path) # need to update docs with seed param
-x7 <- autotest_package (path, test = TRUE)
-DT::datatable (x7, options = list (dom = "t"))
+x6 <- autotest_package (path, test = TRUE)
+DT::datatable (x6, options = list (dom = "t"))
 ```
 
 This warning again indicates precisely how it can be rectified, for example by
