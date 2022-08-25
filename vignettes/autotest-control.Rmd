@@ -4,11 +4,14 @@ author:
   - "Mark Padgham"
 date: "`r Sys.Date()`"
 output: 
+    md_document:
+        variant: markdown_github
     html_document:
         toc: true
         toc_float: true
         number_sections: false
         theme: flatly
+always_allow_html: true
 vignette: >
   %\VignetteIndexEntry{Control of tests}
   %\VignetteEngine{knitr::rmarkdown}
@@ -257,7 +260,7 @@ This parameter must be an object of class `autotest_package`, as returned by
 either the
 [`autotest_types()`](https://docs.ropensci.org/autotest/reference/autotest_types.html)]
 or
-[`autotest_package()](https://docs.ropensci.org/autotest/reference/autotest_package.html)
+[`autotest_package()`](https://docs.ropensci.org/autotest/reference/autotest_package.html)
 functions. The former of these is the function which specifies all unique
 tests, and so returns a relatively small `tibble` of `r nrow(autotest_types())`
 rows. The following lines demonstrate how to switch off the list-column test
@@ -407,7 +410,8 @@ The two expectations shown above call the
 [`autotest_package()`](https://docs.ropensci.org/autotest/reference/autotest_package.html)
 function internally, and assert that the results follow the expected pattern.
 There are also three additional [`testthat`](https://testthat.r-lib.org)
-expectations which can be applied to pre-generated `autotest` objects, to allow for finer control over testing expectations. These are:
+expectations which can be applied to pre-generated `autotest` objects, to allow
+for finer control over testing expectations. These are:
 
 - `expect_autotest_no_err` to expect no errors in results from `autotest_package()`;
 - `expect_autotest_no_warn` to expect no warnings; and
