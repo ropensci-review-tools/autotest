@@ -159,22 +159,54 @@ returns details of all tests without actually implementing them (and for this
 reason we name the object `xf` for "false"):
 
 ```{r at-cor-notest-dummy, echo = TRUE, eval = FALSE}
-xf <- autotest_package (package = "stats",
-                        functions = "cor")
-```
-```{r at-cor-notest, fig.show = "hide", collapse = TRUE, echo = FALSE}
-xf <- autotest_package (package = "stats",
-                        functions = "cor")
-```
-
-That reveals that the example code from the `.Rd` file has four main points at
-which the aliases defined in that file are tested: once each for `var` and
-`cor`, and twice for `cov`. The result looks like this:
-
-```{r print-x-dummy, echo = TRUE, eval = FALSE}
+xf <- autotest_package (package = "stats", functions = "cor")
 print (xf)
 ```
 ```{r print-x, echo = FALSE, collapse = TRUE}
+xf <- tibble::tibble (
+    type = rep ("dummy", 15L),
+    test_name = c (
+        rep ("single_char_case", 2L),
+        "single_par_as_length_2",
+        "return_successful",
+        "return_val_described",
+        "return_desc_include_class",
+        "return_class_matches_desc",
+        rep (c ("par_is_documented", "par_matches_doc"), 4)
+        ),
+    fn_name = rep ("cor", 15L),
+    parameter = c (
+        rep ("use", 3L),
+        rep ("(return object)", 4L),
+        rep ("x", 2L),
+        rep ("use", 2L),
+        rep ("method", 2L),
+        rep ("y", 2L)
+    ),
+    parameter_type = c (
+        rep ("single_character", 3L),
+        rep ("(return object)", 4L),
+        rep (NA_character_, 8L)
+    ),
+    operation = c (
+        "lower-case character parameter",
+        "upper-case character parameter",
+        "Length 2 vector for length 1 parameter",
+        "Check that function successfully returns an object",
+        "Check that description has return value",
+        "Check whether description of return value specifies class",
+        "Compare class of return value with description",
+        rep (c ("Check that parameter is documented",
+                "Check that documentation matches class of input parameter"),
+             4L)
+        ),
+    content = c (
+        rep ("(Should yield same result)", 2L),
+        "Should trigger message, warning, or error", 
+        rep (NA_character_, 12L)
+    ),
+    test = rep (TRUE, 15L)
+)
 print (xf)
 ```
 
@@ -216,17 +248,25 @@ results (as an object names `xt` for "true"):
 xt <- autotest_package (package = "stats",
                         functions = "cor",
                         test = TRUE)
-```
-```{r at-cor-test, fig.show = "hide", collapse = TRUE, echo = FALSE}
-xt <- autotest_package (package = "stats",
-                        functions = "cor",
-                        test = TRUE)
-```
-```{r print-xt-dummy, echo = TRUE, eval = FALSE}
 print (xt)
 ```
 ```{r print-xt, echo = FALSE, collapse = TRUE}
-print (xt)
+xt1 <- tibble::tibble (
+    type = c (rep ("warning", 4L), "diagnostic"),
+    test_name = c (rep ("par_matches_docs", 4L), "single_char_case"),
+    fn_name = rep ("cor", 5L),
+    parameter = c (rep (c ("x", "y"), 2L), "use"),
+    parameter_type = c (rep (NA_character_, 4L), "single character"),
+    operation = c (
+        rep ("Check that documentation matches class of input parameter", 4L),
+        "upper-case character parameter"),
+    content = c (
+        rep ("Parameter documentation does not describe class of [integer]", 2L),
+        rep ("Parameter documentation does not describe class of [dist]", 2L),
+        "is case dependent"
+    ),
+    test = rep (TRUE, 5L)
+)
 ```
 
 And the `r length (which (xf$type == "dummy"))` tests yielded `r nrow (xt)`
@@ -273,19 +313,26 @@ xt2 <- autotest_package (package = "stats",
                          functions = "cor",
                          test = TRUE,
                          test_data = types)
-```
-```{r test_data1, echo = FALSE, eval = TRUE}
-types <- autotest_types()
-types$test [grep ("list_col", types$test_name)] <- FALSE
-xt2 <- autotest_package (package = "stats",
-                         functions = "cor",
-                         test = TRUE,
-                         test_data = types)
-```
-```{r print-xt2-dummy, echo = TRUE, eval = FALSE}
 print (xt2)
 ```
 ```{r print-xt2, echo = FALSE, eval = TRUE}
+xt2 <- tibble::tibble (
+    type = c (rep ("warning", 4L), "diagnostic"),
+    test_name = c (rep ("par_matches_docs", 4L), "single_char_case"),
+    fn_name = rep ("cor", 5L),
+    parameter = c (rep (c ("x", "y"), 2L), "use"),
+    parameter_type = c (rep (NA_character_, 4L), "single character"),
+    operation = c (
+        rep ("Check that documentation matches class of input parameter", 4L),
+        "upper-case character parameter"),
+    content = c (
+        rep ("Parameter documentation does not describe class of [integer]", 2L),
+        rep ("Parameter documentation does not describe class of [dist]", 2L),
+        "is case dependent"
+    ),
+    test = rep (TRUE, 5L)
+)
+
 print (xt2)
 ```
 
@@ -321,20 +368,25 @@ xt3 <- autotest_package (package = "stats",
                          functions = "cor",
                          test = TRUE,
                          test_data = xf)
-```
-```{r test_data2, echo = FALSE, eval = TRUE}
-xf <- autotest_package (package = "stats",
-                        functions = "cor")
-xf$test [grepl ("list_col", xf$test_name) & xf$fn_name == "var"] <- FALSE
-xt3 <- autotest_package (package = "stats",
-                         functions = "cor",
-                         test = TRUE,
-                         test_data = xf)
-```
-```{r print-xt3-dummy, echo = TRUE, eval = FALSE}
 print (xt3)
 ```
 ```{r print-xt3, echo = FALSE, eval = TRUE}
+xt3 <- tibble::tibble (
+    type = c (rep ("warning", 4L), "diagnostic"),
+    test_name = c (rep ("par_matches_docs", 4L), "single_char_case"),
+    fn_name = rep ("cor", 5L),
+    parameter = c (rep (c ("x", "y"), 2L), "use"),
+    parameter_type = c (rep (NA_character_, 4L), "single character"),
+    operation = c (
+        rep ("Check that documentation matches class of input parameter", 4L),
+        "upper-case character parameter"),
+    content = c (
+        rep ("Parameter documentation does not describe class of [integer]", 2L),
+        rep ("Parameter documentation does not describe class of [dist]", 2L),
+        "is case dependent"
+    ),
+    test = rep (TRUE, 5L)
+)
 print (xt3)
 ```
 
@@ -444,10 +496,53 @@ expect_failure (expect_autotest_no_warn (x)) # should expect_success!!
 library (testthat) # as called in your test suite
 # switch off vector-to-list-column tests:
 test_data <- autotest_types (notest = "vector_to_list_col")
-x <- autotest_package (package = "stats",
-                       functions = "cov",
-                       test = TRUE,
-                       test_data = test_data)
+x <- tibble::tibble (
+    type = c (rep ("warning", 2L), rep ("diagnostic", 20L)),
+    test_name = c (
+        rep ("par_is_demonstrated", 2L),
+        "single_int_for_logical",
+        rep ("single_char_case", 2L),
+        rep ("vector_custom_class", 2L),
+        rep ("single_char_case", 15L)
+    ),
+    fn_name = c ("var", "cov", "var", rep ("cor", 19L)),
+    parameter = rep (c (
+        "use", "y", "na.rm", "use", "method", "x", "x", "method", "use", "use", "use"),
+        2L),
+    parameter_type = c (
+        rep (NA_character_, 2L),
+        "single logical",
+        rep ("single character", 2L),
+        rep ("vector", 2L),
+        rep ("single character", 15L)
+    ),
+    operation = c (
+        rep ("Check that parameter usage is demonstrated", 2L),
+        "Substitute integer values for logical parameter",
+        rep ("upper-case character parameter", 2L),
+        rep ("Custom class definitions for vector input", 2L),
+        rep ("upper-case character parameter", 4L),
+        "Custom class definitions for vector input",
+        rep ("upper-case character parameter", 6L),
+        "Custom class definitions for vector input",
+        rep ("upper-case character parameter", 2L),
+        "Custom class definitions for vector input"
+    ),
+    content = c (
+        rep ("Examples do not demonstrate usage of this parameter", 2L),
+        "(Function call should still work unless explicitly prevented)",
+        rep ("is case dependent", 2L),
+        rep ("Function [cor] errors on vector columns with different classes", 2L),
+        rep ("is case dependent", 4L),
+        "Function [cov] errors on vector columns with different classes",
+        rep ("is case dependent", 6L),
+        "Function [cor] errors on vector columns with different classes",
+        rep ("is case dependent", 2L),
+        "Function [cor] errors on vector columns with different classes"
+    ),
+    test = rep (TRUE, 22L)
+)
+
        
 expect_success (expect_autotest_no_err (x))
 expect_failure (expect_autotest_no_warn (x)) # should expect_success!!
@@ -459,9 +554,6 @@ additional `"note"` column, should cause `expect_autotest()` to fail. The
 following line, removing the logical `testthat` expectation, demonstrates:
 
 ```{r testthat-demo-fail-fakey, echo = TRUE, eval = FALSE}
-expect_autotest_notes (x)
-```
-```{r testthat-demo-fail, error = TRUE, echo = FALSE, eval = TRUE}
 expect_autotest_notes (x)
 ```
 
