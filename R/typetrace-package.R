@@ -17,11 +17,7 @@ autotest_trace_package <- function (package,
     package <- dot_to_package (package)
     pkg_name <- preload_package (package)
 
-    exclude <- exclude_functions (package, functions, exclude)
-    if (!is.null (exclude)) {
-        functions <- ls (paste0 ("package:", pkg_name))
-        functions <- functions [which (!functions %in% exclude)]
-    }
+    functions <- include_functions (package, functions, exclude)
 
     Sys.setenv ("TYPETRACER_LEAVE_TRACES" = "true")
     if (pkg_name != package) {
@@ -47,6 +43,35 @@ autotest_trace_package <- function (package,
     )
 
     return (trace_files)
+}
+
+# combine lists of `functions` to include and `exclude` into single vector
+include_functions <- function (package, functions = NULL, exclude = NULL) {
+
+    fns <- m_get_pkg_functions (package)
+
+    err_chk <- function (fn_arg, fns, package) {
+        if (!all (fn_arg %in% fns)) {
+            fn_arg <- fn_arg [which (!fn_arg %in% fns)]
+            stop ("The following functions are not in the namespace of ",
+                  "package:", package, ": [",
+                  paste0 (fn_arg, collapse = ", "), "]",
+                  call. = FALSE)
+        }
+    }
+
+    if (!is.null (functions)) {
+
+        err_chk (functions, fns, package)
+        fns <- fns [which (fns %in% functions)]
+
+    } else if (!is.null (exclude)) {
+
+        err_chk (exclude, fns, package)
+        fns <- fns [which (!fns %in% exclude)]
+    }
+
+    return (fns)
 }
 
 #' Get all (unique) parameter names from all traced functions.
