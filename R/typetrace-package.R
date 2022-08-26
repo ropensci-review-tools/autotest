@@ -9,28 +9,42 @@ get_typetrace_dir <- function () {
     return (td)
 }
 
-autotest_trace_package <- function (package) {
+autotest_trace_package <- function (package,
+                                    functions = NULL,
+                                    exclude = NULL) {
 
-    Sys.setenv ("TYPETRACER_LEAVE_TRACES" = "true")
 
     package <- dot_to_package (package)
     pkg_name <- preload_package (package)
+
+    exclude <- exclude_functions (package, functions, exclude)
+    if (!is.null (exclude)) {
+        functions <- ls (paste0 ("package:", pkg_name))
+        functions <- functions [which (!functions %in% exclude)]
+    }
+
+    Sys.setenv ("TYPETRACER_LEAVE_TRACES" = "true")
     if (pkg_name != package) {
         if (!dir.exists (package)) {
             stop ("'package' should be a local directory.")
         }
-        traces <- typetracer::trace_package (pkg_dir = package)
+        args <- list (pkg_dir = package)
     } else {
-        traces <- typetracer::trace_package (package = package)
+        args <- list (package = package)
     }
+    if (!is.null (functions)) {
+        args$functions = functions
+    }
+
+    traces <- do.call (typetracer::trace_package, args)
+
+    Sys.unsetenv ("TYPETRACER_LEAVE_TRACES") # traces are still there
 
     trace_files <- list.files (
         get_typetrace_dir (),
         pattern = "^typetrace\\_.*\\.Rds$",
         full.names = TRUE
     )
-
-    Sys.unsetenv ("TYPETRACER_LEAVE_TRACES")
 
     return (trace_files)
 }
