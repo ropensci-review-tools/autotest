@@ -18,7 +18,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Mark Padgham \email{mark.padgham@email.com}
+\strong{Maintainer}: Mark Padgham \email{mark.padgham@email.com} (\href{https://orcid.org/0000-0003-2172-5265}{ORCID})
+
+Other contributors:
+\itemize{
+  \item Jouni Helske (\href{https://orcid.org/0000-0001-7130-793X}{ORCID}) [contributor]
+}
 
 }
 \keyword{internal}

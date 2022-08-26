@@ -36,13 +36,7 @@ autotest_trace_package <- function (package,
 
     Sys.unsetenv ("TYPETRACER_LEAVE_TRACES") # traces are still there
 
-    trace_files <- list.files (
-        get_typetrace_dir (),
-        pattern = "^typetrace\\_.*\\.Rds$",
-        full.names = TRUE
-    )
-
-    return (trace_files)
+    return (traces)
 }
 
 # combine lists of `functions` to include and `exclude` into single vector
