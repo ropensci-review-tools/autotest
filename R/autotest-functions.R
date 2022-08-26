@@ -83,6 +83,7 @@ autotest_package <- function (package = ".",
 
         res <- rbind (res,
                       autotest_single_trace (package,
+                                             pkg_dir,
                                              readRDS (trace_files [i]),
                                              fn_pars,
                                              test = test,
@@ -157,7 +158,8 @@ get_package_loc <- function (package) {
 #' @return An `autotest_pkg` object, derived from a \pkg{tibble}, detailing
 #' instances of unexpected behaviour for every parameter of every function.
 #' @noRd
-autotest_single_trace <- function (pkg_dir = NULL,
+autotest_single_trace <- function (package,
+                                   pkg_dir = NULL,
                                    trace_data = NULL,
                                    fn_pars,
                                    test = TRUE,
