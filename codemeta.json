@@ -281,6 +281,12 @@
       "@type": "SoftwareApplication",
       "identifier": "typetracer",
       "name": "typetracer",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
       "sameAs": "https://github.com/mpadge/typetracer"
     },
     "13": {
@@ -307,13 +313,10 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=yaml"
     },
-    "SystemRequirements": {}
+    "SystemRequirements": null
   },
-  "fileSize": "16405.362KB",
+  "fileSize": "1989.012KB",
   "readme": "https://github.com/ropensci-review-tools/autotest/blob/main/README.md",
-  "contIntegration": [
-    "https://github.com/ropensci-review-tools/autotest/actions?query=workflow%3AR-CMD-check",
-    "https://codecov.io/gh/ropensci-review-tools/autotest"
-  ],
+  "contIntegration": ["https://github.com/ropensci-review-tools/autotest/actions?query=workflow%3AR-CMD-check", "https://codecov.io/gh/ropensci-review-tools/autotest"],
   "developmentStatus": "https://www.repostatus.org/#concept"
 }
