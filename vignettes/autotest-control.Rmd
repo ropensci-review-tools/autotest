@@ -276,7 +276,7 @@ clicking on the listed object. The different types of tests which produced
 unexpected responses were:
 
 ```{r xt-operations}
-table (xt$operation)
+table (xt1$operation)
 ```
 
 Two of those reflect the previous results regarding parameters unable to be
@@ -434,7 +434,7 @@ the `test_data` object called `"note"` (case-insensitive), and include a note
 for each row which has `test = FALSE` explaining why those tests have been
 switched off. Lines in your test directory should look something like this:
 
-```{r testthat-demo-testdata, collapse = TRUE, echo = TRUE, eval = FALSE}
+```{r testthat-demo-testdata, collapse = TRUE, message = FALSE, echo = TRUE, eval = FALSE}
 library (testthat) # as called in your test suite
 # For example, to switch off vector-to-list-column tests:
 test_data <- autotest_types (notest = "vector_to_list_col")
