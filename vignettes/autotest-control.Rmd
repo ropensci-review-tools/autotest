@@ -4,13 +4,13 @@ author:
   - "Mark Padgham"
 date: "`r Sys.Date()`"
 output: 
-    md_document:
-        variant: markdown_github
     html_document:
         toc: true
         toc_float: true
         number_sections: false
         theme: flatly
+    md_document:
+        variant: markdown_github
 always_allow_html: true
 vignette: >
   %\VignetteIndexEntry{Control of tests}
