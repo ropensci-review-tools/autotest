@@ -315,7 +315,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "1989.012KB",
+  "fileSize": "1989.013KB",
   "readme": "https://github.com/ropensci-review-tools/autotest/blob/main/README.md",
   "contIntegration": ["https://github.com/ropensci-review-tools/autotest/actions?query=workflow%3AR-CMD-check", "https://codecov.io/gh/ropensci-review-tools/autotest"],
   "developmentStatus": "https://www.repostatus.org/#concept"
