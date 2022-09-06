@@ -269,7 +269,7 @@ xt1 <- tibble::tibble (
 )
 ```
 
-And the `r length (which (xf$type == "dummy"))` tests yielded `r nrow (xt)`
+And the `r length (which (xf$type == "dummy"))` tests yielded `r nrow (xt1)`
 unexpected responses. The best way to understand these results is to examine
 the object in detail, typically through `edit(xt)`, or equivalently in RStudio,
 clicking on the listed object. The different types of tests which produced
