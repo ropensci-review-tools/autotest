@@ -202,7 +202,7 @@ autotest_single_trace <- function (package,
     reports <- rbind (reports, test_param_documentation (test_obj))
 
     if (!quiet) {
-        message (cli::col_green (cli::symbol$tick, " ", this_fn))
+        message (cli::col_green (cli::symbol$tick, " ", trace_data$fn_name))
     }
 
     if (!is.null (reports)) {
