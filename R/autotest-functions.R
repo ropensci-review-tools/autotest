@@ -166,52 +166,23 @@ autotest_single_trace <- function (package,
                                    test_data = NULL,
                                    quiet = FALSE) {
 
-    # get parameter values:
-    par_index <- which (!nzchar (names (trace_data)))
-    par_names_i <- vapply (trace_data [par_index], function (j) j$par, character (1L))
-    par_vals_i <- lapply (trace_data [par_index], function (j) j$par_eval)
-    names (par_vals_i) <- par_names_i
-    index <- which (!vapply (par_vals_i, is.null, logical (1L)))
-    par_vals_i <- par_vals_i [index]
-    par_names_i <- par_names_i [index]
-
-    # get parameter classes & types:
-    index <- which (fn_pars$fn_name == trace_data$fn_name &
-                    fn_pars$par_name %in% par_names_i)
-    fn_pars_i <- fn_pars [index, ]
-    fn_pars_i <- fn_pars_i [match (fn_pars_i$par_name, par_names_i), ]
-
-    # param_types are in [single, vector, tabular]
-    param_types <- rep (NA_character_, nrow (fn_pars_i))
-    is_single <- vapply (fn_pars_i$length, function (j)
-        all (as.integer (strsplit (j, ",") [[1]]) <= 1L),
-        logical (1L))
-    param_types [which (is_single)] <- "single"
-    is_rect <- vapply (trace_data [par_index], function (j)
-        j$typeof == "list" && length (dim (j$par_eval)) == 2,
-        logical (1L))
-    param_types [which (is_rect)] <- "tabular"
-
-    # reduce class to first value only
-    param_class <- gsub (",\\s.*$", "", fn_pars_i$class)
-    names (param_class) <- fn_pars_i$par_name
-    index <- which (!param_class %in% c (atomic_modes (), "data.frame"))
-    param_class <- param_class [index]
+    param_info <- get_param_info (trace_data, fn_pars)
 
     test_obj <- autotest_obj (package = package,
                               package_loc = pkg_dir,
                               fn_name = trace_data$fn_name,
-                              parameters = par_vals_i,
-                              parameter_types = param_types,
-                              class = param_class,
-                              classes = param_class,
+                              parameters = param_info$value,
+                              parameter_types = param_info$type,
+                              class = param_info$class,
+                              classes = param_info$class,
                               env = new.env (),
                               test = test,
                               quiet = quiet)
+
     int_val <- data.frame (
         fn = trace_data$fn_name,
-        par = fn_pars_i$par_name,
-        int_val = fn_pars_i$storage_mode == "integer"
+        par = param_info$name,
+        int_val = param_info$storage_mode == "integer"
     )
     test_obj <- add_int_attrs (test_obj, int_val)
 
