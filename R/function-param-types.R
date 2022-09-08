@@ -45,15 +45,21 @@ get_param_info <- function (trace_data, fn_pars) {
         logical (1L))
     param_types [which (is_rect)] <- "tabular"
 
-    # reduce class to first value only
-    param_class <- gsub (",\\s.*$", "", fn_pars_i$class)
-    names (param_class) <- fn_pars_i$par_name
-    index <- which (!param_class %in% c (atomic_modes (), "data.frame"))
-    param_class <- param_class [index]
+    # reduce class to first non-generic value only
+    # start by removing generic classes, which may be first of several items, so
+    # first remove all ", " versions.
+    atomics <- paste0 (atomic_modes (), collapse = "|")
+    atomics <- paste0 (atomics, "|matrix|array|data\\.frame")
+    ptn <- paste0 ("(", atomics, "),\\s*")
+    param_class <- gsub (ptn, "", fn_pars_i$class)
+    param_class <- gsub (atomics, "", param_class)
+    param_class <- gsub ("^\\,\\s+", "", param_class)
 
-    list (
+    param_class [which (!nzchar (param_class))] <- NA_character_
+
+    data.frame (
         name = par_names_i,
-        value = par_vals_i,
+        value = I (par_vals_i),
         type = param_types,
         class = param_class,
         storage_mode = fn_pars_i$storage_mode
