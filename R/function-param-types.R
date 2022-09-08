@@ -29,10 +29,17 @@ get_param_info <- function (trace_data, fn_pars) {
 
     # param_types are in [single, vector, tabular]
     param_types <- rep (NA_character_, nrow (fn_pars_i))
+
     is_single <- vapply (fn_pars_i$length, function (j)
         all (as.integer (strsplit (j, ",") [[1]]) <= 1L),
         logical (1L))
     param_types [which (is_single)] <- "single"
+
+    is_vector <- vapply (fn_pars_i$length, function (j)
+        any (as.integer (strsplit (j, ",") [[1]]) > 1L),
+        logical (1L))
+    param_types [which (is_vector)] <- "vector"
+
     is_rect <- vapply (trace_data [par_index], function (j)
         j$typeof == "list" && length (dim (j$par_eval)) == 2,
         logical (1L))
