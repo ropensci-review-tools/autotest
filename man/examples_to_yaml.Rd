@@ -35,7 +35,6 @@ automatically test package.
 }
 \seealso{
 Other yaml: 
-\code{\link{at_yaml_template}()},
-\code{\link{autotest_yaml}()}
+\code{\link{at_yaml_template}()}
 }
 \concept{yaml}

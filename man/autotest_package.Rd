@@ -64,7 +64,7 @@ Some columns may contain NA values, as explained in the Note.
 }
 \description{
 Automatically test an entire package by converting examples to \code{yaml} format
-and submitting each to the \link{autotest_yaml} function.
+and submitting each to the \link{autotest_single_trace} function.
 }
 \note{
 Some columns may contain NA values, including:

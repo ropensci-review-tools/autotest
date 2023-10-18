@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.0.2.204
+Version: 0.0.2.206
 Authors@R: c(
     person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2172-5265")),
@@ -24,6 +24,7 @@ Imports:
     rlang,
     testthat,
     tibble,
+    typetracer,
     withr,
     yaml
 Suggests: 
@@ -38,8 +39,10 @@ Suggests:
     usethis
 VignetteBuilder: 
     knitr
+Remotes:
+    mpadge/typetracer
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1
