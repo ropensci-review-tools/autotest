@@ -51,20 +51,21 @@ get_params <- function (res, i, this_fn) {
     }
     pars <- formals (fun = this_fn, envir = pkg_env)
 
-    # Eval any formals in function environment:
-    params_env <- as.environment (params)
-    parent.env (params_env) <- pkg_env
-    index <- which (vapply (
-        pars,
-        function (i) methods::is (i, "call") && !is.symbol (i),
-        logical (1)
-    ))
-    pars [index] <- lapply (pars [index], function (p) {
-        res <- p
-        if (methods::is (p, "call") && !is.symbol (p)) {
-            res <- eval (p, envir = params_env)
-        }
-    })
+    # Eval any formals in function environment (#85):
+    # (This does not work, and can not be implemented in this form.)
+    # params_env <- as.environment (params)
+    # parent.env (params_env) <- pkg_env
+    # index <- which (vapply (
+    #     pars,
+    #     function (i) methods::is (i, "call") && !is.symbol (i),
+    #     logical (1)
+    # ))
+    # pars [index] <- lapply (pars [index], function (p) {
+    #     res <- p
+    #     if (methods::is (p, "call") && !is.symbol (p)) {
+    #         res <- eval (p, envir = params_env)
+    #     }
+    # })
 
     nms <- names (pars)
 
