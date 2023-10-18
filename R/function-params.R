@@ -1,4 +1,3 @@
-
 # extracts the i-th list of complete parameters from the result of a parsed yaml
 get_params <- function (res, i, this_fn) {
 
@@ -8,9 +7,9 @@ get_params <- function (res, i, this_fn) {
     p_vals <- lapply (p, function (i) i [[1]])
 
     # remove any with NULL values
-    #index <- which (vapply (p_vals, function (i) !is.null (i), logical (1)))
-    #p_keys <- p_keys [index]
-    #p_vals <- p_vals [index]
+    # index <- which (vapply (p_vals, function (i) !is.null (i), logical (1)))
+    # p_keys <- p_keys [index]
+    # p_vals <- p_vals [index]
 
     . <- NULL # suppress no visible binding note # nolint
     pre <- res$preprocess [[i]]
@@ -23,23 +22,28 @@ get_params <- function (res, i, this_fn) {
 
     for (p in pre) {
         # remove "`" except if they name list items
-        if (!grepl ("\\$`", p))
+        if (!grepl ("\\$`", p)) {
             p <- gsub ("`", "", p)
+        }
         expr <- parse (text = p)
         suppressMessages (
-            tmp <- tryCatch (utils::capture.output (eval (expr,
-                                                          envir = pkg_env)),
-                             error = function (e) NULL)
+            tmp <- tryCatch (
+                utils::capture.output (eval (expr,
+                    envir = pkg_env
+                )),
+                error = function (e) NULL
+            )
         )
     }
 
     params <- fill_param_vals (p_keys, p_vals, pkg_env, res$package)
 
     # Parse fn definition to get list of all parameters:
-    if (!res$package %in% search ())
+    if (!res$package %in% search ()) {
         suppressMessages (
             library (res$package, character.only = TRUE)
-            )
+        )
+    }
     if (grepl (":::", this_fn)) { # internal fn, so attach to pkg_env
         this_fn <- rm_internal_namespace (this_fn)
         tmp_fn <- utils::getFromNamespace (this_fn, res$package)
@@ -76,8 +80,10 @@ get_params <- function (res, i, this_fn) {
     # finally, remove any params that are if conditionals, since evaluting these
     # requires parsing and evaluating all other parameters, and if conditions
     # can not be mutated anyway
-    index <- which (vapply (params, function (i) !methods::is (i, "if"),
-                            logical (1)))
+    index <- which (vapply (
+        params, function (i) !methods::is (i, "if"),
+        logical (1)
+    ))
     params <- params [index]
 
     return (params)
@@ -91,14 +97,16 @@ get_Rd_value <- function (package, fn_name) { # nolint
         f <- file.path (package, "man", paste0 (fn_name, ".Rd"))
         suppressWarnings (
             rd <- tools::parse_Rd (f)
-            )
+        )
     } else {
         if (basename (package) == package) {
             x <- tools::Rd_db (package = package)
         } else {
             # packages installed into local tempdir via covr:
-            x <- tools::Rd_db (package = basename (package),
-                               dir = package)
+            x <- tools::Rd_db (
+                package = basename (package),
+                dir = package
+            )
         }
         rd <- x [[paste0 (fn_name, ".Rd")]]
     }
@@ -106,8 +114,9 @@ get_Rd_value <- function (package, fn_name) { # nolint
 
     # just to check whether there is a return value:
     val <- get_Rd_metadata (rd, "value")
-    if (length (val) == 0)
+    if (length (val) == 0) {
         return (NULL)
+    }
 
     # Then get actual value by converting to text:
     f <- tempfile (fileext = ".txt")
@@ -132,12 +141,14 @@ get_Rd_param <- function (package, fn_name, param_name) { # nolint
 
     if (pkg_is_source (package)) {
 
-        f <- file.path (package,
-                        "man",
-                        a$name [a$alias == fn_name])
+        f <- file.path (
+            package,
+            "man",
+            a$name [a$alias == fn_name]
+        )
         suppressWarnings (
             rd <- tools::parse_Rd (f)
-            )
+        )
     } else {
 
         if (basename (package) == package) {
@@ -146,16 +157,21 @@ get_Rd_param <- function (package, fn_name, param_name) { # nolint
         } else {
 
             # packages installed into local tempdir via covr:
-            x <- tools::Rd_db (package = basename (package),
-                               dir = package)
+            x <- tools::Rd_db (
+                package = basename (package),
+                dir = package
+            )
         }
 
         rd <- x [[a$name [a$alias == fn_name]]]
     }
 
-    index <- vapply (rd, function (i)
-                     attr (i, "Rd_tag") == "\\arguments",
-                     logical (1))
+    index <- vapply (
+        rd, function (i) {
+            attr (i, "Rd_tag") == "\\arguments"
+        },
+        logical (1)
+    )
     index <- which (index)
     if (length (index) == 0) {
         return (NULL)
@@ -170,12 +186,15 @@ get_Rd_param <- function (package, fn_name, param_name) { # nolint
     rd <- rd [which (len > 1)]
     rd <- lapply (rd, unlist)
     params <- vapply (rd, function (i) i [1], character (1))
-    rd <- vapply (rd, function (i) paste0 (i [-1], collapse = ""),
-                  character (1))
+    rd <- vapply (
+        rd, function (i) paste0 (i [-1], collapse = ""),
+        character (1)
+    )
 
     ret <- NA_character_
-    if (param_name %in% params)
+    if (param_name %in% params) {
         ret <- rd [which (params == param_name)]
+    }
     return (ret)
 }
 
@@ -190,19 +209,25 @@ get_param_descs_source <- function (package, fn) {
 
     index <- grep ("^\\\\item\\{", x)
     index <- rep (seq (index),
-                  times = c (diff (index), length (x) - max (index) + 1))
+        times = c (diff (index), length (x) - max (index) + 1)
+    )
     xs <- split (x, f = as.factor (index))
 
     items <- vapply (xs, function (i) {
-                         i <- gsub ("^\\\\item\\{|\\}$", "", i)
-                         return (strsplit (i, "\\}") [[1]] [1]) },
-                         character (1), USE.NAMES = FALSE)
+        i <- gsub ("^\\\\item\\{|\\}$", "", i)
+        return (strsplit (i, "\\}") [[1]] [1]) },
+    character (1),
+    USE.NAMES = FALSE
+    )
     descs <- vapply (xs, function (i) {
-                         i <- paste0 (gsub ("^\\\\item\\{|\\}$", "", i),
-                                      collapse = " ")
-                         return (substr (i, regexpr ("\\{", i) + 1, nchar (i)))
-                         },
-                         character (1), USE.NAMES = FALSE)
+        i <- paste0 (gsub ("^\\\\item\\{|\\}$", "", i),
+            collapse = " "
+        )
+        return (substr (i, regexpr ("\\{", i) + 1, nchar (i)))
+    },
+    character (1),
+    USE.NAMES = FALSE
+    )
 
     names (descs) <- items
 
@@ -216,17 +241,21 @@ fill_param_vals <- function (p_keys, p_vals, pkg_env, package) {
     for (p in seq_along (p_keys)) {
 
         this_val <- p_vals [[p]]
-        if (is.null (this_val))
+        if (is.null (this_val)) {
             next
+        }
 
-        this_val <- get_non_formula_val (this_val,
-                                         pkg_env,
-                                         package,
-                                         p_vals,
-                                         p)
+        this_val <- get_non_formula_val (
+            this_val,
+            pkg_env,
+            package,
+            p_vals,
+            p
+        )
         # leave formulae as strings:
-        if (methods::is (this_val, "formula"))
+        if (methods::is (this_val, "formula")) {
             this_val <- p_vals [[p]]
+        }
 
         params [[length (params) + 1]] <- this_val
         names (params) [length (params)] <- p_keys [p]
@@ -244,16 +273,24 @@ get_non_formula_val <- function (this_val, pkg_env, package, p_vals, p) {
         temp_val <- paste0 (this_val)
 
         temp_val_get <- tryCatch (get (temp_val, envir = pkg_env),
-                                  error = function (e) NULL)
-        temp_val_eval <- tryCatch (eval (parse (text = this_val),
-                                         envir = pkg_env),
-                                   error = function (err) NULL)
+            error = function (e) NULL
+        )
+        temp_val_eval <- tryCatch (
+            eval (parse (text = this_val),
+                envir = pkg_env
+            ),
+            error = function (err) NULL
+        )
 
         can_get <- !is.null (tryCatch (get (temp_val),
-                                       error = function (e) NULL))
-        can_eval <- !is.null (tryCatch (eval (parse (text = this_val),
-                                              envir = pkg_env),
-                                        error = function (err) NULL))
+            error = function (e) NULL
+        ))
+        can_eval <- !is.null (tryCatch (
+            eval (parse (text = this_val),
+                envir = pkg_env
+            ),
+            error = function (err) NULL
+        ))
 
         if (!is.null (temp_val_get)) {
             this_val <- temp_val_get
@@ -261,17 +298,22 @@ get_non_formula_val <- function (this_val, pkg_env, package, p_vals, p) {
             this_val <- temp_val_eval
         } else if (grepl ("::", temp_val)) {
             this_pkg <- strsplit (temp_val, "::") [[1]] [1]
-            if (!this_pkg %in% search ())
+            if (!this_pkg %in% search ()) {
                 suppressMessages (
-                                  library (this_pkg,
-                                           character.only = TRUE)
+                    library (this_pkg,
+                        character.only = TRUE
+                    )
                 )
+            }
             this_val <- parse (text = temp_val) %>%
-                eval (envir = as.environment (paste0 ("package:",
-                                                      this_pkg)))
+                eval (envir = as.environment (paste0 (
+                    "package:",
+                    this_pkg
+                )))
         } else {
             this_val <- tryCatch (eval (this_val, envir = pkg_env),
-                                  error = function (e) NULL)
+                error = function (e) NULL
+            )
         }
 
     } else if (is.character (this_val)) {
@@ -281,22 +323,28 @@ get_non_formula_val <- function (this_val, pkg_env, package, p_vals, p) {
                 eval (envir = pkg_env)
         } else if (grepl ("::", this_val)) {
             this_pkg <- strsplit (p_vals [[p]], "::") [[1]] [1]
-            if (!this_pkg %in% search ())
+            if (!this_pkg %in% search ()) {
                 suppressMessages (
-                                  library (this_pkg, character.only = TRUE)
+                    library (this_pkg, character.only = TRUE)
                 )
+            }
             this_val <- parse (text = this_val) %>%
-                eval (envir = as.environment (paste0 ("package:",
-                                                      this_pkg)))
+                eval (envir = as.environment (paste0 (
+                    "package:",
+                    this_pkg
+                )))
         } else {
             tryeval <- tryCatch (eval (parse (text = this_val)),
-                                 error = function (e) NULL)
+                error = function (e) NULL
+            )
             # Character values may also name functions, in which case these
             # should NOT be assigned to the values. An example is ?var which has
             # `method = "complete"`, where "complete" is also a function.
-            if (!is.null (tryeval))
-                if (!methods::is (tryeval, "function"))
+            if (!is.null (tryeval)) {
+                if (!methods::is (tryeval, "function")) {
                     this_val <- tryeval
+                }
+            }
         }
     }
 
@@ -315,13 +363,14 @@ clean_final_pars_list <- function (params, pars, nms) {
     # parameters in formals with no default values are returned as empty
     # 'symbol' expressions - this converts these to "MISSING":
     pars <- lapply (pars, function (i) {
-                if (typeof (i) == "symbol" & all (deparse (i) == ""))
-                    return ("MISSING")
-                else if (is.null (i))
-                    return ("NULL")
-                else
-                    return (i)
-            })
+        if (typeof (i) == "symbol" & all (deparse (i) == "")) {
+            return ("MISSING")
+        } else if (is.null (i)) {
+            return ("NULL")
+        } else {
+            return (i)
+        }
+    })
     index <- pmatch (names (params), nms)
     index <- index [which (!is.na (index))]
     pars <- pars [-index]
@@ -331,11 +380,14 @@ clean_final_pars_list <- function (params, pars, nms) {
     if (any (pars == "MISSING")) {
         no_defaults <- nms [which (pars == "MISSING")]
         no_defaults <- no_defaults [which (no_defaults %in% names (params))]
-        if (length (no_defaults) > 0)
-            stop ("function includes the following parameters which require ",
-                  "non-default values:\n   [",
-                  paste0 (no_defaults, collapse = ", "),
-                  "]")
+        if (length (no_defaults) > 0) {
+            stop (
+                "function includes the following parameters which require ",
+                "non-default values:\n   [",
+                paste0 (no_defaults, collapse = ", "),
+                "]"
+            )
+        }
         # The rest must be in params, so the default "MISSING" entries can be
         # removed here:
         pars <- pars [which (pars != "MISSING")]
