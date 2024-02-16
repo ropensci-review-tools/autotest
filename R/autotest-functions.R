@@ -171,11 +171,12 @@ autotest_single_yaml <- function (yaml = NULL,
 
                 reports <- reports [which(!no_test), ]
 
+                rownames (reports) <- NULL
+
             }
 
         }
 
-        rownames (reports) <- NULL
     }
 
     return (reports)
