@@ -159,8 +159,21 @@ autotest_single_yaml <- function (yaml = NULL,
         reports <- reports [which (!duplicated (reports)), ]
 
         # rm "no_test" tests switched off from "test_data"
-        if (test)
-            reports <- reports [which (!reports$type == "no_test"), ]
+        if (test) {
+
+            no_test <- reports$type == "no_test"
+
+            if (all (no_test)) {
+
+                reports <- NULL
+
+            } else {
+
+                reports <- reports [which(!no_test), ]
+
+            }
+
+        }
 
         rownames (reports) <- NULL
     }
