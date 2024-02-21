@@ -22,15 +22,16 @@ The easiest way to install this package is via the associated
 As shown there, simply enable the universe with
 
 ``` r
-options(repos = c(
+options (repos = c (
     ropenscireviewtools = "https://ropensci-review-tools.r-universe.dev",
-    CRAN = "https://cloud.r-project.org"))
+    CRAN = "https://cloud.r-project.org"
+))
 ```
 
 And then install the usual way with,
 
 ``` r
-install.packages("autotest")
+install.packages ("autotest")
 ```
 
 Alternatively, the package can be installed by running one of the
@@ -38,10 +39,10 @@ following lines:
 
 ``` r
 # install.packages("remotes")
-remotes::install_git("https://git.sr.ht/~mpadge/autotest")
-remotes::install_bitbucket("mpadge/autotest")
-remotes::install_gitlab("mpadge/autotest")
-remotes::install_github("ropensci-review-tools/autotest")
+remotes::install_git ("https://git.sr.ht/~mpadge/autotest")
+remotes::install_bitbucket ("mpadge/autotest")
+remotes::install_gitlab ("mpadge/autotest")
+remotes::install_github ("ropensci-review-tools/autotest")
 ```
 
 The package can then be loaded the usual way:
@@ -86,19 +87,19 @@ implemented.
 ``` r
 autotest_types ()
 #> # A tibble: 27 × 8
-#>    type  test_name  fn_name parameter parameter_type operation   content   test 
-#>    <chr> <chr>      <chr>   <chr>     <chr>          <chr>       <chr>     <lgl>
-#>  1 dummy rect_as_o… <NA>    <NA>      rectangular    Convert on… "check f… TRUE 
-#>  2 dummy rect_comp… <NA>    <NA>      rectangular    Convert on… "expect … TRUE 
-#>  3 dummy rect_comp… <NA>    <NA>      rectangular    Convert on… "expect … TRUE 
-#>  4 dummy rect_comp… <NA>    <NA>      rectangular    Convert on… "expect … TRUE 
-#>  5 dummy extend_re… <NA>    <NA>      rectangular    Extend exi… "(Should… TRUE 
-#>  6 dummy replace_r… <NA>    <NA>      rectangular    Replace cl… "(Should… TRUE 
-#>  7 dummy vector_to… <NA>    <NA>      vector         Convert ve… "(Should… TRUE 
-#>  8 dummy vector_cu… <NA>    <NA>      vector         Custom cla… "(Should… TRUE 
-#>  9 dummy double_is… <NA>    <NA>      numeric        Check whet… "int par… TRUE 
-#> 10 dummy trivial_n… <NA>    <NA>      numeric        Add trivia… "(Should… TRUE 
-#> # … with 17 more rows
+#>    type  test_name      fn_name parameter parameter_type operation content test 
+#>    <chr> <chr>          <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
+#>  1 dummy rect_as_other  <NA>    <NA>      rectangular    Convert … "check… TRUE 
+#>  2 dummy rect_compare_… <NA>    <NA>      rectangular    Convert … "expec… TRUE 
+#>  3 dummy rect_compare_… <NA>    <NA>      rectangular    Convert … "expec… TRUE 
+#>  4 dummy rect_compare_… <NA>    <NA>      rectangular    Convert … "expec… TRUE 
+#>  5 dummy extend_rect_c… <NA>    <NA>      rectangular    Extend e… "(Shou… TRUE 
+#>  6 dummy replace_rect_… <NA>    <NA>      rectangular    Replace … "(Shou… TRUE 
+#>  7 dummy vector_to_lis… <NA>    <NA>      vector         Convert … "(Shou… TRUE 
+#>  8 dummy vector_custom… <NA>    <NA>      vector         Custom c… "(Shou… TRUE 
+#>  9 dummy double_is_int  <NA>    <NA>      numeric        Check wh… "int p… TRUE 
+#> 10 dummy trivial_noise  <NA>    <NA>      numeric        Add triv… "(Shou… TRUE 
+#> # ℹ 17 more rows
 ```
 
 That functions returns a [`tibble`](https://tibble.tidyverse.org)
@@ -134,28 +135,29 @@ x <- autotest_package (package = "stats", functions = "var", test = FALSE)
 #> ✔ [5 / 6]: cov
 #> ✔ [6 / 6]: cor
 print (x)
-#> # A tibble: 185 × 9
-#>    type    test_name  fn_name parameter parameter_type operation  content  test 
-#>    <chr>   <chr>      <chr>   <chr>     <chr>          <chr>      <chr>    <lgl>
-#>  1 warning par_is_de… var     use       <NA>           Check tha… Example… TRUE 
-#>  2 warning par_is_de… cov     y         <NA>           Check tha… Example… TRUE 
-#>  3 dummy   trivial_n… var     x         numeric        Add trivi… (Should… TRUE 
-#>  4 dummy   vector_cu… var     x         vector         Custom cl… (Should… TRUE 
-#>  5 dummy   vector_to… var     x         vector         Convert v… (Should… TRUE 
-#>  6 dummy   negate_lo… var     na.rm     single logical Negate de… (Functi… TRUE 
-#>  7 dummy   subst_int… var     na.rm     single logical Substitut… (Functi… TRUE 
-#>  8 dummy   subst_cha… var     na.rm     single logical Substitut… should … TRUE 
-#>  9 dummy   single_pa… var     na.rm     single logical Length 2 … Should … TRUE 
-#> 10 dummy   return_su… var     (return … (return objec… Check tha… <NA>     TRUE 
-#> # … with 175 more rows, and 1 more variable: yaml_hash <chr>
+#> # A tibble: 170 × 9
+#>    type    test_name    fn_name parameter parameter_type operation content test 
+#>    <chr>   <chr>        <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
+#>  1 warning par_is_demo… var     use       <NA>           Check th… Exampl… TRUE 
+#>  2 warning par_is_demo… cov     y         <NA>           Check th… Exampl… TRUE 
+#>  3 dummy   trivial_noi… var     x         numeric        Add triv… (Shoul… TRUE 
+#>  4 dummy   vector_cust… var     x         vector         Custom c… (Shoul… TRUE 
+#>  5 dummy   vector_to_l… var     x         vector         Convert … (Shoul… TRUE 
+#>  6 dummy   negate_logi… var     na.rm     single logical Negate d… (Funct… TRUE 
+#>  7 dummy   subst_int_f… var     na.rm     single logical Substitu… (Funct… TRUE 
+#>  8 dummy   subst_char_… var     na.rm     single logical Substitu… should… TRUE 
+#>  9 dummy   single_par_… var     na.rm     single logical Length 2… Should… TRUE 
+#> 10 dummy   return_succ… var     (return … (return objec… Check th… <NA>    TRUE 
+#> # ℹ 160 more rows
+#> # ℹ 1 more variable: yaml_hash <chr>
 ```
 
 Testing the `var` function also tests `cor` and `cov`, because these are
 all documented within a single `.Rd` help file. Typing `?var` shows that
 the help topic is `cor`, and that the examples include the three
-functions, `var`, `cor`, and `cov`. That result details the 185 tests
+functions, `var`, `cor`, and `cov`. That result details the 170 tests
 which would be applied to the `var` function from the `stats` package.
-These 185 tests yield the following results when actually applied:
+These 170 tests yield the following results when actually applied:
 
 ``` r
 y <- autotest_package (package = "stats", functions = "var", test = TRUE)
@@ -168,32 +170,34 @@ y <- autotest_package (package = "stats", functions = "var", test = TRUE)
 #> ✔ [5 / 6]: cov
 #> ✔ [6 / 6]: cor
 print (y)
-#> # A tibble: 23 × 9
+#> # A tibble: 25 × 9
 #>    type       test_name fn_name parameter parameter_type operation content test 
 #>    <chr>      <chr>     <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
 #>  1 warning    par_is_d… var     use       <NA>           Check th… "Examp… TRUE 
 #>  2 warning    par_is_d… cov     y         <NA>           Check th… "Examp… TRUE 
 #>  3 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
-#>  4 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
-#>  5 diagnostic vector_t… var     y         vector         Convert … "Funct… TRUE 
-#>  6 diagnostic single_c… cor     use       single charac… upper-ca… "is ca… TRUE 
-#>  7 diagnostic single_c… cor     method    single charac… upper-ca… "is ca… TRUE 
-#>  8 diagnostic vector_c… cor     x         vector         Custom c… "Funct… TRUE 
-#>  9 diagnostic single_c… cor     method    single charac… upper-ca… "is ca… TRUE 
-#> 10 diagnostic single_c… cor     use       single charac… upper-ca… "is ca… TRUE 
-#> # … with 13 more rows, and 1 more variable: yaml_hash <chr>
+#>  4 diagnostic subst_in… var     na.rm     single logical Substitu… "(Func… TRUE 
+#>  5 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
+#>  6 diagnostic vector_t… var     y         vector         Convert … "Funct… TRUE 
+#>  7 diagnostic single_c… cor     use       single charac… upper-ca… "is ca… TRUE 
+#>  8 diagnostic single_c… cor     method    single charac… upper-ca… "is ca… TRUE 
+#>  9 diagnostic vector_c… cor     x         vector         Custom c… "Funct… TRUE 
+#> 10 diagnostic vector_c… cor     x         vector         Custom c… "Funct… TRUE 
+#> # ℹ 15 more rows
+#> # ℹ 1 more variable: yaml_hash <chr>
 ```
 
-And only 23 of the original 185 tests produced unexpected behaviour.
-There were in fact only 4 kinds of tests which produced these 23
+And only 25 of the original 170 tests produced unexpected behaviour.
+There were in fact only 5 kinds of tests which produced these 25
 results:
 
 ``` r
 unique (y$operation)
-#> [1] "Check that parameter usage is demonstrated"
-#> [2] "Convert vector input to list-columns"      
-#> [3] "upper-case character parameter"            
-#> [4] "Custom class definitions for vector input"
+#> [1] "Check that parameter usage is demonstrated"     
+#> [2] "Convert vector input to list-columns"           
+#> [3] "Substitute integer values for logical parameter"
+#> [4] "upper-case character parameter"                 
+#> [5] "Custom class definitions for vector input"
 ```
 
 One of these involves conversion of a vector to a list-column
@@ -207,8 +211,10 @@ switched off.
 
 ``` r
 types <- autotest_types (notest = "vector_to_list_col")
-y <- autotest_package (package = "stats", functions = "var",
-                       test = TRUE, test_data = types)
+y <- autotest_package (
+    package = "stats", functions = "var",
+    test = TRUE, test_data = types
+)
 #> ── autotesting stats ──
 #> 
 #> ✔ [1 / 6]: var
@@ -218,20 +224,21 @@ y <- autotest_package (package = "stats", functions = "var",
 #> ✔ [5 / 6]: cov
 #> ✔ [6 / 6]: cor
 print (y)
-#> # A tibble: 28 × 9
+#> # A tibble: 22 × 9
 #>    type       test_name fn_name parameter parameter_type operation content test 
 #>    <chr>      <chr>     <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
 #>  1 warning    par_is_d… var     use       <NA>           Check th… Exampl… TRUE 
 #>  2 warning    par_is_d… cov     y         <NA>           Check th… Exampl… TRUE 
-#>  3 diagnostic single_c… cor     use       single charac… upper-ca… is cas… TRUE 
-#>  4 diagnostic single_c… cor     method    single charac… upper-ca… is cas… TRUE 
-#>  5 diagnostic vector_c… cor     x         vector         Custom c… Functi… TRUE 
-#>  6 diagnostic single_c… cor     method    single charac… upper-ca… is cas… TRUE 
-#>  7 diagnostic single_c… cor     use       single charac… upper-ca… is cas… TRUE 
-#>  8 diagnostic single_c… cor     use       single charac… upper-ca… is cas… TRUE 
-#>  9 diagnostic single_c… cor     method    single charac… upper-ca… is cas… TRUE 
-#> 10 diagnostic vector_c… cov     x         vector         Custom c… Functi… TRUE 
-#> # … with 18 more rows, and 1 more variable: yaml_hash <chr>
+#>  3 diagnostic subst_in… var     na.rm     single logical Substitu… (Funct… TRUE 
+#>  4 diagnostic single_c… cor     use       single charac… upper-ca… is cas… TRUE 
+#>  5 diagnostic single_c… cor     method    single charac… upper-ca… is cas… TRUE 
+#>  6 diagnostic vector_c… cor     x         vector         Custom c… Functi… TRUE 
+#>  7 diagnostic vector_c… cor     x         vector         Custom c… Functi… TRUE 
+#>  8 diagnostic single_c… cor     method    single charac… upper-ca… is cas… TRUE 
+#>  9 diagnostic single_c… cor     use       single charac… upper-ca… is cas… TRUE 
+#> 10 diagnostic single_c… cor     use       single charac… upper-ca… is cas… TRUE 
+#> # ℹ 12 more rows
+#> # ℹ 1 more variable: yaml_hash <chr>
 ```
 
 Those tests are still returned from `autotest_package()`, but with
@@ -266,17 +273,19 @@ project, you agree to abide by its terms.
 
 ## Contributors
 
-
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 
-All contributions to this project are gratefully acknowledged using the [`allcontributors` package](https://github.com/ropenscilabs/allcontributors) following the [all-contributors](https://allcontributors.org) specification. Contributions of any kind are welcome!
+All contributions to this project are gratefully acknowledged using the
+[`allcontributors`
+package](https://github.com/ropenscilabs/allcontributors) following the
+[all-contributors](https://allcontributors.org) specification.
+Contributions of any kind are welcome!
 
 ### Code
 
 <table>
-
 <tr>
 <td align="center">
 <a href="https://github.com/mpadge">
@@ -303,14 +312,11 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ropensci-review-tools/autotest/commits?author=simpar1471">simpar1471</a>
 </td>
 </tr>
-
 </table>
-
 
 ### Issue Authors
 
 <table>
-
 <tr>
 <td align="center">
 <a href="https://github.com/noamross">
@@ -355,8 +361,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Astatnmap">statnmap</a>
 </td>
 </tr>
-
-
 <tr>
 <td align="center">
 <a href="https://github.com/vgherard">
@@ -389,14 +393,11 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Agilbertocamara">gilbertocamara</a>
 </td>
 </tr>
-
 </table>
-
 
 ### Issue Contributors
 
 <table>
-
 <tr>
 <td align="center">
 <a href="https://github.com/schneiderpy">
@@ -405,9 +406,7 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+commenter%3Aschneiderpy">schneiderpy</a>
 </td>
 </tr>
-
 </table>
-
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->

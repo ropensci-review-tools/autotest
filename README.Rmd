@@ -13,14 +13,14 @@ output:
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  warning = TRUE,
-  message = TRUE,
-  width = 120,
-  comment = "#>",
-  fig.retina = 2,
-  fig.path = "README-"
+knitr::opts_chunk$set (
+    collapse = TRUE,
+    warning = TRUE,
+    message = TRUE,
+    width = 120,
+    comment = "#>",
+    fig.retina = 2,
+    fig.path = "README-"
 )
 ```
 
@@ -47,15 +47,16 @@ The easiest way to install this package is via the associated
 shown there, simply enable the universe with
 
 ```{r options, eval = FALSE}
-options(repos = c(
+options (repos = c (
     ropenscireviewtools = "https://ropensci-review-tools.r-universe.dev",
-    CRAN = "https://cloud.r-project.org"))
+    CRAN = "https://cloud.r-project.org"
+))
 ```
 
 And then install the usual way with,
 
 ```{r install, eval = FALSE}
-install.packages("autotest")
+install.packages ("autotest")
 ```
 
 Alternatively, the package can be installed by running one of the following
@@ -63,10 +64,10 @@ lines:
 
 ```{r gh-installation, eval = FALSE}
 # install.packages("remotes")
-remotes::install_git("https://git.sr.ht/~mpadge/autotest")
-remotes::install_bitbucket("mpadge/autotest")
-remotes::install_gitlab("mpadge/autotest")
-remotes::install_github("ropensci-review-tools/autotest")
+remotes::install_git ("https://git.sr.ht/~mpadge/autotest")
+remotes::install_bitbucket ("mpadge/autotest")
+remotes::install_gitlab ("mpadge/autotest")
+remotes::install_github ("ropensci-review-tools/autotest")
 ```
 
 The package can then be loaded the usual way:
@@ -169,8 +170,10 @@ tests which are to be switched off.
 
 ```{r stats-var-test-switch}
 types <- autotest_types (notest = "vector_to_list_col")
-y <- autotest_package (package = "stats", functions = "var",
-                       test = TRUE, test_data = types)
+y <- autotest_package (
+    package = "stats", functions = "var",
+    test = TRUE, test_data = types
+)
 print (y)
 ```
 
