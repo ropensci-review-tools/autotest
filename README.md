@@ -263,3 +263,151 @@ which enable `autotest` to be used in a package’s test suite.
 Please note that this package is released with a [Contributor Code of
 Conduct](https://ropensci.org/code-of-conduct/). By contributing to this
 project, you agree to abide by its terms.
+
+## Contributors
+
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+All contributions to this project are gratefully acknowledged using the [`allcontributors` package](https://github.com/ropenscilabs/allcontributors) following the [all-contributors](https://allcontributors.org) specification. Contributions of any kind are welcome!
+
+### Code
+
+<table>
+
+<tr>
+<td align="center">
+<a href="https://github.com/mpadge">
+<img src="https://avatars.githubusercontent.com/u/6697851?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci-review-tools/autotest/commits?author=mpadge">mpadge</a>
+</td>
+<td align="center">
+<a href="https://github.com/helske">
+<img src="https://avatars.githubusercontent.com/u/1560448?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci-review-tools/autotest/commits?author=helske">helske</a>
+</td>
+<td align="center">
+<a href="https://github.com/maelle">
+<img src="https://avatars.githubusercontent.com/u/8360597?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci-review-tools/autotest/commits?author=maelle">maelle</a>
+</td>
+<td align="center">
+<a href="https://github.com/simpar1471">
+<img src="https://avatars.githubusercontent.com/u/65285181?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci-review-tools/autotest/commits?author=simpar1471">simpar1471</a>
+</td>
+</tr>
+
+</table>
+
+
+### Issue Authors
+
+<table>
+
+<tr>
+<td align="center">
+<a href="https://github.com/noamross">
+<img src="https://avatars.githubusercontent.com/u/571752?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Anoamross">noamross</a>
+</td>
+<td align="center">
+<a href="https://github.com/njtierney">
+<img src="https://avatars.githubusercontent.com/u/6488485?u=3eacd57f61342d1c3cecd5c8ac741b1c4897e1de&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Anjtierney">njtierney</a>
+</td>
+<td align="center">
+<a href="https://github.com/JeffreyRStevens">
+<img src="https://avatars.githubusercontent.com/u/51374986?u=aaa90c8bc7973213aa29cbf69a821bf18ee9bedf&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3AJeffreyRStevens">JeffreyRStevens</a>
+</td>
+<td align="center">
+<a href="https://github.com/bbolker">
+<img src="https://avatars.githubusercontent.com/u/78918?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Abbolker">bbolker</a>
+</td>
+<td align="center">
+<a href="https://github.com/mattfidler">
+<img src="https://avatars.githubusercontent.com/u/514778?u=9b4cbf14caf7dca48a1696eefbdc2ac50a6f6507&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Amattfidler">mattfidler</a>
+</td>
+<td align="center">
+<a href="https://github.com/kieranjmartin">
+<img src="https://avatars.githubusercontent.com/u/15383022?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Akieranjmartin">kieranjmartin</a>
+</td>
+<td align="center">
+<a href="https://github.com/statnmap">
+<img src="https://avatars.githubusercontent.com/u/21193866?u=073dc3920b91762de2543317110d7f2a319e433a&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Astatnmap">statnmap</a>
+</td>
+</tr>
+
+
+<tr>
+<td align="center">
+<a href="https://github.com/vgherard">
+<img src="https://avatars.githubusercontent.com/u/62836440?u=8ea1b4592c7304c0e8c50cd7f1ae132ebfe7e9c9&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Avgherard">vgherard</a>
+</td>
+<td align="center">
+<a href="https://github.com/christophsax">
+<img src="https://avatars.githubusercontent.com/u/1390827?u=ce6363f6da758d1bb85987d021cacc34a81c8837&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Achristophsax">christophsax</a>
+</td>
+<td align="center">
+<a href="https://github.com/joelnitta">
+<img src="https://avatars.githubusercontent.com/u/13459362?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Ajoelnitta">joelnitta</a>
+</td>
+<td align="center">
+<a href="https://github.com/santikka">
+<img src="https://avatars.githubusercontent.com/u/8639149?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Asantikka">santikka</a>
+</td>
+<td align="center">
+<a href="https://github.com/gilbertocamara">
+<img src="https://avatars.githubusercontent.com/u/6058509?u=22d1d5486b5df88b23ead0cd3d43bbf64c3c4138&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Agilbertocamara">gilbertocamara</a>
+</td>
+</tr>
+
+</table>
+
+
+### Issue Contributors
+
+<table>
+
+<tr>
+<td align="center">
+<a href="https://github.com/schneiderpy">
+<img src="https://avatars.githubusercontent.com/u/77991319?u=4242d4c5942fced6368dd5c68221e6618092cbf8&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+commenter%3Aschneiderpy">schneiderpy</a>
+</td>
+</tr>
+
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
