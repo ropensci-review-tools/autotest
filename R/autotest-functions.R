@@ -163,7 +163,6 @@ autotest_single_yaml <- function (yaml = NULL,
             no_test <- reports$type == "no_test"
             if (all (no_test)) {
                 reports <- NULL
-
             } else {
                 reports <- reports [which(!no_test), ]
                 rownames (reports) <- NULL
