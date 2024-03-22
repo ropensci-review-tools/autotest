@@ -59,6 +59,12 @@ test_that ("parse_expressions", {
                expect_silent (eval (parse (text = res2)))
 })
 
+test_that("parse_expressions with two curly brace pairs", {
+    ex <- c("if (TRUE) {", "    message(\"blop\")",
+"} else {", "    message(\"bla\"", "    ))", "}")
+    expect_snapshot(parse_expressions(ex), error = TRUE)
+})
+
 test_that ("strip_if_cond", {
                x <- "if(x==1)y<-0"
                res <- strip_if_cond (x)
