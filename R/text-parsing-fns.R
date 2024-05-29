@@ -234,7 +234,7 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
                 start_multi_line_quote <- TRUE
             } else if (is.na (qstart_1) && !is.na (qend_1)) {
                 multi_line_quote <- FALSE
-            } 
+            }
 
             if (!multi_line_quote || (multi_line_quote && start_multi_line_quote)) {
 
@@ -419,7 +419,6 @@ parse_expressions <- function (x) {
                 xfirst <- x [1:(br_open [i] - 1)]
             if (br_closed [i] < length (x))
                 xlast <- x [(br_closed [i] + 1):length (x)]
-
             x <- c (xfirst, xmid, xlast)
         }
     }
