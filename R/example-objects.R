@@ -114,16 +114,16 @@ example_objects <- function (f,
     env <- new.env (parent = globalenv ())
     # source still displays errors messages where these are intended, as in
     # ?stats::chisq.test, so:
-    errmsg <- options ("show.error.messages")
-    options(show.error.messages = FALSE)
-    utils::capture.output (suppressWarnings (suppressMessages (
-        ret <- tryCatch (source (tmp,
-                                 echo = FALSE,
-                                 local = env,
-                                 max.deparse.length = Inf),
-                         error = function (e) NULL)
-    )))
-    options(show.error.messages = errmsg)
+    withr::with_options (
+        list (show.error.messages  = FALSE),
+        utils::capture.output (suppressWarnings (suppressMessages (
+            ret <- tryCatch (source (tmp,
+                echo = FALSE,
+                local = env,
+                max.deparse.length = Inf),
+                error = function (e) NULL)
+        )))
+    )
 
     o1 <- NULL
     if (!is.null (ret))
