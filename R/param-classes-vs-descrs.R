@@ -353,13 +353,18 @@ param_desc_is_other_fn <- function (pkg, param_descs) {
     allfns <- lapply (s, function (i) ls (envir = as.environment (i)))
     names (allfns) <- s
 
-    # then also get all Rd topics
+    # then also get all Rd topics, but tryCatch because pkgload::load_all()
+    # doesn't create .Rd index, and so errors
+    # (https://github.com/r-lib/pkgload/issues/316).
     topics <- lapply (s, function (i) {
 
-                          rd <- tools::Rd_db (gsub ("^package:", "", i))
-                          vapply (rd, function (j) get_Rd_metadata (j, "name"),
-                                  character (1), USE.NAMES = FALSE)
-                             })
+        rd <- tryCatch (
+            tools::Rd_db (package = gsub ("^package:", "", i)),
+            error = function (e) NULL
+        )
+        vapply (rd, function (j) get_Rd_metadata (j, "name"),
+            character (1), USE.NAMES = FALSE)
+    })
 
     for (i in seq_along (allfns)) {
 
