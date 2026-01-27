@@ -291,6 +291,7 @@ preprocess_example_lines <- function (ex, exclude_not_run, is_source) {
 clean_example_lines <- function (ex, pkg_name) {
 
     ex <- join_at_operators (ex)
+    ex <- rm_examples_if (ex)
     ex <- parse_expressions (ex)
     ex <- match_brackets (ex)
     if (any (grepl ("\\{", ex)))
@@ -403,6 +404,16 @@ join_at_operators <- function (x) {
     for (i in index) {
         x [i] <- paste0 (x [i], x [i + 1], collapse = " ")
         x <- x [- (i + 1)]
+    }
+
+    return (x)
+}
+
+rm_examples_if <- function (x) {
+
+    index <- grep ("\\\\dontshow\\{", x)
+    if (length (index) > 0L) {
+        x <- x [-index]
     }
 
     return (x)
