@@ -1,4 +1,4 @@
-library(testthat)
-library(autotest)
+library (testthat)
+library (autotest)
 
-test_check("autotest")
+test_check ("autotest")

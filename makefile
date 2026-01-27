@@ -36,6 +36,9 @@ test: ## Run test suite
 pkgcheck: ## Run `pkgcheck` and print results to screen.
 	Rscript -e 'library(pkgcheck); checks <- pkgcheck(); print(checks); summary (checks)'
 
+spaceout: ## Apply 'spaceout' style to package
+	Rscript -e 'styler::style_pkg(style = spaceout::spaceout_style)'
+
 clean: ## Clean all junk files, including all pkgdown docs
 	rm -rf *.html *.png README_cache docs/
 

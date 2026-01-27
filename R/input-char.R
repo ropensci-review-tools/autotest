@@ -1,15 +1,16 @@
-
 test_single_char_case_dep <- function (x = NULL, ...) {
     UseMethod ("test_single_char_case_dep", x)
 }
 
 test_single_char_case_dep.NULL <- function (x) {
 
-    report_object (type = "dummy",
-                   test_name = "single_char_case",
-                   parameter_type = "single character",
-                   operation = "Change case",
-                   content = "(Should yield same result)")
+    report_object (
+        type = "dummy",
+        test_name = "single_char_case",
+        parameter_type = "single character",
+        operation = "Change case",
+        content = "(Should yield same result)"
+    )
 }
 
 test_single_char_case_dep.autotest_obj <- function (x, test_data = NULL) { # nolint
@@ -25,11 +26,13 @@ test_single_char_case_dep.autotest_obj <- function (x, test_data = NULL) { # nol
         }
     }
 
-    for (lower in c (TRUE, FALSE))
+    for (lower in c (TRUE, FALSE)) {
         res <- rbind (res, case_dependency (x, lower = lower))
+    }
 
-    if (!is.null (test_data) & !x$test & !is.null (res))
+    if (!is.null (test_data) & !x$test & !is.null (res)) {
         res$type <- "no_test"
+    }
 
     return (res)
 }
@@ -45,8 +48,9 @@ case_dependency <- function (x, lower = TRUE) {
     if (x$test) {
 
         x$params [[x$i]] <- ifelse (lower,
-                                    tolower (x$params [[x$i]]),
-                                    toupper (x$params [[x$i]]))
+            tolower (x$params [[x$i]]),
+            toupper (x$params [[x$i]])
+        )
 
         f <- tempfile ()
         msgs <- catch_all_msgs (f, x$fn, x$params)
@@ -67,11 +71,13 @@ test_single_char_as_random <- function (x = NULL, ...) {
 
 test_single_char_as_random.NULL <- function (x = NULL) { # nolint
 
-    report_object (type = "dummy",
-                   test_name = "random_char_string",
-                   parameter_type = "single character",
-                   operation = "random character string as parameter",
-                   content = "Should error")
+    report_object (
+        type = "dummy",
+        test_name = "random_char_string",
+        parameter_type = "single character",
+        operation = "random character string as parameter",
+        content = "Should error"
+    )
 }
 
 test_single_char_as_random.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
@@ -86,13 +92,17 @@ test_single_char_as_random.autotest_obj <- function (x, test_data = NULL, ...) {
         if (length (test_flag) == 1L) {
             x$test <- test_flag
         }
-        if (!x$test)
+        if (!x$test) {
             res$type <- "no_test"
+        }
     }
 
-    x$params [[x$i]] <- paste0 (sample (c (letters, LETTERS),
-                                        size = 10),
-                                collapse = "")
+    x$params [[x$i]] <- paste0 (
+        sample (c (letters, LETTERS),
+            size = 10
+        ),
+        collapse = ""
+    )
 
     if (char_param_is_arbitrary (x)) {
         x$test <- FALSE
@@ -122,9 +132,11 @@ test_single_char_as_random.autotest_obj <- function (x, test_data = NULL, ...) {
 #' @noRd
 char_param_is_arbitrary <- function (x) {
 
-    rd <- get_Rd_param (package = x$package_loc,
-                        fn_name = x$fn,
-                        param_name = names (x$params) [x$i])
+    rd <- get_Rd_param (
+        package = x$package_loc,
+        fn_name = x$fn,
+        param_name = names (x$params) [x$i]
+    )
 
     ptn <- "name|label|text|string|arbitrary"
     any (grepl (ptn, rd))
@@ -139,15 +151,16 @@ regex_param_descs <- function (h, params, i, msgs) {
     # descriptions, because `parse_exprs` converts all quoted items into list
     # items, leaving no direct way of identifying which items may have been
     # quoted.
-    #a <- rlang::parse_exprs (tools:::.Rd_get_metadata (h, "arguments"))
+    # a <- rlang::parse_exprs (tools:::.Rd_get_metadata (h, "arguments"))
     a <- rlang::parse_exprs (get_Rd_metadata (h, "arguments"))
     ## also .Rd_get_metadata ("title", "name", "description", "value", ...)
-    #rg_names <- unlist (lapply (a, function (i) eval (i) [[1]] [[1]]))
-    #arg_name <- arg_names [i]
+    # rg_names <- unlist (lapply (a, function (i) eval (i) [[1]] [[1]]))
+    # arg_name <- arg_names [i]
     arg_descs <- lapply (a, function (i) unlist (eval (i) [[2]]))
     arg_desc <- arg_descs [i]
-    if (grepl ("~", params [[i]]) | any (grepl ("formula", arg_desc)))
-        return (msgs) # do not test formulas
+    if (grepl ("~", params [[i]]) | any (grepl ("formula", arg_desc))) {
+        return (msgs)
+    } # do not test formulas
 
     # regex the actual string to extract all item descriptions.
     # These are formatted
@@ -155,13 +168,16 @@ regex_param_descs <- function (h, params, i, msgs) {
     # start by removing the { <name> } portion
     hc <- paste0 (paste (h), collapse = " ")
     index <- gregexpr ("\\\\item\\s+\\{(.*?)\\}", hc) [[1]]
-    #index <- gregexpr ("\\\\item\\s+\\{.*\\}\\s+\\{(.*?)\\}", hc) [[1]]
+    # index <- gregexpr ("\\\\item\\s+\\{.*\\}\\s+\\{(.*?)\\}", hc) [[1]]
     i <- as.integer (index)
     j <- i + attr (index, "match.length")
     rms <- gsub ("}", "\\}",
-                 gsub ("\\item\\s+", "",
-                       substring (hc, i, j)),
-                 fixed = TRUE)
+        gsub (
+            "\\item\\s+", "",
+            substring (hc, i, j)
+        ),
+        fixed = TRUE
+    )
 
     # these don't necessary match the end brackets, so need extension where not
     n_open <- vapply (gregexpr ("\\{", rms), length, integer (1))
@@ -169,38 +185,42 @@ regex_param_descs <- function (h, params, i, msgs) {
     index <- which (n_closed < n_open)
     for (k in index) {
         pos <- gregexpr ("\\}", substring (hc, j [k], nchar (hc))) [[1]]
-        #j [k] <- j [k] + pos [n_open [k] - n_closed [k]]
-        add <- substring (hc,
-                          j [k] + 1,
-                          j [k] + pos [n_open [k] - n_closed [k]])
+        # j [k] <- j [k] + pos [n_open [k] - n_closed [k]]
+        add <- substring (
+            hc,
+            j [k] + 1,
+            j [k] + pos [n_open [k] - n_closed [k]]
+        )
         add <- gsub ("}", "\\}", add, fixed = TRUE)
         add <- gsub (":", "\\:", add, fixed = TRUE)
         rms [k] <- paste0 (rms [k], add)
         rms [k] <- gsub (" {", " \\{", rms [k], fixed = TRUE)
     }
 
-    for (i in rms)
+    for (i in rms) {
         hc <- gsub (i, "", hc)
+    }
 
     # The remaining values between the curly braces are the descriptions, but
     # this requires finding matching curly braces.
     index <- gregexpr ("\\\\item\\s+\\{(.*?)\\}", hc) [[1]]
-    #index <- gregexpr ("\\\\item\\s+\\{([^}]*)\\}", hc) [[1]]
+    # index <- gregexpr ("\\\\item\\s+\\{([^}]*)\\}", hc) [[1]]
     i <- as.integer (index)
     j <- i + attr (index, "match.length")
     res <- substring (hc, i, j)
     # extend the k'th element of res to match the closing curly brace
     match_res_k <- function (res, hc, i, j, k) {
         rk <- res [k]
-        #(length (gregexpr ("\\{", rk) [[1]]) !=
+        # (length (gregexpr ("\\{", rk) [[1]]) !=
         #    length (gregexpr ("\\}", rk) [[1]]))
         if (length (gregexpr ("\\{", rk) [[1]]) !=
             length (gregexpr ("\\}", rk) [[1]])) {
             this_i <- i [k] + 1
-            if (k < length (i))
+            if (k < length (i)) {
                 this_j <- i [k + 1] - 1
-            else
+            } else {
                 this_j <- nchar (hc)
+            }
             opens <- gregexpr ("\\{", substring (hc, this_i, this_j)) [[1]]
             closes <- gregexpr ("\\}", substring (hc, this_i, this_j)) [[1]]
             if (length (opens) < length (closes)) {
@@ -217,7 +237,8 @@ regex_param_descs <- function (h, params, i, msgs) {
         }
         return (rk)
     }
-    for (k in seq (res))
+    for (k in seq (res)) {
         res [k] <- match_res_k (res, hc, i, j, k)
+    }
 }
 # nocov end

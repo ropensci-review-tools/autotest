@@ -1,4 +1,3 @@
-
 #  ----------------------------------------------------------------------
 # NOTE that these tests primarily rely on the S3 methods dispatched on
 # `autotest-obj` class objects and defined in `R/test-rect-methods.R`. The
@@ -17,16 +16,20 @@ chk_dims <- function (x, res1, res2) {
         ret$type <- "diagnostic"
         ret$fn_name <- x$fn
         ret$parameter <- names (x$params) [x$i]
-        ret$operation <- paste0 ("compare output dimensions for ",
-                                 "different rectangular inputs")
-        ret$content <- paste0 ("Function [",
-                               x$fn,
-                               "] errors on rectangular input for [",
-                               names (x$params) [x$i],
-                               "]: Dimensions differ between ",
-                               class (res1) [1],
-                               " and ",
-                               class (res2) [1], " inputs")
+        ret$operation <- paste0 (
+            "compare output dimensions for ",
+            "different rectangular inputs"
+        )
+        ret$content <- paste0 (
+            "Function [",
+            x$fn,
+            "] errors on rectangular input for [",
+            names (x$params) [x$i],
+            "]: Dimensions differ between ",
+            class (res1) [1],
+            " and ",
+            class (res2) [1], " inputs"
+        )
     }
     return (ret)
 }
@@ -43,15 +46,17 @@ chk_names <- function (x, res1, res2) {
         ret$fn_name <- x$fn
         ret$parameter <- names (x$params) [x$i]
         ret$operation <- "compare output names for different rectangular inputs"
-        ret$content <- paste0 ("Function [",
-                               x$fn,
-                               "] errors on rectangular input for [",
-                               names (x$params) [x$i],
-                               "]: Column names differ between ",
-                               class (res1) [1],
-                               " and ",
-                               class (res2) [1],
-                               " inputs")
+        ret$content <- paste0 (
+            "Function [",
+            x$fn,
+            "] errors on rectangular input for [",
+            names (x$params) [x$i],
+            "]: Column names differ between ",
+            class (res1) [1],
+            " and ",
+            class (res2) [1],
+            " inputs"
+        )
     }
     return (ret)
 }
@@ -71,19 +76,23 @@ chk_columns <- function (x, res1, res2) {
             ro$type <- "diagnostic"
             ro$fn_name <- x$fn
             ro$parameter <- names (x$params) [x$i]
-            ro$operation <- paste0 ("compare output columns for ",
-                                    "different rectangular inputs")
-            ro$content <- paste0 ("Function [",
-                               x$fn,
-                               "] errors on rectangular input for [",
-                               names (x$params) [x$i],
-                               "]: Column [",
-                               names (res1) [i],
-                               "] differs between ",
-                               class (res1) [1],
-                               " and ",
-                               class (res2) [1],
-                               " inputs")
+            ro$operation <- paste0 (
+                "compare output columns for ",
+                "different rectangular inputs"
+            )
+            ro$content <- paste0 (
+                "Function [",
+                x$fn,
+                "] errors on rectangular input for [",
+                names (x$params) [x$i],
+                "]: Column [",
+                names (res1) [i],
+                "] differs between ",
+                class (res1) [1],
+                " and ",
+                class (res2) [1],
+                " inputs"
+            )
             ret <- rbind (ret, ro)
         }
     }
@@ -95,10 +104,11 @@ chk_columns <- function (x, res1, res2) {
 #' @noRd
 docall <- function (ret, fn, params) {
     docall <- FALSE
-    if (is.null (ret))
+    if (is.null (ret)) {
         docall <- TRUE
-    else if (!"error" %in% ret$type)
+    } else if (!"error" %in% ret$type) {
         docall <- TRUE
+    }
 
     return (docall)
 }
@@ -110,10 +120,13 @@ other_rect_classes <- function (classes = NULL, this_class = NULL) {
 
     other <- c ("data.frame", "tibble::tibble", "data.table::data.table")
     if (!is.null (this_class)) {
-        rm_this <- match (this_class [1],
-                          c ("data.frame", "tbl_df", "data.table"))
-        if (!is.na (rm_this))
+        rm_this <- match (
+            this_class [1],
+            c ("data.frame", "tbl_df", "data.table")
+        )
+        if (!is.na (rm_this)) {
             other <- other [-rm_this]
+        }
     }
 
     if (length (classes) > 0) {
@@ -132,17 +145,21 @@ dummy_rect_as_other <- function (x, test_data = NULL) {
     other <- gsub ("^.*::", "", other)
 
     template <- test_rect_as_other.NULL ()
-    res <- report_object (type = "dummy",
-                          test_name = template$test_name,
-                          fn_name = x$fn,
-                          parameter = names (x$params) [x$i],
-                          parameter_type = par_type,
-                          operation = paste0 ("Convert [",
-                                              par_type,
-                                              "] to [",
-                                              other,
-                                              "]"),
-                          content = template$content)
+    res <- report_object (
+        type = "dummy",
+        test_name = template$test_name,
+        fn_name = x$fn,
+        parameter = names (x$params) [x$i],
+        parameter_type = par_type,
+        operation = paste0 (
+            "Convert [",
+            par_type,
+            "] to [",
+            other,
+            "]"
+        ),
+        content = template$content
+    )
 
     if (!is.null (test_data)) {
         if (template$content %in% test_data$content) {
@@ -161,22 +178,26 @@ dummy_compare_rect_outputs <- function (x, test_data) {
 
     template <- test_rect_compare_outputs.NULL ()
     # that template has 3 rows for 3 different contents
-    operations <- paste0 ("Convert [",
-                          par_type,
-                          "] to [",
-                          other,
-                          "]")
+    operations <- paste0 (
+        "Convert [",
+        par_type,
+        "] to [",
+        other,
+        "]"
+    )
     content <- rep (template$content, each = length (other))
     operations <- rep (operations, times = 3)
     test_names <- rep (template$test_name, each = length (other))
 
-    res <- report_object (type = "dummy",
-                          test_name = test_names,
-                          fn_name = x$fn,
-                          parameter = names (x$params) [x$i],
-                          parameter_type = par_type,
-                          operation = operations,
-                          content = content)
+    res <- report_object (
+        type = "dummy",
+        test_name = test_names,
+        fn_name = x$fn,
+        parameter = names (x$params) [x$i],
+        parameter_type = par_type,
+        operation = operations,
+        content = content
+    )
 
     if (!is.null (test_data)) {
         for (i in unique (res$content)) {
@@ -199,11 +220,12 @@ pass_rect_as_other <- function (x, test_data = NULL) {
     if (!is.null (test_data)) {
         template <- test_rect_as_other.NULL ()
         index <- which (test_data$operation == template$operation &
-                        test_data$content == template$content)
+            test_data$content == template$content)
         if (length (index) > 0) {
             test_this <- test_data$test [index]
-            if (!any (test_this))
+            if (!any (test_this)) {
                 return (test_data [index, ])
+            }
         }
     }
 
@@ -217,21 +239,24 @@ pass_rect_as_other <- function (x, test_data = NULL) {
             # much easier to call the conversions directly here, especially
             # because `data.table` requires a `data.table` aware namespace to
             # work via `do.call`.
-            if (other [o] == "data.frame")
+            if (other [o] == "data.frame") {
                 x$params [[x$i]] <- as.data.frame (x$params [[x$i]])
-            else if (other [o] == "tibble::tibble")
+            } else if (other [o] == "tibble::tibble") {
                 x$params [[x$i]] <- tibble::as_tibble (x$params [[x$i]])
-            else if (other [o] == "data.table::data.table")
+            } else if (other [o] == "data.table::data.table") {
                 x$params [[x$i]] <- data.table::as.data.table (x$params [[x$i]])
+            }
 
             junk <- utils::capture.output (
                 val <- suppressWarnings (
-                            suppressMessages (
-                                do.call (x$fn,
-                                         x$params,
-                                         envir = x$env,
-                                         quote = TRUE)
-                                ))
+                    suppressMessages (
+                        do.call (x$fn,
+                            x$params,
+                            envir = x$env,
+                            quote = TRUE
+                        )
+                    )
+                )
             )
             nm <- paste0 ("val-", gsub ("^.*::", "", other [o]))
             assign (nm, val, envir = x$env)
@@ -241,10 +266,12 @@ pass_rect_as_other <- function (x, test_data = NULL) {
     if (!is.null (res)) {
         par_type <- class (x$params [[x$i]]) [1]
         res$parameter_type <- par_type
-        res$operation <- paste0 ("check error/warning on ",
-                                 par_type,
-                                 " as ",
-                                 other)
+        res$operation <- paste0 (
+            "check error/warning on ",
+            par_type,
+            " as ",
+            other
+        )
     }
 
 
@@ -263,8 +290,9 @@ pass_one_rect_as_other <- function (x,
     ret <- NULL
 
     x$params [[x$i]] <- do.call (eval (parse (text = other)),
-                                 x$params [[x$i]],
-                                 quote = TRUE)
+        x$params [[x$i]],
+        quote = TRUE
+    )
     ftmp <- tempfile ()
     msgs <- catch_all_msgs (ftmp, x$fn, x$params)
     chk <- file.remove (ftmp) # nolint
@@ -272,12 +300,14 @@ pass_one_rect_as_other <- function (x,
     if (!is.null (msgs)) {
         msgs$parameter <- rep (names (x$params) [x$i], nrow (msgs))
 
-        if (grepl ("::", other))
+        if (grepl ("::", other)) {
             other <- strsplit (other, "::") [[1]] [2]
+        }
         ret <- add_msg_output (NULL,
-                               msgs,
-                               types = c ("warning", "error"),
-                               operation = paste0 ("tabular as ", other))
+            msgs,
+            types = c ("warning", "error"),
+            operation = paste0 ("tabular as ", other)
+        )
 
         template <- test_rect_as_other.NULL ()
         ret$test_name <- template$test_name
@@ -296,17 +326,20 @@ get_rect_comparisons <- function (nms, this_env = NULL, this_class = NULL) {
     ret_now <- length (nms) == 0
 
     envobjs <- NULL
-    if (!is.null (this_env))
+    if (!is.null (this_env)) {
         envobjs <- ls (envir = this_env)
+    }
 
     if (is.null (this_class)) {
-        if (length (nms) < 2)
+        if (length (nms) < 2) {
             ret_now <- TRUE
+        }
     } else if (!this_class [1] %in% envobjs) {
-            ret_now <- TRUE
+        ret_now <- TRUE
     }
-    if (ret_now)
+    if (ret_now) {
         return (NULL)
+    }
 
     if (is.null (this_class)) {
         index <- t (utils::combn (length (nms), 2))
@@ -325,8 +358,9 @@ compare_rect_outputs <- function (x, this_obj = NULL) {
     nms <- nms [which (nms %in% ls (envir = x$env))]
 
     nms <- get_rect_comparisons (nms, x$env, this_obj)
-    if (is.null (nms))
+    if (is.null (nms)) {
         return (NULL)
+    }
 
     res <- NULL
     for (i in seq (nrow (nms))) {
@@ -348,9 +382,11 @@ dummy_extend_rect_class <- function (x) {
     ret$fn_name <- x$fn
     ret$parameter <- names (x$params) [x$i]
     ret$parameter_type <- class (x$params [[x$i]]) [1]
-    ret$operation <- paste0 ("Extend existent class [",
-                             class (x$params [[x$i]]) [1],
-                             "] with new class")
+    ret$operation <- paste0 (
+        "Extend existent class [",
+        class (x$params [[x$i]]) [1],
+        "] with new class"
+    )
 
     return (ret)
 }
@@ -372,8 +408,9 @@ do_extend_rect_class_struct <- function (x) {
         msgs$parameter_type <- "general tabular"
 
         msg_out <- add_msg_output (NULL,
-                                   msgs,
-                                   types = c ("warning", "error"))
+            msgs,
+            types = c ("warning", "error")
+        )
         msg_out <- msg_out [!duplicated (msg_out), ]
 
         ret <- test_rect_extend_class.NULL ()
@@ -386,15 +423,18 @@ do_extend_rect_class_struct <- function (x) {
 
     if (!"error" %in% msgs$type) {
         o <- utils::capture.output (
-                temp <- suppressWarnings (do.call (x$fn,
-                                                   x$params,
-                                                   envir = x$env,
-                                                   quote = TRUE))
+            temp <- suppressWarnings (do.call (x$fn,
+                x$params,
+                envir = x$env,
+                quote = TRUE
+            ))
         )
         assign ("val-newclass", temp, envir = x$env)
 
-        ret <- rbind (ret,
-                      compare_rect_outputs (x, this_obj = "val-newclass"))
+        ret <- rbind (
+            ret,
+            compare_rect_outputs (x, this_obj = "val-newclass")
+        )
     }
 
     return (ret)

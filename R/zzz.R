@@ -8,8 +8,9 @@
     op.autotest <- list (autotest_yaml_indent = 4) # nolint
 
     toset <- !(names (op.autotest) %in% names (op))
-    if (any (toset))
+    if (any (toset)) {
         options (op.autotest [toset])
+    }
     invisible ()
 }
 # nocov end
@@ -32,9 +33,11 @@ null_or_not <- function (x, not_this) {
 
 not_null_and_is <- function (x, is_this) {
     res <- FALSE
-    if (!is.null (x))
-        if (any (is_this %in% x$type))
+    if (!is.null (x)) {
+        if (any (is_this %in% x$type)) {
             res <- TRUE
+        }
+    }
     return (res)
 }
 
@@ -42,8 +45,9 @@ not_null_and_is <- function (x, is_this) {
 dot_to_package <- function (package) {
 
     ip <- as.data.frame (utils::installed.packages ())
-    if (package %in% ip$Package)
+    if (package %in% ip$Package) {
         return (package)
+    }
 
     # https://github.com/r-lib/rprojroot/blob/master/R/root.R#L115:
     .max_depth <- 10L
@@ -60,14 +64,16 @@ dot_to_package <- function (package) {
 
                 package <- normalizePath (file.path (package, ".."))
 
-                if (all (files %in% list.files (package)))
+                if (all (files %in% list.files (package))) {
                     return (package)
+                }
             }
         }
     }
 
-    if (!all (files %in% list.files (package)))
+    if (!all (files %in% list.files (package))) {
         stop ("Unable to find root directory of an R package")
+    }
 
     return (package)
 }
@@ -75,16 +81,19 @@ dot_to_package <- function (package) {
 # same criteria as rprojroot::is_r_package, but without extra dependency.
 pkg_is_source <- function (package) {
 
-    need_these <- file.path (package,
-                             c ("DESCRIPTION", "NAMESPACE", "R", "man"))
+    need_these <- file.path (
+        package,
+        c ("DESCRIPTION", "NAMESPACE", "R", "man")
+    )
 
     is_source <- FALSE
 
     if (file.exists (package)) {
         if (all (file.exists (need_these))) {
             desc <- readLines (file.path (package, "DESCRIPTION"))
-            if (any (grepl ("^Package\\:", desc)))
+            if (any (grepl ("^Package\\:", desc))) {
                 is_source <- TRUE
+            }
         }
     }
 
@@ -93,21 +102,26 @@ pkg_is_source <- function (package) {
 
 pkg_lib_path <- function (package, root = FALSE) {
 
-    if (dir.exists (package))
+    if (dir.exists (package)) {
         package <- utils::tail (strsplit (package, .Platform$file.sep) [[1]], 1)
+    }
 
-    if (!paste0 ("package:", package) %in% search ())
+    if (!paste0 ("package:", package) %in% search ()) {
         stop ("Package [", package, "] is not loaded")
+    }
 
-    sp <- vapply (searchpaths (), function (i)
-                  utils::tail (strsplit (i, .Platform$file.sep) [[1]], 1),
-                  character (1),
-                  USE.NAMES = TRUE)
+    sp <- vapply (searchpaths (), function (i) {
+        utils::tail (strsplit (i, .Platform$file.sep) [[1]], 1)
+    },
+    character (1),
+    USE.NAMES = TRUE
+    )
 
     path <- names (sp) [which (sp == package)]
 
-    if (root)
+    if (root) {
         path <- normalizePath (file.path (path, ".."))
+    }
 
     return (path)
 }
@@ -149,18 +163,21 @@ get_pkg_deps <- function (pkg, suggests = FALSE) {
             return (ret)
         }
         deps <- get_deps (desc)
-        if (suggests)
+        if (suggests) {
             deps <- c (deps, get_deps (desc, "Suggests"))
+        }
     } else {
 
         ip <- data.frame (utils::installed.packages (),
-                          stringsAsFactors = FALSE)
+            stringsAsFactors = FALSE
+        )
         if (!pkg %in% ip$Package) {
 
             lib <- c (.libPaths (), pkg_lib_path (pkg, root = TRUE))
 
             ip <- data.frame (utils::installed.packages (lib.loc = lib),
-                              stringsAsFactors = FALSE)
+                stringsAsFactors = FALSE
+            )
         }
         deps <- strsplit (ip$Depends [ip$Package == pkg], ",(\\s?)") [[1]]
         deps <- gsub ("\\s*\\(.*$", "", deps [!is.na (deps)])
@@ -171,8 +188,10 @@ get_pkg_deps <- function (pkg, suggests = FALSE) {
             deps <- c (deps, gsub ("\\s*\\(.*$", "", s [!is.na (s)]))
         }
     }
-    base_pkgs <- c ("stats", "graphics", "grDevices", "utils",
-                    "datasets", "methods", "base")
+    base_pkgs <- c (
+        "stats", "graphics", "grDevices", "utils",
+        "datasets", "methods", "base"
+    )
     deps <- deps [which (!deps %in% c ("R", base_pkgs))]
 
     return (deps)
