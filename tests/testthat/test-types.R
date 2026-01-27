@@ -1,6 +1,6 @@
-context("test types")
+context ("test types")
 
-test_that("autotest_types", {
+test_that ("autotest_types", {
 
     expect_silent (x <- autotest_types ())
     expect_s3_class (x, "autotest_package")
