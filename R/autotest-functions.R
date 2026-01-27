@@ -37,8 +37,10 @@ autotest_yaml <- function (yaml = NULL,
         stop ("either yaml or filename must be given")
     } else if (!is.null (filename)) {
         yaml <- readLines (filename)
-        pkg <- strsplit (yaml [grep ("^package:", yaml)],
-                         "^package: ") [[1]] [2]
+        pkg <- strsplit (
+            yaml [grep ("^package:", yaml)],
+            "^package: "
+        ) [[1]] [2]
         attr (yaml, "package") <- pkg
     }
 
@@ -46,22 +48,29 @@ autotest_yaml <- function (yaml = NULL,
         yaml <- list (yaml)
     }
 
-    msg <- paste0 ("yaml must be either a single character vector ",
-                   "representing a yaml 'autotest' object, or a list ",
-                   "of such objects")
-    if (!is.list (yaml))
+    msg <- paste0 (
+        "yaml must be either a single character vector ",
+        "representing a yaml 'autotest' object, or a list ",
+        "of such objects"
+    )
+    if (!is.list (yaml)) {
         stop (msg)
+    }
 
     # Ensure anything passed as list represents valid yaml input:
-    if (!is.character (yaml [[1]]) & !is.null (attr (yaml [[1]], "package")))
+    if (!is.character (yaml [[1]]) & !is.null (attr (yaml [[1]], "package"))) {
         stop (msg)
+    }
 
-    reports <- lapply (yaml, function (i)
-                      autotest_single_yaml (i,
-                                            filename,
-                                            test,
-                                            test_data,
-                                            quiet))
+    reports <- lapply (yaml, function (i) {
+        autotest_single_yaml (
+            i,
+            filename,
+            test,
+            test_data,
+            quiet
+        )
+    })
     reports <- do.call (rbind, reports)
 
     if (!is.null (reports)) {
@@ -83,8 +92,9 @@ autotest_single_yaml <- function (yaml = NULL,
                                   quiet = FALSE) {
 
     # yaml templates can be preprocessing only, with no direct function calls:
-    if (!any (grepl ("- parameters:$", yaml)))
+    if (!any (grepl ("- parameters:$", yaml))) {
         return (NULL)
+    }
 
     res <- parse_yaml_template (yaml = yaml, filename = filename)
 
@@ -100,31 +110,42 @@ autotest_single_yaml <- function (yaml = NULL,
         this_fn <- names (res$parameters) [i]
         params <- get_params (res, i, this_fn)
         params <- params [which (!(params == "NULL" | names (params) == "..."))]
-        param_types <- get_param_types (this_fn, params,
-                                        par_lengths)
+        param_types <- get_param_types (
+            this_fn, params,
+            par_lengths
+        )
 
-        param_class <- vapply (params,
-                               function (i)
-                                   ifelse (inherits (i, "data.frame"),
-                                           "data.frame",
-                                           class (i) [1]),
-                               character (1))
-        index <- which (!param_class %in% c (atomic_modes (),
-                                             "data.frame"))
+        param_class <- vapply (
+            params,
+            function (i) {
+                ifelse (inherits (i, "data.frame"),
+                    "data.frame",
+                    class (i) [1]
+                )
+            },
+            character (1)
+        )
+        index <- which (!param_class %in% c (
+            atomic_modes (),
+            "data.frame"
+        ))
         param_class <- param_class [index]
-        if (length (param_class) == 0L)
+        if (length (param_class) == 0L) {
             param_class <- NULL
+        }
 
-        test_obj <- autotest_obj (package = res$package,
-                                  package_loc = attr (yaml, "package"),
-                                  fn_name = names (res$parameters) [i],
-                                  parameters = params,
-                                  parameter_types = param_types,
-                                  class = param_class,
-                                  classes = res$classes [[i]],
-                                  env = new.env (),
-                                  test = test,
-                                  quiet = quiet)
+        test_obj <- autotest_obj (
+            package = res$package,
+            package_loc = attr (yaml, "package"),
+            fn_name = names (res$parameters) [i],
+            parameters = params,
+            parameter_types = param_types,
+            class = param_class,
+            classes = res$classes [[i]],
+            env = new.env (),
+            test = test,
+            quiet = quiet
+        )
 
         test_obj <- add_int_attrs (test_obj, int_val)
 
@@ -145,15 +166,17 @@ autotest_single_yaml <- function (yaml = NULL,
 
         reports <- rbind (reports, test_param_documentation (test_obj))
 
-        if (!quiet)
+        if (!quiet) {
             message (cli::col_green (cli::symbol$tick, " ", this_fn))
+        }
     }
 
     if (!is.null (reports)) {
 
         # add hash to reports
-        if (is.null (yaml) & !is.null (filename))
+        if (is.null (yaml) & !is.null (filename)) {
             yaml <- readLines (filename)
+        }
         reports$yaml_hash <- digest::digest (yaml)
 
         reports <- reports [which (!duplicated (reports)), ]
@@ -164,7 +187,7 @@ autotest_single_yaml <- function (yaml = NULL,
             if (all (no_test)) {
                 reports <- NULL
             } else {
-                reports <- reports [which(!no_test), ]
+                reports <- reports [which (!no_test), ]
                 rownames (reports) <- NULL
             }
         }
@@ -249,24 +272,32 @@ autotest_package <- function (package = ".",
         attr (yaml, "package") <- package
         fn_name <- fn_from_yaml (yaml)
 
-        res <- rbind (res,
-                      autotest_yaml (yaml = yaml,
-                                     test = test,
-                                     test_data = test_data,
-                                     quiet = TRUE))
+        res <- rbind (
+            res,
+            autotest_yaml (
+                yaml = yaml,
+                test = test,
+                test_data = test_data,
+                quiet = TRUE
+            )
+        )
 
-        if (!quiet)
-            message (cli::col_green (cli::symbol$tick, " [",
-                                     i, " / ", length (exs),
-                                     "]: ", fn_name [1]))
+        if (!quiet) {
+            message (cli::col_green (
+                cli::symbol$tick, " [",
+                i, " / ", length (exs),
+                "]: ", fn_name [1]
+            ))
+        }
     }
     res <- res [which (!duplicated (res)), ]
 
     res <- test_untested_params (exs, res)
     res <- test_fns_wo_example (package, res, names (exs))
 
-    if (is.null (res))
+    if (is.null (res)) {
         return (res)
+    }
 
     attr (res, "package") <- package
 
@@ -314,13 +345,15 @@ fn_from_yaml <- function (yaml) {
 #' @export
 autotest_types <- function (notest = NULL) {
 
-    res <- rbind (autotest_rectangular (),
-                  autotest_vector (),
-                  autotest_single (),
-                  autotest_return (),
-                  test_untested_params (),
-                  test_fns_wo_example (),
-                  test_param_documentation ())
+    res <- rbind (
+        autotest_rectangular (),
+        autotest_vector (),
+        autotest_single (),
+        autotest_return (),
+        test_untested_params (),
+        test_fns_wo_example (),
+        test_param_documentation ()
+    )
     res <- tibble::tibble (res)
 
     class (res) <- c ("autotest_package", class (res))
@@ -328,9 +361,11 @@ autotest_types <- function (notest = NULL) {
     if (!is.null (notest)) {
         index <- match (notest, res$test_name)
         if (any (is.na (index))) {
-            message ("notest = [",
-                     paste0 (notest [which (is.na (index))], collapse = ", "),
-                     "] does not match any test_name values")
+            message (
+                "notest = [",
+                paste0 (notest [which (is.na (index))], collapse = ", "),
+                "] does not match any test_name values"
+            )
             index <- index [which (!is.na (index))]
         }
         res$test [index] <- FALSE
@@ -341,10 +376,14 @@ autotest_types <- function (notest = NULL) {
 
 order_at_rows <- function (x) {
 
-    type_order <- c ("error", "warning", "diagnostic", "message",
-                     "dummy", "no_test")
-    index <- data.frame (index = seq (nrow (x)),
-                         type = match (x$type, type_order))
+    type_order <- c (
+        "error", "warning", "diagnostic", "message",
+        "dummy", "no_test"
+    )
+    index <- data.frame (
+        index = seq (nrow (x)),
+        type = match (x$type, type_order)
+    )
     index <- index [order (index$type), ]
     x <- x [index$index, ]
     rownames (x) <- NULL
