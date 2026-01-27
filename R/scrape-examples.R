@@ -6,8 +6,9 @@ get_all_examples <- function (package,
                               quiet = FALSE) {
 
     if (is_source) {
-        if (!is_pkg_same (package))
+        if (!is_pkg_same (package)) {
             memoise::forget (m_get_pkg_functions)
+        }
     }
     fns <- m_get_pkg_functions (package)
 
@@ -27,10 +28,12 @@ get_all_examples <- function (package,
         quiet <- TRUE
     }
     if (!quiet) {
-        message (cli::col_green (cli::symbol$star,
-                                 " Extracting example code from ",
-                                 length (rdnames),
-                                 " .Rd files"))
+        message (cli::col_green (
+            cli::symbol$star,
+            " Extracting example code from ",
+            length (rdnames),
+            " .Rd files"
+        ))
         pb <- utils::txtProgressBar (style = 3)
     }
 
@@ -41,7 +44,8 @@ get_all_examples <- function (package,
     exs <- list ()
     for (i in seq (rdnames)) {
         exi <- get_fn_exs (package, rdnames [i], topic [i],
-                           is_source = is_source)
+            is_source = is_source
+        )
         if (!is.null (exi)) {
             attr (exi, "Rdname") <- rdnames [i]
             exs [[length (exs) + 1]] <- exi
@@ -54,8 +58,10 @@ get_all_examples <- function (package,
     }
     if (!quiet) {
         close (pb)
-        message (cli::col_green (cli::symbol$tick,
-                                 " Extracted example code"))
+        message (cli::col_green (
+            cli::symbol$tick,
+            " Extracted example code"
+        ))
     }
 
     not_null <- vapply (exs, function (i) length (i) > 0, logical (1))
@@ -71,14 +77,16 @@ get_fn_exs <- function (package, rd_name, topic, rm_seed = TRUE,
 
     ex <- get_example_lines (package, rd_name)
 
-    if (length (ex) == 0)
+    if (length (ex) == 0) {
         return (NULL)
+    }
 
     ex <- remove_comments (ex)
     ex <- preprocess_example_lines (ex, exclude_not_run, is_source)
 
-    if (length (ex) == 0)
+    if (length (ex) == 0) {
         return (NULL)
+    }
 
     ex <- clean_example_lines (ex, get_package_name (package))
     ex <- transform_single_quotes (ex)
@@ -87,8 +95,9 @@ get_fn_exs <- function (package, rd_name, topic, rm_seed = TRUE,
     is_dispatch <- attr (fns, "is_dispatch")
 
     fn_calls <- process_fn_calls (fns, ex)
-    if (length (fn_calls) == 0)
+    if (length (fn_calls) == 0) {
         return (NULL)
+    }
 
     exs <- split_ex_by_fn_calls (ex, fn_calls)
 
@@ -104,30 +113,32 @@ get_fn_exs <- function (package, rd_name, topic, rm_seed = TRUE,
     aliases <- paste0 (aliases, collapse = "|")
     index <- vapply (exs, function (i) any (grepl (aliases, i)), logical (1))
     if (length (fns) == 2) { # when it's a dispatch method
-        index2 <- vapply (exs, function (i)
-                          any (grepl (fns [2], i)), logical (1))
+        index2 <- vapply (exs, function (i) {
+            any (grepl (fns [2], i))
+        }, logical (1))
         index <- index | index2
     }
 
-    if (!any (index))
-        return (NULL) # There are no calls to fn
+    if (!any (index)) {
+        return (NULL)
+    } # There are no calls to fn
 
     # can do the following via split, but it's a lot more convoluted than this
     # loop. Start by removing any trailing FALSE values
     exs <- exs [1:max (which (index))]
     index <- index [1:max (which (index))]
     for (i in rev (seq_along (index))) {
-        if (index [i])
+        if (index [i]) {
             here <- i
-        else {
+        } else {
             exs [[here]] <- c (exs [[i]], exs [[here]])
         }
     }
     exs <- exs [which (index)]
 
     exs <- lapply (exs, function (i) {
-                       attr (i, "is_dispatch") <- is_dispatch
-                       return (i)   })
+        attr (i, "is_dispatch") <- is_dispatch
+        return (i)   })
 
     return (exs)
 }
@@ -144,8 +155,9 @@ get_example_lines <- function (package, rd_name) {
     } else {
 
         ex <- get_example_lines_source (package, rd_name)
-        if (!is.null (ex))
+        if (!is.null (ex)) {
             load_all_if_needed (package)
+        }
     }
 
     # readLines auto-parses "\" to "\\\\", which then needs to be reverted to
@@ -157,18 +169,22 @@ get_example_lines <- function (package, rd_name) {
 
 get_example_lines_installed <- function (package, rd_name) {
 
-    if (dir.exists (package))
+    if (dir.exists (package)) {
         package <- utils::tail (strsplit (package, .Platform$file.sep) [[1]], 1)
+    }
 
     libloc <- pkg_lib_path (package, root = TRUE)
 
     # example called for function which have no help file trigger warnings
-    tryCatch (utils::example (eval (substitute (rd_name)),
-                              package = package,
-                              character.only = TRUE,
-                              give.lines = TRUE,
-                              lib.loc = libloc),
-              warning = function (w) NULL)
+    tryCatch (
+        utils::example (eval (substitute (rd_name)),
+            package = package,
+            character.only = TRUE,
+            give.lines = TRUE,
+            lib.loc = libloc
+        ),
+        warning = function (w) NULL
+    )
 }
 
 get_example_lines_source <- function (package, rd_name) {
@@ -208,8 +224,9 @@ load_all_if_needed <- function (package) {
         v0 <- utils::packageVersion (pkg_name)
         desc <- file.path (package, "DESCRIPTION")
         v <- read.dcf (desc, "Version")
-        if (v > v0)
+        if (v > v0) {
             doload <- TRUE
+        }
     }
     if (doload) {
         requireNamespace ("devtools")
@@ -245,19 +262,21 @@ remove_comments <- function (ex) {
 
     cmt <- gregexpr ("\\#", ex)
     cmt <- lapply (seq_along (cmt), function (i) {
-                   if (i %in% names (qts)) {
-                       qts_i <- sort (unname (unlist (qts [names (qts) == i])))
-                       cmt [[i]] <- cmt [[i]] [which (!cmt [[i]] %in% qts_i)]
-                       if (length (cmt [[i]]) == 0)
-                           cmt [[i]] <- -1
-                   }
-                   return (cmt [[i]])
-                  })
+        if (i %in% names (qts)) {
+            qts_i <- sort (unname (unlist (qts [names (qts) == i])))
+            cmt [[i]] <- cmt [[i]] [which (!cmt [[i]] %in% qts_i)]
+            if (length (cmt [[i]]) == 0) {
+                cmt [[i]] <- -1
+            }
+        }
+        return (cmt [[i]])
+    })
     ex <- vapply (seq_along (cmt), function (i) {
-                  if (cmt [[i]] [1] > 0)
-                      ex [i] <- substring (ex [i], 1, cmt [[i]] [1] - 1)
-                  return (ex [i])
-                  }, character (1))
+        if (cmt [[i]] [1] > 0) {
+            ex [i] <- substring (ex [i], 1, cmt [[i]] [1] - 1)
+        }
+        return (ex [i])
+    }, character (1))
 
     return (ex)
 }
@@ -272,17 +291,22 @@ preprocess_example_lines <- function (ex, exclude_not_run, is_source) {
     ex <- ex [which (!grepl ("^\\s?$", ex))]
 
     # Cut Rd lines down to example code only
-    if (any (grepl ("^### \\*\\* Examples", ex)))
-        ex <- ex [- (1:grep ("^### \\*\\* Examples", ex))]
+    if (any (grepl ("^### \\*\\* Examples", ex))) {
+        ex <- ex [-(1:grep ("^### \\*\\* Examples", ex))]
+    }
 
-    for (dontrun in c (TRUE, FALSE))
-        ex <- rm_dontrun_lines (ex, is_source = is_source, dontrun = dontrun,
-                                exclude_not_run = exclude_not_run)
+    for (dontrun in c (TRUE, FALSE)) {
+        ex <- rm_dontrun_lines (ex,
+            is_source = is_source, dontrun = dontrun,
+            exclude_not_run = exclude_not_run
+        )
+    }
 
     if (is_source) { # rm any roxygen2 auto-generated lines
         index <- grep ("^%", ex)
-        if (length (index) > 0)
+        if (length (index) > 0) {
             ex <- ex [-index]
+        }
     }
 
     return (ex)
@@ -294,13 +318,15 @@ clean_example_lines <- function (ex, pkg_name) {
     ex <- rm_examples_if (ex)
     ex <- parse_expressions (ex)
     ex <- match_brackets (ex)
-    if (any (grepl ("\\{", ex)))
+    if (any (grepl ("\\{", ex))) {
         ex <- match_brackets (ex, curly = TRUE)
+    }
     ex <- merge_piped_lines (ex)
     ex <- merge_fn_defs (ex)
     ex <- single_clause (ex)
-    for (double_quote in c (TRUE, FALSE))
+    for (double_quote in c (TRUE, FALSE)) {
         ex <- multi_line_quotes (ex, double_quote = double_quote)
+    }
     ex <- join_function_lines (ex)
     ex <- rm_not_parseable (ex, pkg_name)
     ex <- rm_plot_lines (ex)
@@ -319,7 +345,9 @@ find_fn_call_points <- function (topic, package) {
 
     if (is_dispatch) {
         fns_short <- vapply (fns, function (i) strsplit (i, "\\.") [[1]] [1],
-                             character (1), USE.NAMES = FALSE)
+            character (1),
+            USE.NAMES = FALSE
+        )
         fns <- fns_short [which (!duplicated (fns_short))]
     }
     attr (fns, "is_dispatch") <- is_dispatch
@@ -343,13 +371,14 @@ process_fn_calls <- function (fns, ex) {
 
     # reduce to only final calls in a sequence
     index <- which (c (2, diff (fns)) == 1)
-    if (length (index) > 0)
-        fns <- fns [- (index - 1)]
+    if (length (index) > 0) {
+        fns <- fns [-(index - 1)]
+    }
 
     # remove any plot or summary calls
-    #index <- grepl ("^plot|^summary", ex [fns])
-    #index <- grepl ("plot|^summary", ex [fns])
-    #if (any (index))
+    # index <- grepl ("^plot|^summary", ex [fns])
+    # index <- grepl ("plot|^summary", ex [fns])
+    # if (any (index))
     #    fns <- fns [-(which (index))]
 
     return (fns)
@@ -364,7 +393,8 @@ process_fn_calls <- function (fns, ex) {
 #' @noRd
 split_ex_by_fn_calls <- function (ex, fn_calls) {
     index <- rep (seq (length (fn_calls)),
-                  times = c (fn_calls [1], diff (fn_calls)))
+        times = c (fn_calls [1], diff (fn_calls))
+    )
     split (ex [seq_along (index)], f = as.factor (index))
 }
 
@@ -380,30 +410,38 @@ rm_seed_calls <- function (exs, rm_seed) {
 dispatched_fns <- function (package) {
     res <- m_fns_to_topics (package = package)
     index <- grep ("[[:alpha:]]?\\.[[:alpha:]]", res$alias)
-    if (length (index) == 0)
+    if (length (index) == 0) {
         return (NULL)
+    }
 
     fns <- res$alias [index]
     fns_short <- vapply (fns, function (i) strsplit (i, "\\.") [[1]] [1],
-                         character (1), USE.NAMES = FALSE)
-    index <- which (vapply (fns_short, function (i)
-                            any (grepl (i, res$alias, fixed = TRUE)),
-                            logical (1), USE.NAMES = FALSE))
+        character (1),
+        USE.NAMES = FALSE
+    )
+    index <- which (vapply (fns_short, function (i) {
+        any (grepl (i, res$alias, fixed = TRUE))
+    },
+    logical (1),
+    USE.NAMES = FALSE
+    ))
     return (fns_short [index])
 }
 
 # join multiple lines connected by operators (*, /, -, +)
 join_at_operators <- function (x) {
-    operators <- c ("\\+", "\\-", "\\*", "\\/",
-                    "\\^", "\\*\\*",
-                    "%%", "%/%",
-                    "<", "<\\=", ">", ">\\=",
-                    "\\=\\=", "\\!\\=", "\\|", "&")
+    operators <- c (
+        "\\+", "\\-", "\\*", "\\/",
+        "\\^", "\\*\\*",
+        "%%", "%/%",
+        "<", "<\\=", ">", ">\\=",
+        "\\=\\=", "\\!\\=", "\\|", "&"
+    )
     operators <- paste0 ("(", paste0 (operators, collapse = "|"), ")\\s*$")
     index <- rev (grep (operators, x))
     for (i in index) {
         x [i] <- paste0 (x [i], x [i + 1], collapse = " ")
-        x <- x [- (i + 1)]
+        x <- x [-(i + 1)]
     }
 
     return (x)
@@ -424,7 +462,7 @@ merge_piped_lines <- function (x) {
     index <- rev (grep ("%>%\\s?$|\\\\%>\\\\%\\s?$", x))
     for (i in index) {
         x [i] <- gsub ("\\s+", " ", paste0 (x [i:(i + 1)], collapse = " "))
-        x <- x [- (i + 1)]
+        x <- x [-(i + 1)]
         if (any (grepl ("\\\\%", x))) {
             x <- gsub ("\\\\%", "%", x)
         }
@@ -434,16 +472,20 @@ merge_piped_lines <- function (x) {
 
 merge_fn_defs <- function (x) {
     if (any (grepl ("function(\\s?)\\(", x))) {
-        br_open <- lapply (gregexpr ("\\{", x), function (i)
-                           as.integer (i [i >= 0]))
-        br_closed <- lapply (gregexpr ("\\}", x), function (i)
-                             as.integer (i [i >= 0]))
+        br_open <- lapply (gregexpr ("\\{", x), function (i) {
+            as.integer (i [i >= 0])
+        })
+        br_closed <- lapply (gregexpr ("\\}", x), function (i) {
+            as.integer (i [i >= 0])
+        })
 
         br_open2 <- br_closed2 <- NULL
-        for (i in seq (br_open))
+        for (i in seq (br_open)) {
             br_open2 <- c (br_open2, rep (i, length (br_open [[i]])))
-        for (i in seq (br_closed))
+        }
+        for (i in seq (br_closed)) {
             br_closed2 <- c (br_closed2, rep (i, length (br_closed [[i]])))
+        }
 
         br_open <- rev (br_open2)
         br_closed <- rev (br_closed2)
@@ -452,10 +494,12 @@ merge_fn_defs <- function (x) {
         br_closed <- br_closed [index]
         for (i in seq_along (br_open)) {
             x1 <- x2 <- NULL
-            if (br_open [i] > 1)
+            if (br_open [i] > 1) {
                 x1 <- x [seq (br_open [i] - 1)]
-            if (br_closed [i] < length (x))
+            }
+            if (br_closed [i] < length (x)) {
                 x2 <- x [(br_closed [i] + 1):length (x)]
+            }
             # NOTE: The following presumes that any functions defined in
             # examples and which span multiple lines are defined such that
             # fn <- function () { # line ends here
@@ -466,12 +510,17 @@ merge_fn_defs <- function (x) {
             # b = 2
             # }
             # in which the lines between the braces aren't cleanly separated
-            x <- c (x1,
-                    paste0 (x [br_open [i]],
-                            paste0 (x [(br_open [i] + 1):(br_closed [i] - 1)],
-                                    collapse = ";"),
-                            x [br_closed [i]]),
-                    x2)
+            x <- c (
+                x1,
+                paste0 (
+                    x [br_open [i]],
+                    paste0 (x [(br_open [i] + 1):(br_closed [i] - 1)],
+                        collapse = ";"
+                    ),
+                    x [br_closed [i]]
+                ),
+                x2
+            )
         }
     }
     return (x)
@@ -480,7 +529,7 @@ merge_fn_defs <- function (x) {
 # match (if|for) with anything after and NOT (if|for) with "{"
 single_clause <- function (x) {
     index <- which (grepl ("^(if|for)\\s?\\(.*\\)\\s?", x) &
-                    !grepl ("^(if|for)\\s?\\(.*\\)\\s?\\{", x))
+        !grepl ("^(if|for)\\s?\\(.*\\)\\s?\\{", x))
     if (length (index) > 0) {
         br1 <- gregexpr ("\\(", x [index])
         br2 <- gregexpr ("\\)", x [index])
@@ -493,7 +542,7 @@ single_clause <- function (x) {
         index <- index [grep ("^\\s*$", xcut)]
         if (length (index) > 0) {
             x [index] <- paste0 (x [index], x [index + 1], collapse = " ")
-            x <- x [- (index + 1)]
+            x <- x [-(index + 1)]
         }
     }
 
@@ -505,13 +554,15 @@ single_clause <- function (x) {
 # example of non-matched quotes: stats::influence.measure
 multi_line_quotes <- function (x, double_quote = TRUE) {
 
-    if (double_quote)
+    if (double_quote) {
         q <- "\""
-    else
+    } else {
         q <- "\'"
+    }
 
-    index <- vapply (gregexpr (q, x), function (i)
-                     length (which (i > 0)), integer (1))
+    index <- vapply (gregexpr (q, x), function (i) {
+        length (which (i > 0))
+    }, integer (1))
     # check that single quotes are not possessive apostrophes
     chk <- grepl ("[[:alpha:]]\'s", x [which (index > 0)])
     index <- index [which (!chk)]
@@ -521,11 +572,13 @@ multi_line_quotes <- function (x, double_quote = TRUE) {
         index2 <- rep (seq (length (index) / 2), each = 2)
         # un-reverse the individual entries so they are increasing pairs of
         # [start, end] of quotes
-        index <- lapply (split (index, f = factor (index2)),
-                         function (i) rev (i))
+        index <- lapply (
+            split (index, f = factor (index2)),
+            function (i) rev (i)
+        )
         for (i in index) {
             x [i [1]] <- paste0 (x [i [1]:i [2]], collapse = " ")
-            x <- x [- ((i [1] + 1):i [2])]
+            x <- x [-((i [1] + 1):i [2])]
         }
     }
     return (x)
@@ -538,29 +591,34 @@ rm_dontrun_lines <- function (x, is_source = TRUE, dontrun = TRUE,
                               exclude_not_run = TRUE) {
     if (is_source) {
         txt <- ifelse (dontrun, "\\\\dontrun\\s?\\{",
-                       "\\\\donttest\\s?\\{")
+            "\\\\donttest\\s?\\{"
+        )
         n <- grep (txt, x)
         while (length (n) > 0) {
             n_end <- n [1] + match_curlies (x [n [1]:length (x)])
-            if (exclude_not_run)
-                x <- x [- (n [1]:n_end)]
-            else
+            if (exclude_not_run) {
+                x <- x [-(n [1]:n_end)]
+            } else {
                 x <- x [-c (n [1], n_end)]
+            }
             n <- grep (txt, x)
         }
     } else {
         txt_start <- ifelse (dontrun, "## Not run:", "## No test:")
         txt_end <- ifelse (dontrun, "##\\s+End\\s+\\(Not\\s+run\\)",
-                           "##\\s+End\\s+\\(No\\s+test\\)")
+            "##\\s+End\\s+\\(No\\s+test\\)"
+        )
         n <- grep (txt_start, x)
         while (length (n) > 0) {
             n_end <- grep (txt_end, x)
-            if (length (n_end) == 0)
+            if (length (n_end) == 0) {
                 n_end <- n
-            if (exclude_not_run)
-                x <- x [- (n [1]:n_end [1])]
-            else
+            }
+            if (exclude_not_run) {
+                x <- x [-(n [1]:n_end [1])]
+            } else {
                 x <- x [-c (n [1], n_end)]
+            }
             n <- grep (txt_start, x)
         }
     }
@@ -580,27 +638,32 @@ rm_not_parseable <- function (x, pkg_name) {
         x [index] <- gsub ("^\\s?try\\s?\\(|\\)$", "", x [index])
     }
 
-    dev <- options()$"device"
+    dev <- options ()$"device"
     options (device = NULL) # suppress plot output
 
     p_txt <- paste0 ("package:", pkg_name)
     this_env <- new.env (parent = as.environment (p_txt))
 
     junk <- utils::capture.output (
-                suppressMessages (
-                suppressWarnings (
-        parseable <- vapply (x, function (i) {
-                                 i <- gsub ("\\%", "%", i, fixed = TRUE)
-                                 p <- tryCatch (
-                                            eval (parse (text = i),
-                                                  envir = this_env),
-                                            error = function (err) "error")
-                                 is_err <- FALSE
-                                 if (is.character (p))
-                                     is_err <- identical (p, "error")
-                                 return (!is_err)
-                               }, logical (1), USE.NAMES = FALSE)
-    ))) # end capture.output and suppressMessages/Warnings
+        suppressMessages (
+            suppressWarnings (
+                parseable <- vapply (x, function (i) {
+                    i <- gsub ("\\%", "%", i, fixed = TRUE)
+                    p <- tryCatch (
+                        eval (parse (text = i),
+                            envir = this_env
+                        ),
+                        error = function (err) "error"
+                    )
+                    is_err <- FALSE
+                    if (is.character (p)) {
+                        is_err <- identical (p, "error")
+                    }
+                    return (!is_err)
+                }, logical (1), USE.NAMES = FALSE)
+            )
+        )
+    ) # end capture.output and suppressMessages/Warnings
 
     options (device = dev)
 
@@ -612,30 +675,32 @@ rm_not_parseable <- function (x, pkg_name) {
 # "plot" or "summary"
 rm_plot_lines <- function (x) {
     plotlines <- vapply (x, function (i) {
-                             i <- gsub ("\\%", "%", i, fixed = TRUE)
-                             p <- utils::getParseData (parse (text = i))
-                             s <- which (p$token == "SYMBOL_FUNCTION_CALL" &
-                                         grepl ("plot|summary|print", p$text))
-                             ret <- FALSE
-                             if (length (s) > 0) {
-                                 ret <- TRUE
-                                 # only include if its not part of another fn
-                                 if (any (p$token == "FUNCTION")) {
-                                     ret <- which (p$token ==
-                                                   "FUNCTION") [1] > s [1]
-                                 }
-                             }
-                             return (ret)   },
-
-                             logical (1),
-                             USE.NAMES = FALSE)
-    if (any (plotlines))
+        i <- gsub ("\\%", "%", i, fixed = TRUE)
+        p <- utils::getParseData (parse (text = i))
+        s <- which (p$token == "SYMBOL_FUNCTION_CALL" &
+            grepl ("plot|summary|print", p$text))
+        ret <- FALSE
+        if (length (s) > 0) {
+            ret <- TRUE
+            # only include if its not part of another fn
+            if (any (p$token == "FUNCTION")) {
+                ret <- which (p$token ==
+                    "FUNCTION") [1] > s [1]
+            }
+        }
+        return (ret)   },
+    logical (1),
+    USE.NAMES = FALSE
+    )
+    if (any (plotlines)) {
         x <- x [-which (plotlines)]
+    }
 
     # rm other extraneous lines, repeating plot etc
     index <- grepl ("^\\#|^plot|^summary|^print", x)
-    if (any (index))
+    if (any (index)) {
         x <- x [!index]
+    }
 
     return (x)
 }
@@ -647,17 +712,19 @@ rm_plot_lines <- function (x) {
 rm_enclosing_brackets <- function (x) {
 
     lapply (x, function (i) {
-                a <- attributes (i)
-                out <- lapply (i, function (j) {
-                                   index <- grep ("^\\(", j)
-                                   if (length (index) > 0) {
-                                       j [index] <-
-                                           gsub ("\\)$", "",
-                                                 gsub ("^\\(", "", j [index]))
-                                   }
-                                   return (j)   })
-                attributes (out) <- a
-                return (out) })
+        a <- attributes (i)
+        out <- lapply (i, function (j) {
+            index <- grep ("^\\(", j)
+            if (length (index) > 0) {
+                j [index] <-
+                    gsub (
+                        "\\)$", "",
+                        gsub ("^\\(", "", j [index])
+                    )
+            }
+            return (j)   })
+        attributes (out) <- a
+        return (out) })
 }
 
 #' yaml does not parse single quotes, so these are converted to double quotes,
@@ -668,8 +735,9 @@ rm_enclosing_brackets <- function (x) {
 transform_single_quotes <- function (x) {
     res <- vapply (x, function (i) {
         quotes2 <- gregexpr ("\"", i) [[1]]
-        if (quotes2 [1] < 1)
+        if (quotes2 [1] < 1) {
             return (i)
+        }
 
         index <- 2 * seq (length (quotes2) / 2)
         index <- cbind (quotes2 [index - 1], quotes2 [index])
@@ -692,8 +760,9 @@ transform_single_quotes <- function (x) {
 
             qts <- sort (c (1, quotes1 - 1, quotes1 + 1, nchar (i)))
             qts <- matrix (qts, ncol = 2, byrow = TRUE)
-            txt <- apply (qts, 1, function (j)
-                          substring (i, j [1], j [2]))
+            txt <- apply (qts, 1, function (j) {
+                substring (i, j [1], j [2])
+            })
             ret <- paste0 (txt, collapse = "")
         }
 
@@ -701,9 +770,10 @@ transform_single_quotes <- function (x) {
         ret <- gsub ("'", "\"", ret, fixed = TRUE)
 
         return (ret)
-                           },
-        character (1),
-        USE.NAMES = FALSE)
+    },
+    character (1),
+    USE.NAMES = FALSE
+    )
 
     return (res)
 }
