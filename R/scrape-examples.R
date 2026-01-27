@@ -11,8 +11,9 @@ get_all_examples <- function (package,
     }
     fns <- m_get_pkg_functions (package)
 
-    if (!is.null (exclude))
+    if (!is.null (exclude)) {
         fns <- fns [which (!fns %in% exclude)]
+    }
     topics <- m_fns_to_topics (fns, package)
 
     index <- which (!duplicated (topics$topic))
@@ -22,8 +23,9 @@ get_all_examples <- function (package,
     topic <- topics$topic
     rdnames <- gsub ("\\.Rd$", "", topics$name)
 
-    if (length (rdnames) < 10)
+    if (length (rdnames) < 10) {
         quiet <- TRUE
+    }
     if (!quiet) {
         message (cli::col_green (cli::symbol$star,
                                  " Extracting example code from ",
@@ -32,8 +34,9 @@ get_all_examples <- function (package,
         pb <- utils::txtProgressBar (style = 3)
     }
 
-    if (!is_source)
+    if (!is_source) {
         package <- basename (package)
+    }
 
     exs <- list ()
     for (i in seq (rdnames)) {
@@ -45,8 +48,9 @@ get_all_examples <- function (package,
             names (exs) [length (exs)] <- fns [i]
         }
 
-        if (!quiet)
+        if (!quiet) {
             utils::setTxtProgressBar (pb, i / length (rdnames))
+        }
     }
     if (!quiet) {
         close (pb)
