@@ -8,13 +8,13 @@
   "codeRepository": "https://github.com/ropensci-review-tools/autotest",
   "issueTracker": "https://github.com/ropensci-review-tools/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.2.220",
+  "version": "0.1.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.2.1 (2022-06-23)",
+  "runtimePlatform": "R version 4.5.2 (2025-10-31)",
   "author": [
     {
       "@type": "Person",
@@ -301,13 +301,11 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=yaml"
     },
-    "SystemRequirements": {}
+    "SystemRequirements": null
   },
-  "fileSize": "570.294KB",
+  "fileSize": "555.52KB",
   "readme": "https://github.com/ropensci-review-tools/autotest/blob/main/README.md",
-  "contIntegration": [
-    "https://github.com/ropensci-review-tools/autotest/actions?query=workflow%3AR-CMD-check",
-    "https://codecov.io/gh/ropensci-review-tools/autotest"
-  ],
-  "developmentStatus": "https://www.repostatus.org/#concept"
+  "contIntegration": ["https://github.com/ropensci-review-tools/autotest/actions?query=workflow%3AR-CMD-check", "https://codecov.io/gh/ropensci-review-tools/autotest"],
+  "developmentStatus": "https://www.repostatus.org/#concept",
+  "keywords": ["automated-testing", "fuzzing", "r", "testing"]
 }
