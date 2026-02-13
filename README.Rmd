@@ -64,10 +64,12 @@ lines:
 
 ```{r gh-installation, eval = FALSE}
 # install.packages("remotes")
+remotes::install_git ("https://codeberg.org/ropensci-review-tools/autotest")
+remotes::install_git ("https://codefloe.com/ropensci-review-tools/autotest")
+remotes::install_gitlab ("ropensci-review-tools/autotest")
+remotes::install_github ("ropensci-review-tools/autotest")
 remotes::install_git ("https://git.sr.ht/~mpadge/autotest")
 remotes::install_bitbucket ("mpadge/autotest")
-remotes::install_gitlab ("mpadge/autotest")
-remotes::install_github ("ropensci-review-tools/autotest")
 ```
 
 The package can then be loaded the usual way:
