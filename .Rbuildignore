@@ -1,4 +1,3 @@
-.ropensci-staff
 ^.*\.Rproj$
 ^CODE_OF_CONDUCT\.md$
 ^CONTRIBUTING.md$
