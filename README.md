@@ -4,9 +4,9 @@
 
 <!-- badges: start -->
 
-[![R build
-status](https://github.com/ropensci-review-tools/autotest/workflows/R-CMD-check/badge.svg)](https://github.com/ropensci-review-tools/autotest/actions?query=workflow%3AR-CMD-check)
-[![codecov](https://codecov.io/gh/ropensci-review-tools/autotest/branch/master/graph/badge.svg)](https://codecov.io/gh/ropensci-review-tools/autotest)
+[![R-CMD-check](https://github.com/ropensci-review-tools/autotest/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci-review-tools/autotest/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/ropensci-review-tools/autotest/graph/badge.svg)](https://app.codecov.io/gh/ropensci-review-tools/autotest)
 [![Project Status:
 Concept](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
 <!-- badges: end -->
