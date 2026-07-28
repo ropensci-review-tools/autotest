@@ -56,7 +56,7 @@ library (autotest)
 
 ## Usage
 
-The simply way to use the package is
+The simplest way to use the package is
 
 ``` r
 x <- autotest_package ("<package>")
