@@ -50,7 +50,7 @@ git_hash: 273bf8b5c03cab47d5d2b45a5d34c92db97c1b7b
   report is generated for `cov`'s known test-suite-triggered error case.
 
 ## T001-4: Remove the obsolete yaml/example-parsing pipeline
-- [ ] T001-4: Delete `autotest_yaml()` and `autotest_single_yaml()` from
+- [x] T001-4: Delete `autotest_yaml()` and `autotest_single_yaml()` from
   `R/autotest-functions.R` if any remnants remain (git diff shows they were
   already removed on this branch — confirm and remove any leftover
   references). Grep `R/*.R` for any other still-defined function that is
