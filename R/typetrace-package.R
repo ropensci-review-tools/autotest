@@ -107,11 +107,17 @@ get_unique_fn_pars <- function (traces) {
 #'
 #' Used to identify function parameters never exercised by any documented
 #' example (`test_untested_params()`), as distinct from parameters only ever
-#' seen in the package's own test suite.
+#' seen in the package's own test suite. 'typetracer' records an entry for
+#' every formal of a traced function, whether or not that formal was
+#' actually written in the call (unspecified formals are recorded at their
+#' resolved default value), so entries are only counted as "demonstrated"
+#' here when their `par_uneval` is not the literal string `"NULL"` — the
+#' value 'typetracer' records when a parameter was not part of the call
+#' itself (see `trace_one_param()` in 'typetracer').
 #' @param trace_files Character vector of paths to individual 'typetracer'
 #' trace '.Rds' files.
 #' @return A `data.frame` with columns `fn_name` and `par_name`, one row per
-#' unique combination demonstrated in an example-sourced trace.
+#' unique combination explicitly demonstrated in an example-sourced trace.
 #' @noRd
 get_example_fn_pars <- function (trace_files) {
 
@@ -123,6 +129,15 @@ get_example_fn_pars <- function (trace_files) {
         }
 
         par_index <- which (!nzchar (names (trace_data)))
+        if (length (par_index) == 0L) {
+            return (NULL)
+        }
+
+        was_demonstrated <- vapply (
+            trace_data [par_index], function (j) !identical (j$par_uneval, "NULL"),
+            logical (1L)
+        )
+        par_index <- par_index [was_demonstrated]
         if (length (par_index) == 0L) {
             return (NULL)
         }

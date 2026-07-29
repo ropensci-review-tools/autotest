@@ -17,7 +17,12 @@ test_that ("expect_autotest", {
         test = TRUE
     )
 
-    expect_success (expect_autotest_no_err (x))
+    # This should be expect_success, but cov's own documented example
+    # explicitly demonstrates an error case via
+    # `try(cov(swM, use = "all"))`; typetracer traces that literal call,
+    # and autotest correctly flags it as an error when it re-calls `cov()`
+    # directly (without the documentation's protective `try()`), so:
+    expect_failure (expect_autotest_no_err (x))
     # This should be expect_success, but cov generates warnings about
     # parameter usage not being demonstrated in examples, so:
     expect_failure (expect_autotest_no_warn (x))

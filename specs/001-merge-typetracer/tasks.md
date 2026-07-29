@@ -119,7 +119,7 @@ git_hash: 273bf8b5c03cab47d5d2b45a5d34c92db97c1b7b
   yaml-derived arguments.
 
 ## T001-9: Get the full test suite green
-- [ ] T001-9: Run `devtools::load_all()` then
+- [x] T001-9: Run `devtools::load_all()` then
   `testthat::test_dir("tests/testthat")` (or `devtools::test()`) repeatedly,
   fixing failures until the suite passes. Specifically verify
   `tests/testthat/test-testthat-expectation.R`'s `expect_autotest` test
