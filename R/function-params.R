@@ -21,11 +21,12 @@ get_params <- function (res, i, this_fn) {
     pkg_env <- list2env (envs)
 
     for (p in pre) {
-        # remove "`" except if they name list items
-        if (!grepl ("\\$`", p)) {
-            p <- gsub ("`", "", p)
+        has_backticks <- grepl ("`", p, fixed = TRUE)
+        if (has_backticks) {
+            expr <- parse_backtick_lines (p)
+        } else {
+            expr <- parse (text = p)
         }
-        expr <- parse (text = p)
         suppressMessages (
             tmp <- tryCatch (
                 utils::capture.output (eval (expr,
@@ -88,6 +89,50 @@ get_params <- function (res, i, this_fn) {
     params <- params [index]
 
     return (params)
+}
+
+# Preprocessing lines are sometimes scraped with backticks that are only
+# needed for some of their uses, for example to name list items (`x$\`a b\``)
+# or non-syntactic argument names (`` `a b` = 1 ``), while other backticks are
+# spurious and prevent the line from parsing at all. Rather than guessing
+# which is which, try parsing as is, then progressively try removing each
+# backtick pair in turn and re-parsing, only ever removing a pair when doing
+# so actually lets the line parse.
+parse_backtick_lines <- function (p) {
+
+    expr <- tryCatch (parse (text = p), error = function (e) NULL)
+    if (!is.null (expr)) {
+        return (expr)
+    }
+
+    m <- gregexpr ("`[^`]*`", p) [[1]]
+    n_pairs <- if (m [1] == -1) 0L else length (m)
+
+    for (i in seq_len (n_pairs)) {
+        p_try <- rm_nth_backtick_pair (p, i)
+        expr <- tryCatch (parse (text = p_try), error = function (e) NULL)
+        if (!is.null (expr)) {
+            return (expr)
+        }
+    }
+
+    # last resort: none of the individual removals parsed, so strip them all:
+    parse (text = gsub ("`", "", p))
+}
+
+# Remove the backticks (but not the enclosed text) from the n-th
+# backtick-quoted substring of `p`.
+rm_nth_backtick_pair <- function (p, n) {
+
+    m <- gregexpr ("`[^`]*`", p) [[1]]
+    starts <- as.integer (m)
+    lens <- attr (m, "match.length")
+
+    s <- starts [n]
+    e <- s + lens [n] - 1L
+    inner <- substr (p, s + 1L, e - 1L)
+
+    paste0 (substr (p, 1L, s - 1L), inner, substr (p, e + 1L, nchar (p)))
 }
 
 # Get the 'value' field from an Rd entry for a given package function:
