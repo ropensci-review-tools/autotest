@@ -63,7 +63,7 @@ git_hash: 273bf8b5c03cab47d5d2b45a5d34c92db97c1b7b
   confirming `autotest_yaml` no longer appears in `NAMESPACE`.
 
 ## T001-5: Rewrite or remove obsolete yaml-pipeline tests
-- [ ] T001-5: `tests/testthat/test-yaml.R` calls `autotest_yaml()` and
+- [x] T001-5: `tests/testthat/test-yaml.R` calls `autotest_yaml()` and
   `autotest_single_yaml()`, both deleted — currently fails with
   `could not find function "autotest_yaml"`. Remove this file if its
   assertions are now meaningless (they test yaml-input validation that no

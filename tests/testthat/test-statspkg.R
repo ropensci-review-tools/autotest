@@ -38,28 +38,24 @@ test_that ("autotest var", {
 
     package <- "stats"
     functions <- "var"
-    exclude <- NULL
-
-    exclude <- exclude_functions (package, functions, exclude)
-    exs <- examples_to_yaml (package, exclude = exclude)
-
-    yaml <- exs [[1]]
-    expect_silent (
-        x0 <- autotest_yaml (yaml, quiet = TRUE)
-    )
-    expect_message (
-        x_t <- autotest_yaml (yaml, test = TRUE)
-    )
-    expect_identical (x0, x_t)
 
     expect_message (
-        x_f <- autotest_yaml (yaml, test = FALSE)
+        x_f <- autotest_package (
+            package = package, functions = functions,
+            test = FALSE
+        )
+    )
+    expect_message (
+        x_t <- autotest_package (
+            package = package, functions = functions,
+            test = TRUE
+        )
     )
     expect_true (nrow (x_f) > nrow (x_t))
 
     for (x in list (x_f, x_t)) {
         expect_is (x, "data.frame")
-        expect_equal (ncol (x), 9)
+        expect_equal (ncol (x), 8)
         expect_identical (names (x), c (
             "type",
             "test_name",
@@ -68,25 +64,9 @@ test_that ("autotest var", {
             "parameter_type",
             "operation",
             "content",
-            "test",
-            "yaml_hash"
+            "test"
         ))
     }
-
-    f <- tempfile (fileext = ".yaml")
-    con <- file (f)
-    writeLines (yaml, con = con)
-    close (con)
-    expect_true (file.exists (f))
-
-    expect_message (
-        x_f_file <- autotest_yaml (filename = f, test = FALSE)
-    )
-    expect_message (
-        x_t_file <- autotest_yaml (filename = f, test = TRUE)
-    )
-    expect_identical (x_f, x_f_file)
-    expect_identical (x_t, x_t_file)
 })
 
 test_that ("autotest rnorm", {

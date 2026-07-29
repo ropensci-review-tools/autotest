@@ -135,6 +135,19 @@ rm_nth_backtick_pair <- function (p, n) {
     paste0 (substr (p, 1L, s - 1L), inner, substr (p, e + 1L, nchar (p)))
 }
 
+# tools::Rd_db() re-parses a package's entire Rd database from scratch on
+# every call. get_Rd_value()/get_Rd_param() are called once per traced
+# parameter, so an unmemoised Rd_db() call here makes autotest_package()
+# scale very badly (observed multi-GB/multi-minute blowups) for packages
+# with many documented topics, such as base 'stats'.
+m_rd_db <- memoise::memoise (function (package, dir = NULL) {
+    if (is.null (dir)) {
+        tools::Rd_db (package = package)
+    } else {
+        tools::Rd_db (package = package, dir = dir)
+    }
+})
+
 # Get the 'value' field from an Rd entry for a given package function:
 get_Rd_value <- function (package, fn_name) { # nolint
     val <- NULL
@@ -146,10 +159,10 @@ get_Rd_value <- function (package, fn_name) { # nolint
         )
     } else {
         if (basename (package) == package) {
-            x <- tools::Rd_db (package = package)
+            x <- m_rd_db (package = package)
         } else {
             # packages installed into local tempdir via covr:
-            x <- tools::Rd_db (
+            x <- m_rd_db (
                 package = basename (package),
                 dir = package
             )
@@ -199,11 +212,11 @@ get_Rd_param <- function (package, fn_name, param_name) { # nolint
 
         if (basename (package) == package) {
 
-            x <- tools::Rd_db (package = package)
+            x <- m_rd_db (package = package)
         } else {
 
             # packages installed into local tempdir via covr:
-            x <- tools::Rd_db (
+            x <- m_rd_db (
                 package = basename (package),
                 dir = package
             )
