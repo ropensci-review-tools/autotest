@@ -153,3 +153,33 @@ get_example_fn_pars <- function (trace_files) {
 
     return (unique (pars))
 }
+
+#' Get the formal parameter names of every traced function.
+#'
+#' By the time `test_untested_params()` runs, `typetracer::trace_package()`
+#' has already unloaded the traced package's namespace (and for a local
+#' source package that was never actually installed, it may not be
+#' reloadable at all afterwards), so formals can't reliably be looked up
+#' again via `getFromNamespace()`. Each individual trace file already
+#' records `par_formals`, captured directly at trace time, so those are
+#' used instead.
+#' @param trace_files Character vector of paths to individual 'typetracer'
+#' trace '.Rds' files.
+#' @return Named `list`, one entry per unique traced function, each holding
+#' that function's formal parameter names.
+#' @noRd
+get_fn_formals <- function (trace_files) {
+
+    res <- lapply (trace_files, function (f) {
+        trace_data <- readRDS (f)
+        list (fn_name = trace_data$fn_name, formals = names (trace_data$par_formals))
+    })
+
+    fn_names <- vapply (res, function (x) x$fn_name, character (1L))
+    fmls <- lapply (res, function (x) x$formals)
+    index <- which (!duplicated (fn_names))
+    fmls <- fmls [index]
+    names (fmls) <- fn_names [index]
+
+    return (fmls)
+}

@@ -68,6 +68,16 @@ autotest_package <- function (package = ".",
 
     traces <- autotest_trace_package (package, functions = functions, exclude = exclude)
 
+    # 'typetracer::trace_package()' unloads the traced package's namespace
+    # once tracing is done, and does not itself reload it into this session
+    # (its own end-of-trace reload check runs in a separate subprocess).
+    # Packages with other loaded dependents (e.g. 'stats') tend to stay
+    # attached regardless, since 'unloadNamespace()' silently no-ops when
+    # dependents prevent it, but a standalone package with nothing else
+    # depending on it unloads cleanly, leaving the mutation-testing loop
+    # below unable to find its functions. Reload it to be sure.
+    preload_package (package)
+
     trace_files <- list.files (
         get_typetrace_dir (),
         pattern = "^typetrace\\_.*\\.Rds$",
@@ -112,6 +122,7 @@ autotest_package <- function (package = ".",
     }
 
     example_fn_pars <- get_example_fn_pars (trace_files)
+    fn_formals <- get_fn_formals (trace_files)
     fn_names <- include_functions (package, functions, exclude)
 
     typetracer::clear_traces ()
@@ -119,7 +130,11 @@ autotest_package <- function (package = ".",
     res <- res [which (!duplicated (res)), ]
 
     if (!is.null (example_fn_pars) && nrow (example_fn_pars) > 0) {
-        res <- test_untested_params (example_fn_pars, package = package, res_in = res)
+        res <- test_untested_params (
+            example_fn_pars,
+            fn_formals = fn_formals,
+            res_in = res
+        )
     }
     res <- test_fns_wo_example (package, res, fn_names)
 

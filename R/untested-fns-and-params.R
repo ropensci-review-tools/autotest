@@ -41,8 +41,8 @@ test_fns_wo_example.character <- function (package, res, fn_names) {
 #' For every function represented in `example_fn_pars`, identify any formal
 #' parameters (other than `...`) never demonstrated by name in any
 #' example-sourced 'typetracer' trace.
-#' @param package Name or path of the package being tested, used to look up
-#' function formals.
+#' @param fn_formals Result of \link{get_fn_formals}: named `list` of formal
+#' parameter names for every traced function.
 #' @param example_fn_pars Result of \link{get_example_fn_pars}: a
 #' `data.frame` of `fn_name`/`par_name` combinations demonstrated in
 #' example-sourced traces.
@@ -50,21 +50,19 @@ test_fns_wo_example.character <- function (package, res, fn_names) {
 #' each holding the names of parameters never demonstrated by that function's
 #' examples.
 #' @noRd
-untested_params <- function (package, example_fn_pars) {
+untested_params <- function (fn_formals, example_fn_pars) {
 
     if (is.null (example_fn_pars) || nrow (example_fn_pars) == 0) {
         return (NULL)
     }
 
-    pkg_name <- get_package_name (package)
     fns <- unique (example_fn_pars$fn_name)
 
     fmls <- lapply (fns, function (f) {
-        fn <- utils::getFromNamespace (f, pkg_name)
-        fn_formals <- names (formals (fn))
+        this_formals <- fn_formals [[f]]
         these_pars <- example_fn_pars$par_name [example_fn_pars$fn_name == f]
-        index <- which (!fn_formals %in% these_pars & fn_formals != "...")
-        fn_formals [index]
+        index <- which (!this_formals %in% these_pars & this_formals != "...")
+        this_formals [index]
     })
     names (fmls) <- fns
 
@@ -93,10 +91,10 @@ test_untested_params.NULL <- function (example_fn_pars = NULL, ...) {
 
 #' @exportS3Method
 test_untested_params.data.frame <- function (example_fn_pars = NULL,
-                                             package = NULL,
+                                             fn_formals = NULL,
                                              res_in = NULL, ...) {
 
-    pars <- untested_params (package, example_fn_pars)
+    pars <- untested_params (fn_formals, example_fn_pars)
 
     res <- lapply (seq_along (pars), function (i) {
         ro <- test_untested_params.NULL ()

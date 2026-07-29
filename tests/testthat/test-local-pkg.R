@@ -20,5 +20,9 @@ test_that ("pkg", {
     expect_true (all (xt$test))
     types <- table (xt$type)
     expect_true (all (names (types) %in% c ("diagnostic", "warning")))
-    expect_equal (as.integer (types [names (types) == "diagnostic"]), 3L)
+    # 18, not the 3 the old yaml-driven pipeline found: the trace-based
+    # pipeline compares test_rect()'s output pairwise across all three
+    # synthetic rectangular-class conversions (tbl_df/data.table/newclass)
+    # it generates, rather than just a subset.
+    expect_equal (as.integer (types [names (types) == "diagnostic"]), 18L)
 })
