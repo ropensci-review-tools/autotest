@@ -2,6 +2,7 @@ autotest_single <- function (x = NULL, ...) {
     UseMethod ("autotest_single", x)
 }
 
+#' @exportS3Method
 autotest_single.NULL <- function (x = NULL, ...) {
 
     env <- pkgload::ns_env ("autotest")
@@ -20,6 +21,7 @@ autotest_single.NULL <- function (x = NULL, ...) {
     return (do.call (rbind, res))
 }
 
+#' @exportS3Method
 autotest_single.autotest_obj <- function (x, test_data = NULL, ...) {
 
     if (any (x$params == "NULL")) {
@@ -121,6 +123,7 @@ test_single_length <- function (x = NULL, ...) {
     UseMethod ("test_single_length", x)
 }
 
+#' @exportS3Method
 test_single_length.NULL <- function (x = NULL, ...) {
     report_object (
         type = "dummy",
@@ -131,6 +134,7 @@ test_single_length.NULL <- function (x = NULL, ...) {
     )
 }
 
+#' @exportS3Method
 test_single_length.autotest_obj <- function (x, val_type, test_data = NULL) { # nolint
 
     res <- test_single_length.NULL ()

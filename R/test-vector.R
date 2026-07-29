@@ -2,6 +2,7 @@ autotest_vector <- function (x = NULL, ...) {
     UseMethod ("autotest_vector", x)
 }
 
+#' @exportS3Method
 autotest_vector.NULL <- function (x = NULL, ...) {
 
     env <- pkgload::ns_env ("autotest")
@@ -19,6 +20,7 @@ autotest_vector.NULL <- function (x = NULL, ...) {
     return (do.call (rbind, res))
 }
 
+#' @exportS3Method
 autotest_vector.autotest_obj <- function (x, test_data = NULL, ...) {
 
     ret <- NULL
@@ -64,6 +66,7 @@ test_vec_class_defs <- function (x = NULL, ...) {
     UseMethod ("test_vec_class_defs", x)
 }
 
+#' @exportS3Method
 test_vec_class_defs.NULL <- function (x = NULL, ...) {
     report_object (
         type = "dummy",
@@ -75,6 +78,7 @@ test_vec_class_defs.NULL <- function (x = NULL, ...) {
 }
 
 
+#' @exportS3Method
 test_vec_class_defs.autotest_obj <- function (x, test_data = NULL) { # nolint
 
     # only mutate classes of atomic-mode vectors, for which x$class = NULL
@@ -141,6 +145,7 @@ test_vec_as_list <- function (x = NULL, ...) {
     UseMethod ("test_vec_as_list", x)
 }
 
+#' @exportS3Method
 test_vec_as_list.NULL <- function (x = NULL, ...) {
     report_object (
         type = "dummy",
@@ -151,6 +156,7 @@ test_vec_as_list.NULL <- function (x = NULL, ...) {
     )
 }
 
+#' @exportS3Method
 test_vec_as_list.autotest_obj <- function (x, test_data = NULL) {
 
     res0 <- test_vec_as_list.NULL ()

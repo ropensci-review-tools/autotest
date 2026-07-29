@@ -2,6 +2,7 @@ test_single_char_case_dep <- function (x = NULL, ...) {
     UseMethod ("test_single_char_case_dep", x)
 }
 
+#' @exportS3Method
 test_single_char_case_dep.NULL <- function (x) {
 
     report_object (
@@ -13,6 +14,7 @@ test_single_char_case_dep.NULL <- function (x) {
     )
 }
 
+#' @exportS3Method
 test_single_char_case_dep.autotest_obj <- function (x, test_data = NULL) { # nolint
 
     res <- NULL
@@ -69,6 +71,7 @@ test_single_char_as_random <- function (x = NULL, ...) {
     UseMethod ("test_single_char_as_random", x)
 }
 
+#' @exportS3Method
 test_single_char_as_random.NULL <- function (x = NULL) { # nolint
 
     report_object (
@@ -80,6 +83,7 @@ test_single_char_as_random.NULL <- function (x = NULL) { # nolint
     )
 }
 
+#' @exportS3Method
 test_single_char_as_random.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     res <- test_single_char_as_random.NULL ()

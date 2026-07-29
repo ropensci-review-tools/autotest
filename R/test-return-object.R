@@ -6,6 +6,7 @@ autotest_return <- function (x = NULL, ...) {
     UseMethod ("autotest_return", x)
 }
 
+#' @exportS3Method
 autotest_return.NULL <- function (x = NULL, ...) {
 
     # The NULL dispatch here is different from all others, because no parameters
@@ -28,6 +29,7 @@ autotest_return.NULL <- function (x = NULL, ...) {
     )
 }
 
+#' @exportS3Method
 autotest_return.autotest_obj <- function (x, test_data = NULL) {
 
     rbind (
@@ -42,6 +44,7 @@ test_return_success <- function (x = NULL, ...) {
     UseMethod ("test_return_success", x)
 }
 
+#' @exportS3Method
 test_return_success.NULL <- function (x = NULL, ...) {
 
     op <- "Check that function successfully returns an object"
@@ -55,6 +58,7 @@ test_return_success.NULL <- function (x = NULL, ...) {
 }
 
 
+#' @exportS3Method
 test_return_success.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     ret <- test_return_success.NULL ()
@@ -122,6 +126,7 @@ test_return_is_described <- function (x = NULL, ...) {
     UseMethod ("test_return_is_described", x)
 }
 
+#' @exportS3Method
 test_return_is_described.NULL <- function (x = NULL, ...) {
 
     report_object (
@@ -133,6 +138,7 @@ test_return_is_described.NULL <- function (x = NULL, ...) {
     )
 }
 
+#' @exportS3Method
 test_return_is_described.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     ret <- test_return_is_described.NULL ()
@@ -173,6 +179,7 @@ test_return_has_class <- function (x = NULL, ...) {
     UseMethod ("test_return_has_class", x)
 }
 
+#' @exportS3Method
 test_return_has_class.NULL <- function (x = NULL, ...) {
 
     op <- "Check whether description of return value specifies class"
@@ -185,6 +192,7 @@ test_return_has_class.NULL <- function (x = NULL, ...) {
     )
 }
 
+#' @exportS3Method
 test_return_has_class.autotest_obj <- function (x, test_data = NULL) { # nolint
 
     ret <- test_return_has_class.NULL ()
@@ -259,6 +267,7 @@ test_return_primary_val_matches_desc <- function (x = NULL, ...) { # nolint
     UseMethod ("test_return_primary_val_matches_desc", x)
 }
 
+#' @exportS3Method
 test_return_primary_val_matches_desc.NULL <- function (x = NULL, ...) { # nolint
 
     op <- "Compare class of return value with description"
@@ -271,6 +280,7 @@ test_return_primary_val_matches_desc.NULL <- function (x = NULL, ...) { # nolint
     )
 }
 
+#' @exportS3Method
 test_return_primary_val_matches_desc.autotest_obj <- function (x, test_data = NULL) { # nolint
 
     ret <- test_return_primary_val_matches_desc.NULL ()

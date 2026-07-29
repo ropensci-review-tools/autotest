@@ -848,8 +848,8 @@ split_content_at_commas <- function (x) {
 }
 
 #' reduce vector of comma positions to only those which are not contained within
-#' quotation marks. Also transform result to matrix with each row having [start,
-#' end] positions of sequences between commas.
+#' quotation marks. Also transform result to matrix with each row having
+#' \[start, end\] positions of sequences between commas.
 #'
 #' @param commas vector of positions of all commas
 #' @param s The string containing the commas

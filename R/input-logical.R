@@ -2,6 +2,7 @@ test_negate_logical <- function (x = NULL, ...) {
     UseMethod ("test_negate_logical", x)
 }
 
+#' @exportS3Method
 test_negate_logical.NULL <- function (x = NULL, ...) {
     report_object (
         type = "dummy",
@@ -12,6 +13,7 @@ test_negate_logical.NULL <- function (x = NULL, ...) {
     )
 }
 
+#' @exportS3Method
 test_negate_logical.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     res <- test_negate_logical.NULL ()
@@ -73,6 +75,7 @@ test_int_for_logical <- function (x = NULL, ...) {
     UseMethod ("test_int_for_logical", x)
 }
 
+#' @exportS3Method
 test_int_for_logical.NULL <- function (x = NULL, ...) {
 
     res <- subst_for_logical (subst = "integer")
@@ -84,6 +87,7 @@ test_int_for_logical.NULL <- function (x = NULL, ...) {
     return (res)
 }
 
+#' @exportS3Method
 test_int_for_logical.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     res <- test_int_for_logical.NULL ()
@@ -136,6 +140,7 @@ test_char_for_logical <- function (x = NULL, ...) {
     UseMethod ("test_char_for_logical", x)
 }
 
+#' @exportS3Method
 test_char_for_logical.NULL <- function (x = NULL, ...) {
 
     res <- subst_for_logical (subst = "character")
@@ -144,6 +149,7 @@ test_char_for_logical.NULL <- function (x = NULL, ...) {
     return (res)
 }
 
+#' @exportS3Method
 test_char_for_logical.autotest_obj <- function (x = NULL, test_data = NULL, ...) { # nolint
 
     res <- test_char_for_logical.NULL ()

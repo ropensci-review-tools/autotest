@@ -20,6 +20,7 @@ test_single_int_range <- function (x = NULL, ...) {
     UseMethod ("test_single_int_range", x)
 }
 
+#' @exportS3Method
 test_single_int_range.NULL <- function (x = NULL, ...) {
 
     report_object (
@@ -34,6 +35,7 @@ test_single_int_range.NULL <- function (x = NULL, ...) {
     )
 }
 
+#' @exportS3Method
 test_single_int_range.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     res <- NULL
@@ -347,6 +349,7 @@ test_int_as_dbl <- function (x = NULL, ...) {
     UseMethod ("test_int_as_dbl", x)
 }
 
+#' @exportS3Method
 test_int_as_dbl.NULL <- function (x = NULL, ...) {
     report_object (
         type = "dummy",
@@ -357,6 +360,7 @@ test_int_as_dbl.NULL <- function (x = NULL, ...) {
     )
 }
 
+#' @exportS3Method
 test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # nolint
 
     if (vec) {

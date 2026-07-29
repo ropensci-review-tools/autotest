@@ -6,6 +6,7 @@ test_fns_wo_example <- function (package = NULL, res, fn_names) {
     UseMethod ("test_fns_wo_example", package)
 }
 
+#' @exportS3Method
 test_fns_wo_example.NULL <- function (package = NULL, res, fn_names) {
 
     report_object (
@@ -15,6 +16,7 @@ test_fns_wo_example.NULL <- function (package = NULL, res, fn_names) {
     )
 }
 
+#' @exportS3Method
 test_fns_wo_example.character <- function (package, res, fn_names) {
 
     r0 <- test_fns_wo_example.NULL ()
@@ -127,6 +129,7 @@ test_untested_params <- function (exs = NULL, ...) {
     UseMethod ("test_untested_params", exs)
 }
 
+#' @exportS3Method
 test_untested_params.NULL <- function (exs = NULL, ...) {
 
     report_object (
@@ -140,6 +143,7 @@ test_untested_params.NULL <- function (exs = NULL, ...) {
     )
 }
 
+#' @exportS3Method
 test_untested_params.list <- function (exs = NULL, res_in = NULL, ...) {
 
     pars <- untested_params (exs)
@@ -188,6 +192,7 @@ test_param_documentation <- function (x = NULL, ...) {
     UseMethod ("test_param_documentation", x)
 }
 
+#' @exportS3Method
 test_param_documentation.NULL <- function (x = NULL, ...) {
 
     rbind (
@@ -196,6 +201,7 @@ test_param_documentation.NULL <- function (x = NULL, ...) {
     )
 }
 
+#' @exportS3Method
 test_param_documentation.autotest_obj <- function (x) { # nolint
 
     if (x$test) {

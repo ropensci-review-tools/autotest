@@ -78,7 +78,7 @@ the corresponding message.
 }
 }
 \seealso{
-Other main_functions: 
-\code{\link{autotest_types}()}
+Other main_functions:
+\code{\link[=autotest_types]{autotest_types()}}
 }
 \concept{main_functions}

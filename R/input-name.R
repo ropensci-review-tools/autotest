@@ -2,6 +2,7 @@ test_single_name <- function (x = NULL, ...) {
     UseMethod ("test_single_name", x)
 }
 
+#' @exportS3Method
 test_single_name.NULL <- function (x = NULL, ...) {
     report_object (
         type = "dummy",
@@ -12,6 +13,7 @@ test_single_name.NULL <- function (x = NULL, ...) {
     )
 }
 
+#' @exportS3Method
 test_single_name.autotest_obj <- function (x, test_data = NULL) {
 
     res <- test_single_name.NULL ()

@@ -47,8 +47,8 @@ res <- autotest_yaml (yaml = yaml_list)
 }
 }
 \seealso{
-Other yaml: 
-\code{\link{at_yaml_template}()},
-\code{\link{examples_to_yaml}()}
+Other yaml:
+\code{\link[=at_yaml_template]{at_yaml_template()}},
+\code{\link[=examples_to_yaml]{examples_to_yaml()}}
 }
 \concept{yaml}

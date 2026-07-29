@@ -2,6 +2,7 @@ test_double_is_int <- function (x = NULL, ...) {
     UseMethod ("test_double_is_int", x)
 }
 
+#' @exportS3Method
 test_double_is_int.NULL <- function (x = NULL, ...) {
     report_object (
         type = "dummy",
@@ -12,6 +13,7 @@ test_double_is_int.NULL <- function (x = NULL, ...) {
     )
 }
 
+#' @exportS3Method
 test_double_is_int.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     res <- NULL
@@ -79,6 +81,7 @@ test_double_noise <- function (x = NULL, ...) {
     UseMethod ("test_double_noise", x)
 }
 
+#' @exportS3Method
 test_double_noise.NULL <- function (x = NULL, ...) {
     report_object (
         type = "dummy",
@@ -89,6 +92,7 @@ test_double_noise.NULL <- function (x = NULL, ...) {
     )
 }
 
+#' @exportS3Method
 test_double_noise.autotest_obj <- function (x, test_data = NULL, ...) {
 
     res <- NULL

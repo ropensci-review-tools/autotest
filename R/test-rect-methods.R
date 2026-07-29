@@ -4,6 +4,7 @@ autotest_rectangular <- function (x = NULL, test_data = NULL, ...) {
     UseMethod ("autotest_rectangular", x)
 }
 
+#' @exportS3Method
 autotest_rectangular.NULL <- function (x = NULL, ...) { # nolint
 
     env <- pkgload::ns_env ("autotest")
@@ -21,6 +22,7 @@ autotest_rectangular.NULL <- function (x = NULL, ...) { # nolint
     return (do.call (rbind, res))
 }
 
+#' @exportS3Method
 autotest_rectangular.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     ret <- NULL
@@ -66,6 +68,7 @@ test_rect_as_other <- function (x = NULL, test_data = NULL, ...) {
     UseMethod ("test_rect_as_other", x)
 }
 
+#' @exportS3Method
 test_rect_as_other.NULL <- function (x = NULL, ...) {
 
     report_object (
@@ -78,6 +81,7 @@ test_rect_as_other.NULL <- function (x = NULL, ...) {
 }
 
 
+#' @exportS3Method
 test_rect_as_other.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     ret <- NULL
@@ -121,6 +125,7 @@ test_rect_compare_outputs <- function (x = NULL, test_data = NULL, ...) {
 #' tests listed within the following initial `NULL` method.
 #'
 #' @noRd
+#' @exportS3Method
 test_rect_compare_outputs.NULL <- function (x = NULL, ...) {
 
     report_object (
@@ -140,6 +145,7 @@ test_rect_compare_outputs.NULL <- function (x = NULL, ...) {
     )
 }
 
+#' @exportS3Method
 test_rect_compare_outputs.autotest_obj <- function (x, test_data = NULL) { # nolint
 
     if (x$test) {
@@ -157,6 +163,7 @@ test_rect_extend_class <- function (x = NULL, test_data = NULL, ...) {
     UseMethod ("test_rect_extend_class", x)
 }
 
+#' @exportS3Method
 test_rect_extend_class.NULL <- function (x = NULL, ...) {
 
     report_object (
@@ -168,6 +175,7 @@ test_rect_extend_class.NULL <- function (x = NULL, ...) {
     )
 }
 
+#' @exportS3Method
 test_rect_extend_class.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     if (x$test) {
@@ -185,6 +193,7 @@ test_rect_replace_class <- function (x = NULL, test_data = NULL, ...) {
     UseMethod ("test_rect_replace_class", x)
 }
 
+#' @exportS3Method
 test_rect_replace_class.NULL <- function (x = NULL, ...) { # nolint
 
     report_object (
@@ -196,6 +205,7 @@ test_rect_replace_class.NULL <- function (x = NULL, ...) { # nolint
     )
 }
 
+#' @exportS3Method
 test_rect_replace_class.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     ret <- test_rect_replace_class.NULL ()

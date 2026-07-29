@@ -210,7 +210,7 @@ dummy_compare_rect_outputs <- function (x, test_data) {
     return (res)
 }
 
-#' Change class of params [[i]] to other rectangular classes and capture
+#' Change class of params \[\[i\]\] to other rectangular classes and capture
 #' resultant return values in `this_env`
 #' @noRd
 pass_rect_as_other <- function (x, test_data = NULL) {
