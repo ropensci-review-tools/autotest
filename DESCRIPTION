@@ -37,10 +37,8 @@ Suggests:
     roxygen2,
     tidyr,
     usethis
-VignetteBuilder: 
+VignetteBuilder:
     knitr
-Remotes:
-    mpadge/typetracer
 Encoding: UTF-8
 Language: en-GB
 LazyData: true

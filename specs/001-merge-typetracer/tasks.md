@@ -133,7 +133,7 @@ git_hash: 273bf8b5c03cab47d5d2b45a5d34c92db97c1b7b
   still pass unchanged.
 
 ## T001-10: Update `DESCRIPTION` and `codemeta.json`
-- [ ] T001-10: In `DESCRIPTION`, remove the `Remotes: mpadge/typetracer`
+- [x] T001-10: In `DESCRIPTION`, remove the `Remotes: mpadge/typetracer`
   line (the `trace_source`/`call_env` features relied on are already in
   typetracer's CRAN release, per `plan.md`). Confirm the `typetracer`
   entry under `Imports:` remains. Regenerate `codemeta.json` (e.g. via
