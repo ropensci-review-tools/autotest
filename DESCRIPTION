@@ -36,6 +36,8 @@ Suggests:
     roxygen2,
     tidyr,
     usethis
+Remotes:
+    mpadge/typetracer
 VignetteBuilder:
     knitr
 Encoding: UTF-8
