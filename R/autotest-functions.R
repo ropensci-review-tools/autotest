@@ -80,11 +80,22 @@ autotest_package <- function (package = ".",
 
     for (i in seq_along (trace_files)) {
 
+        trace_data <- readRDS (trace_files [i])
+
+        # Traces from the package's own test suite are used only to enrich
+        # 'fn_pars' with type information (above); mutation/fuzz testing
+        # itself is only ever driven by example-derived traces, because
+        # test-suite calls may be deliberately designed to trigger errors,
+        # which would otherwise appear here as spurious autotest failures.
+        if (!identical (trace_data$trace_source, "examples")) {
+            next
+        }
+
         res <- rbind (
             res,
             autotest_single_trace (package,
                 pkg_dir,
-                readRDS (trace_files [i]),
+                trace_data,
                 fn_pars,
                 test = test,
                 test_data = test_data,

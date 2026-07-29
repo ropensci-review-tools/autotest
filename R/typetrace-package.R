@@ -29,8 +29,9 @@ autotest_trace_package <- function (package,
         args <- list (package = package)
     }
     if (!is.null (functions)) {
-        args$functions = functions
+        args$functions <- functions
     }
+    args$types <- c ("examples", "tests")
 
     traces <- do.call (typetracer::trace_package, args)
 
@@ -48,9 +49,10 @@ include_functions <- function (package, functions = NULL, exclude = NULL) {
         if (!all (fn_arg %in% fns)) {
             fn_arg <- fn_arg [which (!fn_arg %in% fns)]
             stop ("The following functions are not in the namespace of ",
-                  "package:", package, ": [",
-                  paste0 (fn_arg, collapse = ", "), "]",
-                  call. = FALSE)
+                "package:", package, ": [",
+                paste0 (fn_arg, collapse = ", "), "]",
+                call. = FALSE
+            )
         }
     }
 
@@ -79,7 +81,7 @@ get_unique_fn_pars <- function (traces) {
 
     par_types <- lapply (seq (nrow (fn_pars)), function (i) {
         index <- which (traces$fn_name == fn_pars$fn_name [i] &
-                        traces$par_name == fn_pars$par_name [i])
+            traces$par_name == fn_pars$par_name [i])
         onecol <- function (traces, index, what = "classes") {
             res <- traces [[what]] [index]
             if (is.list (res)) {

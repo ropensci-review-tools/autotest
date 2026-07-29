@@ -7,7 +7,7 @@ git_hash: 273bf8b5c03cab47d5d2b45a5d34c92db97c1b7b
 # Tasks: merge-typetracer
 
 ## T001-1: Confirm typetracer's trace-provenance API is sufficient
-- [ ] T001-1: In the sibling `typetracer` source at
+- [x] T001-1: In the sibling `typetracer` source at
   `/data/mega/code/repos/pre-processing-r/typetracer`, read
   `R/trace-package.R`, `R/load-and-clear-traces.R`, and `R/tracer-define.R`
   in full (not just grep hits). Confirm that `trace_source`
@@ -26,7 +26,7 @@ git_hash: 273bf8b5c03cab47d5d2b45a5d34c92db97c1b7b
   section (mark each resolved).
 
 ## T001-2: Pass explicit `types = c("examples", "tests")` through to `trace_package()`
-- [ ] T001-2: In `R/typetrace-package.R`, update `autotest_trace_package()`
+- [x] T001-2: In `R/typetrace-package.R`, update `autotest_trace_package()`
   to explicitly pass `types = c("examples", "tests")` to
   `typetracer::trace_package()` (rather than relying on the default), per
   the confirmation from T001-1. Verify the `Sys.setenv`/`Sys.unsetenv`
@@ -35,7 +35,7 @@ git_hash: 273bf8b5c03cab47d5d2b45a5d34c92db97c1b7b
   `list.files(get_typetrace_dir(), pattern = "^typetrace\\_.*\\.Rds$")`.
 
 ## T001-3: Restrict mutation/fuzz testing to example-sourced traces
-- [ ] T001-3: In `R/autotest-functions.R`, update `autotest_package()`'s
+- [x] T001-3: In `R/autotest-functions.R`, update `autotest_package()`'s
   loop over `trace_files` (or `autotest_single_trace()` itself) so that
   `autotest_rectangular()`, `autotest_vector()`, `autotest_single()`, and
   `autotest_return()` are only invoked for trace files/trace_data whose
