@@ -15,7 +15,6 @@ BugReports: https://github.com/ropensci-review-tools/autotest/issues
 Imports:
     cli,
     data.table,
-    digest,
     here,
     magrittr,
     memoise,

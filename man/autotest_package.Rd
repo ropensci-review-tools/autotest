@@ -63,8 +63,9 @@ specification of each test.
 Some columns may contain NA values, as explained in the Note.
 }
 \description{
-Automatically test an entire package by converting examples to \code{yaml} format
-and submitting each to the \link{autotest_single_trace} function.
+Automatically test an entire package by tracing calls made in its
+documented examples (and, for local source packages, its test suite) with
+\pkg{typetracer}, then testing each traced function call in turn.
 }
 \note{
 Some columns may contain NA values, including:

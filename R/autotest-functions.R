@@ -1,7 +1,8 @@
 #' autotest_package
 #'
-#' Automatically test an entire package by converting examples to `yaml` format
-#' and submitting each to the \link{autotest_single_trace} function.
+#' Automatically test an entire package by tracing calls made in its
+#' documented examples (and, for local source packages, its test suite) with
+#' \pkg{typetracer}, then testing each traced function call in turn.
 #'
 #' @param package Name of package, as either
 #' \enumerate{

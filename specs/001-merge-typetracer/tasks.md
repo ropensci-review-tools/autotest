@@ -142,7 +142,7 @@ git_hash: 273bf8b5c03cab47d5d2b45a5d34c92db97c1b7b
   from T001-4).
 
 ## T001-11: Final verification pass
-- [ ] T001-11: With T001-1 through T001-10 complete, run
+- [x] T001-11: With T001-1 through T001-10 complete, run
   `devtools::check()` (or the project's standard `R CMD check` /
   pre-commit invocation) on the `typetracer` branch and confirm: no
   `ERROR`/`WARNING` related to the changes in this stage, the full test
