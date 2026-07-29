@@ -1,0 +1,41 @@
+# HOWTO generate personal token on codeberg:
+#   1. Personal settings -> Applications -> Generate new token
+#   2. Grant access to repo read/write
+#
+# TODO on github:
+# Store all necessary variables as secrets, including passwords with secret
+# names as specified below:
+# - UNAME, EMAIL for git config
+# - CODEBERG for codeberg.org token
+# - CODEFLOW for codeflow.com token
+
+name: push-to-elsewhere
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  push-to-elsehwere:
+    runs-on: ubuntu-latest
+
+    # will only push *from* main
+    if: ${{ github.ref == 'refs/heads/main' }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Git setup
+      run: |
+          git config --global user.name "ropensci"
+          git config --global user.email "noreply@ropensci.org"
+          git clone https://github.com/ropensci-review-tools/autotest.git
+          git fetch --unshallow origin
+          git remote add codeberg https://${{secrets.UNAME}}:${{secrets.CODEBERG}}@codeberg.org/ropensci-review-tools/autotest.git
+          git push --tags codeberg main
+          git remote add codefloe https://${{secrets.UNAME}}:${{secrets.CODEFLOE}}@codefloe.com/ropensci-review-tools/autotest.git
+          git push --tags codefloe main

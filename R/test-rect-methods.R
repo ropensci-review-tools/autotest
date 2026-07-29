@@ -4,6 +4,7 @@ autotest_rectangular <- function (x = NULL, test_data = NULL, ...) {
     UseMethod ("autotest_rectangular", x)
 }
 
+#' @exportS3Method
 autotest_rectangular.NULL <- function (x = NULL, ...) { # nolint
 
     env <- pkgload::ns_env ("autotest")
@@ -14,12 +15,14 @@ autotest_rectangular.NULL <- function (x = NULL, ...) { # nolint
     tests <- grep ("^test\\_rect\\_", tests, value = TRUE)
     tests <- unique (gsub ("\\..*$", "", tests))
 
-    res <- lapply (tests, function (i)
-                   do.call (paste0 (i, ".NULL"), list (NULL)))
+    res <- lapply (tests, function (i) {
+        do.call (paste0 (i, ".NULL"), list (NULL))
+    })
 
     return (do.call (rbind, res))
 }
 
+#' @exportS3Method
 autotest_rectangular.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     ret <- NULL
@@ -35,11 +38,14 @@ autotest_rectangular.autotest_obj <- function (x, test_data = NULL, ...) { # nol
         x$class <- NULL
         if (names (x$params) [r] %in% names (x$classes)) {
 
-            x$class <- x$classes [[match (names (x$params) [r],
-                                          names (x$classes))]]
+            x$class <- x$classes [[match (
+                names (x$params) [r],
+                names (x$classes)
+            )]]
             # then only proceed if class is not explicitly restricted:
-            if (!x$class %in% c ("data.table", "tbl_df", "data.table"))
+            if (!x$class %in% c ("data.table", "tbl_df", "data.table")) {
                 next
+            }
         }
 
         ret <- rbind (ret, test_rect_as_other (x, test_data))
@@ -62,16 +68,20 @@ test_rect_as_other <- function (x = NULL, test_data = NULL, ...) {
     UseMethod ("test_rect_as_other", x)
 }
 
+#' @exportS3Method
 test_rect_as_other.NULL <- function (x = NULL, ...) {
 
-    report_object (type = "dummy",
-                   test_name = "rect_as_other",
-                   parameter_type = "rectangular",
-                   operation = "Convert one rectangular class to another",
-                   content = "check for error/warning messages")
+    report_object (
+        type = "dummy",
+        test_name = "rect_as_other",
+        parameter_type = "rectangular",
+        operation = "Convert one rectangular class to another",
+        content = "check for error/warning messages"
+    )
 }
 
 
+#' @exportS3Method
 test_rect_as_other.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     ret <- NULL
@@ -87,8 +97,9 @@ test_rect_as_other.autotest_obj <- function (x, test_data = NULL, ...) { # nolin
     }
 
     ret <- these_tests [which (!these_tests$test), ]
-    if (nrow (ret) == 0)
+    if (nrow (ret) == 0) {
         ret <- NULL
+    }
     these_tests <- these_tests [which (these_tests$test), ]
 
     if (x$test) {
@@ -114,25 +125,34 @@ test_rect_compare_outputs <- function (x = NULL, test_data = NULL, ...) {
 #' tests listed within the following initial `NULL` method.
 #'
 #' @noRd
+#' @exportS3Method
 test_rect_compare_outputs.NULL <- function (x = NULL, ...) {
 
-    report_object (type = "dummy",
-            test_name = c ("rect_compare_dims",
-                           "rect_compare_col_names",
-                           "rect_compare_col_structure"),
-            parameter_type = "rectangular",
-            operation = "Convert one rectangular class to another",
-            content = c ("expect dimensions are same ",
-                         "expect column names are retained ",
-                         "expect all columns retain identical structure "))
+    report_object (
+        type = "dummy",
+        test_name = c (
+            "rect_compare_dims",
+            "rect_compare_col_names",
+            "rect_compare_col_structure"
+        ),
+        parameter_type = "rectangular",
+        operation = "Convert one rectangular class to another",
+        content = c (
+            "expect dimensions are same ",
+            "expect column names are retained ",
+            "expect all columns retain identical structure "
+        )
+    )
 }
 
+#' @exportS3Method
 test_rect_compare_outputs.autotest_obj <- function (x, test_data = NULL) { # nolint
 
-    if (x$test)
+    if (x$test) {
         ret <- compare_rect_outputs (x, test_data)
-    else
+    } else {
         ret <- dummy_compare_rect_outputs (x, test_data)
+    }
 
     return (ret)
 }
@@ -143,21 +163,26 @@ test_rect_extend_class <- function (x = NULL, test_data = NULL, ...) {
     UseMethod ("test_rect_extend_class", x)
 }
 
+#' @exportS3Method
 test_rect_extend_class.NULL <- function (x = NULL, ...) {
 
-    report_object (type = "dummy",
-                   test_name = "extend_rect_class",
-                   parameter_type = "rectangular",
-                   operation = "Extend existent class with new class",
-                   content = "(Should yield same result)")
+    report_object (
+        type = "dummy",
+        test_name = "extend_rect_class",
+        parameter_type = "rectangular",
+        operation = "Extend existent class with new class",
+        content = "(Should yield same result)"
+    )
 }
 
+#' @exportS3Method
 test_rect_extend_class.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
-    if (x$test)
+    if (x$test) {
         res <- do_extend_rect_class_struct (x)
-    else
+    } else {
         res <- dummy_extend_rect_class (x)
+    }
 
     return (res)
 }
@@ -168,15 +193,19 @@ test_rect_replace_class <- function (x = NULL, test_data = NULL, ...) {
     UseMethod ("test_rect_replace_class", x)
 }
 
+#' @exportS3Method
 test_rect_replace_class.NULL <- function (x = NULL, ...) { # nolint
 
-    report_object (type = "dummy",
-                   test_name = "replace_rect_class",
-                   parameter_type = "rectangular",
-                   operation = "Replace class with new class",
-                   content = "(Should yield same result)")
+    report_object (
+        type = "dummy",
+        test_name = "replace_rect_class",
+        parameter_type = "rectangular",
+        operation = "Replace class with new class",
+        content = "(Should yield same result)"
+    )
 }
 
+#' @exportS3Method
 test_rect_replace_class.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     ret <- test_rect_replace_class.NULL ()
@@ -194,15 +223,17 @@ test_rect_replace_class.autotest_obj <- function (x, test_data = NULL, ...) { # 
         f <- tempfile (fileext = ".txt")
         msgs <- catch_all_msgs (f, x$fn, x$params)
 
-        if (!null_or_not (msgs, "error"))
+        if (!null_or_not (msgs, "error")) {
             ret <- NULL
-        else {
+        } else {
             msgs$parameter <- rep (names (x$params) [x$i], nrow (msgs))
             ret$type <- "diagnostic"
-            ret$content <- paste0 ("Function [",
-                               x$fn,
-                               "] does not error when class structure of [",
-                               this_class, "] is removed.")
+            ret$content <- paste0 (
+                "Function [",
+                x$fn,
+                "] does not error when class structure of [",
+                this_class, "] is removed."
+            )
         }
     }
 

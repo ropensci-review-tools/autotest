@@ -15,17 +15,19 @@ match_brackets <- function (x, curly = FALSE) {
     brseq <- bracket_sequences (x, open_sym, close_sym, both_sym)
     br_open <- brseq$br_open
     br_closed <- brseq$br_closed
-    if (length (br_open) == 0 & length (br_closed) == 0)
+    if (length (br_open) == 0 & length (br_closed) == 0) {
         return (x)
-    else if (any (is.na (br_open)) & any (is.na (br_closed)))
-        return (NULL) # error in parsing brackets
+    } else if (any (is.na (br_open)) & any (is.na (br_closed))) {
+        return (NULL)
+    } # error in parsing brackets
 
     x <- match_one_brackets (x, br_open, br_closed, collapse_sym)
 
     # catch instances where curly brackets are only used on first condition,
     # with second condition being a single line
-    if (curly)
+    if (curly) {
         x <- catch_curly_else (x)
+    }
 
     return (x)
 }
@@ -39,17 +41,23 @@ match_one_brackets <- function (x, br_open, br_closed, collapse_sym) {
         xmid <- x [br_open [i]:br_closed [i]]
         if (grepl ("\\{\\s?$", xmid [1])) {
             # join line after opening curly bracket
-            xmid <- c (paste0 (xmid [1:2], collapse = " "),
-                       xmid [3:length (xmid)])
+            xmid <- c (
+                paste0 (xmid [1:2], collapse = " "),
+                xmid [3:length (xmid)]
+            )
         }
         if (grepl ("^\\s?\\}", xmid [length (xmid)])) {
             # join line before closing curly
-            if (length (xmid) > 2)
-                xmid <- c (xmid [1:(length (xmid) - 2)],
-                           paste0 (xmid [(length (xmid) - 1):length (xmid)],
-                                   collapse = " "))
-            else
+            if (length (xmid) > 2) {
+                xmid <- c (
+                    xmid [1:(length (xmid) - 2)],
+                    paste0 (xmid [(length (xmid) - 1):length (xmid)],
+                        collapse = " "
+                    )
+                )
+            } else {
                 xmid <- paste0 (xmid, collapse = " ")
+            }
         }
         # plus any ggplot-type lines with terminal "+". Formulae can also end
         # with "+", so presume only "ggplot" commands will have this, and grep
@@ -60,14 +68,16 @@ match_one_brackets <- function (x, br_open, br_closed, collapse_sym) {
             rms <- NULL
             for (j in index) {
                 if (j < length (xmid)) {
-                        xmid [j + 1] <- paste0 (xmid [j],
-                                                xmid [j + 1],
-                                                collapse = " ")
-                        rms <- c (rms, j)
+                    xmid [j + 1] <- paste0 (xmid [j],
+                        xmid [j + 1],
+                        collapse = " "
+                    )
+                    rms <- c (rms, j)
                 }
             }
-            if (!is.null (rms))
+            if (!is.null (rms)) {
                 xmid <- xmid [-rms]
+            }
         }
 
         x [br_closed [i]] <- paste0 (xmid, collapse = collapse_sym)
@@ -89,8 +99,9 @@ rm_intervening_lines <- function (x, br_open, br_closed) {
 
     if (length (br_open) > 0) {
 
-        index <- unlist (lapply (seq_along (br_open), function (i)
-                                 br_open [i]:(br_closed [i] - 1)))
+        index <- unlist (lapply (seq_along (br_open), function (i) {
+            br_open [i]:(br_closed [i] - 1)
+        }))
         index2 <- (index - 1) [index > 1]
 
         pipe_sym <- "\\\\%>\\\\%$"
@@ -115,8 +126,9 @@ rm_final_ggplus_lines <- function (x, has_gg_pluses) {
 
         index <- grep ("\\+\\s?$", x)
         index2 <- cumsum (c (FALSE, diff (index) > 1))
-        index <- lapply (split (index, f = as.factor (index2)), function (i)
-                         c (i, max (i) + 1))
+        index <- lapply (split (index, f = as.factor (index2)), function (i) {
+            c (i, max (i) + 1)
+        })
 
         for (i in index) {
             x [i [1]] <- paste0 (x [i], collapse = " ")
@@ -134,7 +146,7 @@ catch_curly_else <- function (x) {
     if (length (index) > 0) {
         for (i in index) {
             x [i] <- paste0 (x [i], " ", x [i + 1])
-            x <- x [- (i + 1)]
+            x <- x [-(i + 1)]
         }
     }
 
@@ -152,25 +164,30 @@ quote_sequences <- function (x) {
     qts <- gregexpr ("\\\"|\\\'", x)
     qts_not_esc <- gregexpr ("'", x)
     qts <- lapply (seq_along (qts), function (i) {
-                   if (qts [[i]] [1] > 0) {
-                       qts [[i]] <- qts [[i]] [which (!qts [[i]] %in%
-                                                      qts_not_esc [[i]])]
-                   }
-                   if (length (qts [[i]]) == 0)
-                       qts [[i]] <- -1L
-                   return (qts [[i]])
-                              })
-    ln_nums <- lapply (seq_along (qts), function (i)
-                       rep (i, length (qts [[i]])))
+        if (qts [[i]] [1] > 0) {
+            qts [[i]] <- qts [[i]] [which (!qts [[i]] %in%
+                qts_not_esc [[i]])]
+        }
+        if (length (qts [[i]]) == 0) {
+            qts [[i]] <- -1L
+        }
+        return (qts [[i]])
+    })
+    ln_nums <- lapply (seq_along (qts), function (i) {
+        rep (i, length (qts [[i]]))
+    })
     qts <- cbind (unlist (ln_nums), unlist (qts))
     qts <- qts [which (qts [, 2] > 0), ]
 
-    if (nrow (qts) == 0L)
+    if (nrow (qts) == 0L) {
         return (NULL)
+    }
 
     index <- seq (nrow (qts) / 2) * 2 - 1
-    qts <- cbind (qts [index, , drop = FALSE],
-                  qts [index + 1, , drop = FALSE])
+    qts <- cbind (
+        qts [index, , drop = FALSE],
+        qts [index + 1, , drop = FALSE]
+    )
     # split sequences which extend across multiple lines:
     index <- which (qts [, 1] != qts [, 3])
     if (length (index) > 0) {
@@ -188,8 +205,9 @@ quote_sequences <- function (x) {
     linenums <- apply (qts, 1, function (i) i [1])
 
     qts <- apply (qts, 1, function (i) as.vector (seq (i [2], i [4])))
-    if (!is.list (qts)) # apply when all vecs have same length
+    if (!is.list (qts)) { # apply when all vecs have same length
         qts <- lapply (apply (qts, 2, function (i) list (i)), unlist)
+    }
     names (qts) <- linenums
 
     return (qts)
@@ -198,10 +216,12 @@ quote_sequences <- function (x) {
 bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
 
     # `gregexpr` return -1 for no match; these are removed here
-    br_open <- lapply (gregexpr (open_sym, x), function (i)
-                       as.integer (i [i >= 0]))
-    br_closed <- lapply (gregexpr (close_sym, x), function (i)
-                       as.integer (i [i >= 0]))
+    br_open <- lapply (gregexpr (open_sym, x), function (i) {
+        as.integer (i [i >= 0])
+    })
+    br_closed <- lapply (gregexpr (close_sym, x), function (i) {
+        as.integer (i [i >= 0])
+    })
 
     # remove any that are inside quotations, like L#44 in stats::spline
     qts <- quote_sequences (x)
@@ -234,7 +254,7 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
                 start_multi_line_quote <- TRUE
             } else if (is.na (qstart_1) && !is.na (qend_1)) {
                 multi_line_quote <- FALSE
-            } 
+            }
 
             if (!multi_line_quote || (multi_line_quote && start_multi_line_quote)) {
 
@@ -242,8 +262,9 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
                     qindex <- seq (max (qstart), nchar (x) [i])
                     start_multi_line_quote <- FALSE
                 } else {
-                    qindex <- unlist (lapply (seq_along (qstart), function (i)
-                                              qstart [i]:qend [i]))
+                    qindex <- unlist (lapply (seq_along (qstart), function (i) {
+                        qstart [i]:qend [i]
+                    }))
                 }
                 if (length (br_open [[i]]) > 0L) {
                     br_open [[i]] <- br_open [[i]] [!br_open [[i]] %in% qindex]
@@ -258,8 +279,10 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
     # examples may have rogue brackets, like in stats::spline, where it arises
     # in a plot axis label (line#62)
     if (length (unlist (br_open)) != length (unlist (br_closed))) {
-        return (list (br_open = NA,
-                      br_closed = NA))
+        return (list (
+            br_open = NA,
+            br_closed = NA
+        ))
     }
 
     # Remove all instances of matched brackets on one line
@@ -277,10 +300,12 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
     # `length` function here. There may also be values of -1 from the initial
     # `gregexpr` above; these need to be ignored here
     br_open2 <- br_closed2 <- NULL
-    for (i in seq (br_open))
+    for (i in seq (br_open)) {
         br_open2 <- c (br_open2, rep (i, length (br_open [[i]])))
-    for (i in seq (br_closed))
+    }
+    for (i in seq (br_closed)) {
         br_closed2 <- c (br_closed2, rep (i, length (br_closed [[i]])))
+    }
 
     # no matching brackets just gives empty lines for all that follows:
     nested <- nested_sequences (br_open2, br_closed2)
@@ -291,8 +316,10 @@ bracket_sequences <- function (x, open_sym, close_sym, both_sym) {
     br_open <- br_open [index]
     br_closed <- br_closed [index]
 
-    list (br_open = br_open,
-          br_closed = br_closed)
+    list (
+        br_open = br_open,
+        br_closed = br_closed
+    )
 }
 
 # return positions of paris of outer matching brackets on one line, as [open1,
@@ -303,17 +330,20 @@ bracket_sequences_one_line <- function (x,
                                         open_sym = "\\(",
                                         close_sym = "\\)") {
 
-    br_open <- lapply (gregexpr (open_sym, x), function (i)
-                       as.integer (i [i >= 0])) [[1]]
-    br_closed <- lapply (gregexpr (close_sym, x), function (i)
-                       as.integer (i [i >= 0])) [[1]]
+    br_open <- lapply (gregexpr (open_sym, x), function (i) {
+        as.integer (i [i >= 0])
+    }) [[1]]
+    br_closed <- lapply (gregexpr (close_sym, x), function (i) {
+        as.integer (i [i >= 0])
+    }) [[1]]
 
     if (length (br_open) > 1 & length (br_closed) > 1) {
         while (br_open [2] < br_closed [1]) {
             br_open <- br_open [-2]
             br_closed <- br_closed [-1]
-            if (length (br_open) < 2)
+            if (length (br_open) < 2) {
                 break
+            }
         }
     }
 
@@ -338,13 +368,16 @@ nested_sequences <- function (br_open, br_closed) {
     i1 <- i2 - 1
     index <- which (br_open [i2] < br_closed [i1])
     if (length (index) > 0) {
-        for (i in index)
+        for (i in index) {
             br_open [i + 1] <- br_open [i]
+        }
         br_open <- br_open [-index]
         br_closed <- br_closed [-index]
     }
-    list (br_open = br_open,
-          br_closed = br_closed)
+    list (
+        br_open = br_open,
+        br_closed = br_closed
+    )
 }
 
 # Expressions are multiple lines of code embedded within curly brackets. When
@@ -356,9 +389,10 @@ nested_sequences <- function (br_open, br_closed) {
 parse_expressions <- function (x) {
 
     brseq <- bracket_sequences (x,
-                                open_sym = "\\{",
-                                close_sym = "\\}",
-                                both_sym = "\\{(.+)?\\}")
+        open_sym = "\\{",
+        close_sym = "\\}",
+        both_sym = "\\{(.+)?\\}"
+    )
     br_open <- brseq$br_open
     br_closed <- brseq$br_closed
 
@@ -366,15 +400,17 @@ parse_expressions <- function (x) {
         xmid <- x [br_open [i]:br_closed [i]]
         if (length (xmid) > 2) {
             # rm content up to first curly
-            cstart <- which (vapply (gregexpr ("\\{", xmid), function (i)
-                                     any (i > 0), logical (1))) [1]
+            cstart <- which (vapply (gregexpr ("\\{", xmid), function (i) {
+                any (i > 0)
+            }, logical (1))) [1]
             j <- regexpr ("\\{", xmid [cstart])
             xstart <- substring (xmid [cstart], 1, j)
             xmid [cstart] <- gsub (".*\\{", "", xmid [cstart])
 
             # rm content after last curly
-            cend <- which (vapply (gregexpr ("\\}", xmid), function (i)
-                                   any (i > 0), logical (1)))
+            cend <- which (vapply (gregexpr ("\\}", xmid), function (i) {
+                any (i > 0)
+            }, logical (1)))
             cend <- utils::tail (cend, 1)
             j <- regexpr ("\\}", xmid [cend])
             xend <- substring (xmid [cend], j, nchar (xmid [cend]))
@@ -400,25 +436,32 @@ parse_expressions <- function (x) {
                     brseq <- nested_sequences (br1 [[j]], br2 [[j]])
                     br_end [j] <- brseq$br_closed [1]
                 }
-                xmid_after <- substring (xmid [index],
-                                         br_end + 1,
-                                         nchar (xmid [index]))
+                xmid_after <- substring (
+                    xmid [index],
+                    br_end + 1,
+                    nchar (xmid [index])
+                )
                 index2 <- grep ("^\\s*$", xmid_after)
                 if (length (index2) > 0) {
-                    xmid [index [index2]] <- paste0 (xmid [index [index2]],
-                                                     xmid [index [index2] + 1])
-                    xmid <- xmid [- (index [index2] + 1)]
+                    xmid [index [index2]] <- paste0 (
+                        xmid [index [index2]],
+                        xmid [index [index2] + 1]
+                    )
+                    xmid <- xmid [-(index [index2] + 1)]
                 }
             }
 
             xmid <- match_brackets (c (xstart, match_brackets (xmid), xend),
-                                    curly = TRUE)
+                curly = TRUE
+            )
 
             xfirst <- xlast <- NULL
-            if (br_open [i] > 1)
+            if (br_open [i] > 1) {
                 xfirst <- x [1:(br_open [i] - 1)]
-            if (br_closed [i] < length (x))
+            }
+            if (br_closed [i] < length (x)) {
                 xlast <- x [(br_closed [i] + 1):length (x)]
+            }
 
             x <- c (xfirst, xmid, xlast)
         }
@@ -455,7 +498,7 @@ join_function_lines <- function (x) {
         if (length (defs_on_next_line) > 0) {
             index <- fns [defs_on_next_line]
             x [index] <- paste0 (x [index], x [index + 1])
-            x <- x [- (index + 1)]
+            x <- x [-(index + 1)]
         }
     }
 
@@ -513,11 +556,14 @@ unpipe <- function (x) {
             br2 <- max (gregexpr ("\\)", x [i]) [[1]])
             not_empty <- grepl ("[A-Za-z0-9]", substring (x [i], br1, br2))
             comma <- ""
-            if (not_empty)
+            if (not_empty) {
                 comma <- ", "
-            x [i] <- paste0 (substring (x [i], 1, br1),
-                             "var", i - 1, comma,
-                             substring (x [i], br1 + 1, nchar (x [i])))
+            }
+            x [i] <- paste0 (
+                substring (x [i], 1, br1),
+                "var", i - 1, comma,
+                substring (x [i], br1 + 1, nchar (x [i]))
+            )
         }
     }
     return (x)
@@ -550,17 +596,19 @@ split_piped_lines <- function (x) {
 # numbers of input character vector, `x`.
 match_curlies <- function (x) {
     opens <- vapply (gregexpr ("\\{", x), function (i) {
-                if (all (i <= 0))
-                    return (0L)
-                else
-                    return <- length (i)
-                           }, integer (1))
+        if (all (i <= 0)) {
+            return (0L)
+        } else {
+            return <- length (i)
+        }
+    }, integer (1))
     closes <- vapply (gregexpr ("\\}", x), function (i) {
-                if (all (i <= 0))
-                    return (0L)
-                else
-                    return <- length (i)
-                           }, integer (1))
+        if (all (i <= 0)) {
+            return (0L)
+        } else {
+            return <- length (i)
+        }
+    }, integer (1))
     oc <- cumsum (opens) - cumsum (closes)
     return (which (oc == 0) [1] - 1)
 }

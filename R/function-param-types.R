@@ -19,7 +19,7 @@ get_param_info <- function (trace_data, fn_pars) {
 
     # get parameter classes & types:
     index <- which (fn_pars$fn_name == trace_data$fn_name &
-                    fn_pars$par_name %in% par_names_i)
+        fn_pars$par_name %in% par_names_i)
     fn_pars_i <- fn_pars [index, ]
     fn_pars_i <- fn_pars_i [match (fn_pars_i$par_name, par_names_i), ]
 
@@ -30,19 +30,28 @@ get_param_info <- function (trace_data, fn_pars) {
     # param_types are in [single, vector, tabular]
     param_types <- rep (NA_character_, nrow (fn_pars_i))
 
-    is_single <- vapply (fn_pars_i$length, function (j)
-        all (as.integer (strsplit (j, ",") [[1]]) <= 1L),
-        logical (1L))
+    is_single <- vapply (
+        fn_pars_i$length, function (j) {
+            all (as.integer (strsplit (j, ",") [[1]]) <= 1L)
+        },
+        logical (1L)
+    )
     param_types [which (is_single)] <- "single"
 
-    is_vector <- vapply (fn_pars_i$length, function (j)
-        any (as.integer (strsplit (j, ",") [[1]]) > 1L),
-        logical (1L))
+    is_vector <- vapply (
+        fn_pars_i$length, function (j) {
+            any (as.integer (strsplit (j, ",") [[1]]) > 1L)
+        },
+        logical (1L)
+    )
     param_types [which (is_vector)] <- "vector"
 
-    is_rect <- vapply (trace_data [par_index], function (j)
-        j$typeof == "list" && length (dim (j$par_eval)) == 2,
-        logical (1L))
+    is_rect <- vapply (
+        trace_data [par_index], function (j) {
+            j$typeof == "list" && length (dim (j$par_eval)) == 2
+        },
+        logical (1L)
+    )
     param_types [which (is_rect)] <- "tabular"
 
     # reduce class to first non-generic value only
@@ -66,7 +75,6 @@ get_param_info <- function (trace_data, fn_pars) {
     )
 }
 
-
 # add attributes to elements of `autotest_object` `x` identifying any parameters
 # which are exclusively used as `int`, but not explicitly specified as such
 add_int_attrs <- function (x, int_val) {
@@ -75,8 +83,9 @@ add_int_attrs <- function (x, int_val) {
 
     if (nrow (int_val) > 0) {
         for (p in int_val$par) {
-            if (is.numeric (x$params [[p]]))
+            if (is.numeric (x$params [[p]])) {
                 attr (x$params [[p]], "is_int") <- TRUE
+            }
         }
     }
 

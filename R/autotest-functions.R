@@ -1,4 +1,3 @@
-
 #' autotest_package
 #'
 #' Automatically test an entire package by converting examples to `yaml` format
@@ -81,18 +80,23 @@ autotest_package <- function (package = ".",
 
     for (i in seq_along (trace_files)) {
 
-        res <- rbind (res,
-                      autotest_single_trace (package,
-                                             pkg_dir,
-                                             readRDS (trace_files [i]),
-                                             fn_pars,
-                                             test = test,
-                                             test_data = test_data,
-                                             quiet = TRUE))
+        res <- rbind (
+            res,
+            autotest_single_trace (package,
+                pkg_dir,
+                readRDS (trace_files [i]),
+                fn_pars,
+                test = test,
+                test_data = test_data,
+                quiet = TRUE
+            )
+        )
 
         if (!quiet) {
-            message (cli::col_green (cli::symbol$tick, " [",
-                                     i, " / ", length (trace_files), "]"))
+            message (cli::col_green (
+                cli::symbol$tick, " [",
+                i, " / ", length (trace_files), "]"
+            ))
         }
     }
 
@@ -100,11 +104,12 @@ autotest_package <- function (package = ".",
 
     res <- res [which (!duplicated (res)), ]
 
-    #res <- test_untested_params (exs, res)
-    #res <- test_fns_wo_example (package, res, names (exs))
+    # res <- test_untested_params (exs, res)
+    # res <- test_fns_wo_example (package, res, names (exs))
 
-    if (is.null (res))
+    if (is.null (res)) {
         return (res)
+    }
 
     attr (res, "package") <- package
 
@@ -129,7 +134,7 @@ autotest_package <- function (package = ".",
 get_package_loc <- function (package) {
 
     pkg_dir <- tryCatch (find.package (package), error = function (e) NULL)
-    
+
     if (is.null (pkg_dir)) {
         if (!dir.exists (package)) {
             stop ("Directory ['", package, "'] does not exist", call. = FALSE)
@@ -168,16 +173,18 @@ autotest_single_trace <- function (package,
 
     param_info <- get_param_info (trace_data, fn_pars)
 
-    test_obj <- autotest_obj (package = package,
-                              package_loc = pkg_dir,
-                              fn_name = trace_data$fn_name,
-                              parameters = param_info$value,
-                              parameter_types = param_info$type,
-                              class = param_info$class,
-                              classes = param_info$class,
-                              env = new.env (),
-                              test = test,
-                              quiet = quiet)
+    test_obj <- autotest_obj (
+        package = package,
+        package_loc = pkg_dir,
+        fn_name = trace_data$fn_name,
+        parameters = param_info$value,
+        parameter_types = param_info$type,
+        class = param_info$class,
+        classes = param_info$class,
+        env = new.env (),
+        test = test,
+        quiet = quiet
+    )
 
     int_val <- data.frame (
         fn = trace_data$fn_name,
@@ -238,13 +245,15 @@ autotest_single_trace <- function (package,
 #' @export
 autotest_types <- function (notest = NULL) {
 
-    res <- rbind (autotest_rectangular (),
-                  autotest_vector (),
-                  autotest_single (),
-                  autotest_return (),
-                  test_untested_params (),
-                  test_fns_wo_example (),
-                  test_param_documentation ())
+    res <- rbind (
+        autotest_rectangular (),
+        autotest_vector (),
+        autotest_single (),
+        autotest_return (),
+        test_untested_params (),
+        test_fns_wo_example (),
+        test_param_documentation ()
+    )
     res <- tibble::tibble (res)
 
     class (res) <- c ("autotest_package", class (res))
@@ -252,9 +261,11 @@ autotest_types <- function (notest = NULL) {
     if (!is.null (notest)) {
         index <- match (notest, res$test_name)
         if (any (is.na (index))) {
-            message ("notest = [",
-                     paste0 (notest [which (is.na (index))], collapse = ", "),
-                     "] does not match any test_name values")
+            message (
+                "notest = [",
+                paste0 (notest [which (is.na (index))], collapse = ", "),
+                "] does not match any test_name values"
+            )
             index <- index [which (!is.na (index))]
         }
         res$test [index] <- FALSE
@@ -265,10 +276,14 @@ autotest_types <- function (notest = NULL) {
 
 order_at_rows <- function (x) {
 
-    type_order <- c ("error", "warning", "diagnostic", "message",
-                     "dummy", "no_test")
-    index <- data.frame (index = seq (nrow (x)),
-                         type = match (x$type, type_order))
+    type_order <- c (
+        "error", "warning", "diagnostic", "message",
+        "dummy", "no_test"
+    )
+    index <- data.frame (
+        index = seq (nrow (x)),
+        type = match (x$type, type_order)
+    )
     index <- index [order (index$type), ]
     x <- x [index$index, ]
     rownames (x) <- NULL

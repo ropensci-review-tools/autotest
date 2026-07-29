@@ -1,5 +1,4 @@
-
-context("local source package")
+context ("local source package")
 
 source ("../local-pkg.R")
 # functions to make local package, including
@@ -10,16 +9,16 @@ source ("../local-pkg.R")
 # - make_test_rect (d)
 # - make_namespace (d)
 
-test_that("pkg", {
+test_that ("pkg", {
 
-              package <- make_pkg ()
-              xf <- autotest_package (package = package)
-              expect_true (all (xf$test))
-              expect_true (all (xf$type == "dummy"))
+    package <- make_pkg ()
+    xf <- autotest_package (package = package)
+    expect_true (all (xf$test))
+    expect_true (all (xf$type == "dummy"))
 
-              xt <- autotest_package (package = package, test = TRUE)
-              expect_true (all (xt$test))
-              types <- table (xt$type)
-              expect_true (all (names (types) %in% c ("diagnostic", "warning")))
-              expect_equal (as.integer (types [names (types) == "diagnostic"]), 3L)
+    xt <- autotest_package (package = package, test = TRUE)
+    expect_true (all (xt$test))
+    types <- table (xt$type)
+    expect_true (all (names (types) %in% c ("diagnostic", "warning")))
+    expect_equal (as.integer (types [names (types) == "diagnostic"]), 3L)
 })

@@ -1,5 +1,3 @@
-
-
 #' expect_autotest_no_testdata
 #'
 #' Expect `autotest_package()` to be clear of errors with no tests switched off
@@ -11,14 +9,15 @@
 expect_autotest_no_testdata <- function (object = NULL) {
 
     x <- autotest_package (here::here (),
-                           test = TRUE)
+        test = TRUE
+    )
 
     chk <- !any (c ("warning", "error") %in% x$type)
 
     testthat::expect (
-                      chk,
-                      sprintf ("`autotest` generates warnings or errors")
-                      )
+        chk,
+        sprintf ("`autotest` generates warnings or errors")
+    )
 
     invisible (x)
 }
@@ -37,15 +36,16 @@ expect_autotest_no_testdata <- function (object = NULL) {
 expect_autotest_testdata <- function (object) {
 
     x <- autotest_package (here::here (),
-                           test = TRUE,
-                           test_data = object)
+        test = TRUE,
+        test_data = object
+    )
 
     chk <- !any (c ("warning", "error") %in% x$type)
 
     testthat::expect (
-                      chk,
-                      sprintf ("`autotest` generates warnings or errors")
-                      )
+        chk,
+        sprintf ("`autotest` generates warnings or errors")
+    )
 
     # Then check that test_data has `note` column with values for all tests
     # switched off:
@@ -62,20 +62,22 @@ expect_autotest_testdata <- function (object) {
             x$note <- object [[i]] [match (xref, tref)]
 
             index <- which (x$type == "no_test")
-            if (length (index) > 0)
+            if (length (index) > 0) {
                 chk <- all (nchar (x$note [index]) > 0)
+            }
         }
     }
-    msg <- paste0 ("Any autotest tests which are switched off should ",
-                   "have explanatory notes in a 'note' column")
+    msg <- paste0 (
+        "Any autotest tests which are switched off should ",
+        "have explanatory notes in a 'note' column"
+    )
     testthat::expect (
-                      chk,
-                      sprintf (msg)
-                      )
+        chk,
+        sprintf (msg)
+    )
 
     invisible (x)
 }
-
 
 
 #' expect_autotest_no_err
@@ -89,16 +91,17 @@ expect_autotest_testdata <- function (object) {
 expect_autotest_no_err <- function (object) {
 
     act <- testthat::quasi_label (rlang::enquo (object),
-                                  arg = "object")
+        arg = "object"
+    )
 
     chk <- !any ("error" %in% act$val$type)
 
     testthat::expect (
-                      chk,
-                      sprintf ("`autotest` generates errors")
-                      )
+        chk,
+        sprintf ("`autotest` generates errors")
+    )
 
-    invisible(act$val)
+    invisible (act$val)
 }
 
 #' expect_autotest_no_warn
@@ -112,16 +115,17 @@ expect_autotest_no_err <- function (object) {
 expect_autotest_no_warn <- function (object) {
 
     act <- testthat::quasi_label (rlang::enquo (object),
-                                  arg = "object")
+        arg = "object"
+    )
 
     chk <- !any ("warning" %in% act$val$type)
 
     testthat::expect (
-                      chk,
-                      sprintf ("`autotest` generates warnings")
-                      )
+        chk,
+        sprintf ("`autotest` generates warnings")
+    )
 
-    invisible(act$val)
+    invisible (act$val)
 }
 
 #' expect_autotest_notes
@@ -135,7 +139,8 @@ expect_autotest_no_warn <- function (object) {
 expect_autotest_notes <- function (object) {
 
     act <- testthat::quasi_label (rlang::enquo (object),
-                                  arg = "object")
+        arg = "object"
+    )
 
     chk <- TRUE
     index <- which (act$val$type == "no_test")
@@ -147,12 +152,14 @@ expect_autotest_notes <- function (object) {
             chk <- all (nchar (notes [index]) > 0)
         }
     }
-    msg <- paste0 ("Any autotest tests which are switched off should ",
-                   "have explanatory notes in a 'note' column")
+    msg <- paste0 (
+        "Any autotest tests which are switched off should ",
+        "have explanatory notes in a 'note' column"
+    )
     testthat::expect (
-                      chk,
-                      sprintf (msg)
-                      )
+        chk,
+        sprintf (msg)
+    )
 
-    invisible(act$val)
+    invisible (act$val)
 }

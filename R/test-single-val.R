@@ -1,8 +1,8 @@
-
 autotest_single <- function (x = NULL, ...) {
     UseMethod ("autotest_single", x)
 }
 
+#' @exportS3Method
 autotest_single.NULL <- function (x = NULL, ...) {
 
     env <- pkgload::ns_env ("autotest")
@@ -14,12 +14,14 @@ autotest_single.NULL <- function (x = NULL, ...) {
     index2 <- grep ("^test\\_(.*)logical", tests)
     tests <- unique (gsub ("\\..*$", "", tests [c (index1, index2)]))
 
-    res <- lapply (tests, function (i)
-                   do.call (paste0 (i, ".NULL"), list (NULL)))
+    res <- lapply (tests, function (i) {
+        do.call (paste0 (i, ".NULL"), list (NULL))
+    })
 
     return (do.call (rbind, res))
 }
 
+#' @exportS3Method
 autotest_single.autotest_obj <- function (x, test_data = NULL, ...) {
 
     if (any (x$params == "NULL")) {
@@ -28,10 +30,12 @@ autotest_single.autotest_obj <- function (x, test_data = NULL, ...) {
 
     f <- tempfile (fileext = ".txt")
     res <- NULL
-    if (x$test)
+    if (x$test) {
         res <- catch_all_msgs (f, x$fn, x$params)
-    if (!is.null (res))
+    }
+    if (!is.null (res)) {
         res$operation <- "normal function call"
+    }
 
     index <- which (x$param_types == "single")
     for (i in index) {
@@ -43,36 +47,46 @@ autotest_single.autotest_obj <- function (x, test_data = NULL, ...) {
 
         if (val_type == "integer") {
 
-            res <- rbind (res,
-                          test_single_int_range (x, test_data),
-                          test_int_as_dbl (x, vec = FALSE, test_data))
+            res <- rbind (
+                res,
+                test_single_int_range (x, test_data),
+                test_int_as_dbl (x, vec = FALSE, test_data)
+            )
 
         } else if (val_type == "numeric") {
 
-            res <- rbind (res,
-                          test_double_is_int (x, test_data),
-                          test_double_noise (x, test_data))
+            res <- rbind (
+                res,
+                test_double_is_int (x, test_data),
+                test_double_noise (x, test_data)
+            )
 
         } else if (val_type == "character") {
 
-            res <- rbind (res,
-                          test_single_char_case_dep (x, test_data),
-                          test_single_char_as_random (x, test_data))
+            res <- rbind (
+                res,
+                test_single_char_case_dep (x, test_data),
+                test_single_char_as_random (x, test_data)
+            )
 
         } else if (val_type == "logical") {
 
-            res <- rbind (res,
-                          test_negate_logical (x, test_data),
-                          test_int_for_logical (x, test_data),
-                          test_char_for_logical (x, test_data))
+            res <- rbind (
+                res,
+                test_negate_logical (x, test_data),
+                test_int_for_logical (x, test_data),
+                test_char_for_logical (x, test_data)
+            )
 
         } else if (val_type %in% c ("name", "formula")) {
 
             res <- rbind (res, test_single_name (x, test_data))
-            if (val_type %in% c ("name", "formula"))
+            if (val_type %in% c ("name", "formula")) {
                 check_vec <- FALSE
-        } else
+            }
+        } else {
             check_vec <- FALSE
+        }
 
         # check response to vector input:
         if (check_vec) {
@@ -87,16 +101,17 @@ single_val_type <- function (x) {
 
     res <- ""
 
-    if (is_int (x))
+    if (is_int (x)) {
         res <- "integer"
-    else if (methods::is (x, "numeric"))
+    } else if (methods::is (x, "numeric")) {
         res <- "numeric"
-    else if (is.character (x))
+    } else if (is.character (x)) {
         res <- "character"
-    else if (is.logical (x))
+    } else if (is.logical (x)) {
         res <- "logical"
-    else if ((methods::is (x, "name") | methods::is (x, "formula")))
+    } else if ((methods::is (x, "name") | methods::is (x, "formula"))) {
         res <- class (x) [1]
+    }
 
     return (res)
 }
@@ -108,14 +123,18 @@ test_single_length <- function (x = NULL, ...) {
     UseMethod ("test_single_length", x)
 }
 
+#' @exportS3Method
 test_single_length.NULL <- function (x = NULL, ...) {
-    report_object (type = "dummy",
-                   test_name = "single_par_as_length_2",
-                   parameter_type = "single integer",
-                   operation = "Length 2 vector for length 1 parameter",
-                   content = "Should trigger message, warning, or error")
+    report_object (
+        type = "dummy",
+        test_name = "single_par_as_length_2",
+        parameter_type = "single integer",
+        operation = "Length 2 vector for length 1 parameter",
+        content = "Should trigger message, warning, or error"
+    )
 }
 
+#' @exportS3Method
 test_single_length.autotest_obj <- function (x, val_type, test_data = NULL) { # nolint
 
     res <- test_single_length.NULL ()
@@ -128,8 +147,9 @@ test_single_length.autotest_obj <- function (x, val_type, test_data = NULL) { # 
         if (length (test_flag) == 1L) {
             res$test <- test_flag
         }
-        if (!x$test)
+        if (!x$test) {
             res$type <- "no_test"
+        }
     }
 
     if (x$test) {
@@ -138,18 +158,21 @@ test_single_length.autotest_obj <- function (x, val_type, test_data = NULL) { # 
         f <- tempfile (fileext = ".txt")
         msgs <- catch_all_msgs (f, x$fn, x$params)
 
-        if (not_null_and_is (msgs, c ("warning", "error")))
-            res <- NULL # function call should warn or error
+        if (not_null_and_is (msgs, c ("warning", "error"))) {
+            res <- NULL
+        } # function call should warn or error
         else {
             res$type <- "diagnostic"
-            res$content <- paste0 ("Parameter [",
-                                   names (x$params) [x$i],
-                                   "] of function [",
-                                   x$fn,
-                                   "] is only used a single ",
-                                   val_type,
-                                   " value, ",
-                                   "but responds to vectors of length > 1")
+            res$content <- paste0 (
+                "Parameter [",
+                names (x$params) [x$i],
+                "] of function [",
+                x$fn,
+                "] is only used a single ",
+                val_type,
+                " value, ",
+                "but responds to vectors of length > 1"
+            )
         }
     }
 

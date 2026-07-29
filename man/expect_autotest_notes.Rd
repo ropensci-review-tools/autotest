@@ -14,10 +14,10 @@ Expect \code{test_data} param of \code{autotest_package} to have additional \cod
 column explaining why tests have been switched off.
 }
 \seealso{
-Other expectations: 
-\code{\link{expect_autotest_no_err}()},
-\code{\link{expect_autotest_no_testdata}()},
-\code{\link{expect_autotest_no_warn}()},
-\code{\link{expect_autotest_testdata}()}
+Other expectations:
+\code{\link[=expect_autotest_no_err]{expect_autotest_no_err()}},
+\code{\link[=expect_autotest_no_testdata]{expect_autotest_no_testdata()}},
+\code{\link[=expect_autotest_no_warn]{expect_autotest_no_warn()}},
+\code{\link[=expect_autotest_testdata]{expect_autotest_testdata()}}
 }
 \concept{expectations}

@@ -34,7 +34,7 @@ more specified functions, to a list of 'autotest' 'yaml' objects to use to
 automatically test package.
 }
 \seealso{
-Other yaml: 
-\code{\link{at_yaml_template}()}
+Other yaml:
+\code{\link[=at_yaml_template]{at_yaml_template()}}
 }
 \concept{yaml}

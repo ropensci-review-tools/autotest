@@ -21,7 +21,7 @@ function.
 List all types of 'autotests' currently implemented.
 }
 \seealso{
-Other main_functions: 
-\code{\link{autotest_package}()}
+Other main_functions:
+\code{\link[=autotest_package]{autotest_package()}}
 }
 \concept{main_functions}

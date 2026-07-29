@@ -2,8 +2,8 @@
 % Please edit documentation in R/autotest-package.R
 \docType{package}
 \name{autotest-package}
+\alias{autotest}
 \alias{autotest-package}
-\alias{_PACKAGE}
 \title{autotest: Automatic Package Testing}
 \description{
 Automatic testing of R packages via a simple YAML schema.
@@ -19,6 +19,11 @@ Useful links:
 }
 \author{
 \strong{Maintainer}: Mark Padgham \email{mark.padgham@email.com} (\href{https://orcid.org/0000-0003-2172-5265}{ORCID})
+
+Authors:
+\itemize{
+  \item Mark Padgham \email{mark.padgham@email.com} (\href{https://orcid.org/0000-0003-2172-5265}{ORCID})
+}
 
 Other contributors:
 \itemize{

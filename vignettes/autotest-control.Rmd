@@ -19,14 +19,14 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  warning = TRUE,
-  message = TRUE,
-  width = 120,
-  comment = "#>",
-  fig.retina = 2,
-  fig.path = "README-"
+knitr::opts_chunk$set (
+    collapse = TRUE,
+    warning = TRUE,
+    message = TRUE,
+    width = 120,
+    comment = "#>",
+    fig.retina = 2,
+    fig.path = "README-"
 )
 ```
 
@@ -173,7 +173,7 @@ xf <- tibble::tibble (
         "return_desc_include_class",
         "return_class_matches_desc",
         rep (c ("par_is_documented", "par_matches_doc"), 4)
-        ),
+    ),
     fn_name = rep ("cor", 15L),
     parameter = c (
         rep ("use", 3L),
@@ -196,13 +196,17 @@ xf <- tibble::tibble (
         "Check that description has return value",
         "Check whether description of return value specifies class",
         "Compare class of return value with description",
-        rep (c ("Check that parameter is documented",
-                "Check that documentation matches class of input parameter"),
-             4L)
-        ),
+        rep (
+            c (
+                "Check that parameter is documented",
+                "Check that documentation matches class of input parameter"
+            ),
+            4L
+        )
+    ),
     content = c (
         rep ("(Should yield same result)", 2L),
-        "Should trigger message, warning, or error", 
+        "Should trigger message, warning, or error",
         rep (NA_character_, 12L)
     ),
     test = rep (TRUE, 15L)
@@ -245,9 +249,11 @@ calling the same function with `test = TRUE`. Doing so yields the following
 results (as an object names `xt` for "true"):
 
 ```{r at-cor-test-dummy, echo = TRUE, eval = FALSE}
-xt <- autotest_package (package = "stats",
-                        functions = "cor",
-                        test = TRUE)
+xt <- autotest_package (
+    package = "stats",
+    functions = "cor",
+    test = TRUE
+)
 print (xt)
 ```
 ```{r print-xt, echo = FALSE, collapse = TRUE}
@@ -259,7 +265,8 @@ xt1 <- tibble::tibble (
     parameter_type = c (rep (NA_character_, 4L), "single character"),
     operation = c (
         rep ("Check that documentation matches class of input parameter", 4L),
-        "upper-case character parameter"),
+        "upper-case character parameter"
+    ),
     content = c (
         rep ("Parameter documentation does not describe class of [integer]", 2L),
         rep ("Parameter documentation does not describe class of [dist]", 2L),
@@ -307,12 +314,14 @@ rows. The following lines demonstrate how to switch off the list-column test
 for all functions and parameters:
 
 ```{r test_data1-dummy, echo = TRUE, eval = FALSE}
-types <- autotest_types()
+types <- autotest_types ()
 types$test [grep ("list_col", types$test_name)] <- FALSE
-xt2 <- autotest_package (package = "stats",
-                         functions = "cor",
-                         test = TRUE,
-                         test_data = types)
+xt2 <- autotest_package (
+    package = "stats",
+    functions = "cor",
+    test = TRUE,
+    test_data = types
+)
 print (xt2)
 ```
 ```{r print-xt2, echo = FALSE, eval = TRUE}
@@ -324,7 +333,8 @@ xt2 <- tibble::tibble (
     parameter_type = c (rep (NA_character_, 4L), "single character"),
     operation = c (
         rep ("Check that documentation matches class of input parameter", 4L),
-        "upper-case character parameter"),
+        "upper-case character parameter"
+    ),
     content = c (
         rep ("Parameter documentation does not describe class of [integer]", 2L),
         rep ("Parameter documentation does not describe class of [dist]", 2L),
@@ -361,13 +371,17 @@ particular functions, starting again with the `xf` data of dummy tests
 generated above.
 
 ```{r test_data2-fakey, echo = TRUE, eval = FALSE}
-xf <- autotest_package (package = "stats",
-                        functions = "cor")
+xf <- autotest_package (
+    package = "stats",
+    functions = "cor"
+)
 xf$test [grepl ("list_col", xf$test_name) & xf$fn_name == "var"] <- FALSE
-xt3 <- autotest_package (package = "stats",
-                         functions = "cor",
-                         test = TRUE,
-                         test_data = xf)
+xt3 <- autotest_package (
+    package = "stats",
+    functions = "cor",
+    test = TRUE,
+    test_data = xf
+)
 print (xt3)
 ```
 ```{r print-xt3, echo = FALSE, eval = TRUE}
@@ -379,7 +393,8 @@ xt3 <- tibble::tibble (
     parameter_type = c (rep (NA_character_, 4L), "single character"),
     operation = c (
         rep ("Check that documentation matches class of input parameter", 4L),
-        "upper-case character parameter"),
+        "upper-case character parameter"
+    ),
     content = c (
         rep ("Parameter documentation does not describe class of [integer]", 2L),
         rep ("Parameter documentation does not describe class of [dist]", 2L),
@@ -484,11 +499,13 @@ they generally should `expect_success()` throughout.
 library (testthat) # as called in your test suite
 # For example, to switch off vector-to-list-column tests:
 test_data <- autotest_types (notest = "vector_to_list_col")
-x <- autotest_package (package = "stats",
-                       functions = "cov",
-                       test = TRUE,
-                       test_data = test_data)
-       
+x <- autotest_package (
+    package = "stats",
+    functions = "cov",
+    test = TRUE,
+    test_data = test_data
+)
+
 expect_success (expect_autotest_no_err (x))
 expect_failure (expect_autotest_no_warn (x)) # should expect_success!!
 ```
@@ -506,9 +523,12 @@ x <- tibble::tibble (
         rep ("single_char_case", 15L)
     ),
     fn_name = c ("var", "cov", "var", rep ("cor", 19L)),
-    parameter = rep (c (
-        "use", "y", "na.rm", "use", "method", "x", "x", "method", "use", "use", "use"),
-        2L),
+    parameter = rep (
+        c (
+            "use", "y", "na.rm", "use", "method", "x", "x", "method", "use", "use", "use"
+        ),
+        2L
+    ),
     parameter_type = c (
         rep (NA_character_, 2L),
         "single logical",
@@ -543,7 +563,7 @@ x <- tibble::tibble (
     test = rep (TRUE, 22L)
 )
 
-       
+
 expect_success (expect_autotest_no_err (x))
 expect_failure (expect_autotest_no_warn (x)) # should expect_success!!
 ```
@@ -566,7 +586,7 @@ column containing explanations of why each test has been switched off:
 ```{r testthat-demo-success}
 x$note <- ""
 x [grep ("vector_to_list", x$test_name), "note"] <-
-  "these tests have been switched off because ..."
+    "these tests have been switched off because ..."
 
 expect_success (expect_autotest_notes (x))
 ```

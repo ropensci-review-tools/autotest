@@ -1,8 +1,8 @@
-
 autotest_vector <- function (x = NULL, ...) {
     UseMethod ("autotest_vector", x)
 }
 
+#' @exportS3Method
 autotest_vector.NULL <- function (x = NULL, ...) {
 
     env <- pkgload::ns_env ("autotest")
@@ -13,12 +13,14 @@ autotest_vector.NULL <- function (x = NULL, ...) {
     tests <- grep ("^test\\_vec\\_", tests, value = TRUE)
     tests <- unique (gsub ("\\..*$", "", tests))
 
-    res <- lapply (tests, function (i)
-                   do.call (paste0 (i, ".NULL"), list (NULL)))
+    res <- lapply (tests, function (i) {
+        do.call (paste0 (i, ".NULL"), list (NULL))
+    })
 
     return (do.call (rbind, res))
 }
 
+#' @exportS3Method
 autotest_vector.autotest_obj <- function (x, test_data = NULL, ...) {
 
     ret <- NULL
@@ -35,17 +37,20 @@ autotest_vector.autotest_obj <- function (x, test_data = NULL, ...) {
         params_v <- x$params
         if (x$test) {
             msgs <- catch_all_msgs (f, x$fn, params_v)
-            ret <- add_msg_output (ret, msgs, types = "warning",
-                                   operation = "normal function call")
+            ret <- add_msg_output (ret, msgs,
+                types = "warning",
+                operation = "normal function call"
+            )
         }
 
         if (typeof (params_v [[v]]) == "integer" &
             !is.factor (params_v [[v]])) {
             ret <- rbind (ret, test_int_as_dbl (x,
-                                                vec = TRUE,
-                                                test_data = test_data))
+                vec = TRUE,
+                test_data = test_data
+            ))
         } else if (typeof (params_v [[v]]) == "double" &
-                   !is.factor (params_v [[v]])) {
+            !is.factor (params_v [[v]])) {
             ret <- rbind (ret, test_double_noise (x, test_data = test_data))
         }
 
@@ -61,20 +66,25 @@ test_vec_class_defs <- function (x = NULL, ...) {
     UseMethod ("test_vec_class_defs", x)
 }
 
+#' @exportS3Method
 test_vec_class_defs.NULL <- function (x = NULL, ...) {
-    report_object (type = "dummy",
-                   test_name = "vector_custom_class",
-                   parameter_type = "vector",
-                   operation = "Custom class definitions for vector input",
-                   content = "(Should yield same result)")
+    report_object (
+        type = "dummy",
+        test_name = "vector_custom_class",
+        parameter_type = "vector",
+        operation = "Custom class definitions for vector input",
+        content = "(Should yield same result)"
+    )
 }
 
 
+#' @exportS3Method
 test_vec_class_defs.autotest_obj <- function (x, test_data = NULL) { # nolint
 
     # only mutate classes of atomic-mode vectors, for which x$class = NULL
-    if (!is.null (x$class))
+    if (!is.null (x$class)) {
         return (NULL)
+    }
 
     res0 <- test_vec_class_defs.NULL ()
     res0$fn_name <- x$fn
@@ -84,8 +94,9 @@ test_vec_class_defs.autotest_obj <- function (x, test_data = NULL) { # nolint
         if (length (test_flag) == 1L) {
             res0$test <- test_flag
         }
-        if (!res0$test)
+        if (!res0$test) {
             res0$type <- "no_test"
+        }
         x$test <- res0$test
     }
 
@@ -104,14 +115,16 @@ test_vec_class_defs.autotest_obj <- function (x, test_data = NULL) { # nolint
                 res <- NULL
                 res0$type <- "diagnostic"
                 for (e in index) {
-                    res0$content <- paste0 ("Function [",
-                                            x$fn,
-                                            "] errors on vector columns with ",
-                                            "different classes when ",
-                                            "submitted as ",
-                                            names (x$params) [x$i],
-                                            " Error message: ",
-                                            msgs$content [e])
+                    res0$content <- paste0 (
+                        "Function [",
+                        x$fn,
+                        "] errors on vector columns with ",
+                        "different classes when ",
+                        "submitted as ",
+                        names (x$params) [x$i],
+                        " Error message: ",
+                        msgs$content [e]
+                    )
 
                     res <- rbind (res, res0)
                 }
@@ -132,14 +145,18 @@ test_vec_as_list <- function (x = NULL, ...) {
     UseMethod ("test_vec_as_list", x)
 }
 
+#' @exportS3Method
 test_vec_as_list.NULL <- function (x = NULL, ...) {
-    report_object (type = "dummy",
-                   test_name = "vector_to_list_col",
-                   parameter_type = "vector",
-                   operation = "Convert vector input to list-columns",
-                   content = "(Should yield same result)")
+    report_object (
+        type = "dummy",
+        test_name = "vector_to_list_col",
+        parameter_type = "vector",
+        operation = "Convert vector input to list-columns",
+        content = "(Should yield same result)"
+    )
 }
 
+#' @exportS3Method
 test_vec_as_list.autotest_obj <- function (x, test_data = NULL) {
 
     res0 <- test_vec_as_list.NULL ()
@@ -150,8 +167,9 @@ test_vec_as_list.autotest_obj <- function (x, test_data = NULL) {
         if (length (test_flag) == 1L) {
             res0$test <- test_flag
         }
-        if (!res0$test)
+        if (!res0$test) {
             res0$type <- "no_test"
+        }
         x$test <- res0$test
     }
 
@@ -176,13 +194,15 @@ test_vec_as_list.autotest_obj <- function (x, test_data = NULL) {
                 # 2. Other procedures which error on "is.atomic(x) is not TRUE"
                 generic_msgs <- "binary operator|is.atomic"
                 if (grepl (generic_msgs, msgs$content [e])) {
-                    res0$content <- paste0 ("Function [",
-                                            x$fn,
-                                            "] errors on list-columns ",
-                                            "when submitted as ",
-                                            names (x$params) [x$i],
-                                            " Error message: ",
-                                            msgs$content [e])
+                    res0$content <- paste0 (
+                        "Function [",
+                        x$fn,
+                        "] errors on list-columns ",
+                        "when submitted as ",
+                        names (x$params) [x$i],
+                        " Error message: ",
+                        msgs$content [e]
+                    )
                     res <- rbind (res, res0)
                 }
             }

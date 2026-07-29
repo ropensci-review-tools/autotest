@@ -33,20 +33,23 @@ autotest_obj <- function (package = NA_character_,
                           test = FALSE,
                           quiet = FALSE) {
 
-    x <- list (package = package,
-               package_loc = package_loc,
-               test_name = test_name,
-               params = parameters,
-               param_types = parameter_types,
-               fn = fn_name,
-               class = class,
-               classes = classes,
-               env = env,
-               test = test,
-               quiet = quiet)
+    x <- list (
+        package = package,
+        package_loc = package_loc,
+        test_name = test_name,
+        params = parameters,
+        param_types = parameter_types,
+        fn = fn_name,
+        class = class,
+        classes = classes,
+        env = env,
+        test = test,
+        quiet = quiet
+    )
 
-    if (is.null (x$package_loc))
+    if (is.null (x$package_loc)) {
         x$package_loc <- x$package
+    }
 
     class (x) <- c ("autotest_obj", class (x))
 

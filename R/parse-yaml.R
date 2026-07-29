@@ -1,4 +1,3 @@
-
 parse_yaml_template <- function (yaml = NULL, filename = NULL) {
 
     if (is.null (yaml) & is.null (filename)) {
@@ -22,8 +21,9 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
         fn_names <- c (fn_names, names (x$functions [[f]]))
 
         pars <- NA_character_
-        if (any (grepl ("- parameters:$", yaml)))
+        if (any (grepl ("- parameters:$", yaml))) {
             pars <- parse_one_fn (x, f, yaml)
+        }
         parameters [[length (parameters) + 1]] <- pars
 
         preprocess <- add_yaml_prepro (preprocess, x, f)
@@ -35,10 +35,12 @@ parse_yaml_template <- function (yaml = NULL, filename = NULL) {
     parameters <- set_seq_storage_mode (parameters)
     parameters <- param_had_dot (yaml, parameters)
 
-    list (package = x$package,
-          parameters = parameters,
-          preprocess = preprocess,
-          classes = classes)
+    list (
+        package = x$package,
+        parameters = parameters,
+        preprocess = preprocess,
+        classes = classes
+    )
 }
 
 #' Necessary preprocessing steps for yaml to parse succesfully.
@@ -53,9 +55,9 @@ preprocess_yaml <- function (yaml) {
     index <- grep ("\\:\\s+\\!", y)
     if (length (index) > 0) {
         yi <- vapply (yaml [index], function (i) {
-                          x <- strsplit (i, "\\:\\s+\\!") [[1]]
-                          paste0 (x [1], ": \'!", x [2], "\'")
-          }, character (1))
+            x <- strsplit (i, "\\:\\s+\\!") [[1]]
+            paste0 (x [1], ": \'!", x [2], "\'")
+        }, character (1))
         yaml [index] <- yi
     }
 
@@ -71,42 +73,49 @@ preprocess_yaml <- function (yaml) {
 yaml_handlers <- function () {
 
     bool_yes <- function (x) {
-        if (substr (tolower (x), 1, 1) == "y")
+        if (substr (tolower (x), 1, 1) == "y") {
             return (x)
-        else
+        } else {
             return (TRUE)
+        }
     }
 
     bool_no <- function (x) {
-        if (substr (tolower (x), 1, 1) == "n")
+        if (substr (tolower (x), 1, 1) == "n") {
             return (x)
-        else
+        } else {
             return (FALSE)
+        }
     }
 
     int_handler <- function (x) {
-        if (substring (x, nchar (x), nchar (x)) == "L")
+        if (substring (x, nchar (x), nchar (x)) == "L") {
             return (as.integer (x))
-        else
+        } else {
             return (as.double (x))
+        }
     }
 
     str_handler <- function (x) {
         index <- as.integer (gregexpr ("[0-9]", x) [[1]])
-        if (length (index) <= 1)
+        if (length (index) <= 1) {
             return (x)
+        }
 
         if (identical (index, seq_len (nchar (x) - 1)) &
-            substring (x, nchar (x), nchar (x)) == "L")
+            substring (x, nchar (x), nchar (x)) == "L") {
             return (as.integer (substring (x, 1, nchar (x) - 1)))
-        else
+        } else {
             return (x)
+        }
     }
 
-    handlers <- list("bool#yes" = bool_yes,
-                     "bool#no" = bool_no,
-                     "int" = int_handler,
-                     "str" = str_handler)
+    handlers <- list (
+        "bool#yes" = bool_yes,
+        "bool#no" = bool_no,
+        "int" = int_handler,
+        "str" = str_handler
+    )
 
     return (handlers)
 }
@@ -121,16 +130,19 @@ yaml_handlers <- function () {
 #' @noRd
 rm_no_param_fns <- function (x) {
 
-    no_params <- vapply (x$functions, function (i) {
-                             fi <- i [[1]] [[1]] # (name, empty [[1]] item)
-                             res <- FALSE
-                             if ("parameters" %in% names (fi)) {
-                                 if (length (fi$parameters) == 1 &
-                                     all (fi$parameters == "(none)"))
-                                     res <- TRUE
-                             }
-                             return (res) },
-                             logical (1))
+    no_params <- vapply (
+        x$functions, function (i) {
+            fi <- i [[1]] [[1]] # (name, empty [[1]] item)
+            res <- FALSE
+            if ("parameters" %in% names (fi)) {
+                if (length (fi$parameters) == 1 &
+                    all (fi$parameters == "(none)")) {
+                    res <- TRUE
+                }
+            }
+            return (res) },
+        logical (1)
+    )
 
     x$functions <- x$functions [which (!no_params)]
 
@@ -146,13 +158,16 @@ parse_one_fn <- function (x, f, yaml) {
     yfns <- grep (paste0 ("^", yaml_indent (1), "-\\s[^\\s]*"), yaml)
     yfns_end <- c (yfns [-1] - 1, length (yaml))
     index <- yfns [f]:yfns_end [f]
-    yaml <- c (yaml [1:(yfns [1] - 1)],
-               yaml [index])
+    yaml <- c (
+        yaml [1:(yfns [1] - 1)],
+        yaml [index]
+    )
 
     # check whether character variables are quoted:
     pars <- i [[which (nms == "parameters") [1]]]$parameters
-    is_char <- which (vapply (pars, function (j)
-                              is.character (j [[1]]), logical (1)))
+    is_char <- which (vapply (pars, function (j) {
+        is.character (j [[1]])
+    }, logical (1)))
     # then check whether yaml vals are quoted:
     index <- grep ("- parameters:$", yaml)
     if (length (index) > 0) {
@@ -162,20 +177,27 @@ parse_one_fn <- function (x, f, yaml) {
         for (p in is_char) {
             ystr <- paste0 ("- ", names (pars [[p]]), ":")
             # specific processing because yaml itself reserves "null"
-            if (ystr == "- null:")
+            if (ystr == "- null:") {
                 ystr <- "- \"null\":"
-            yaml_version <- gsub ("^\\s+", "",
-                                  strsplit (yaml2 [grep (ystr, yaml2)],
-                                            ystr) [[1]] [2])
+            }
+            yaml_version <- gsub (
+                "^\\s+", "",
+                strsplit (
+                    yaml2 [grep (ystr, yaml2)],
+                    ystr
+                ) [[1]] [2]
+            )
 
             if (!grepl ("\"|\'", yaml_version)) {
 
                 is_formula <- grepl ("~", paste0 (pars [[p]]))
                 if (is_formula) {
                     f <- tempfile ()
-                    is_formula <- is.null (catch_all_msgs (tempfile (),
-                                                           "as.formula",
-                                                           unname (pars [[p]])))
+                    is_formula <- is.null (catch_all_msgs (
+                        tempfile (),
+                        "as.formula",
+                        unname (pars [[p]])
+                    ))
                 }
 
                 if (is_formula) {
@@ -197,8 +219,9 @@ parse_one_fn <- function (x, f, yaml) {
 #' @return Names of all functions included in the f'th entry of x
 #' @noRd
 get_fn_names <- function (x, f) {
-    vapply (x$functions [[f]] [[1]], function (j)
-            names (j), character (1))
+    vapply (x$functions [[f]] [[1]], function (j) {
+        names (j)
+    }, character (1))
 }
 
 add_yaml_prepro <- function (preprocess, x, f) {
@@ -206,11 +229,12 @@ add_yaml_prepro <- function (preprocess, x, f) {
     this_fn <- x$functions [[f]] [[1]]
     nms <- get_fn_names (x, f)
 
-    if ("preprocess" %in% nms)
+    if ("preprocess" %in% nms) {
         preprocess [[length (preprocess) + 1]] <-
             this_fn [[which (nms == "preprocess")]]$preprocess
-    else
+    } else {
         preprocess [[length (preprocess) + 1]] <- NA_character_
+    }
 
     return (preprocess)
 }
@@ -220,11 +244,12 @@ add_yaml_classes <- function (classes, x, f) {
     this_fn <- x$functions [[f]] [[1]]
     nms <- get_fn_names (x, f)
 
-    if ("class" %in% nms)
+    if ("class" %in% nms) {
         classes [[length (classes) + 1]] <-
             this_fn [[which (nms == "class")]]$class [[1]]
-        else
-            classes [[length (classes) + 1]] <- NA_character_
+    } else {
+        classes [[length (classes) + 1]] <- NA_character_
+    }
 
     return (classes)
 }
@@ -232,12 +257,13 @@ add_yaml_classes <- function (classes, x, f) {
 # x is raw yaml from 'readLines' NOT parsed from yaml.load
 load_libraries <- function (x, quiet = FALSE) {
     libraries <- vapply (x [grep ("::", x)], function (i) {
-                             first_bit <- strsplit (i, "::") [[1]] [1]
-                             # then remove everything before space
-                             utils::tail (strsplit (first_bit, "\\s+") [[1]], 1)
-          },
-          character (1),
-          USE.NAMES = FALSE)
+        first_bit <- strsplit (i, "::") [[1]] [1]
+        # then remove everything before space
+        utils::tail (strsplit (first_bit, "\\s+") [[1]], 1)
+    },
+    character (1),
+    USE.NAMES = FALSE
+    )
     # then main package
     this_lib <- gsub ("package:\\s", "", x [grep ("package:", x)])
     libraries <- unique (c (libraries, this_lib))
@@ -246,12 +272,15 @@ load_libraries <- function (x, quiet = FALSE) {
     libraries <- gsub ("^\\'", "", libraries)
     libraries <- libraries [which (!libraries %in% loadedNamespaces ())]
     if (!quiet & length (libraries) > 0) {
-        message (cli::col_green (cli::symbol$star,
-                                 " Loading the following libraries:"))
+        message (cli::col_green (
+            cli::symbol$star,
+            " Loading the following libraries:"
+        ))
         cli::cli_ul (libraries)
         suppressMessages (
-                          chk <- lapply (libraries, function (i)
-                                         do.call (library, as.list (i)))
+            chk <- lapply (libraries, function (i) {
+                do.call (library, as.list (i))
+            })
         )
     }
 }
@@ -267,8 +296,9 @@ load_libraries <- function (x, quiet = FALSE) {
 at_yaml_template <- function (loc = tempdir ()) {
 
     if (!grepl ("\\.yaml$", loc [1])) {
-        if (!file.exists (loc))
+        if (!file.exists (loc)) {
             stop ("Directory [", loc, "] does not exist")
+        }
         loc <- file.path (loc, "autotest.yaml")
     }
 
@@ -283,19 +313,21 @@ at_yaml_template <- function (loc = tempdir ()) {
 }
 
 yaml_template <- function () {
-    c ("package: <package_name>",
-       "functions:",
-       "    - <name of function>:",
-       "        - preprocess:",
-       "            - '<R code required for pre-processing exlosed in quotation marks>'", # nolint
-       "            - '<second line of pre-processing code>'",
-       "            - '<more code>'",
-       "        - parameters:",
-       "            - <param_name>: <value>",
-       "            - <another_param>: <value>",
-       "    - <name of same or different function>::",
-       "        - parameters:",
-       "            - <param_name>: <value>")
+    c (
+        "package: <package_name>",
+        "functions:",
+        "    - <name of function>:",
+        "        - preprocess:",
+        "            - '<R code required for pre-processing exlosed in quotation marks>'", # nolint
+        "            - '<second line of pre-processing code>'",
+        "            - '<more code>'",
+        "        - parameters:",
+        "            - <param_name>: <value>",
+        "            - <another_param>: <value>",
+        "    - <name of same or different function>::",
+        "        - parameters:",
+        "            - <param_name>: <value>"
+    )
 }
 
 #' any YAML sequences like `[1 2 3]` are converted to "double" storage mode.
@@ -306,17 +338,18 @@ yaml_template <- function () {
 set_seq_storage_mode <- function (p) {
 
     p <- lapply (p, function (i) {
-                 i <- lapply (i, function (j) {
-                              if (storage.mode (j [[1]]) == "double" &
-                                  length (j [[1]]) > 1) {
-                                  if (all (abs (j [[1]] - round (j [[1]])) <
-                                           .Machine$double.eps))
-                                      storage.mode (j [[1]]) <- "integer"
-                              }
-                              return (j)
-                                 })
-                 return (i)
-       })
+        i <- lapply (i, function (j) {
+            if (storage.mode (j [[1]]) == "double" &
+                length (j [[1]]) > 1) {
+                if (all (abs (j [[1]] - round (j [[1]])) <
+                    .Machine$double.eps)) {
+                    storage.mode (j [[1]]) <- "integer"
+                }
+            }
+            return (j)
+        })
+        return (i)
+    })
 
     return (p)
 }
@@ -329,18 +362,21 @@ set_seq_storage_mode <- function (p) {
 param_had_dot <- function (yaml, p) {
 
     p <- lapply (p, function (i) {
-                     lapply (i, function (j) {
-                                 nm <- names (j)
-                                 ptn <- paste0 ("-\\s?", nm, ":")
-                                 ln <- strsplit (grep (ptn, yaml, value = TRUE),
-                                                 ptn)
-                                 if (storage.mode (j [[1]]) == "double" &
-                                     length (j [[1]]) == 1 &
-                                     grepl ("\\.", ln [[1]] [2]))
-                                     attr (j [[1]], "is_int") <- FALSE
-                                 return (j)
-                                 })
-       })
+        lapply (i, function (j) {
+            nm <- names (j)
+            ptn <- paste0 ("-\\s?", nm, ":")
+            ln <- strsplit (
+                grep (ptn, yaml, value = TRUE),
+                ptn
+            )
+            if (storage.mode (j [[1]]) == "double" &
+                length (j [[1]]) == 1 &
+                grepl ("\\.", ln [[1]] [2])) {
+                attr (j [[1]], "is_int") <- FALSE
+            }
+            return (j)
+        })
+    })
 
     return (p)
 }

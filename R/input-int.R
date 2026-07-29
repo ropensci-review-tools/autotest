@@ -2,13 +2,15 @@ is_int <- function (p) {
 
     p_is_int <- FALSE
 
-    #if (is.numeric (p))
+    # if (is.numeric (p))
     #    if (p == round (p))
     #        p_is_int <- TRUE
-    if (!p_is_int)
+    if (!p_is_int) {
         p_is_int <- is.integer (p)
-    if (!p_is_int & "is_int" %in% names (attributes (p)))
+    }
+    if (!p_is_int & "is_int" %in% names (attributes (p))) {
         p_is_int <- attr (p, "is_int")
+    }
 
     return (p_is_int)
 }
@@ -18,16 +20,22 @@ test_single_int_range <- function (x = NULL, ...) {
     UseMethod ("test_single_int_range", x)
 }
 
+#' @exportS3Method
 test_single_int_range.NULL <- function (x = NULL, ...) {
 
-    report_object (type = "dummy",
-                   test_name = "int_range",
-                   parameter_type = "single integer",
-                   operation = "Ascertain permissible range",
-                   content = paste0 ("Should either be unrestricted or ",
-                                     "correspond with documentation"))
+    report_object (
+        type = "dummy",
+        test_name = "int_range",
+        parameter_type = "single integer",
+        operation = "Ascertain permissible range",
+        content = paste0 (
+            "Should either be unrestricted or ",
+            "correspond with documentation"
+        )
+    )
 }
 
+#' @exportS3Method
 test_single_int_range.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     res <- NULL
@@ -42,29 +50,34 @@ test_single_int_range.autotest_obj <- function (x, test_data = NULL, ...) { # no
         }
     }
 
-    if (x$test)
+    if (x$test) {
         res <- single_int_range (x)
-    else
+    } else {
         res <- single_int_dummy_report (x)
+    }
 
-    if (!is.null (test_data) & !x$test & !is.null (res))
+    if (!is.null (test_data) & !x$test & !is.null (res)) {
         res$type <- "no_test"
+    }
 
     return (res)
 }
 
 single_int_range <- function (x) {
 
-    rd <- get_Rd_param (package = x$package_loc,
-                        fn_name = x$fn,
-                        param_name = names (x$params) [x$i])
+    rd <- get_Rd_param (
+        package = x$package_loc,
+        fn_name = x$fn,
+        param_name = names (x$params) [x$i]
+    )
 
     doc_range <- documented_int_range (rd)
 
     int_range <- get_int_range (x$fn, x$params, x$i, doc_range)
 
-    if (!is.numeric (int_range)) # call with default parameters errored
+    if (!is.numeric (int_range)) { # call with default parameters errored
         return (int_range)
+    }
 
     res <- NULL
 
@@ -77,11 +90,13 @@ single_int_range <- function (x) {
 
         if (!any (grepl ("unrestricted", rd, ignore.case = TRUE))) {
 
-            content <- paste0 ("Parameter [",
-                               names (x$params) [x$i],
-                               "] permits unrestricted integer inputs, ",
-                               " yet does not document this; please add ",
-                               "'unrestricted' to parameter description.")
+            content <- paste0 (
+                "Parameter [",
+                names (x$params) [x$i],
+                "] permits unrestricted integer inputs, ",
+                " yet does not document this; please add ",
+                "'unrestricted' to parameter description."
+            )
             res <- res_out
             res$content <- content
         }
@@ -103,30 +118,36 @@ single_int_range <- function (x) {
             if (length (rd_numbers) == 0L) {
 
                 res <- res_out
-                res$content <- paste0 ("Parameter [",
-                                       names (x$params) [x$i],
-                                       "] has no documented range")
+                res$content <- paste0 (
+                    "Parameter [",
+                    names (x$params) [x$i],
+                    "] has no documented range"
+                )
 
             } else if (length (rd_numbers) == 1L) {
 
-                content <- paste0 ("Parameter [",
-                                   names (x$params) [x$i],
-                                   "] defines only one positive or negative ",
-                                   "limit; plese either specify both lower ",
-                                   "and upper limits, or that values must be ",
-                                   "'positive' or 'negative'")
+                content <- paste0 (
+                    "Parameter [",
+                    names (x$params) [x$i],
+                    "] defines only one positive or negative ",
+                    "limit; plese either specify both lower ",
+                    "and upper limits, or that values must be ",
+                    "'positive' or 'negative'"
+                )
                 res <- res_out
                 res$content <- content
 
             } else if (!(any (rd_numbers >= max (int_range)) &
-                         any (rd_numbers <= min (int_range)))) {
+                any (rd_numbers <= min (int_range)))) {
 
-                content <- paste0 ("Parameter [",
-                                   names (x$params) [x$i],
-                                   "] responds to approximate ranges of [",
-                                   paste0 (int_range, collapse = ", "),
-                                   "], yet documents ranges between [",
-                                   paste0 (rd_numbers, collapse = ", "), "]")
+                content <- paste0 (
+                    "Parameter [",
+                    names (x$params) [x$i],
+                    "] responds to approximate ranges of [",
+                    paste0 (int_range, collapse = ", "),
+                    "], yet documents ranges between [",
+                    paste0 (rd_numbers, collapse = ", "), "]"
+                )
                 res <- res_out
                 res$content <- content
 
@@ -148,7 +169,7 @@ documented_int_range <- function (rd) {
         g <- regmatches (rd, regexpr (ptn, rd))
         val <- suppressWarnings (
             as.integer (regmatches (g, regexpr ("[0-9]+", g)))
-            )
+        )
         if (length (val) == 0L) {
             val <- NA_integer_
         }
@@ -161,22 +182,22 @@ documented_int_range <- function (rd) {
     ptn_upper <- "(less|lower|smaller)\\sthan|upper\\slimit\\sof|below"
 
     # test for the upper bound
-    if (any(grepl("negative integer", rd, ignore.case = TRUE))) {
-        doc_range[2] <- 0L
-    } else if (any(grepl(ptn_upper, rd, ignore.case = TRUE))) {
-        val <- int_from_rd(rd, paste0("(", ptn_upper, ")\\s[0-9]+"))
-        if (!is.na(val)) {
-            doc_range[2] <- val
+    if (any (grepl ("negative integer", rd, ignore.case = TRUE))) {
+        doc_range [2] <- 0L
+    } else if (any (grepl (ptn_upper, rd, ignore.case = TRUE))) {
+        val <- int_from_rd (rd, paste0 ("(", ptn_upper, ")\\s[0-9]+"))
+        if (!is.na (val)) {
+            doc_range [2] <- val
         }
     }
-    
+
     # test for the lower bound
-    if (any(grepl("positive integer", rd, ignore.case = TRUE))) {
-        doc_range[1] <- 0L
-    } else if (any(grepl(ptn_lower, rd, ignore.case = TRUE))) {
-        val <- int_from_rd(rd, paste0("(", ptn_lower, ")\\s[0-9]+"))
-        if (!is.na(val)) {
-            doc_range[1] <- val
+    if (any (grepl ("positive integer", rd, ignore.case = TRUE))) {
+        doc_range [1] <- 0L
+    } else if (any (grepl (ptn_lower, rd, ignore.case = TRUE))) {
+        val <- int_from_rd (rd, paste0 ("(", ptn_lower, ")\\s[0-9]+"))
+        if (!is.na (val)) {
+            doc_range [1] <- val
         }
     }
 
@@ -188,10 +209,11 @@ get_fn_response <- function (this_fn, params) {
     msgs <- catch_all_msgs (f, this_fn, params)
     val <- 3
     if (!is.null (msgs)) {
-        if (any (msgs$type == "error"))
+        if (any (msgs$type == "error")) {
             val <- 1
-        else if (any (msgs$type == "warning"))
+        } else if (any (msgs$type == "warning")) {
             val <- 2
+        }
     }
 
     return (val)
@@ -220,11 +242,13 @@ get_int_range <- function (this_fn, params, i, test_range = c (-Inf, Inf)) {
     # the actual int range.
     if (get_fn_response (this_fn, params) == 1) { # allow warnings
 
-        content <- paste0 ("Function [", this_fn,
-                           "] does not respond appropriately for ",
-                           "specified/default input [",
-                           names (params) [i], " = ",
-                           params [[i]], "]")
+        content <- paste0 (
+            "Function [", this_fn,
+            "] does not respond appropriately for ",
+            "specified/default input [",
+            names (params) [i], " = ",
+            params [[i]], "]"
+        )
 
         ret <- test_single_int_range.NULL ()
         ret$type <- "diagnostic"
@@ -255,7 +279,7 @@ int_upper_limit <- function (this_fn, params, i, limit) {
     } else {
         st <- system.time (
             p_i <- stepdown (this_fn, params, i, maxval, step_factor = 10)
-            ) [3]
+        ) [3]
         # then step back up factor and 10 and zoom in, but only for function
         # calls which are relatively quick, arbitrarily deemed here to mean < 10
         # seconds for coarse stepdown
@@ -267,8 +291,9 @@ int_upper_limit <- function (this_fn, params, i, limit) {
         }
     }
 
-    if (p_i_max == .Machine$integer.max)
+    if (p_i_max == .Machine$integer.max) {
         p_i_max <- Inf
+    }
 
     return (p_i_max)
 }
@@ -292,18 +317,20 @@ int_lower_limit <- function (this_fn, params, i, limit) {
         }
 
         if (p_i == 0) {
-            if (fn_resp_no_error (this_fn, params, i, 0))
+            if (fn_resp_no_error (this_fn, params, i, 0)) {
                 p_i <- 0
-            else if (fn_resp_no_error (this_fn, params, i, 1))
+            } else if (fn_resp_no_error (this_fn, params, i, 1)) {
                 p_i <- 1
+            }
         } else { # p_i must be < 0
             params [[i]] <- -floor (p_i * 10)
             maxval <- get_fn_response (this_fn, params)
             p_i <- stepdown (this_fn, params, i, maxval, step_factor = 2)
         }
     }
-    if (p_i == -.Machine$integer.max)
+    if (p_i == -.Machine$integer.max) {
         p_i <- -Inf
+    }
 
     return (p_i)
 }
@@ -322,20 +349,25 @@ test_int_as_dbl <- function (x = NULL, ...) {
     UseMethod ("test_int_as_dbl", x)
 }
 
+#' @exportS3Method
 test_int_as_dbl.NULL <- function (x = NULL, ...) {
-    report_object (type = "dummy",
-                   test_name = "int_as_numeric",
-                   parameter_type = "single integer",
-                   operation = "Integer value converted to numeric",
-                   content = "(Should yield same result)")
+    report_object (
+        type = "dummy",
+        test_name = "int_as_numeric",
+        parameter_type = "single integer",
+        operation = "Integer value converted to numeric",
+        content = "(Should yield same result)"
+    )
 }
 
+#' @exportS3Method
 test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # nolint
 
-    if (vec)
+    if (vec) {
         param_type <- "integer vector"
-    else
+    } else {
         param_type <- "single integer"
+    }
 
     res <- test_int_as_dbl.NULL ()
     res$fn_name <- x$fn
@@ -347,8 +379,9 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # 
         if (length (test_flag) == 1L) {
             x$test <- test_flag
         }
-        if (!x$test)
+        if (!x$test) {
             res$type <- "no_test"
+        }
     }
 
     if (x$test) {
@@ -361,25 +394,32 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # 
         if (length (out1) == 0) {
             junk <- utils::capture.output (
                 out1 <- suppressWarnings (
-                            withr::with_seed (seed,
-                                              do.call (x$fn, x$params)))
+                    withr::with_seed (
+                        seed,
+                        do.call (x$fn, x$params)
+                    )
                 )
+            )
             x$params [[x$i]] <- x$params [[x$i]] + 100 * .Machine$double.eps
             out2 <- catch_all_msgs (f, x$fn, x$params)
             if (length (out2) == 0) {
                 Sys.sleep (0.5) # in case Sys.time is used
                 junk <- utils::capture.output (
                     out2 <- suppressWarnings (
-                                withr::with_seed (seed,
-                                                 do.call (x$fn, x$params)))
+                        withr::with_seed (
+                            seed,
+                            do.call (x$fn, x$params)
+                        )
                     )
+                )
 
                 # Note that out1 can carry the `attr(., "is_int")`, so may not
                 # be identical to out2
                 no_change <- TRUE
                 if (is.numeric (out1) & is.numeric (out2)) {
-                    if (max (abs (out1 - out2)) > (100 * .Machine$double.eps))
+                    if (max (abs (out1 - out2)) > (100 * .Machine$double.eps)) {
                         no_change <- FALSE
+                    }
                 } else {
                     no_change <- length (setdiff (out1, out2)) == 0
                 }
@@ -389,14 +429,16 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # 
                     res <- NULL
                 } else {
                     res$type <- "diagnostic"
-                    res$content <- paste0 ("Function [",
-                                           x$fn,
-                                           "] returns different values when ",
-                                           "parameter [",
-                                           names (x$params) [x$i],
-                                           "] only demonstrated or documented ",
-                                           " as int-valued is submitted as",
-                                           " double.")
+                    res$content <- paste0 (
+                        "Function [",
+                        x$fn,
+                        "] returns different values when ",
+                        "parameter [",
+                        names (x$params) [x$i],
+                        "] only demonstrated or documented ",
+                        " as int-valued is submitted as",
+                        " double."
+                    )
                 }
             } else {
                 res <- out2
