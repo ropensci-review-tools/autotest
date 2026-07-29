@@ -80,7 +80,7 @@ git_hash: 273bf8b5c03cab47d5d2b45a5d34c92db97c1b7b
   trace-based analogue).
 
 ## T001-6: Reimplement `test_fns_wo_example()` against trace data
-- [ ] T001-6: In `R/untested-fns-and-params.R`, replace the yaml-text-based
+- [x] T001-6: In `R/untested-fns-and-params.R`, replace the yaml-text-based
   `test_fns_wo_example.character()` (and its use of `fns_without_examples()`
   from `R/namespace-processing.R`) with a version that determines functions
   without example coverage by comparing the full set of package functions
@@ -95,7 +95,7 @@ git_hash: 273bf8b5c03cab47d5d2b45a5d34c92db97c1b7b
   else calls it after this change (confirm via grep).
 
 ## T001-7: Reimplement `test_untested_params()` against trace data
-- [ ] T001-7: In `R/untested-fns-and-params.R`, replace the yaml-text-based
+- [x] T001-7: In `R/untested-fns-and-params.R`, replace the yaml-text-based
   `untested_params()` (called from `test_untested_params.list()`) with a
   version that, for each traced function, compares `names(formals(fn))`
   against the set of parameter names actually present (named or
@@ -109,7 +109,7 @@ git_hash: 273bf8b5c03cab47d5d2b45a5d34c92db97c1b7b
   `autotest_package()`'s output schema is unchanged.
 
 ## T001-8: Wire the reinstated checks back into `autotest_package()`
-- [ ] T001-8: In `R/autotest-functions.R`, uncomment/replace the two
+- [x] T001-8: In `R/autotest-functions.R`, uncomment/replace the two
   currently-commented-out lines in `autotest_package()`
   (`# res <- test_untested_params(exs, res)` and
   `# res <- test_fns_wo_example(package, res, names(exs))`) with calls to

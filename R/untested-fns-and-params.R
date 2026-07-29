@@ -24,14 +24,9 @@ test_fns_wo_example.character <- function (package, res, fn_names) {
     no_examples <- fns_without_examples (package) # in namespace-processing
     no_examples <- no_examples [which (no_examples %in% fn_names)]
 
-    # res will be NULL if package has no examples at all
-    if (!is.null (res)) {
-        no_examples <- no_examples [no_examples %in% unique (res$fn_name)]
-    }
     if (length (no_examples) > 0) {
         r0$type <- "warning"
         r0$content <- "This function has no documented example"
-        r0$yaml_hash <- NA_character_
         for (i in no_examples) {
             r0$fn_name <- i
             res <- rbind (res, r0)
@@ -43,81 +38,34 @@ test_fns_wo_example.character <- function (package, res, fn_names) {
 
 #' untested_params
 #'
-#' Takes a full list of examples for a single package and identifies any
-#' parameters not able to be tested from example code. This requires the full
-#' list of all examples, because it's not possible to determine from any one
-#' example whether or not a parameter might be tested in some other example.
+#' For every function represented in `example_fn_pars`, identify any formal
+#' parameters (other than `...`) never demonstrated by name in any
+#' example-sourced 'typetracer' trace.
+#' @param package Name or path of the package being tested, used to look up
+#' function formals.
+#' @param example_fn_pars Result of \link{get_example_fn_pars}: a
+#' `data.frame` of `fn_name`/`par_name` combinations demonstrated in
+#' example-sourced traces.
+#' @return Named `list`, one entry per function with untested parameters,
+#' each holding the names of parameters never demonstrated by that function's
+#' examples.
 #' @noRd
-untested_params <- function (exs) {
+untested_params <- function (package, example_fn_pars) {
 
-    if (length (exs) == 0) {
+    if (is.null (example_fn_pars) || nrow (example_fn_pars) == 0) {
         return (NULL)
-    } # package has no examples
-
-    pars <- list ()
-
-    for (i in exs) {
-
-        package <- gsub (
-            "package:\\s?|\\s?$", "",
-            grep ("^package:", i, value = TRUE)
-        )
-        l1 <- i [grep ("^functions:", i) [1] + 1]
-        sp <- gregexpr ("\\s", l1) [[1]]
-        nspaces <- sp [which (diff (sp) > 1) [1]]
-        ptn <- paste0 ("^[[:space:]]{", nspaces, "}-")
-        index <- grep (ptn, i)
-
-        these_fns <- gsub ("\\s+-\\s?|:$", "", i [index])
-
-        index <- cbind (index, c (index [-1] - 1, length (i)))
-        these_pars <- apply (index, 1, function (j) {
-            txt <- i [j [1]:j [2]]
-            ln <- grep ("\\s+- parameters:", txt)
-            p <- vapply (txt [-(1:ln)], function (k) {
-                res <- gsub ("\\s+-\\s?", "", k)
-                strsplit (res, ":") [[1]] [1] },
-            character (1),
-            USE.NAMES = FALSE
-            )
-            return (p) })
-        if (methods::is (these_pars, "matrix")) {
-            these_pars <- apply (these_pars, 2, function (j) {
-                list (as.vector (j))
-            })
-            these_pars <- lapply (these_pars, unlist)
-        }
-        names (these_pars) <- these_fns
-
-        pars <- c (pars, these_pars)
     }
 
-    fns <- unique (names (pars))
-
-    this_env <- as.environment (paste0 ("package:", package))
-    # add any internal fns which also have examples
-    this_env <- add_internal_fns_to_namespace (this_env, exs)
-    # and remove any internal (`:::`) namespace adresses from fns
-    index <- grep ("\\:\\:\\:", fns)
-    fns [index] <- unlist (regmatches (
-        fns [index],
-        gregexpr ("(?<=\\:\\:\\:).*", fns [index],
-            perl = TRUE
-        )
-    ))
-
-    pars_f <- lapply (fns, function (f) {
-        pars_f <- pars [which (names (pars) == f)]
-        unique (unlist (pars_f))    })
-    names (pars_f) <- fns
+    pkg_name <- get_package_name (package)
+    fns <- unique (example_fn_pars$fn_name)
 
     fmls <- lapply (fns, function (f) {
-        names (formals (f, envir = this_env))
+        fn <- utils::getFromNamespace (f, pkg_name)
+        fn_formals <- names (formals (fn))
+        these_pars <- example_fn_pars$par_name [example_fn_pars$fn_name == f]
+        index <- which (!fn_formals %in% these_pars & fn_formals != "...")
+        fn_formals [index]
     })
-    fmls <- lapply (seq_along (fmls), function (i) {
-        index <- which (!fmls [[i]] %in% pars_f [[i]] &
-            !fmls [[i]] == "...")
-        fmls [[i]] [index]  })
     names (fmls) <- fns
 
     fmls <- fmls [which (vapply (fmls, length, integer (1)) > 0)]
@@ -125,12 +73,12 @@ untested_params <- function (exs) {
     return (fmls)
 }
 
-test_untested_params <- function (exs = NULL, ...) {
-    UseMethod ("test_untested_params", exs)
+test_untested_params <- function (example_fn_pars = NULL, ...) {
+    UseMethod ("test_untested_params", example_fn_pars)
 }
 
 #' @exportS3Method
-test_untested_params.NULL <- function (exs = NULL, ...) {
+test_untested_params.NULL <- function (example_fn_pars = NULL, ...) {
 
     report_object (
         type = "dummy",
@@ -144,10 +92,11 @@ test_untested_params.NULL <- function (exs = NULL, ...) {
 }
 
 #' @exportS3Method
-test_untested_params.list <- function (exs = NULL, res_in = NULL, ...) {
+test_untested_params.data.frame <- function (example_fn_pars = NULL,
+                                             package = NULL,
+                                             res_in = NULL, ...) {
 
-    pars <- untested_params (exs)
-    pars <- pars [which (vapply (pars, length, integer (1)) > 0)]
+    pars <- untested_params (package, example_fn_pars)
 
     res <- lapply (seq_along (pars), function (i) {
         ro <- test_untested_params.NULL ()
@@ -155,7 +104,6 @@ test_untested_params.list <- function (exs = NULL, res_in = NULL, ...) {
         ro$type <- "warning"
         ro$fn_name <- names (pars) [i]
         ro$parameter <- pars [[i]]
-        ro$yaml_hash <- NA_character_
         return (ro)  })
 
     res <- do.call (rbind, res)
@@ -282,38 +230,4 @@ test_param_docs_test <- function (x) {
     }
 
     return (ret)
-}
-
-#' @param e package namespace environment
-#' @noRd
-add_internal_fns_to_namespace <- function (e, exs) {
-
-    pkg <- strsplit (attr (e, "name"), ":") [[1]] [2]
-
-    fns <- lapply (exs, function (i) {
-        y <- yaml::yaml.load (i,
-            handlers = yaml_handlers ()
-        )
-        unique (vapply (y$functions, names, character (1)))
-    })
-    fns <- unique (unlist (fns))
-    fns <- grep ("\\:\\:\\:", fns, value = TRUE)
-    if (length (fns) > 0) {
-        fns <- vapply (fns, function (i) {
-            regmatches (
-                i,
-                gregexpr ("(?<=\\:\\:\\:).*", i,
-                    perl = TRUE
-                )
-            ) [[1]]
-        }, character (1),
-        USE.NAMES = FALSE
-        )
-        for (f in fns) {
-            tmp_fn <- utils::getFromNamespace (f, pkg)
-            e [[f]] <- tmp_fn
-        }
-    }
-
-    return (e)
 }

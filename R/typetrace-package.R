@@ -101,3 +101,40 @@ get_unique_fn_pars <- function (traces) {
 
     return (cbind (fn_pars, do.call (rbind, par_types)))
 }
+
+#' Get all (unique) function/parameter name combinations demonstrated in
+#' example-sourced traces only.
+#'
+#' Used to identify function parameters never exercised by any documented
+#' example (`test_untested_params()`), as distinct from parameters only ever
+#' seen in the package's own test suite.
+#' @param trace_files Character vector of paths to individual 'typetracer'
+#' trace '.Rds' files.
+#' @return A `data.frame` with columns `fn_name` and `par_name`, one row per
+#' unique combination demonstrated in an example-sourced trace.
+#' @noRd
+get_example_fn_pars <- function (trace_files) {
+
+    pars <- lapply (trace_files, function (f) {
+
+        trace_data <- readRDS (f)
+        if (!identical (trace_data$trace_source, "examples")) {
+            return (NULL)
+        }
+
+        par_index <- which (!nzchar (names (trace_data)))
+        if (length (par_index) == 0L) {
+            return (NULL)
+        }
+
+        par_names <- vapply (
+            trace_data [par_index], function (j) j$par,
+            character (1L)
+        )
+        data.frame (fn_name = trace_data$fn_name, par_name = par_names)
+    })
+
+    pars <- do.call (rbind, pars)
+
+    return (unique (pars))
+}

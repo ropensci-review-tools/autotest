@@ -111,12 +111,17 @@ autotest_package <- function (package = ".",
         }
     }
 
+    example_fn_pars <- get_example_fn_pars (trace_files)
+    fn_names <- include_functions (package, functions, exclude)
+
     typetracer::clear_traces ()
 
     res <- res [which (!duplicated (res)), ]
 
-    # res <- test_untested_params (exs, res)
-    # res <- test_fns_wo_example (package, res, names (exs))
+    if (!is.null (example_fn_pars) && nrow (example_fn_pars) > 0) {
+        res <- test_untested_params (example_fn_pars, package = package, res_in = res)
+    }
+    res <- test_fns_wo_example (package, res, fn_names)
 
     if (is.null (res)) {
         return (res)
