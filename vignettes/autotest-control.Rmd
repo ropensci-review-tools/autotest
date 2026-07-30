@@ -25,8 +25,7 @@ knitr::opts_chunk$set (
     message = TRUE,
     width = 120,
     comment = "#>",
-    fig.retina = 2,
-    fig.path = "README-"
+    fig.retina = 2
 )
 ```
 
@@ -82,14 +81,16 @@ a large nested
 list of components corresponding to the various `.Rd` tags such as
 `\arguments`, `\details`, and `\value`. An internal function from the [`tools`
 package](https://stat.ethz.ch/R-manual/R-devel/library/tools/html/00Index.html)
-can be used to extract individual components (using the `:::` notation to
-access internal functions). For example, a single `.Rd` file often describes
-the functionality of several functions, each of which is identified by
-specifying the function name as an `"alias"`. The aliases for the `"cor.Rd"`
-file are:
+can be used to extract individual components (retrieved here via
+`utils::getFromNamespace()` rather than the `:::` notation, since the latter
+is generally best avoided outside of interactive use). For example, a single
+`.Rd` file often describes the functionality of several functions, each of
+which is identified by specifying the function name as an `"alias"`. The
+aliases for the `"cor.Rd"` file are:
 
 ```{r cor-aliases}
-tools:::.Rd_get_metadata (cor_rd, "alias")
+Rd_get_metadata <- utils::getFromNamespace (".Rd_get_metadata", "tools")
+Rd_get_metadata (cor_rd, "alias")
 ```
 
 This one file thus contains documentation for those four functions. Example
