@@ -6,7 +6,7 @@
 \alias{autotest-package}
 \title{autotest: Automatic Package Testing}
 \description{
-Automatic testing of R packages via a simple YAML schema.
+Automatic testing of R packages by tracing function calls made in examples and tests, then systematically varying the inputs to check that functions respond sensibly.
 }
 \seealso{
 Useful links:
