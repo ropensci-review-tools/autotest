@@ -1,7 +1,7 @@
 ---
-created: 2026-07-30T12:12:00Z
+created: 2026-07-30T11:47:00Z
 agent: claude-sonnet-5
-git_hash: e23c47590345d1509db01a803148fcd932a944c4
+git_hash: 13ef3dc5c5b8e67aa5ec44ba762de523b66ab070
 ---
 
 # Design Decisions: autotest
@@ -125,6 +125,18 @@ briefly the working assumption at each stage until re-verification against
 the real target package disproved it.
 **Stages:** 003
 
+### Progress-display parameters should be consolidated, not layered
+**Outcome:** `autotest_package()`'s `quiet` parameter was removed outright and replaced by a single `progress` parameter (`"bar"` default, `"tests"`, `"none"`), rather than keeping `quiet` and a new progress-style parameter as two separate, orthogonal switches.
+**Rationale:** A full-codebase check showed `quiet`, within `autotest_package()`, only ever gated the single progress message being fixed anyway, and its one internal call to `autotest_single_trace()` already hardcoded `quiet = TRUE` regardless — so consolidating carried no hidden behavioral risk. Two other, unrelated functions (`autotest_single_trace()`, `autotest_obj()`) keep their own independent `quiet` parameters untouched.
+**Roads not taken:** The initial plan kept `quiet` and `progress` as two co-existing parameters; this was revised before implementation once the consolidation was confirmed safe.
+**Stages:** 004
+
+### A corrected progress total requires filtering before the loop, not inside it
+**Outcome:** `autotest_package()`'s progress display previously reported totals against *all* trace files (both example- and test-sourced), while silently skipping test-sourced ones before printing anything — showing an inflated denominator (173 vs. 32 actually processed, for one real package). Fixed by filtering to example-sourced traces once, up front, rather than mid-loop.
+**Rationale:** Filtering mid-loop is what produced the inflated total in the first place; filtering before the loop starts gives an accurate total for any display style without extra file I/O.
+**Roads not taken:** N/A.
+**Stages:** 004
+
 ## Architectural Evolution
 The project began (2020) as a documentation-driven, static text-parsing
 system: scrape examples, convert to YAML, generate tests from the parsed
@@ -167,3 +179,8 @@ itself rather than working around them in `autotest`.
   are all complete, but the change was left uncommitted in the sibling
   `typetracer` repository per explicit instruction; only `autotest`'s own
   stage records were committed here.
+- **Keeping `quiet` alongside a new `progress` parameter** (stage 004):
+  the initial plan for `autotest_package()`'s progress-reporting fix
+  proposed both as separate, orthogonal switches; consolidated into
+  `progress` alone (with `"none"` subsuming `quiet = TRUE`) once confirmed
+  safe.
