@@ -1,7 +1,7 @@
 ---
-created: 2026-07-30T12:32:00Z
+created: 2026-07-30T15:13:07Z
 agent: claude-sonnet-5
-git_hash: 7e0eaa3149491cd46607d83363014d1a508107e6
+git_hash: 761f096f13e01ab3f05a5eab2ceb3e23c9d7ce8c
 ---
 
 # Design Decisions: autotest
@@ -18,7 +18,12 @@ driven only by example-sourced traces, so that a package's own test suite
 (which may deliberately trigger errors) cannot produce spurious autotest
 failures. Results are returned as a `tibble`-derived `autotest_package`
 object, one row per finding, with `type` in `error`/`warning`/
-`diagnostic`/`message`/`dummy`.
+`diagnostic`/`message`/`dummy`. Every place that actually executes
+arbitrary target-package/example code — both `typetracer`'s in-process
+example tracing and this package's own mutation-test invocations — runs
+under a discarding graphics device, so plotting side effects never leak
+into an open device, a stray `Rplots.pdf`, or a caller's own recording
+device (e.g. `knitr`'s, during documentation rendering).
 
 ## Key Decisions
 
@@ -143,6 +148,33 @@ the real target package disproved it.
 **Roads not taken:** A `tryCatch`-guarded `get()`-then-`getFromNamespace()` two-tier fallback, mirroring `autotest`'s own pattern exactly, was implemented first and works; simplified to a direct `asNamespace()` lookup once confirmed that a single namespace-based lookup already covers both exported and unexported cases.
 **Stages:** 005
 
+### Plotting side effects are contained at every real-execution site, not per-document
+**Outcome:** A single internal helper (`with_null_device()`) wraps every point where
+arbitrary package/example code actually runs — `typetracer::trace_package()`'s in-process
+example evaluation, and this package's own mutation-test/noise-comparison call sites — in
+a discarding graphics device, rather than adding `fig.show = "hide"` to individual
+`README.Rmd`/vignette chunks.
+**Rationale:** A per-document fix would not address the general `Rplots.pdf` residue
+reported when autotesting arbitrary real-world packages, and the actual root cause was
+traced to `typetracer`'s in-process example execution rather than to anything in
+`autotest`'s own example-scraping code.
+**Roads not taken:** Patching the `typetracer` dependency directly was considered and
+rejected — wrapping the single call site into it from `autotest`'s own code was sufficient,
+since R's graphics device stack is respected regardless of which package opens/closes
+devices.
+**Stages:** 006
+
+### `progress = "bar"` must be knitr-aware, not just tty-aware
+**Outcome:** `autotest_package()` now falls back from `progress = "bar"` to `"none"`
+whenever `isTRUE(getOption("knitr.in.progress"))`, in addition to `cli`'s own tty
+detection.
+**Rationale:** `cli`'s dynamic-tty detection operates at the file-descriptor level and can
+still read as a real terminal inside a `knitr` chunk even though `knitr` has redirected
+R-level output, leaking literal ANSI clear-line sequences into rendered documents;
+`knitr.in.progress` was confirmed empirically to be a reliable, environment-independent
+signal for this specific context.
+**Stages:** 006
+
 ## Architectural Evolution
 The project began (2020) as a documentation-driven, static text-parsing
 system: scrape examples, convert to YAML, generate tests from the parsed
@@ -160,7 +192,12 @@ lighter execution model had never exercised. Validation against further
 real packages beyond the original migration continues to surface and fix
 genuine `typetracer` bugs at the source (stage 003), consistent with the
 project's established practice of root-causing issues in the tracer
-itself rather than working around them in `autotest`.
+itself rather than working around them in `autotest`. Stage 006 extended
+this same discipline to a documentation/build-hygiene concern (stray
+plot files and progress-bar noise from `make knitr`), tracing it through
+to `typetracer`'s in-process example execution and fixing it via a call-
+site wrapper rather than patching the dependency or working around the
+symptom per document.
 
 ## Important Roads Not Taken
 - **Compatibility shim for the yaml pipeline** (stage 001): rejected in
@@ -190,3 +227,14 @@ itself rather than working around them in `autotest`.
   proposed both as separate, orthogonal switches; consolidated into
   `progress` alone (with `"none"` subsuming `quiet = TRUE`) once confirmed
   safe.
+- **Per-document `fig.show = "hide"` chunk options** (stage 006):
+  considered as the direct fix for stray plot files in rendered
+  documentation, but rejected in favor of a root-cause fix at every actual
+  code-execution site, since a per-chunk fix would not address the same
+  bug's effect on arbitrary real-world packages (stray `Rplots.pdf`
+  files), and would need re-applying to every new document.
+- **Patching the `typetracer` dependency directly** (stage 006): the
+  actual plot-generation root cause was traced into `typetracer::
+  trace_package()`'s in-process example execution; wrapping the single
+  call site into it from `autotest`'s own code was sufficient and
+  preferred over modifying the external package.
