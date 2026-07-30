@@ -14,7 +14,7 @@ test_single_name.NULL <- function (x = NULL, ...) {
 }
 
 #' @exportS3Method
-test_single_name.autotest_obj <- function (x, test_data = NULL) {
+test_single_name.autotest_obj <- function (x, test_data = NULL, ...) {
 
     res <- test_single_name.NULL ()
 

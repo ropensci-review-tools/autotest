@@ -135,7 +135,7 @@ test_single_length.NULL <- function (x = NULL, ...) {
 }
 
 #' @exportS3Method
-test_single_length.autotest_obj <- function (x, val_type, test_data = NULL) { # nolint
+test_single_length.autotest_obj <- function (x, val_type, test_data = NULL, ...) { # nolint
 
     res <- test_single_length.NULL ()
     res$fn_name <- x$fn

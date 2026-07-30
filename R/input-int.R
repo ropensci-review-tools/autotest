@@ -266,10 +266,22 @@ get_int_range <- function (this_fn, params, i, test_range = c (-Inf, Inf)) {
     return (c (p_i, p_i_max))
 }
 
+#' Ceiling used to probe integer parameters with no documented upper bound.
+#'
+#' Probing directly at `.Machine$integer.max` is unsafe: many functions use
+#' an integer parameter to control the size of an allocation (e.g. `n` in
+#' `rnorm()`), so a direct call with `.Machine$integer.max` can attempt to
+#' allocate tens of gigabytes before any error/warning can be caught. This
+#' value is used as the initial probe instead; the existing stepdown/scale-up
+#' logic in `int_upper_limit()` can still explore one order of magnitude
+#' beyond it when a function responds quickly and without error.
+#' @noRd
+safe_int_probe_ceiling <- 1e6
+
 int_upper_limit <- function (this_fn, params, i, limit) {
 
     if (limit == Inf) {
-        limit <- .Machine$integer.max
+        limit <- safe_int_probe_ceiling
     }
     params [[i]] <- limit
     maxval <- get_fn_response (this_fn, params)
@@ -291,7 +303,7 @@ int_upper_limit <- function (this_fn, params, i, limit) {
         }
     }
 
-    if (p_i_max == .Machine$integer.max) {
+    if (p_i_max >= safe_int_probe_ceiling) {
         p_i_max <- Inf
     }
 
@@ -301,7 +313,7 @@ int_upper_limit <- function (this_fn, params, i, limit) {
 int_lower_limit <- function (this_fn, params, i, limit) {
 
     if (limit == -Inf) {
-        limit <- -.Machine$integer.max
+        limit <- -safe_int_probe_ceiling
     }
     params [[i]] <- limit
     maxval <- get_fn_response (this_fn, params)
@@ -328,7 +340,7 @@ int_lower_limit <- function (this_fn, params, i, limit) {
             p_i <- stepdown (this_fn, params, i, maxval, step_factor = 2)
         }
     }
-    if (p_i == -.Machine$integer.max) {
+    if (p_i <= -safe_int_probe_ceiling) {
         p_i <- -Inf
     }
 
@@ -361,7 +373,7 @@ test_int_as_dbl.NULL <- function (x = NULL, ...) {
 }
 
 #' @exportS3Method
-test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # nolint
+test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL, ...) { # nolint
 
     if (vec) {
         param_type <- "integer vector"
@@ -396,7 +408,7 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # 
                 out1 <- suppressWarnings (
                     withr::with_seed (
                         seed,
-                        do.call (x$fn, x$params)
+                        with_null_device (do.call (x$fn, x$params))
                     )
                 )
             )
@@ -408,7 +420,7 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # 
                     out2 <- suppressWarnings (
                         withr::with_seed (
                             seed,
-                            do.call (x$fn, x$params)
+                            with_null_device (do.call (x$fn, x$params))
                         )
                     )
                 )

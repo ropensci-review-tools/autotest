@@ -10,7 +10,7 @@ autotest_package(
   exclude = NULL,
   test = FALSE,
   test_data = NULL,
-  quiet = FALSE
+  progress = c("bar", "tests", "none")
 )
 }
 \arguments{
@@ -38,11 +38,18 @@ which would be conducted. These tests have an additional flag, \code{test}, whic
 defaults to \code{TRUE}. Setting any tests to \code{FALSE} will avoid running them when
 \code{test = TRUE}.}
 
-\item{quiet}{If 'FALSE', provide printed output on screen.}
+\item{progress}{Style of progress display while testing functions, one of:
+\itemize{
+\item \code{"bar"} (default) A \code{cli} progress bar. Automatically falls back
+to \code{"none"} when called from within a \code{knitr} document, to avoid
+literal ANSI escape sequences leaking into the rendered output.
+\item \code{"tests"} One line per function tested, showing \verb{[i / n]}.
+\item \code{"none"} No progress display at all.
+}}
 }
 \value{
 An \code{autotest_package} object which is derived from a \pkg{tibble}
-\code{tbl_df} object. This has one row for each test, and the following nine
+\code{tbl_df} object. This has one row for each test, and the following eight
 columns:
 \enumerate{
 \item \code{type} The type of result, either "dummy" for \code{test = FALSE}, or one
@@ -57,14 +64,13 @@ of "error", "warning", "diagnostic", or "message".
 \code{test = TRUE}, the observed discrepancy with that expected behaviour
 \item \code{test} If \code{FALSE} (default), list all tests without implementing them,
 otherwise implement all tests.
-\item \verb{yaml_hash' A unique hash which may be be used to extract the }yaml`
-specification of each test.
 }
 Some columns may contain NA values, as explained in the Note.
 }
 \description{
-Automatically test an entire package by converting examples to \code{yaml} format
-and submitting each to the \link{autotest_yaml} function.
+Automatically test an entire package by tracing calls made in its
+documented examples (and, for local source packages, its test suite) with
+\pkg{typetracer}, then testing each traced function call in turn.
 }
 \note{
 Some columns may contain NA values, including:

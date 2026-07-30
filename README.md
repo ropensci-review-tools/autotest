@@ -56,7 +56,7 @@ library (autotest)
 
 ## Usage
 
-The simplest way to use the package is
+The simply way to use the package is
 
 ``` r
 x <- autotest_package ("<package>")
@@ -128,70 +128,56 @@ from tests. The following code illustrates.
 
 ``` r
 x <- autotest_package (package = "stats", functions = "var", test = FALSE)
-#> 
-#> ── autotesting stats ──
-#> 
-#> ✔ [1 / 6]: var
-#> ✔ [2 / 6]: cor
-#> ✔ [3 / 6]: cor
-#> ✔ [4 / 6]: cov
-#> ✔ [5 / 6]: cov
-#> ✔ [6 / 6]: cor
+#> namespace 'stats' is already loaded so argument 'keep.source' will be ignored.
+#> Error in cov(swM, use = "all") : missing observations in cov/cor
+#> R^2 = 0.21
 print (x)
-#> # A tibble: 170 × 9
+#> # A tibble: 21 × 8
 #>    type    test_name    fn_name parameter parameter_type operation content test 
 #>    <chr>   <chr>        <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
-#>  1 warning par_is_demo… var     use       <NA>           Check th… Exampl… TRUE 
-#>  2 warning par_is_demo… cov     y         <NA>           Check th… Exampl… TRUE 
-#>  3 dummy   trivial_noi… var     x         numeric        Add triv… (Shoul… TRUE 
-#>  4 dummy   vector_cust… var     x         vector         Custom c… (Shoul… TRUE 
-#>  5 dummy   vector_to_l… var     x         vector         Convert … (Shoul… TRUE 
-#>  6 dummy   negate_logi… var     na.rm     single logical Negate d… (Funct… TRUE 
-#>  7 dummy   subst_int_f… var     na.rm     single logical Substitu… (Funct… TRUE 
-#>  8 dummy   subst_char_… var     na.rm     single logical Substitu… should… TRUE 
-#>  9 dummy   single_par_… var     na.rm     single logical Length 2… Should… TRUE 
-#> 10 dummy   return_succ… var     (return … (return objec… Check th… <NA>    TRUE 
-#> # ℹ 160 more rows
-#> # ℹ 1 more variable: yaml_hash <chr>
+#>  1 warning par_is_demo… var     na.rm     <NA>           Check th… Exampl… TRUE 
+#>  2 warning par_is_demo… var     use       <NA>           Check th… Exampl… TRUE 
+#>  3 dummy   int_as_nume… var     x         integer vector Integer … (Shoul… TRUE 
+#>  4 dummy   vector_to_l… var     x         vector         Convert … (Shoul… TRUE 
+#>  5 dummy   negate_logi… var     na.rm     single logical Negate d… (Funct… TRUE 
+#>  6 dummy   subst_int_f… var     na.rm     single logical Substitu… (Funct… TRUE 
+#>  7 dummy   subst_char_… var     na.rm     single logical Substitu… should… TRUE 
+#>  8 dummy   single_par_… var     na.rm     single logical Length 2… Should… TRUE 
+#>  9 dummy   return_succ… var     (return … (return objec… Check th… <NA>    TRUE 
+#> 10 dummy   return_val_… var     (return … (return objec… Check th… <NA>    TRUE 
+#> # ℹ 11 more rows
 ```
 
 Testing the `var` function also tests `cor` and `cov`, because these are
 all documented within a single `.Rd` help file. Typing `?var` shows that
 the help topic is `cor`, and that the examples include the three
-functions, `var`, `cor`, and `cov`. That result details the 170 tests
+functions, `var`, `cor`, and `cov`. That result details the 21 tests
 which would be applied to the `var` function from the `stats` package.
-These 170 tests yield the following results when actually applied:
+These 21 tests yield the following results when actually applied:
 
 ``` r
 y <- autotest_package (package = "stats", functions = "var", test = TRUE)
-#> ── autotesting stats ──
-#> 
-#> ✔ [1 / 6]: var
-#> ✔ [2 / 6]: cor
-#> ✔ [3 / 6]: cor
-#> ✔ [4 / 6]: cov
-#> ✔ [5 / 6]: cov
-#> ✔ [6 / 6]: cor
+#> Error in cov(swM, use = "all") : missing observations in cov/cor
+#> R^2 = 0.21
 print (y)
-#> # A tibble: 25 × 9
+#> # A tibble: 11 × 8
 #>    type       test_name fn_name parameter parameter_type operation content test 
 #>    <chr>      <chr>     <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
-#>  1 warning    par_is_d… var     use       <NA>           Check th… "Examp… TRUE 
-#>  2 warning    par_is_d… cov     y         <NA>           Check th… "Examp… TRUE 
+#>  1 warning    par_is_d… var     na.rm     <NA>           Check th… "Examp… TRUE 
+#>  2 warning    par_is_d… var     use       <NA>           Check th… "Examp… TRUE 
 #>  3 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
 #>  4 diagnostic subst_in… var     na.rm     single logical Substitu… "(Func… TRUE 
 #>  5 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
 #>  6 diagnostic vector_t… var     y         vector         Convert … "Funct… TRUE 
-#>  7 diagnostic single_c… cor     use       single charac… upper-ca… "is ca… TRUE 
-#>  8 diagnostic single_c… cor     method    single charac… upper-ca… "is ca… TRUE 
-#>  9 diagnostic vector_c… cor     x         vector         Custom c… "Funct… TRUE 
-#> 10 diagnostic vector_c… cor     x         vector         Custom c… "Funct… TRUE 
-#> # ℹ 15 more rows
-#> # ℹ 1 more variable: yaml_hash <chr>
+#>  7 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
+#>  8 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
+#>  9 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
+#> 10 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
+#> 11 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE
 ```
 
-And only 25 of the original 170 tests produced unexpected behaviour.
-There were in fact only 5 kinds of tests which produced these 25
+And only 11 of the original 21 tests produced unexpected behaviour.
+There were in fact only 3 kinds of tests which produced these 11
 results:
 
 ``` r
@@ -199,8 +185,6 @@ unique (y$operation)
 #> [1] "Check that parameter usage is demonstrated"     
 #> [2] "Convert vector input to list-columns"           
 #> [3] "Substitute integer values for logical parameter"
-#> [4] "upper-case character parameter"                 
-#> [5] "Custom class definitions for vector input"
 ```
 
 One of these involves conversion of a vector to a list-column
@@ -218,43 +202,20 @@ y <- autotest_package (
     package = "stats", functions = "var",
     test = TRUE, test_data = types
 )
-#> ── autotesting stats ──
-#> 
-#> ✔ [1 / 6]: var
-#> ✔ [2 / 6]: cor
-#> ✔ [3 / 6]: cor
-#> ✔ [4 / 6]: cov
-#> ✔ [5 / 6]: cov
-#> ✔ [6 / 6]: cor
+#> Error in cov(swM, use = "all") : missing observations in cov/cor
+#> R^2 = 0.21
 print (y)
-#> # A tibble: 22 × 9
-#>    type       test_name fn_name parameter parameter_type operation content test 
-#>    <chr>      <chr>     <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
-#>  1 warning    par_is_d… var     use       <NA>           Check th… Exampl… TRUE 
-#>  2 warning    par_is_d… cov     y         <NA>           Check th… Exampl… TRUE 
-#>  3 diagnostic subst_in… var     na.rm     single logical Substitu… (Funct… TRUE 
-#>  4 diagnostic single_c… cor     use       single charac… upper-ca… is cas… TRUE 
-#>  5 diagnostic single_c… cor     method    single charac… upper-ca… is cas… TRUE 
-#>  6 diagnostic vector_c… cor     x         vector         Custom c… Functi… TRUE 
-#>  7 diagnostic vector_c… cor     x         vector         Custom c… Functi… TRUE 
-#>  8 diagnostic single_c… cor     method    single charac… upper-ca… is cas… TRUE 
-#>  9 diagnostic single_c… cor     use       single charac… upper-ca… is cas… TRUE 
-#> 10 diagnostic single_c… cor     use       single charac… upper-ca… is cas… TRUE 
-#> # ℹ 12 more rows
-#> # ℹ 1 more variable: yaml_hash <chr>
+#> # A tibble: 3 × 8
+#>   type       test_name  fn_name parameter parameter_type operation content test 
+#>   <chr>      <chr>      <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
+#> 1 warning    par_is_de… var     na.rm     <NA>           Check th… Exampl… TRUE 
+#> 2 warning    par_is_de… var     use       <NA>           Check th… Exampl… TRUE 
+#> 3 diagnostic subst_int… var     na.rm     single logical Substitu… (Funct… TRUE
 ```
 
 Those tests are still returned from `autotest_package()`, but with
 `test = FALSE` to indicate they were not run, and a `type` of “no_test”
 rather than the previous “diagnostic”.
-
-## Can `autotest` automatically create tests in my `tests` directory?
-
-Not yet, but that should be possible soon. In the meantime, there are
-[`testthat`](https://testthat.r-lib.org) expectations, listed in the
-[main package
-functions](https://docs.ropensci.org/autotest/reference/index.html),
-which enable `autotest` to be used in a package’s test suite.
 
 ## Prior work
 
@@ -276,178 +237,231 @@ project, you agree to abide by its terms.
 
 ## Contributors
 
-
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+
 <!-- prettier-ignore-start -->
+
 <!-- markdownlint-disable -->
 
-All contributions to this project are gratefully acknowledged using the [`allcontributors` package](https://github.com/ropensci/allcontributors) following the [allcontributors](https://allcontributors.org) specification. Contributions of any kind are welcome!
+All contributions to this project are gratefully acknowledged using the
+[`allcontributors` package](https://github.com/ropensci/allcontributors)
+following the [allcontributors](https://allcontributors.org)
+specification. Contributions of any kind are welcome!
 
 ### Code
 
 <table>
 
 <tr>
+
 <td align="center">
+
 <a href="https://github.com/mpadge">
 <img src="https://avatars.githubusercontent.com/u/6697851?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/commits?author=mpadge">mpadge</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/helske">
 <img src="https://avatars.githubusercontent.com/u/1560448?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/commits?author=helske">helske</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/maelle">
 <img src="https://avatars.githubusercontent.com/u/8360597?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/commits?author=maelle">maelle</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/simpar1471">
 <img src="https://avatars.githubusercontent.com/u/65285181?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/commits?author=simpar1471">simpar1471</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/maurolepore">
 <img src="https://avatars.githubusercontent.com/u/5856545?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/commits?author=maurolepore">maurolepore</a>
 </td>
+
 </tr>
 
 </table>
-
 
 ### Issues
 
 <table>
 
 <tr>
+
 <td align="center">
+
 <a href="https://github.com/noamross">
 <img src="https://avatars.githubusercontent.com/u/571752?u=49b086850e1716aa25615cea39250c51e085a5d8&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Anoamross">noamross</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/njtierney">
 <img src="https://avatars.githubusercontent.com/u/6488485?u=3eacd57f61342d1c3cecd5c8ac741b1c4897e1de&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Anjtierney">njtierney</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/JeffreyRStevens">
 <img src="https://avatars.githubusercontent.com/u/51374986?u=aaa90c8bc7973213aa29cbf69a821bf18ee9bedf&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3AJeffreyRStevens">JeffreyRStevens</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/bbolker">
 <img src="https://avatars.githubusercontent.com/u/78918?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Abbolker">bbolker</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/mattfidler">
 <img src="https://avatars.githubusercontent.com/u/514778?u=0743137276d8b20294e563ae74561b7271f4cc8d&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Amattfidler">mattfidler</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/kieranjmartin">
 <img src="https://avatars.githubusercontent.com/u/15383022?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Akieranjmartin">kieranjmartin</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/statnmap">
 <img src="https://avatars.githubusercontent.com/u/21193866?u=073dc3920b91762de2543317110d7f2a319e433a&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Astatnmap">statnmap</a>
 </td>
+
 </tr>
 
-
 <tr>
+
 <td align="center">
+
 <a href="https://github.com/vgherard">
 <img src="https://avatars.githubusercontent.com/u/62836440?u=8ea1b4592c7304c0e8c50cd7f1ae132ebfe7e9c9&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Avgherard">vgherard</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/christophsax">
 <img src="https://avatars.githubusercontent.com/u/1390827?u=ce6363f6da758d1bb85987d021cacc34a81c8837&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Achristophsax">christophsax</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/joelnitta">
 <img src="https://avatars.githubusercontent.com/u/13459362?u=205e0d1ae66884c3b361a78dd6802cd10160b041&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Ajoelnitta">joelnitta</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/santikka">
 <img src="https://avatars.githubusercontent.com/u/8639149?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Asantikka">santikka</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/gilbertocamara">
 <img src="https://avatars.githubusercontent.com/u/6058509?u=22d1d5486b5df88b23ead0cd3d43bbf64c3c4138&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Agilbertocamara">gilbertocamara</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/abigailkeller">
 <img src="https://avatars.githubusercontent.com/u/62615943?u=440761884585e76dd048ea1ccf96a78e2df0be5f&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Aabigailkeller">abigailkeller</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/KlausVigo">
 <img src="https://avatars.githubusercontent.com/u/3372431?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3AKlausVigo">KlausVigo</a>
 </td>
+
 </tr>
 
-
 <tr>
+
 <td align="center">
+
 <a href="https://github.com/vincenzocoia">
 <img src="https://avatars.githubusercontent.com/u/4676224?u=604c83ed66ff64c6ccb107ef1ce9f74244e18b08&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Avincenzocoia">vincenzocoia</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/marcburri">
 <img src="https://avatars.githubusercontent.com/u/49943705?u=a53e94087149f7a32feb848a8e30f11cf204e0c0&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Amarcburri">marcburri</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/schneiderpy">
 <img src="https://avatars.githubusercontent.com/u/77991319?u=4242d4c5942fced6368dd5c68221e6618092cbf8&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3Aschneiderpy">schneiderpy</a>
 </td>
+
 <td align="center">
+
 <a href="https://github.com/TanguyBarthelemy">
 <img src="https://avatars.githubusercontent.com/u/112711017?u=7317b68f88a56107649c09bb8e2eefdc94c2d70e&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ropensci-review-tools/autotest/issues?q=is%3Aissue+author%3ATanguyBarthelemy">TanguyBarthelemy</a>
 </td>
+
 </tr>
 
 </table>
 
 <!-- markdownlint-enable -->
+
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->

@@ -5,6 +5,19 @@
 # and then parses the result with a separate function. See also the
 # `tryCatchLog` package for further inspiration.
 
+#' Evaluate `expr` with a discarding graphics device active, so that any plot
+#' triggered by arbitrary package/example code under test is silently dropped
+#' instead of leaking into whichever device (or file, e.g. `Rplots.pdf`) would
+#' otherwise have received it. The device stack is LIFO, so this correctly
+#' nests under and restores any device already active, including one recorded
+#' by knitr.
+#' @noRd
+with_null_device <- function (expr) {
+    grDevices::pdf (nullfile ())
+    on.exit (grDevices::dev.off (), add = TRUE)
+    expr
+}
+
 log_all_msgs <- function (con, this_fn, params = NULL) {
 
     o <- utils::capture.output ({
@@ -16,11 +29,13 @@ log_all_msgs <- function (con, this_fn, params = NULL) {
         }
         x <- tryCatch (
             withCallingHandlers (
-                if (is.null (params)) {
-                    eval (call (this_fn), envir = en)
-                } else {
-                    do.call (this_fn, params, quote = TRUE)
-                },
+                with_null_device (
+                    if (is.null (params)) {
+                        eval (call (this_fn), envir = en)
+                    } else {
+                        do.call (this_fn, params, quote = TRUE)
+                    }
+                ),
                 error = function (e) {
                     write (toString (e),
                         con,

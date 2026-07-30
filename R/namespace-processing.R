@@ -1,3 +1,16 @@
+get_package_name <- function (package) {
+    pkg_name <- NULL
+
+    if (!pkg_is_source (package)) {
+        pkg_name <- basename (package)
+    } else {
+        desc <- file.path (package, "DESCRIPTION")
+        pkg_name <- as.character (read.dcf (desc, "Package"))
+    }
+
+    return (pkg_name)
+}
+
 #' @param package Name of locally installed package or path to local source
 #' @return List of all functions exported by nominated package excluding any
 #' re-exports from other packages
@@ -60,30 +73,6 @@ get_pkg_functions <- function (package) {
     return (fns [which (!fns %in% other_fns)])
 }
 m_get_pkg_functions <- memoise::memoise (get_pkg_functions)
-
-# m_get_pkg_functions will always return memoised result, even if content of
-# package changes. The following function identifies when that happens, and
-# bypasses memoisation.
-is_pkg_same <- function (package) {
-
-    is_same <- TRUE
-
-    f <- list.files (package, recursive = TRUE, full.names = TRUE)
-    f <- lapply (f, file.info)
-
-    fn_file <- file.path (tempdir (), paste0 (
-        basename (package),
-        "_functions.Rds"
-    ))
-    if (!file.exists (fn_file)) {
-        saveRDS (f, fn_file)
-    } else {
-        f2 <- readRDS (fn_file)
-        is_same <- identical (f2, f)
-    }
-
-    return (is_same)
-}
 
 #' @param package Name of locally installed package or path to local source
 #' @note This function is really slow, but is only called one so no gain from
@@ -252,18 +241,3 @@ fns_to_topics <- function (x = NULL, package) {
     return (res)
 }
 m_fns_to_topics <- memoise::memoise (fns_to_topics)
-
-#' @param topic A single .Rd topic
-#' @return List of aliases associated with that .Rd topic
-#' @noRd
-topic_to_fns <- function (topic, package) {
-    if (pkg_is_source (package)) {
-        if (!is_pkg_same (package)) {
-            memoise::forget (m_fns_to_topics)
-        }
-    }
-
-    alias_topic <- m_fns_to_topics (package = package)
-    return (alias_topic$alias [alias_topic$topic == topic])
-}
-m_topic_to_fns <- memoise::memoise (topic_to_fns)

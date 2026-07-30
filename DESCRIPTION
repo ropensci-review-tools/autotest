@@ -1,13 +1,15 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.1.0.026
+Version: 0.1.0.034
 Authors@R: c(
     person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2172-5265")),
     person("Jouni", "Helske", role = "ctb",
            comment = c(ORCID = "0000-0001-7130-793X"))
   )
-Description: Automatic testing of R packages via a simple YAML schema.
+Description: Automatic testing of R packages by tracing function calls made
+    in examples and tests, then systematically varying the inputs to check
+    that functions respond sensibly.
 License: GPL-3
 URL: https://docs.ropensci.org/autotest/,
     https://github.com/ropensci-review-tools/autotest
@@ -15,7 +17,7 @@ BugReports: https://github.com/ropensci-review-tools/autotest/issues
 Imports:
     cli,
     data.table,
-    digest,
+    grDevices,
     here,
     magrittr,
     memoise,
@@ -24,9 +26,9 @@ Imports:
     rlang,
     testthat,
     tibble,
-    withr,
-    yaml
-Suggests: 
+    typetracer,
+    withr
+Suggests:
     devtools,
     dplyr,
     DT,
@@ -36,7 +38,9 @@ Suggests:
     roxygen2,
     tidyr,
     usethis
-VignetteBuilder: 
+Remotes:
+    mpadge/typetracer
+VignetteBuilder:
     knitr
 Encoding: UTF-8
 Language: en-GB

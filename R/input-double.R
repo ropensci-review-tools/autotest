@@ -128,7 +128,7 @@ double_noise <- function (x) {
         res0 <- tryCatch (
             withr::with_seed (
                 seed,
-                do.call (x$fn, x$params)
+                with_null_device (do.call (x$fn, x$params))
             ),
             error = function (e) NULL
         )
@@ -148,7 +148,7 @@ double_noise <- function (x) {
     res1 <- tryCatch (
         withr::with_seed (
             seed,
-            do.call (x$fn, x$params)
+            with_null_device (do.call (x$fn, x$params))
         ),
         error = function (e) NULL
     )

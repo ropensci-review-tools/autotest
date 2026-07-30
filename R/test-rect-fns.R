@@ -250,11 +250,11 @@ pass_rect_as_other <- function (x, test_data = NULL) {
             junk <- utils::capture.output (
                 val <- suppressWarnings (
                     suppressMessages (
-                        do.call (x$fn,
+                        with_null_device (do.call (x$fn,
                             x$params,
                             envir = x$env,
                             quote = TRUE
-                        )
+                        ))
                     )
                 )
             )
@@ -423,11 +423,11 @@ do_extend_rect_class_struct <- function (x) {
 
     if (!"error" %in% msgs$type) {
         o <- utils::capture.output (
-            temp <- suppressWarnings (do.call (x$fn,
+            temp <- suppressWarnings (with_null_device (do.call (x$fn,
                 x$params,
                 envir = x$env,
                 quote = TRUE
-            ))
+            )))
         )
         assign ("val-newclass", temp, envir = x$env)
 

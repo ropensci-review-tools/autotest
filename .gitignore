@@ -1,6 +1,8 @@
 .Rproj.user
 .Rhistory
 .RData
+inst/doc
+inst/WORDLIST
 aaa\.Rmd*
 # History files
 .Rhistory
@@ -10,8 +12,13 @@ aaa\.Rmd*
 # Output files from R CMD build
 /*.tar.gz
 # vim files
+.env
 .*.un~
 .*.swp
 # compiled object files
 *.o
 *.so
+# local-preview byproducts of `vignettes/makefile`'s `knitr` target
+vignettes/*.md
+# others
+.claude

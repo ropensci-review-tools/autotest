@@ -1,0 +1,15 @@
+{
+  "tool": "designlens",
+  "version": "0.1.2",
+  "docs": "https://github.com/ropensci-review-tools/designlens/blob/main/docs/conventions.md",
+  "active": true,
+  "auto_commit": true,
+  "retrospective_threshold": 10,
+  "auto_retrospective": true,
+  "agent": [
+    "claude"
+  ],
+  "commands_path": [
+    ".claude/commands"
+  ]
+}
