@@ -31,7 +31,13 @@ autotest_trace_package <- function (package,
     }
     args$types <- c ("examples", "tests")
 
-    traces <- do.call (typetracer::trace_package, args)
+    # 'typetracer::trace_package()' runs every documented example in-process
+    # via 'eval(parse(text = ex))' to derive traces, and only attempts its own
+    # plot suppression via 'options(device = NULL)', which has no effect when
+    # a device is already active (e.g. knitr's per-chunk recording device) --
+    # so wrap the whole call to redirect any such plotting to a discarding
+    # device regardless of what's already active.
+    traces <- with_null_device (do.call (typetracer::trace_package, args))
 
     Sys.unsetenv ("TYPETRACER_LEAVE_TRACES") # traces are still there
 

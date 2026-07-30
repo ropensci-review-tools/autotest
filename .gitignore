@@ -18,5 +18,7 @@ aaa\.Rmd*
 # compiled object files
 *.o
 *.so
+# local-preview byproducts of `vignettes/makefile`'s `knitr` target
+vignettes/*.md
 # others
 .claude

@@ -12,4 +12,4 @@ open: $(LFILE).html
 	xdg-open $(LFILE).html &
 
 clean:
-	rm -rf *.html *.png 
+	rm -rf *.html *.png *.md Rplots.pdf 

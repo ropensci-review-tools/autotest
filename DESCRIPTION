@@ -17,6 +17,7 @@ BugReports: https://github.com/ropensci-review-tools/autotest/issues
 Imports:
     cli,
     data.table,
+    grDevices,
     here,
     magrittr,
     memoise,

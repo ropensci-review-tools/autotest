@@ -40,7 +40,7 @@ spaceout: ## Apply 'spaceout' style to package
 	Rscript -e 'styler::style_pkg(style = spaceout::spaceout_style)'
 
 clean: ## Clean all junk files, including all pkgdown docs
-	rm -rf *.html *.png README_cache docs/
+	rm -rf *.html *.png Rplots.pdf README_cache docs/
 
 help: ## Show this help
 	@printf "Usage:\033[36m make [target]\033[0m\n"

@@ -408,7 +408,7 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL, ...)
                 out1 <- suppressWarnings (
                     withr::with_seed (
                         seed,
-                        do.call (x$fn, x$params)
+                        with_null_device (do.call (x$fn, x$params))
                     )
                 )
             )
@@ -420,7 +420,7 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL, ...)
                     out2 <- suppressWarnings (
                         withr::with_seed (
                             seed,
-                            do.call (x$fn, x$params)
+                            with_null_device (do.call (x$fn, x$params))
                         )
                     )
                 )

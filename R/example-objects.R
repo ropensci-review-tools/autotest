@@ -133,13 +133,15 @@ example_objects <- function (f,
     withr::with_options (
         list (show.error.messages = FALSE),
         utils::capture.output (suppressWarnings (suppressMessages (
-            ret <- tryCatch (
-                source (tmp,
-                    echo = FALSE,
-                    local = env,
-                    max.deparse.length = Inf
-                ),
-                error = function (e) NULL
+            ret <- with_null_device (
+                tryCatch (
+                    source (tmp,
+                        echo = FALSE,
+                        local = env,
+                        max.deparse.length = Inf
+                    ),
+                    error = function (e) NULL
+                )
             )
         )))
     )

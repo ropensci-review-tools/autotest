@@ -23,8 +23,7 @@ knitr::opts_chunk$set (
     message = TRUE,
     width = 120,
     comment = "#>",
-    fig.retina = 2,
-    fig.path = "README-"
+    fig.retina = 2
 )
 ```
 

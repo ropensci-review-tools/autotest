@@ -25,7 +25,9 @@
 #' `test = TRUE`.
 #' @param progress Style of progress display while testing functions, one of:
 #' \itemize{
-#'    \item `"bar"` (default) A `cli` progress bar.
+#'    \item `"bar"` (default) A `cli` progress bar. Automatically falls back
+#'    to `"none"` when called from within a `knitr` document, to avoid
+#'    literal ANSI escape sequences leaking into the rendered output.
 #'    \item `"tests"` One line per function tested, showing `[i / n]`.
 #'    \item `"none"` No progress display at all.
 #' }
@@ -67,6 +69,13 @@ autotest_package <- function (package = ".",
                               progress = c ("bar", "tests", "none")) {
 
     progress <- match.arg (progress)
+    if (progress == "bar" && isTRUE (getOption ("knitr.in.progress"))) {
+        # 'cli' progress bars rely on 'isatty()' at the file-descriptor
+        # level, which can still read TRUE inside a knitr chunk even though
+        # knitr has redirected R-level output, leaving literal ANSI
+        # clear-line sequences (e.g. "[K") baked into the rendered document.
+        progress <- "none"
+    }
 
     package <- dot_to_package (package)
     pkg_name <- preload_package (package)

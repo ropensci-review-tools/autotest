@@ -40,7 +40,9 @@ defaults to \code{TRUE}. Setting any tests to \code{FALSE} will avoid running th
 
 \item{progress}{Style of progress display while testing functions, one of:
 \itemize{
-\item \code{"bar"} (default) A \code{cli} progress bar.
+\item \code{"bar"} (default) A \code{cli} progress bar. Automatically falls back
+to \code{"none"} when called from within a \code{knitr} document, to avoid
+literal ANSI escape sequences leaking into the rendered output.
 \item \code{"tests"} One line per function tested, showing \verb{[i / n]}.
 \item \code{"none"} No progress display at all.
 }}
