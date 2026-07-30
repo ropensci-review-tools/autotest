@@ -242,7 +242,7 @@ autotest_single_trace <- function (package,
     )
 
     int_val <- data.frame (
-        fn = trace_data$fn_name,
+        fn = rep (trace_data$fn_name, nrow (param_info)),
         par = param_info$name,
         int_val = param_info$storage_mode == "integer"
     )
