@@ -1,7 +1,7 @@
 ---
-created: 2026-07-30T09:25:00Z
+created: 2026-07-30T12:12:00Z
 agent: claude-sonnet-5
-git_hash: b616f5f44383760c64d9a5c42609f7be62ef5b76
+git_hash: e23c47590345d1509db01a803148fcd932a944c4
 ---
 
 # Design Decisions: autotest
@@ -102,6 +102,29 @@ analysis of caller references.
 initial approach and was found insufficient in practice.
 **Stages:** 002
 
+### A single suspected bug can mask several related ones — verify end to end, not fix-and-assume
+**Outcome:** `autotest_package()` reported spurious test failures against
+`pkgstats` that `testthat::test_local()` did not. Planning identified one
+root cause in `typetracer`'s tracer-injection header (mishandling
+namespace-qualified `pkg::fn(...)` calls); fixing only that left the
+real-world reproduction still failing. Continuing to re-run the actual
+`autotest_package()` vs. `testthat::test_local()` comparison after each
+fix — rather than stopping once the originally-planned fix was in place —
+surfaced three further, related defects in the same header code (an unset
+session option in subprocess contexts, a raw function value as call head,
+and an independent recurrence of the same call-head assumption in a
+different function), all specific to patterns `pkgstats` genuinely uses
+(parallel workers, `callr::r_bg()` subprocesses).
+**Rationale:** The plan's own stated verification goal (re-run the actual
+target package, not just unit tests) is what caught this; had verification
+stopped at "the planned fix now passes typetracer's own test suite," three
+real defects would have shipped undetected.
+**Roads not taken:** Declaring the fix complete after the first defect was
+resolved, since it matched the originally-diagnosed root cause, was
+briefly the working assumption at each stage until re-verification against
+the real target package disproved it.
+**Stages:** 003
+
 ## Architectural Evolution
 The project began (2020) as a documentation-driven, static text-parsing
 system: scrape examples, convert to YAML, generate tests from the parsed
@@ -115,7 +138,11 @@ example-text-scraping code have been fully removed (stages 001–002),
 trace provenance is used to keep mutation testing scoped to documented
 examples, and the migration's validation work surfaced and fixed several
 pre-existing performance/correctness issues that the old pipeline's
-lighter execution model had never exercised.
+lighter execution model had never exercised. Validation against further
+real packages beyond the original migration continues to surface and fix
+genuine `typetracer` bugs at the source (stage 003), consistent with the
+project's established practice of root-causing issues in the tracer
+itself rather than working around them in `autotest`.
 
 ## Important Roads Not Taken
 - **Compatibility shim for the yaml pipeline** (stage 001): rejected in
@@ -135,3 +162,8 @@ lighter execution model had never exercised.
   exempt from cleanup** (stage 002): stage 001 had judged these
   independently useful and kept them; a closer audit found neither had
   any live consumer either, and both were removed.
+- **Committing the stage 003 `typetracer` fix immediately** (stage 003):
+  the fix, its regression tests, and full verification against `pkgstats`
+  are all complete, but the change was left uncommitted in the sibling
+  `typetracer` repository per explicit instruction; only `autotest`'s own
+  stage records were committed here.
