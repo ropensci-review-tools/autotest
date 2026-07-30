@@ -53,8 +53,7 @@ data, and get the full test suite passing so the branch can merge into
   the calling environment, at least for `testthat`, so trace provenance can
   be identified.
 - Investigation during this planning session confirmed the user's
-  recollection: `typetracer` (source at
-  `/data/mega/code/repos/pre-processing-r/typetracer`, installed version
+  recollection: `typetracer` (sibling package source, installed version
   0.2.3.5, matching local source `0.2.3.005`) has since been extended to
   solve exactly this. `trace_package()` accepts a `types` argument
   (`"examples"`, `"tests"`, or both — default both), tags each batch of

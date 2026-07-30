@@ -7,8 +7,7 @@ git_hash: 273bf8b5c03cab47d5d2b45a5d34c92db97c1b7b
 # Tasks: merge-typetracer
 
 ## T001-1: Confirm typetracer's trace-provenance API is sufficient
-- [x] T001-1: In the sibling `typetracer` source at
-  `/data/mega/code/repos/pre-processing-r/typetracer`, read
+- [x] T001-1: In the sibling `typetracer` package source, read
   `R/trace-package.R`, `R/load-and-clear-traces.R`, and `R/tracer-define.R`
   in full (not just grep hits). Confirm that `trace_source`
   (`"examples"`/`"tests"`) and `call_env` reliably distinguish
