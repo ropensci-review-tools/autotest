@@ -1,7 +1,7 @@
 ---
-created: 2026-07-30T11:47:00Z
+created: 2026-07-30T12:32:00Z
 agent: claude-sonnet-5
-git_hash: 13ef3dc5c5b8e67aa5ec44ba762de523b66ab070
+git_hash: 7e0eaa3149491cd46607d83363014d1a508107e6
 ---
 
 # Design Decisions: autotest
@@ -136,6 +136,12 @@ the real target package disproved it.
 **Rationale:** Filtering mid-loop is what produced the inflated total in the first place; filtering before the loop starts gives an accurate total for any display style without extra file I/O.
 **Roads not taken:** N/A.
 **Stages:** 004
+
+### Unexported functions must be resolved via the namespace, not the attached environment
+**Outcome:** `autotest`'s own function enumeration (`get_pkg_functions()`) deliberately includes unexported functions (e.g. S3 methods registered but not `export()`ed), since these are legitimate targets for tracing and testing. `typetracer`'s `inject_pkg_trace_fns()`/`uninject_pkg_trace_fns()` only resolved names via the attached `package:X` search-path environment, which excludes unexported objects — fixed by resolving via `asNamespace(package)` instead, which contains both.
+**Rationale:** The mismatch meant any package with an unexported function on the traced-function list (a common case, given how routine unexported S3 methods are) would crash `autotest_package()` outright, not just produce a spurious finding.
+**Roads not taken:** A `tryCatch`-guarded `get()`-then-`getFromNamespace()` two-tier fallback, mirroring `autotest`'s own pattern exactly, was implemented first and works; simplified to a direct `asNamespace()` lookup once confirmed that a single namespace-based lookup already covers both exported and unexported cases.
+**Stages:** 005
 
 ## Architectural Evolution
 The project began (2020) as a documentation-driven, static text-parsing
