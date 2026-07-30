@@ -8,13 +8,13 @@ test_that ("autotest var", {
     expect_message (
         x_f <- autotest_package (
             package = package, functions = functions,
-            test = FALSE
+            test = FALSE, progress = "tests"
         )
     )
     expect_message (
         x_t <- autotest_package (
             package = package, functions = functions,
-            test = TRUE
+            test = TRUE, progress = "tests"
         )
     )
     expect_true (nrow (x_f) > nrow (x_t))
@@ -43,13 +43,13 @@ test_that ("autotest rnorm", {
     expect_message (
         x0 <- autotest_package (
             package = package, functions = functions,
-            test = FALSE
+            test = FALSE, progress = "tests"
         )
     )
     expect_message (
         x <- autotest_package (
             package = package, functions = functions,
-            test = TRUE
+            test = TRUE, progress = "tests"
         )
     )
     expect_true (nrow (x0) > nrow (x))

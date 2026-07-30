@@ -10,7 +10,7 @@ autotest_package(
   exclude = NULL,
   test = FALSE,
   test_data = NULL,
-  quiet = FALSE
+  progress = c("bar", "tests", "none")
 )
 }
 \arguments{
@@ -38,7 +38,12 @@ which would be conducted. These tests have an additional flag, \code{test}, whic
 defaults to \code{TRUE}. Setting any tests to \code{FALSE} will avoid running them when
 \code{test = TRUE}.}
 
-\item{quiet}{If 'FALSE', provide printed output on screen.}
+\item{progress}{Style of progress display while testing functions, one of:
+\itemize{
+\item \code{"bar"} (default) A \code{cli} progress bar.
+\item \code{"tests"} One line per function tested, showing \verb{[i / n]}.
+\item \code{"none"} No progress display at all.
+}}
 }
 \value{
 An \code{autotest_package} object which is derived from a \pkg{tibble}

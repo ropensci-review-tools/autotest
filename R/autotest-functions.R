@@ -23,7 +23,12 @@
 #' which would be conducted. These tests have an additional flag, `test`, which
 #' defaults to `TRUE`. Setting any tests to `FALSE` will avoid running them when
 #' `test = TRUE`.
-#' @param quiet If 'FALSE', provide printed output on screen.
+#' @param progress Style of progress display while testing functions, one of:
+#' \itemize{
+#'    \item `"bar"` (default) A `cli` progress bar.
+#'    \item `"tests"` One line per function tested, showing `[i / n]`.
+#'    \item `"none"` No progress display at all.
+#' }
 #' @return An `autotest_package` object which is derived from a \pkg{tibble}
 #' `tbl_df` object. This has one row for each test, and the following eight
 #' columns:
@@ -59,7 +64,9 @@ autotest_package <- function (package = ".",
                               exclude = NULL,
                               test = FALSE,
                               test_data = NULL,
-                              quiet = FALSE) {
+                              progress = c ("bar", "tests", "none")) {
+
+    progress <- match.arg (progress)
 
     package <- dot_to_package (package)
     pkg_name <- preload_package (package)
@@ -87,18 +94,30 @@ autotest_package <- function (package = ".",
 
     res <- NULL
 
-    for (i in seq_along (trace_files)) {
+    # Traces from the package's own test suite are used only to enrich
+    # 'fn_pars' with type information (above); mutation/fuzz testing itself
+    # is only ever driven by example-derived traces, because test-suite
+    # calls may be deliberately designed to trigger errors, which would
+    # otherwise appear here as spurious autotest failures. Reading and
+    # filtering all trace files once up front (rather than skipping
+    # non-example traces mid-loop) also gives an accurate total for the
+    # progress display below.
+    trace_data_all <- lapply (trace_files, readRDS)
+    is_example <- vapply (
+        trace_data_all,
+        function (d) identical (d$trace_source, "examples"),
+        logical (1)
+    )
+    trace_data_all <- trace_data_all [is_example]
+    n_total <- length (trace_data_all)
 
-        trace_data <- readRDS (trace_files [i])
+    if (progress == "bar") {
+        cli::cli_progress_bar (name = "Testing functions", total = n_total)
+    }
 
-        # Traces from the package's own test suite are used only to enrich
-        # 'fn_pars' with type information (above); mutation/fuzz testing
-        # itself is only ever driven by example-derived traces, because
-        # test-suite calls may be deliberately designed to trigger errors,
-        # which would otherwise appear here as spurious autotest failures.
-        if (!identical (trace_data$trace_source, "examples")) {
-            next
-        }
+    for (i in seq_along (trace_data_all)) {
+
+        trace_data <- trace_data_all [[i]]
 
         res <- rbind (
             res,
@@ -112,12 +131,18 @@ autotest_package <- function (package = ".",
             )
         )
 
-        if (!quiet) {
+        if (progress == "bar") {
+            cli::cli_progress_update ()
+        } else if (progress == "tests") {
             message (cli::col_green (
                 cli::symbol$tick, " [",
-                i, " / ", length (trace_files), "]"
+                i, " / ", n_total, "]"
             ))
         }
+    }
+
+    if (progress == "bar") {
+        cli::cli_progress_done ()
     }
 
     example_fn_pars <- get_example_fn_pars (trace_files)
