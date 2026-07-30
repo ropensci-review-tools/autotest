@@ -1,4 +1,6 @@
 ^.*\.Rproj$
+^.claude/
+^.designlens.json$
 ^CODE_OF_CONDUCT\.md$
 ^CONTRIBUTING.md$
 ^Dockerfile$
@@ -17,3 +19,4 @@
 ^makefile$
 ^vignettes/makefile$
 data-raw/
+specs/
