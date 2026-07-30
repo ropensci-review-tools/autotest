@@ -1,8 +1,3 @@
-# tools::Rd_db() re-parses a package's entire Rd database from scratch on
-# every call. get_Rd_value()/get_Rd_param() are called once per traced
-# parameter, so an unmemoised Rd_db() call here makes autotest_package()
-# scale very badly (observed multi-GB/multi-minute blowups) for packages
-# with many documented topics, such as base 'stats'.
 m_rd_db <- memoise::memoise (function (package, dir = NULL) {
     if (is.null (dir)) {
         tools::Rd_db (package = package)
@@ -11,7 +6,6 @@ m_rd_db <- memoise::memoise (function (package, dir = NULL) {
     }
 })
 
-# Get the 'value' field from an Rd entry for a given package function:
 get_Rd_value <- function (package, fn_name) { # nolint
     val <- NULL
 
@@ -34,13 +28,12 @@ get_Rd_value <- function (package, fn_name) { # nolint
     }
 
 
-    # just to check whether there is a return value:
     val <- get_Rd_metadata (rd, "value")
     if (length (val) == 0) {
         return (NULL)
     }
 
-    # Then get actual value by converting to text:
+    # Convert actual value to text:
     f <- tempfile (fileext = ".txt")
     tools::Rd2txt (rd, out = f)
     rd_txt <- gsub ("\\_\\\b", "", readLines (f))

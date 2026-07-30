@@ -1,5 +1,3 @@
-# Trace a package with 'typetracer'
-
 get_typetrace_dir <- function () {
 
     td <- getOption ("typetracedir")
@@ -114,6 +112,7 @@ get_unique_fn_pars <- function (traces) {
 #' here when their `par_uneval` is not the literal string `"NULL"` — the
 #' value 'typetracer' records when a parameter was not part of the call
 #' itself (see `trace_one_param()` in 'typetracer').
+#'
 #' @param trace_files Character vector of paths to individual 'typetracer'
 #' trace '.Rds' files.
 #' @return A `data.frame` with columns `fn_name` and `par_name`, one row per
@@ -163,6 +162,7 @@ get_example_fn_pars <- function (trace_files) {
 #' again via `getFromNamespace()`. Each individual trace file already
 #' records `par_formals`, captured directly at trace time, so those are
 #' used instead.
+#'
 #' @param trace_files Character vector of paths to individual 'typetracer'
 #' trace '.Rds' files.
 #' @return Named `list`, one entry per unique traced function, each holding

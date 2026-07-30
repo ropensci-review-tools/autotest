@@ -41,6 +41,7 @@ test_fns_wo_example.character <- function (package, res, fn_names) {
 #' For every function represented in `example_fn_pars`, identify any formal
 #' parameters (other than `...`) never demonstrated by name in any
 #' example-sourced 'typetracer' trace.
+#'
 #' @param fn_formals Result of \link{get_fn_formals}: named `list` of formal
 #' parameter names for every traced function.
 #' @param example_fn_pars Result of \link{get_example_fn_pars}: a
