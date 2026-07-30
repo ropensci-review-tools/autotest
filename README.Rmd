@@ -183,15 +183,6 @@ FALSE` to indicate they were not run, and a `type` of "no_test" rather than the
 previous "diagnostic".
 
 
-## Can `autotest` automatically create tests in my `tests` directory?
-
-Not yet, but that should be possible soon. In the meantime, there are
-[`testthat`](https://testthat.r-lib.org) expectations, listed in the [main
-package
-functions](https://docs.ropensci.org/autotest/reference/index.html),
-which enable `autotest` to be used in a package's test suite.
-
-
 ## Prior work
 
 1. The
