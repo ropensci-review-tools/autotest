@@ -30,7 +30,7 @@ autotest_return.NULL <- function (x = NULL, ...) {
 }
 
 #' @exportS3Method
-autotest_return.autotest_obj <- function (x, test_data = NULL) {
+autotest_return.autotest_obj <- function (x, test_data = NULL, ...) {
 
     rbind (
         test_return_success (x, test_data),
@@ -193,7 +193,7 @@ test_return_has_class.NULL <- function (x = NULL, ...) {
 }
 
 #' @exportS3Method
-test_return_has_class.autotest_obj <- function (x, test_data = NULL) { # nolint
+test_return_has_class.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     ret <- test_return_has_class.NULL ()
     ret$fn_name <- x$fn
@@ -281,7 +281,7 @@ test_return_primary_val_matches_desc.NULL <- function (x = NULL, ...) { # nolint
 }
 
 #' @exportS3Method
-test_return_primary_val_matches_desc.autotest_obj <- function (x, test_data = NULL) { # nolint
+test_return_primary_val_matches_desc.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     ret <- test_return_primary_val_matches_desc.NULL ()
     ret$fn_name <- x$fn

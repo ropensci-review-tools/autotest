@@ -146,7 +146,7 @@ test_rect_compare_outputs.NULL <- function (x = NULL, ...) {
 }
 
 #' @exportS3Method
-test_rect_compare_outputs.autotest_obj <- function (x, test_data = NULL) { # nolint
+test_rect_compare_outputs.autotest_obj <- function (x, test_data = NULL, ...) { # nolint
 
     if (x$test) {
         ret <- compare_rect_outputs (x, test_data)

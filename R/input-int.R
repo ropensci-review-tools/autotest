@@ -373,7 +373,7 @@ test_int_as_dbl.NULL <- function (x = NULL, ...) {
 }
 
 #' @exportS3Method
-test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL) { # nolint
+test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL, ...) { # nolint
 
     if (vec) {
         param_type <- "integer vector"

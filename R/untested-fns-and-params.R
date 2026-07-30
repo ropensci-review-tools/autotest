@@ -148,7 +148,7 @@ test_param_documentation.NULL <- function (x = NULL, ...) {
 }
 
 #' @exportS3Method
-test_param_documentation.autotest_obj <- function (x) { # nolint
+test_param_documentation.autotest_obj <- function (x, ...) { # nolint
 
     if (x$test) {
         ret <- test_param_docs_test (x)
