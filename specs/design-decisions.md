@@ -1,7 +1,7 @@
 ---
-created: 2026-07-29T15:55:00Z
+created: 2026-07-30T09:25:00Z
 agent: claude-sonnet-5
-git_hash: 7081f595f474b88def9360da398b002e2b4098d7
+git_hash: b616f5f44383760c64d9a5c42609f7be62ef5b76
 ---
 
 # Design Decisions: autotest
@@ -22,14 +22,18 @@ object, one row per finding, with `type` in `error`/`warning`/
 
 ## Key Decisions
 
-### YAML as an early intermediate representation, later removed
+### YAML as an early intermediate representation, later fully removed
 **Outcome:** The original design normalized documented parameter
 constraints into a YAML schema (`parse_yaml`, `examples_to_yaml`) as a
 buffer between fragile Rd-parsing and the test-generation logic. This
 pipeline was fully removed once typetracer-based tracing replaced it as
-the source of parameter information; `examples_to_yaml()`/
-`at_yaml_template()` remain as independently useful exported utilities,
-but nothing downstream depends on parsing yaml back into R objects anymore.
+the source of parameter information. What first looked like independently
+useful exported utilities (`examples_to_yaml()`, `at_yaml_template()`)
+turned out, on closer audit, to have no live consumer either — both were
+removed, along with the yaml-era example-text-scraping pipeline
+(`R/scrape-examples.R`) that fed them and its cascading dependents. No
+yaml-authoring, yaml-generation, or yaml-era example-scraping code remains
+anywhere in the package.
 **Rationale:** YAML decoupled documentation-parsing from test generation
 early on, but static text-parsing of example code proved to be exactly
 the "miles of code" that motivated switching to runtime type tracing.
@@ -37,7 +41,8 @@ the "miles of code" that motivated switching to runtime type tracing.
 working alongside the trace-based pipeline was considered and rejected —
 maintaining two parallel pipelines indefinitely was judged not worth it
 once the pivot was confirmed intentional.
-**Stages:** 000 (design history), 001 (removal)
+**Stages:** 000 (design history), 001 (initial removal), 002 (completed
+removal of remaining orphans)
 
 ### S3 class/generic dispatch as the core extensibility mechanism
 **Outcome:** The `autotest_obj` class and per-input-type S3 method
@@ -82,6 +87,21 @@ triggered the issue in tests, were both considered and rejected in favor
 of fixing the underlying cause.
 **Stages:** 001
 
+### Static call-graph audits must be confirmed by actual execution
+**Outcome:** When removing dead code left over from the yaml pipeline,
+`grep`-based confirmation that a symbol has no external callers is
+necessary but not sufficient — verification now also requires
+`devtools::load_all()`, the full test suite, and a direct
+`autotest_package()` smoke test.
+**Rationale:** A file-level deletion during stage 002 removed a function
+(`preload_package()`) that was actually called live from
+`autotest_package()` itself, breaking the core pipeline; this was only
+caught by attempting to run `autotest_package()` directly, not by static
+analysis of caller references.
+**Roads not taken:** Relying on `grep`/static analysis alone was the
+initial approach and was found insufficient in practice.
+**Stages:** 002
+
 ## Architectural Evolution
 The project began (2020) as a documentation-driven, static text-parsing
 system: scrape examples, convert to YAML, generate tests from the parsed
@@ -90,7 +110,8 @@ hierarchy (`autotest_obj`) that remains the system's backbone today. After
 a long low-activity maintenance period (2022–2025), 2026 brought a
 deliberate architectural pivot (issue #76): replacing static example
 parsing with runtime type tracing via the sibling `typetracer` package.
-That pivot is now complete — the yaml pipeline has been fully removed,
+That pivot is now complete — the yaml pipeline and its supporting
+example-text-scraping code have been fully removed (stages 001–002),
 trace provenance is used to keep mutation testing scoped to documented
 examples, and the migration's validation work surfaced and fixed several
 pre-existing performance/correctness issues that the old pipeline's
@@ -110,3 +131,7 @@ lighter execution model had never exercised.
   including local source directories; this was narrowed to
   named/installed packages only after it was found to risk stale/corrupt
   reads for local packages whose source may change between calls.
+- **Treating `examples_to_yaml()`/`at_yaml_template()` as permanently
+  exempt from cleanup** (stage 002): stage 001 had judged these
+  independently useful and kept them; a closer audit found neither had
+  any live consumer either, and both were removed.
