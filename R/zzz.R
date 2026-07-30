@@ -3,14 +3,6 @@
 
     options (keep.source = TRUE) # otherwise getParseData does not work
 
-    op <- options ()
-
-    op.autotest <- list (autotest_yaml_indent = 4) # nolint
-
-    toset <- !(names (op.autotest) %in% names (op))
-    if (any (toset)) {
-        options (op.autotest [toset])
-    }
     invisible ()
 }
 # nocov end

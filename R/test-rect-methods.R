@@ -53,7 +53,7 @@ autotest_rectangular.autotest_obj <- function (x, test_data = NULL, ...) { # nol
         ret <- rbind (ret, test_rect_compare_outputs (x, test_data))
 
         # Modify class definitions for rectangular inputs if not excluded by
-        # yaml class definitions
+        # an explicit class restriction
         if (!names (x$params) [r] %in% names (x$classes)) {
             ret <- rbind (ret, test_rect_extend_class (x, test_data))
 

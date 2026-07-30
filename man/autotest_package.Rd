@@ -42,7 +42,7 @@ defaults to \code{TRUE}. Setting any tests to \code{FALSE} will avoid running th
 }
 \value{
 An \code{autotest_package} object which is derived from a \pkg{tibble}
-\code{tbl_df} object. This has one row for each test, and the following nine
+\code{tbl_df} object. This has one row for each test, and the following eight
 columns:
 \enumerate{
 \item \code{type} The type of result, either "dummy" for \code{test = FALSE}, or one
@@ -57,8 +57,6 @@ of "error", "warning", "diagnostic", or "message".
 \code{test = TRUE}, the observed discrepancy with that expected behaviour
 \item \code{test} If \code{FALSE} (default), list all tests without implementing them,
 otherwise implement all tests.
-\item \verb{yaml_hash' A unique hash which may be be used to extract the }yaml`
-specification of each test.
 }
 Some columns may contain NA values, as explained in the Note.
 }

@@ -727,8 +727,8 @@ rm_enclosing_brackets <- function (x) {
         return (out) })
 }
 
-#' yaml does not parse single quotes, so these are converted to double quotes,
-#' but this requires first checking whether they are embedded within double
+#' Single quotes are converted to double quotes for consistent parsing, but
+#' this requires first checking whether they are embedded within double
 #' quotes in which case they are simply removed. (Example ?D under "higher
 #' derivatives"). Once that's been done, the remainder are converted.
 #' @noRd

@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.1.0.030
+Version: 0.1.0.031
 Authors@R: c(
     person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2172-5265")),
@@ -26,9 +26,8 @@ Imports:
     testthat,
     tibble,
     typetracer,
-    withr,
-    yaml
-Suggests: 
+    withr
+Suggests:
     devtools,
     dplyr,
     DT,

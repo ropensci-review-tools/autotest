@@ -21,19 +21,6 @@ test_that ("get-examples", {
     expect_length (exs [[1]] [[6]], 4)
 })
 
-test_that ("examples_to_yaml", {
-
-    package <- "stats"
-    functions <- "var"
-    exclude <- NULL
-
-    exclude <- exclude_functions (package, functions, exclude)
-    exs <- examples_to_yaml (package, exclude = exclude)
-    expect_is (exs, "list")
-    expect_length (exs, 6L)
-    expect_true (all (names (exs) == "var"))
-})
-
 test_that ("autotest var", {
 
     package <- "stats"

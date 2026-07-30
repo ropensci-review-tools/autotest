@@ -1,4 +1,4 @@
-# extracts the i-th list of complete parameters from the result of a parsed yaml
+# extracts the i-th list of complete parameters from a parsed specification
 get_params <- function (res, i, this_fn) {
 
     p <- res$parameters [[i]]
