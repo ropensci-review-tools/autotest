@@ -67,7 +67,7 @@ function](https://docs.ropensci.org/autotest/reference/autotest_package.html)
 can either be the name of an installed package, or a path to a local
 directory containing the source for a package. The result is a
 `data.frame` of errors, warnings, and other diagnostic messages issued
-during package `auotest`-ing. The function has an additional parameter,
+during package `autotest`-ing. The function has an additional parameter,
 `functions`, to restrict tests to specified functions only.
 
 By default,
