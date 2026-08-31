@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.1.0.055
+Version: 0.1.1
 Authors@R: c(
     person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2172-5265")),
@@ -9,7 +9,9 @@ Authors@R: c(
   )
 Description: Automatic testing of R packages by tracing function calls made
     in examples and tests, then systematically varying the inputs to check
-    that functions respond sensibly.
+    that functions respond sensibly. The package is a development aid for
+    authors submitting to the 'rOpenSci' statistical software review
+    project ('rOpenSci' authors, 2021; <doi:10.5281/zenodo.5556756>).
 License: GPL-3
 URL: https://docs.ropensci.org/autotest/,
     https://github.com/ropensci-review-tools/autotest
