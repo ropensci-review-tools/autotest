@@ -8,7 +8,7 @@
 [![Codecov test
 coverage](https://codecov.io/gh/ropensci-review-tools/autotest/graph/badge.svg)](https://app.codecov.io/gh/ropensci-review-tools/autotest)
 [![Project Status:
-Concept](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
+Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 <!-- badges: end -->
 
 Automatic mutation testing of R packages. Mutation in the sense of
@@ -166,9 +166,9 @@ print (y)
 #>  1 warning    par_is_d… var     na.rm     <NA>           Check th… "Examp… TRUE 
 #>  2 warning    par_is_d… var     use       <NA>           Check th… "Examp… TRUE 
 #>  3 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
-#>  4 diagnostic subst_in… var     na.rm     single logical Substitu… "(Func… TRUE 
-#>  5 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
-#>  6 diagnostic vector_t… var     y         vector         Convert … "Funct… TRUE 
+#>  4 diagnostic vector_t… var     y         vector         Convert … "Funct… TRUE 
+#>  5 diagnostic subst_in… var     na.rm     single logical Substitu… "(Func… TRUE 
+#>  6 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
 #>  7 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
 #>  8 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
 #>  9 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
