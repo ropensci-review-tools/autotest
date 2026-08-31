@@ -83,6 +83,12 @@ will be "warning" or "error", and \code{content} will contain the content of
 the corresponding message.
 }
 }
+\examples{
+\donttest{
+x <- autotest_package (package = "stats", functions = "var", test = FALSE)
+x
+}
+}
 \seealso{
 Other main_functions:
 \code{\link[=autotest_types]{autotest_types()}}

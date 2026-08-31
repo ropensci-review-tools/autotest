@@ -60,6 +60,12 @@
 #'    the corresponding message.
 #' }
 #' @family main_functions
+#'
+#' @examples
+#' \donttest{
+#' x <- autotest_package (package = "stats", functions = "var", test = FALSE)
+#' x
+#' }
 #' @export
 autotest_package <- function (package = ".",
                               functions = NULL,
@@ -310,6 +316,9 @@ autotest_single_trace <- function (package,
 #' function.
 #' @family main_functions
 #'
+#' @examples
+#' x <- autotest_types ()
+#' x
 #' @export
 autotest_types <- function (notest = NULL) {
 

@@ -20,6 +20,15 @@
 #' object.
 #' @family class
 #'
+#' @return An object of class `autotest_obj`, a list holding the parameters
+#' passed as arguments, used internally to represent one autotest test case.
+#'
+#' @examples
+#' x <- autotest_obj (
+#'     package = "stats",
+#'     fn_name = "sd",
+#'     test_name = "test"
+#' )
 #' @export
 autotest_obj <- function (package = NA_character_,
                           package_loc = NULL,

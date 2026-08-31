@@ -15,6 +15,14 @@ expect_autotest_no_testdata(object = NULL)
 \description{
 Expect \code{autotest_package()} to be clear of errors with no tests switched off
 }
+\examples{
+\dontrun{
+# Called within a 'testthat' test file of the local package itself:
+testthat::test_that ("autotest", {
+    testthat::expect_success (expect_autotest_no_testdata ())
+})
+}
+}
 \seealso{
 Other expectations:
 \code{\link[=expect_autotest_no_err]{expect_autotest_no_err()}},

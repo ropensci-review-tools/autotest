@@ -9,9 +9,18 @@ expect_autotest_notes(object)
 \arguments{
 \item{object}{An \code{autotest} object to be tested}
 }
+\value{
+(invisibly) The same object
+}
 \description{
 Expect \code{test_data} param of \code{autotest_package} to have additional \code{note}
 column explaining why tests have been switched off.
+}
+\examples{
+\donttest{
+x <- autotest_package (package = "stats", functions = "cov", test = TRUE)
+testthat::expect_success (expect_autotest_notes (x))
+}
 }
 \seealso{
 Other expectations:
