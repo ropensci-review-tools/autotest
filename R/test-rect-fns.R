@@ -72,7 +72,9 @@ chk_columns <- function (x, res1, res2) {
         if (!identical (res1 [[i]], res2 [[i]])) {
 
             ro <- test_rect_compare_outputs.NULL ()
-            ro <- ro [grep ("compare_col_structure", ro$test_name, fixed = TRUE), ]
+            ro <- ro [
+                grep ("compare_col_structure", ro$test_name, fixed = TRUE),
+            ]
             ro$type <- "diagnostic"
             ro$fn_name <- x$fn
             ro$parameter <- names (x$params) [x$i]

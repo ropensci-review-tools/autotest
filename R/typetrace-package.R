@@ -133,7 +133,8 @@ get_example_fn_pars <- function (trace_files) {
         }
 
         was_demonstrated <- vapply (
-            trace_data [par_index], function (j) !identical (j$par_uneval, "NULL"),
+            trace_data [par_index],
+            function (j) !identical (j$par_uneval, "NULL"),
             logical (1L)
         )
         par_index <- par_index [was_demonstrated]
@@ -172,7 +173,10 @@ get_fn_formals <- function (trace_files) {
 
     res <- lapply (trace_files, function (f) {
         trace_data <- readRDS (f)
-        list (fn_name = trace_data$fn_name, formals = names (trace_data$par_formals))
+        list (
+            fn_name = trace_data$fn_name,
+            formals = names (trace_data$par_formals)
+        )
     })
 
     fn_names <- vapply (res, function (x) x$fn_name, character (1L))

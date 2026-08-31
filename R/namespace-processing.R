@@ -1,11 +1,11 @@
 get_package_name <- function (package) {
     pkg_name <- NULL
 
-    if (!pkg_is_source (package)) {
-        pkg_name <- basename (package)
-    } else {
+    if (pkg_is_source (package)) {
         desc <- file.path (package, "DESCRIPTION")
         pkg_name <- as.character (read.dcf (desc, "Package"))
+    } else {
+        pkg_name <- basename (package)
     }
 
     return (pkg_name)
@@ -155,7 +155,10 @@ fns_from_other_pkgs <- function (package) {
     checkmate::assert_file_exists (namespace_file, .var.name = "NAMESPACE file")
 
     ns <- readLines (namespace_file)
-    ns <- gsub ("importFrom\\(|\\)$", "", grep ("^importFrom", ns, value = TRUE))
+    ns <- gsub (
+        "importFrom\\(|\\)$", "",
+        grep ("^importFrom", ns, value = TRUE)
+    )
     fns <- vapply (
         ns, function (i) strsplit (i, split = ",", fixed = TRUE) [[1]] [2],
         character (1)
