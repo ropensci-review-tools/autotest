@@ -23,7 +23,7 @@ test_that ("autotest var", {
             test = TRUE, progress = "tests"
         )
     )
-    expect_true (nrow (x_f) > nrow (x_t))
+    expect_gt (nrow (x_f), nrow (x_t))
 
     # 'var'/'cor'/'cov' example code triggers real plotting as a side effect;
     # confirm that never leaks out to an open device or an 'Rplots.pdf' file.
@@ -32,8 +32,8 @@ test_that ("autotest var", {
 
     for (x in list (x_f, x_t)) {
         expect_is (x, "data.frame")
-        expect_equal (ncol (x), 8)
-        expect_identical (names (x), c (
+        expect_identical (ncol (x), 8L)
+        expect_named (x, c (
             "type",
             "test_name",
             "fn_name",
@@ -83,5 +83,5 @@ test_that ("autotest rnorm", {
     # 'x' may legitimately be NULL here: 'autotest_package()' returns NULL when
     # every test passes cleanly, so 'nrow()' (unlike 'NROW()') would otherwise
     # yield NULL, silently turning this comparison into a no-op 'logical(0)'.
-    expect_true (nrow (x0) > NROW (x))
+    expect_gt (nrow (x0), NROW (x))
 })

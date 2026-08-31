@@ -24,5 +24,5 @@ test_that ("pkg", {
     # pipeline compares test_rect()'s output pairwise across all three
     # synthetic rectangular-class conversions (tbl_df/data.table/newclass)
     # it generates, rather than just a subset.
-    expect_equal (as.integer (types [names (types) == "diagnostic"]), 18L)
+    expect_identical (as.integer (types [names (types) == "diagnostic"]), 18L)
 })
