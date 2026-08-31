@@ -1,6 +1,8 @@
 
 # hex sticker script
 
+## Clipboard image and font setup
+
 Images from
 https://www.onlinewebfonts.com/icon/
 
@@ -11,6 +13,25 @@ Modify images in gimp by:
 
 Can then convert to eps if desired, but direct loading png below also works the
 same. All black colours were adjusted to gray 0.8
+
+Custom font must be registered before any print()/ggsave() call uses it, so it
+renders correctly regardless of graphics device
+
+```{r}
+library (showtext)
+font_add (
+    "Alien Encounters",
+    regular = "Alien-Encounters-Regular.ttf",
+    bold = "Alien-Encounters-Bold.ttf",
+    italic = "Alien-Encounters-Italic.ttf",
+    bolditalic = "Alien-Encounters-Bold-Italic.ttf"
+)
+showtext_auto ()
+```
+
+----
+
+## Main code to generate hex
 
 ```{r}
 library (ggplot2)
@@ -31,12 +52,18 @@ col_back <- "#888888"
 col_fill <- "#11DCDC"
 
 hex <- ggplot () +
-    geom_polygon (aes_ (x = ~x, y = ~y),
+    geom_polygon (
+        aes (x = x, y = y),
         data = border,
-        size = 6, fill = col_fill, color = col_back
+        linewidth = 6,
+        fill = col_fill,
+        color = col_back
     ) +
-    ggimage::geom_image (aes_ (x = ~x, y = ~y, image = ~image), d,
-        size = 0.65, asp = 1
+    ggimage::geom_image (
+        aes (x = x, y = y, image = image),
+        d,
+        size = 0.65,
+        asp = 1
     ) +
     # force output height to exactly equal width, regardless of device shape
     coord_fixed (ratio = asp) +
@@ -52,7 +79,7 @@ add_one_lab <- function (hex, lab_dat, aes, fs) {
         mapping = aes,
         size = fs,
         colour = col_back,
-        family = "SF Alien Encounters",
+        family = "Alien Encounters",
         fontface = 1,
         nudge_y = -0.02,
         nudge_x = 0.02
@@ -63,7 +90,7 @@ add_one_lab <- function (hex, lab_dat, aes, fs) {
         size = fs,
         colour = col_fore,
         fontface = 1,
-        family = "SF Alien Encounters"
+        family = "Alien Encounters"
     )
     return (hex)
 }
@@ -88,12 +115,12 @@ hex <- add_one_lab (hex, lab_dat, aes, fs)
 
 
 th <- theme_minimal ()
-th$panel.background <- element_rect (fill = "transparent", size = 0)
+th$panel.background <- element_rect (fill = "transparent", linewidth = 0)
 th$plot.background <- element_rect (fill = "transparent", colour = NA)
 th$line <- element_blank ()
 th$axis.text <- element_blank ()
 th$axis.title <- element_blank ()
-th$plot.margin <- margin (rep (unit (0, "null"), 4))
+th$plot.margin <- margin (0, 0, 0, 0, unit = "null")
 # th$plot.margin <- margin (rep (unit (-0.5, 'line'), 4))
 th$legend.position <- "none"
 th$axis.ticks.length <- unit (0, "null")
@@ -107,20 +134,10 @@ print (hex)
 from https://databasefaq.com/index.php/answer/182192/r-fonts-ggplot2-eps-error-using-arial-in-eps-figure-with-extrafont-package
 ```{r}
 fname <- "autotest.svg"
-library (showtext)
-## add the Arial font
-font_add (
-    "SF Alien Encounters",
-    regular = "SFAlienEncounters.ttf",
-    bold = "SFAlienEncountersSolid.ttf",
-    italic = "SFAlienEncounters-Italic.ttf",
-    bolditalic = "SFAlienEncountersSolid-Ital.ttf"
-)
 
 setEPS ()
 postscript (fname)
-showtext_begin () ## call this function after opening a device
-hex + theme_minimal (base_family = "SF Alien Encounters") +
+hex + theme_minimal (base_family = "Alien Encounters") +
     theme (
         axis.line = element_blank (),
         axis.text.x = element_blank (),
