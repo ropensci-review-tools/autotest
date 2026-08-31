@@ -16,13 +16,19 @@ preload_package <- function (package) {
             devtools::load_all (package, export_all = FALSE)
         }
 
-    } else if (!basename (package) == package) {
+    } else if (basename (package) != package) {
 
         # pkgs installed in tmp_loc via covr
+        # 'library()' (not 'requireNamespace()') is required here: the
+        # package must be attached to the search path so that unqualified
+        # calls in traced example/test code resolve correctly.
         suppressMessages (
-            library (basename (package),
+            library ( # nolint
+                basename (package),
                 lib.loc = normalizePath (file.path (package, "..")),
-                character.only = TRUE
+                character.only = TRUE,
+                warn.conflicts = FALSE,
+                verbose = FALSE
             )
         )
         pkg_name <- basename (package)
@@ -36,8 +42,9 @@ preload_package <- function (package) {
         if (is.null (fp)) {
             stop ("package [", package, "] does not appear to be installed.")
         }
+        # 'library()' required here too, for the same reason as above.
         suppressMessages (
-            library (package, character.only = TRUE)
+            library (package, character.only = TRUE) # nolint
         )
         pkg_name <- package
     }
@@ -62,7 +69,7 @@ atomic_modes <- function (collapse = FALSE) {
     )
 
     if (collapse) {
-        x <- paste0 (x, collapse = "|")
+        x <- paste (x, collapse = "|")
     }
 
     return (x)

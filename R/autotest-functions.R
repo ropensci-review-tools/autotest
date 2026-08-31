@@ -8,7 +8,8 @@
 #' \enumerate{
 #'    \item Path to local package source
 #'    \item Name of installed package
-#'    \item Full path to location of installed package if not on \link{.libPaths}, or
+#'    \item Full path to location of installed package if not on
+#'    \link{.libPaths}, or
 #'    \item Default which presumes current directory is within package to be
 #'    tested.
 #' }
@@ -42,10 +43,11 @@
 #'    \item `parameter_type` Expected type of parameter as identified by
 #'    `autotest`.
 #'    \item `operation` Description of the test
-#'    \item `content` For `test = FALSE`, the expected behaviour of the test; for
-#'    `test = TRUE`, the observed discrepancy with that expected behaviour
-#'    \item `test` If `FALSE` (default), list all tests without implementing them,
-#'    otherwise implement all tests.
+#'    \item `content` For `test = FALSE`, the expected behaviour of the
+#'    test; for `test = TRUE`, the observed discrepancy with that expected
+#'    behaviour
+#'    \item `test` If `FALSE` (default), list all tests without
+#'    implementing them, otherwise implement all tests.
 #' }
 #' Some columns may contain NA values, as explained in the Note.
 #'
@@ -92,7 +94,9 @@ autotest_package <- function (package = ".",
     pkg_name <- preload_package (package)
     pkg_dir <- get_package_loc (package)
 
-    traces <- autotest_trace_package (package, functions = functions, exclude = exclude)
+    traces <- autotest_trace_package (package,
+        functions = functions, exclude = exclude
+    )
 
     # 'typetracer::trace_package()' unloads the traced package's namespace
     # once tracing is done, and does not itself reload it into this session
@@ -290,7 +294,7 @@ autotest_single_trace <- function (package,
 
         # rm "no_test" tests switched off from "test_data"
         if (test) {
-            reports <- reports [which (!reports$type == "no_test"), ]
+            reports <- reports [which (reports$type != "no_test"), ]
         }
 
         rownames (reports) <- NULL
@@ -337,10 +341,10 @@ autotest_types <- function (notest = NULL) {
 
     if (!is.null (notest)) {
         index <- match (notest, res$test_name)
-        if (any (is.na (index))) {
+        if (anyNA (index)) {
             message (
                 "notest = [",
-                paste0 (notest [which (is.na (index))], collapse = ", "),
+                toString (notest [which (is.na (index))]),
                 "] does not match any test_name values"
             )
             index <- index [which (!is.na (index))]
@@ -358,7 +362,7 @@ order_at_rows <- function (x) {
         "dummy", "no_test"
     )
     index <- data.frame (
-        index = seq (nrow (x)),
+        index = seq_len (nrow (x)),
         type = match (x$type, type_order)
     )
     index <- index [order (index$type), ]

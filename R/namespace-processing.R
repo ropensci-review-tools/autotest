@@ -25,8 +25,8 @@ get_pkg_functions <- function (package) {
             pattern = "\\.Rd$",
             full.names = TRUE
         )
-        suppressWarnings (
-            fns <- lapply (man_dir, function (i) {
+        fns <- suppressWarnings (
+            lapply (man_dir, function (i) {
                 get_Rd_metadata (tools::parse_Rd (i), "alias")
             })
         )
@@ -87,9 +87,7 @@ fns_without_examples <- function (package) {
             full.names = TRUE
         )
         ex_alias <- lapply (man_dir, function (i) {
-            suppressWarnings (
-                rd <- tools::parse_Rd (i)
-            )
+            rd <- suppressWarnings (tools::parse_Rd (i))
             list (
                 ex = get_Rd_metadata (rd, "examples"),
                 aliases = get_Rd_metadata (rd, "alias")
@@ -120,7 +118,7 @@ fns_without_examples <- function (package) {
     index <- which (vapply (
         ex_alias, function (i) {
             if (length (i$ex) > 1) {
-                i$ex <- paste0 (i$ex, collapse = "\n")
+                i$ex <- paste (i$ex, collapse = "\n")
             }
             res <- nchar (i$ex)
             if (length (res) == 0) {
@@ -143,7 +141,7 @@ fns_from_other_pkgs <- function (package) {
 
         fp <- file.path (package)
 
-    } else if (!basename (package) == package) {
+    } else if (basename (package) != package) {
 
         fp <- package
 
@@ -157,15 +155,15 @@ fns_from_other_pkgs <- function (package) {
     checkmate::assert_file_exists (namespace_file, .var.name = "NAMESPACE file")
 
     ns <- readLines (namespace_file)
-    ns <- gsub ("importFrom\\(|\\)$", "", ns [grep ("^importFrom", ns)])
+    ns <- gsub ("importFrom\\(|\\)$", "", grep ("^importFrom", ns, value = TRUE))
     fns <- vapply (
-        ns, function (i) strsplit (i, split = ",") [[1]] [2],
+        ns, function (i) strsplit (i, split = ",", fixed = TRUE) [[1]] [2],
         character (1)
     )
 
-    index <- grep ("\"", fns)
+    index <- grep ("\"", fns, fixed = TRUE)
     if (length (index) > 0) {
-        fns_sub <- gsub ("\"", "", fns [index])
+        fns_sub <- gsub ("\"", "", fns [index], fixed = TRUE)
         fns <- c (fns, fns_sub)
     }
 
@@ -187,9 +185,7 @@ fns_to_topics <- function (x = NULL, package) {
             full.names = TRUE
         )
         alias_topic <- lapply (man_dir, function (i) {
-            suppressWarnings (
-                rd <- tools::parse_Rd (i)
-            )
+            rd <- suppressWarnings (tools::parse_Rd (i))
             alias <- get_Rd_metadata (rd, "alias")
             topic <- get_Rd_metadata (rd, "name")
             name <- strsplit (i, .Platform$file.sep) [[1]]
@@ -228,7 +224,7 @@ fns_to_topics <- function (x = NULL, package) {
     }
 
     alias_topic <- do.call (rbind, alias_topic)
-    index <- seq (nrow (alias_topic))
+    index <- seq_len (nrow (alias_topic))
     if (!is.null (x)) {
         index <- match (x, alias_topic [, 1])
     }

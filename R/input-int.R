@@ -144,9 +144,9 @@ single_int_range <- function (x) {
                     "Parameter [",
                     names (x$params) [x$i],
                     "] responds to approximate ranges of [",
-                    paste0 (int_range, collapse = ", "),
+                    toString (int_range),
                     "], yet documents ranges between [",
-                    paste0 (rd_numbers, collapse = ", "), "]"
+                    toString (rd_numbers), "]"
                 )
                 res <- res_out
                 res$content <- content
@@ -289,8 +289,11 @@ int_upper_limit <- function (this_fn, params, i, limit) {
     if (maxval > 1) {
         p_i_max <- params [[i]]
     } else {
+        # assignment must stay nested here: 'system.time()' does not return
+        # the value of its expression, so this is the only way to capture
+        # both the elapsed time and the 'stepdown()' result from one call.
         st <- system.time (
-            p_i <- stepdown (this_fn, params, i, maxval, step_factor = 10)
+            p_i <- stepdown (this_fn, params, i, maxval, step_factor = 10) # nolint
         ) [3]
         # then step back up factor and 10 and zoom in, but only for function
         # calls which are relatively quick, arbitrarily deemed here to mean < 10
@@ -404,8 +407,11 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL, ...)
         seed <- sample.int (.Machine$integer.max, 1L)
 
         if (length (out1) == 0) {
+            # assignment must stay nested here: 'capture.output()' returns
+            # the printed text, not the value of its expression, so this is
+            # the only way to capture both in one call.
             junk <- utils::capture.output (
-                out1 <- suppressWarnings (
+                out1 <- suppressWarnings ( # nolint
                     withr::with_seed (
                         seed,
                         with_null_device (do.call (x$fn, x$params))
@@ -417,7 +423,7 @@ test_int_as_dbl.autotest_obj <- function (x, vec = FALSE, test_data = NULL, ...)
             if (length (out2) == 0) {
                 Sys.sleep (0.5) # in case Sys.time is used
                 junk <- utils::capture.output (
-                    out2 <- suppressWarnings (
+                    out2 <- suppressWarnings ( # nolint
                         withr::with_seed (
                             seed,
                             with_null_device (do.call (x$fn, x$params))

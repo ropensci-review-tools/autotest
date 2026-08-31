@@ -101,7 +101,7 @@ test_single_char_as_random.autotest_obj <- function (x, test_data = NULL, ...) {
         }
     }
 
-    x$params [[x$i]] <- paste0 (
+    x$params [[x$i]] <- paste (
         sample (c (letters, LETTERS),
             size = 10
         ),
@@ -118,11 +118,11 @@ test_single_char_as_random.autotest_obj <- function (x, test_data = NULL, ...) {
         f <- tempfile ()
         msgs <- catch_all_msgs (f, x$fn, x$params)
 
-        if (!"error" %in% msgs$type) {
+        if ("error" %in% msgs$type) {
+            res <- NULL
+        } else {
             res$type <- "diagnostic"
             res$content <- "does not match arguments to expected values"
-        } else {
-            res <- NULL
         }
     }
 

@@ -219,13 +219,11 @@ test_rect_replace_class.autotest_obj <- function (x, test_data = NULL, ...) { # 
     if (x$test) {
 
         p <- x$params [[x$i]]
-        x$params [[x$i]] <- structure (p, class = c ("newclass"))
+        x$params [[x$i]] <- structure (p, class = "newclass")
         f <- tempfile (fileext = ".txt")
         msgs <- catch_all_msgs (f, x$fn, x$params)
 
-        if (!null_or_not (msgs, "error")) {
-            ret <- NULL
-        } else {
+        if (null_or_not (msgs, "error")) {
             msgs$parameter <- rep (names (x$params) [x$i], nrow (msgs))
             ret$type <- "diagnostic"
             ret$content <- paste0 (
@@ -234,6 +232,8 @@ test_rect_replace_class.autotest_obj <- function (x, test_data = NULL, ...) { # 
                 "] does not error when class structure of [",
                 this_class, "] is removed."
             )
+        } else {
+            ret <- NULL
         }
     }
 

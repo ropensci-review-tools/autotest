@@ -11,9 +11,7 @@ get_Rd_value <- function (package, fn_name) { # nolint
 
     if (pkg_is_source (package)) {
         f <- file.path (package, "man", paste0 (fn_name, ".Rd"))
-        suppressWarnings (
-            rd <- tools::parse_Rd (f)
-        )
+        rd <- suppressWarnings (tools::parse_Rd (f))
     } else {
         if (basename (package) == package) {
             x <- m_rd_db (package = package)
@@ -36,7 +34,11 @@ get_Rd_value <- function (package, fn_name) { # nolint
     # Convert actual value to text:
     f <- tempfile (fileext = ".txt")
     tools::Rd2txt (rd, out = f)
-    rd_txt <- gsub ("\\_\\\b", "", readLines (f))
+    # backspace character constructed at runtime (rather than embedded
+    # literally as an escape) because a literal backspace byte in this file
+    # corrupts source-position tracking in 'lintr's fixed_regex_linter,
+    # crashing the linter on later lines.
+    rd_txt <- gsub (paste0 ("\\_\\", intToUtf8 (8)), "", readLines (f))
     sec_index <- grep ("^[[:alpha:]].*:$", rd_txt)
     i0 <- grep ("^Value:$", rd_txt)
     if (i0 == max (sec_index)) {
@@ -61,9 +63,7 @@ get_Rd_param <- function (package, fn_name, param_name) { # nolint
             "man",
             a$name [a$alias == fn_name]
         )
-        suppressWarnings (
-            rd <- tools::parse_Rd (f)
-        )
+        rd <- suppressWarnings (tools::parse_Rd (f))
     } else {
 
         if (basename (package) == package) {
@@ -102,7 +102,7 @@ get_Rd_param <- function (package, fn_name, param_name) { # nolint
     rd <- lapply (rd, unlist)
     params <- vapply (rd, function (i) i [1], character (1))
     rd <- vapply (
-        rd, function (i) paste0 (i [-1], collapse = ""),
+        rd, function (i) paste (i [-1], collapse = ""),
         character (1)
     )
 

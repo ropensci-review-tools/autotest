@@ -12,7 +12,7 @@ chk_dims <- function (x, res1, res2) {
     if (!identical (dim (res1), dim (res2))) {
 
         ret <- test_rect_compare_outputs.NULL ()
-        ret <- ret [grep ("compare_dims", ret$test_name), ]
+        ret <- ret [grep ("compare_dims", ret$test_name, fixed = TRUE), ]
         ret$type <- "diagnostic"
         ret$fn_name <- x$fn
         ret$parameter <- names (x$params) [x$i]
@@ -41,7 +41,7 @@ chk_names <- function (x, res1, res2) {
     if (!identical (names (res1), names (res2))) {
 
         ret <- test_rect_compare_outputs.NULL ()
-        ret <- ret [grep ("compare_col_names", ret$test_name), ]
+        ret <- ret [grep ("compare_col_names", ret$test_name, fixed = TRUE), ]
         ret$type <- "diagnostic"
         ret$fn_name <- x$fn
         ret$parameter <- names (x$params) [x$i]
@@ -72,7 +72,7 @@ chk_columns <- function (x, res1, res2) {
         if (!identical (res1 [[i]], res2 [[i]])) {
 
             ro <- test_rect_compare_outputs.NULL ()
-            ro <- ro [grep ("compare_col_structure", ro$test_name), ]
+            ro <- ro [grep ("compare_col_structure", ro$test_name, fixed = TRUE), ]
             ro$type <- "diagnostic"
             ro$fn_name <- x$fn
             ro$parameter <- names (x$params) [x$i]
@@ -247,8 +247,11 @@ pass_rect_as_other <- function (x, test_data = NULL) {
                 x$params [[x$i]] <- data.table::as.data.table (x$params [[x$i]])
             }
 
+            # assignment must stay nested here: 'capture.output()' returns
+            # the printed text, not the value of its expression, so this is
+            # the only way to capture both in one call.
             junk <- utils::capture.output (
-                val <- suppressWarnings (
+                val <- suppressWarnings ( # nolint
                     suppressMessages (
                         with_null_device (do.call (x$fn,
                             x$params,
@@ -300,8 +303,8 @@ pass_one_rect_as_other <- function (x,
     if (!is.null (msgs)) {
         msgs$parameter <- rep (names (x$params) [x$i], nrow (msgs))
 
-        if (grepl ("::", other)) {
-            other <- strsplit (other, "::") [[1]] [2]
+        if (grepl ("::", other, fixed = TRUE)) {
+            other <- strsplit (other, "::", fixed = TRUE) [[1]] [2]
         }
         ret <- add_msg_output (NULL,
             msgs,
@@ -363,7 +366,7 @@ compare_rect_outputs <- function (x, this_obj = NULL) {
     }
 
     res <- NULL
-    for (i in seq (nrow (nms))) {
+    for (i in seq_len (nrow (nms))) {
         res1 <- get (nms [i, 1], envir = x$env)
         res2 <- get (nms [i, 2], envir = x$env)
 
@@ -422,8 +425,11 @@ do_extend_rect_class_struct <- function (x) {
     }
 
     if (!"error" %in% msgs$type) {
+        # assignment must stay nested here: 'capture.output()' returns the
+        # printed text, not the value of its expression, so this is the
+        # only way to capture both in one call.
         o <- utils::capture.output (
-            temp <- suppressWarnings (with_null_device (do.call (x$fn,
+            temp <- suppressWarnings (with_null_device (do.call (x$fn, # nolint
                 x$params,
                 envir = x$env,
                 quote = TRUE

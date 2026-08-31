@@ -77,7 +77,7 @@ get_unique_fn_pars <- function (traces) {
 
     fn_pars <- unique (traces [, c ("fn_name", "par_name")])
 
-    par_types <- lapply (seq (nrow (fn_pars)), function (i) {
+    par_types <- lapply (seq_len (nrow (fn_pars)), function (i) {
         index <- which (traces$fn_name == fn_pars$fn_name [i] &
             traces$par_name == fn_pars$par_name [i])
         onecol <- function (traces, index, what = "classes") {
@@ -86,7 +86,7 @@ get_unique_fn_pars <- function (traces) {
                 res <- do.call (c, res)
             }
             res <- unique (res)
-            paste0 (res [which (!res == "NULL")], collapse = ", ")
+            toString (res [which (res != "NULL")])
         }
         data.frame (
             class = onecol (traces, index, "class"),

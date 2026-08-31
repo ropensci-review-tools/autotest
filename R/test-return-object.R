@@ -78,9 +78,7 @@ test_return_success.autotest_obj <- function (x, test_data = NULL, ...) { # noli
 
         # pkgs with examples for internal fns have to have their namespace
         # (re-)loaded which prompts a warning via memoise
-        suppressWarnings (
-            retobj <- m_capture_return_object (x)
-        )
+        retobj <- suppressWarnings (m_capture_return_object (x))
 
         if (methods::is (retobj, "error")) {
             ret$type <- "error"
@@ -109,9 +107,12 @@ capture_return_object <- function (x) {
         operation = "normal function call"
     )
 
-    suppressMessages (
-        o <- utils::capture.output (
-            retobj <- with_null_device (
+    # assignment must stay nested here: 'capture.output()' returns the
+    # printed text, not the value of its expression, so this is the only
+    # way to capture both in one call.
+    o <- suppressMessages (
+        utils::capture.output (
+            retobj <- with_null_device ( # nolint
                 tryCatch (do.call (x$fn, x$params, quote = TRUE),
                     warning = function (w) w,
                     error = function (e) e
@@ -228,9 +229,7 @@ test_return_has_class.autotest_obj <- function (x, test_data = NULL, ...) { # no
 
             # pkgs with examples for internal fns have to have their namespace
             # (re-)loaded which prompts a warning via memoise
-            suppressWarnings (
-                retobj <- m_capture_return_object (x)
-            )
+            retobj <- suppressWarnings (m_capture_return_object (x))
 
             cl <- attr (retobj, "class")
             okay <- TRUE
@@ -243,21 +242,18 @@ test_return_has_class.autotest_obj <- function (x, test_data = NULL, ...) { # no
                 )
             }
 
-            if (!any (okay)) { # one okay means all okay
-
+            if (any (okay)) { # one okay means all okay
+                ret <- NULL
+            } else {
                 ret$type <- "diagnostic"
                 ret$content <- paste0 (
                     "Function [",
                     x$fn,
                     "] returns a value of class [",
-                    paste0 (attr (retobj, "class"),
-                        collapse = ", "
-                    ),
+                    toString (attr (retobj, "class")),
                     "], which differs from the value ",
                     "provided in the description"
                 )
-            } else {
-                ret <- NULL
             }
         }
     }
@@ -316,9 +312,7 @@ test_return_primary_val_matches_desc.autotest_obj <- function (x, test_data = NU
 
             # pkgs with examples for internal fns have to have their namespace
             # (re-)loaded which prompts a warning via memoise
-            suppressWarnings (
-                retobj <- m_capture_return_object (x)
-            )
+            retobj <- suppressWarnings (m_capture_return_object (x))
 
             chk <- TRUE
             if (!is.null (attr (retobj, "class"))) {
@@ -330,7 +324,9 @@ test_return_primary_val_matches_desc.autotest_obj <- function (x, test_data = NU
                 )
             }
 
-            if (!any (chk)) {
+            if (any (chk)) {
+                ret <- NULL
+            } else {
 
                 txt <- compare_return_classes (Rd_value, retobj)
 
@@ -345,8 +341,6 @@ test_return_primary_val_matches_desc.autotest_obj <- function (x, test_data = NU
                 } else {
                     ret <- NULL
                 }
-            } else {
-                ret <- NULL
             }
         }
     } # end if x$test
@@ -360,7 +354,7 @@ compare_return_classes <- function (Rd_value, retval) { # nolint
     # Get class of returned object, along with matched value from man
     # entry
     retclasses <- attr (retval, "class")
-    r <- gregexpr (paste0 (retclasses, collapse = "|"), Rd_value)
+    r <- gregexpr (paste (retclasses, collapse = "|"), Rd_value)
     i <- vapply (r, function (i) i [1] > 0, logical (1))
 
     if (any (i)) {
@@ -386,7 +380,7 @@ compare_return_classes <- function (Rd_value, retval) { # nolint
                 "Function returns an object of primary class [",
                 retclasses [1],
                 "] yet documentation says value is of class [",
-                paste0 (desc_classes, collapse = ", "),
+                toString (desc_classes),
                 "]"
             )
         }
@@ -394,7 +388,7 @@ compare_return_classes <- function (Rd_value, retval) { # nolint
     } else {
 
         retclasses_mod <- gsub ("\\_|\\.", "", retclasses)
-        r <- gregexpr (paste0 (retclasses_mod, collapse = "|"), Rd_value)
+        r <- gregexpr (paste (retclasses_mod, collapse = "|"), Rd_value)
         i <- vapply (r, function (i) i [1] > 0, logical (1))
 
         if (any (i)) {
