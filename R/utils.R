@@ -45,17 +45,6 @@ preload_package <- function (package) {
     return (pkg_name)
 }
 
-rm_internal_namespace <- function (x) {
-
-    regmatches (
-        x,
-        gregexpr ("(?<=\\:\\:\\:).*",
-            x,
-            perl = TRUE
-        )
-    ) [[1]]
-}
-
 #' List of atomic modes
 #'
 #' from ?is.atomic
