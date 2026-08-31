@@ -32,7 +32,7 @@ preload_package <- function (package) {
         ip <- data.frame (utils::installed.packages (),
             stringsAsFactors = FALSE
         )
-        if (!package %in% ip$Package) {
+        if (!isTRUE (checkmate::check_choice (package, ip$Package))) {
             stop ("package [", package, "] does not appear to be installed.")
         }
         suppressMessages (

@@ -154,9 +154,7 @@ fns_from_other_pkgs <- function (package) {
     }
 
     namespace_file <- file.path (fp, "NAMESPACE")
-    if (!file.exists (namespace_file)) {
-        stop ("There is no NAMESPACE file at [", fp, "]")
-    }
+    checkmate::assert_file_exists (namespace_file, .var.name = "NAMESPACE file")
 
     ns <- readLines (namespace_file)
     ns <- gsub ("importFrom\\(|\\)$", "", ns [grep ("^importFrom", ns)])

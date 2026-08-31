@@ -68,6 +68,12 @@ autotest_package <- function (package = ".",
                               test_data = NULL,
                               progress = c ("bar", "tests", "none")) {
 
+    checkmate::assert_string (package)
+    checkmate::assert_character (functions, null.ok = TRUE)
+    checkmate::assert_character (exclude, null.ok = TRUE)
+    checkmate::assert_flag (test)
+    checkmate::assert_data_frame (test_data, null.ok = TRUE)
+
     progress <- match.arg (progress)
     if (progress == "bar" && isTRUE (getOption ("knitr.in.progress"))) {
         # 'cli' progress bars rely on 'isatty()' at the file-descriptor
@@ -200,9 +206,7 @@ get_package_loc <- function (package) {
     pkg_dir <- tryCatch (find.package (package), error = function (e) NULL)
 
     if (is.null (pkg_dir)) {
-        if (!dir.exists (package)) {
-            stop ("Directory ['", package, "'] does not exist", call. = FALSE)
-        }
+        checkmate::assert_directory_exists (package, .var.name = "package")
     } else {
         package <- pkg_dir
     }
@@ -308,6 +312,8 @@ autotest_single_trace <- function (package,
 #'
 #' @export
 autotest_types <- function (notest = NULL) {
+
+    checkmate::assert_character (notest, null.ok = TRUE)
 
     res <- rbind (
         autotest_rectangular (),

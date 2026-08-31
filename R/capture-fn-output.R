@@ -70,9 +70,7 @@ log_all_msgs <- function (con, this_fn, params = NULL) {
 }
 
 parse_all_msgs <- function (f) {
-    if (!file.exists (f)) {
-        stop ("File [", f, "] does not exist")
-    }
+    checkmate::assert_file_exists (f)
 
     x <- readLines (f)
     x <- x [which (!(x == "" | duplicated (x)))]

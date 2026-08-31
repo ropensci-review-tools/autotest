@@ -19,9 +19,7 @@ autotest_trace_package <- function (package,
 
     Sys.setenv ("TYPETRACER_LEAVE_TRACES" = "true")
     if (pkg_name != package) {
-        if (!dir.exists (package)) {
-            stop ("'package' should be a local directory.")
-        }
+        checkmate::assert_directory_exists (package, .var.name = "package")
         args <- list (pkg_dir = package)
     } else {
         args <- list (package = package)
@@ -50,14 +48,10 @@ include_functions <- function (package, functions = NULL, exclude = NULL) {
     fns <- m_get_pkg_functions (package)
 
     err_chk <- function (fn_arg, fns, package) {
-        if (!all (fn_arg %in% fns)) {
-            fn_arg <- fn_arg [which (!fn_arg %in% fns)]
-            stop ("The following functions are not in the namespace of ",
-                "package:", package, ": [",
-                paste0 (fn_arg, collapse = ", "), "]",
-                call. = FALSE
-            )
-        }
+        checkmate::assert_subset (
+            fn_arg, fns,
+            .var.name = paste0 ("functions in namespace of package: ", package)
+        )
     }
 
     if (!is.null (functions)) {

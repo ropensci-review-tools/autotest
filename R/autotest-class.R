@@ -33,6 +33,14 @@ autotest_obj <- function (package = NA_character_,
                           test = FALSE,
                           quiet = FALSE) {
 
+    checkmate::assert_string (package, na.ok = TRUE)
+    checkmate::assert_string (fn_name, na.ok = TRUE)
+    checkmate::assert_string (test_name, na.ok = TRUE)
+    checkmate::assert_list (parameters)
+    checkmate::assert_flag (test)
+    checkmate::assert_flag (quiet)
+    checkmate::assert_environment (env)
+
     x <- list (
         package = package,
         package_loc = package_loc,
