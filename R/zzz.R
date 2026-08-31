@@ -125,15 +125,13 @@ get_git_hash <- function (package) {
 
     ret <- NULL
 
-    wd <- setwd (package)
+    withr::with_dir (package, {
+        if (dir.exists (file.path (package, ".git"))) {
 
-    if (dir.exists (file.path (package, ".git"))) {
-
-        x <- system2 ("git", c ("log", "-1"), stdout = TRUE) [1]
-        ret <- gsub ("commit\\s+", "", x)
-    }
-
-    setwd (wd)
+            x <- system2 ("git", c ("log", "-1"), stdout = TRUE) [1]
+            ret <- gsub ("commit\\s+", "", x)
+        }
+    })
 
     return (ret)
 }
