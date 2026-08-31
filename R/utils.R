@@ -3,7 +3,7 @@ get_Rd_metadata <- utils::getFromNamespace (".Rd_get_metadata", "tools") # nolin
 #' Load a package (installed or local source) into the current session, and
 #' return its name.
 #'
-#' @param package Name of locally installed package or path to local source
+#' @inheritParams get_pkg_functions
 #' @return Name of the package
 #' @noRd
 preload_package <- function (package) {

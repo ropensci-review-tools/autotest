@@ -74,7 +74,7 @@ get_pkg_functions <- function (package) {
 }
 m_get_pkg_functions <- memoise::memoise (get_pkg_functions)
 
-#' @param package Name of locally installed package or path to local source
+#' @inheritParams get_pkg_functions
 #' @note This function is really slow, but is only called one so no gain from
 #' memoising.
 #' @noRd

@@ -16,8 +16,7 @@
 #' nominated package to be included in 'autotesting'.
 #' @param exclude Optional character vector containing names of any functions of
 #' nominated package to be excluded from 'autotesting'.
-#' @param test If `FALSE`, return only descriptions of tests which would be run
-#' with `test = TRUE`, without actually running them.
+#' @inheritParams autotest_obj
 #' @param test_data Result returned from calling either \link{autotest_types} or
 #' \link{autotest_package} with `test = FALSE` that contains a list of all tests
 #' which would be conducted. These tests have an additional flag, `test`, which
@@ -226,8 +225,7 @@ get_package_loc <- function (package) {
 #' @param traces A 'typetracer' trace file of function and parameter traces.
 #' @param fn_pars Reduced version of 'typetracer' traces containing only unique
 #' function and parameter name combinations.
-#' @param test If `FALSE`, return only descriptions of tests which would be run
-#' with `test = TRUE`, without actually running them.
+#' @inheritParams autotest_obj
 #' @param test_data Result returned from calling either \link{autotest_types} or
 #' \link{autotest_package} with `test = FALSE` that contains a list of all tests
 #' which would be conducted. These tests have an additional flag, `test`, which
