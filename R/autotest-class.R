@@ -20,6 +20,15 @@
 #' object.
 #' @family class
 #'
+#' @return An object of class `autotest_obj`, a list holding the parameters
+#' passed as arguments, used internally to represent one autotest test case.
+#'
+#' @examples
+#' x <- autotest_obj (
+#'     package = "stats",
+#'     fn_name = "sd",
+#'     test_name = "test"
+#' )
 #' @export
 autotest_obj <- function (package = NA_character_,
                           package_loc = NULL,
@@ -32,6 +41,14 @@ autotest_obj <- function (package = NA_character_,
                           env = new.env (),
                           test = FALSE,
                           quiet = FALSE) {
+
+    checkmate::assert_string (package, na.ok = TRUE)
+    checkmate::assert_string (fn_name, na.ok = TRUE)
+    checkmate::assert_string (test_name, na.ok = TRUE)
+    checkmate::assert_list (parameters)
+    checkmate::assert_flag (test)
+    checkmate::assert_flag (quiet)
+    checkmate::assert_environment (env)
 
     x <- list (
         package = package,

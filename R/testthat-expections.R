@@ -5,6 +5,14 @@
 #' @param object Not used here, but required for `testthat` expectations
 #' @return (invisibly) The autotest object
 #' @family expectations
+#'
+#' @examples
+#' \dontrun{
+#' # Called within a 'testthat' test file of the local package itself:
+#' testthat::test_that ("autotest", {
+#'     testthat::expect_success (expect_autotest_no_testdata ())
+#' })
+#' }
 #' @export
 expect_autotest_no_testdata <- function (object = NULL) {
 
@@ -32,6 +40,15 @@ expect_autotest_no_testdata <- function (object = NULL) {
 #' tests which are not to be run on the local package.
 #' @return (invisibly) The autotest object
 #' @family expectations
+#'
+#' @examples
+#' test_data <- autotest_types (notest = "vector_to_list_col")
+#' \dontrun{
+#' # Called within a 'testthat' test file of the local package itself:
+#' testthat::test_that ("autotest", {
+#'     testthat::expect_success (expect_autotest_testdata (test_data))
+#' })
+#' }
 #' @export
 expect_autotest_testdata <- function (object) {
 
@@ -87,6 +104,12 @@ expect_autotest_testdata <- function (object) {
 #' @param object An `autotest` object to be tested
 #' @return (invisibly) The same object
 #' @family expectations
+#'
+#' @examples
+#' \donttest{
+#' x <- autotest_package (package = "stats", functions = "cov", test = TRUE)
+#' testthat::expect_failure (expect_autotest_no_err (x))
+#' }
 #' @export
 expect_autotest_no_err <- function (object) {
 
@@ -111,6 +134,12 @@ expect_autotest_no_err <- function (object) {
 #' @param object An `autotest` object to be tested
 #' @return (invisibly) The same object
 #' @family expectations
+#'
+#' @examples
+#' \donttest{
+#' x <- autotest_package (package = "stats", functions = "cov", test = TRUE)
+#' testthat::expect_failure (expect_autotest_no_warn (x))
+#' }
 #' @export
 expect_autotest_no_warn <- function (object) {
 
@@ -134,7 +163,14 @@ expect_autotest_no_warn <- function (object) {
 #' column explaining why tests have been switched off.
 #'
 #' @param object An `autotest` object to be tested
+#' @return (invisibly) The same object
 #' @family expectations
+#'
+#' @examples
+#' \donttest{
+#' x <- autotest_package (package = "stats", functions = "cov", test = TRUE)
+#' testthat::expect_success (expect_autotest_notes (x))
+#' }
 #' @export
 expect_autotest_notes <- function (object) {
 

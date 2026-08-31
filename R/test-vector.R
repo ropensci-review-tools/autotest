@@ -102,7 +102,9 @@ test_vec_class_defs.autotest_obj <- function (x, test_data = NULL, ...) { # noli
 
     if (x$test) {
 
-        if (!names (x$params) [x$i] %in% names (x$classes)) {
+        if (names (x$params) [x$i] %in% names (x$classes)) {
+            res <- NULL
+        } else {
             p <- x$params [[x$i]]
             class (p) <- "different"
             x$params [[x$i]] <- p
@@ -131,8 +133,6 @@ test_vec_class_defs.autotest_obj <- function (x, test_data = NULL, ...) { # noli
             } else {
                 res <- NULL
             }
-        } else {
-            res <- NULL
         }
     } else {
         res <- res0

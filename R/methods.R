@@ -46,7 +46,8 @@ summary.autotest_package <- function (object, ...) {
     message ("     ", sum (diagnostics), " other diagnostics", diag_txt)
     objecttrim <- object [which (!grepl (
         "no documented example",
-        object$content
+        object$content,
+        fixed = TRUE
     )), ]
     message (
         "That corresponds to ",
@@ -58,7 +59,7 @@ summary.autotest_package <- function (object, ...) {
 
     print (res)
 
-    no_ex <- grep ("no documented example", object$content)
+    no_ex <- grep ("no documented example", object$content, fixed = TRUE)
     if (length (no_ex) > 0) {
         message (
             "\nIn addition to the values in that table, the output ",

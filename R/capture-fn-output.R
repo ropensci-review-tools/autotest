@@ -22,9 +22,9 @@ log_all_msgs <- function (con, this_fn, params = NULL) {
 
     o <- utils::capture.output ({
         en <- new.env ()
-        if (grepl (":::", this_fn)) {
+        if (grepl (":::", this_fn, fixed = TRUE)) {
             # internal fns can't be called via do.call:
-            this_fn <- strsplit (this_fn, ":::") [[1]]
+            this_fn <- strsplit (this_fn, ":::", fixed = TRUE) [[1]]
             this_fn <- utils::getFromNamespace (this_fn [2], this_fn [1])
         }
         x <- tryCatch (
@@ -70,9 +70,7 @@ log_all_msgs <- function (con, this_fn, params = NULL) {
 }
 
 parse_all_msgs <- function (f) {
-    if (!file.exists (f)) {
-        stop ("File [", f, "] does not exist")
-    }
+    checkmate::assert_file_exists (f)
 
     x <- readLines (f)
     x <- x [which (!(x == "" | duplicated (x)))]
@@ -91,7 +89,7 @@ parse_all_msgs <- function (f) {
                 x [i] <- paste0 (x [i], x [i + 1], collapse = " ")
                 rm_lines <- c (rm_lines, i + 1)
             }
-            colon1 <- regexpr ("\\:", x [i])
+            colon1 <- regexpr (":", x [i], fixed = TRUE)
             content <- gsub (
                 "^\\s?", "",
                 substring (x [i], colon1 + 1, nchar (x [i]))
@@ -147,9 +145,7 @@ parse_all_msgs <- function (f) {
 catch_all_msgs <- function (f, this_fn, params = NULL) {
 
     con <- file (f, "wt")
-    suppressMessages (
-        x <- log_all_msgs (con, this_fn, params)
-    )
+    x <- suppressMessages (log_all_msgs (con, this_fn, params))
     close (con)
     out <- parse_all_msgs (f)
     if (!is.null (out)) {

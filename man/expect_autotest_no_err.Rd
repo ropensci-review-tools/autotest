@@ -15,6 +15,12 @@ expect_autotest_no_err(object)
 \description{
 Expect \code{autotest_package()} to be clear of errors
 }
+\examples{
+\donttest{
+x <- autotest_package (package = "stats", functions = "cov", test = TRUE)
+testthat::expect_failure (expect_autotest_no_err (x))
+}
+}
 \seealso{
 Other expectations:
 \code{\link[=expect_autotest_no_testdata]{expect_autotest_no_testdata()}},

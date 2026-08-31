@@ -45,8 +45,19 @@ with \code{test = TRUE}, without actually running them.}
 \item{quiet}{If \code{FALSE}, issue progress and other messages during testing of
 object.}
 }
+\value{
+An object of class \code{autotest_obj}, a list holding the parameters
+passed as arguments, used internally to represent one autotest test case.
+}
 \description{
 This function exists only to provide the class definitions for test objects,
 and is not intended to be called directly.
+}
+\examples{
+x <- autotest_obj (
+    package = "stats",
+    fn_name = "sd",
+    test_name = "test"
+)
 }
 \concept{class}

@@ -124,8 +124,8 @@ double_noise <- function (x) {
 
     seed <- sample.int (.Machine$integer.max, 1L)
 
-    suppressWarnings (
-        res0 <- tryCatch (
+    res0 <- suppressWarnings (
+        tryCatch (
             withr::with_seed (
                 seed,
                 with_null_device (do.call (x$fn, x$params))

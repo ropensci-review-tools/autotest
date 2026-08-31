@@ -19,9 +19,7 @@ autotest_trace_package <- function (package,
 
     Sys.setenv ("TYPETRACER_LEAVE_TRACES" = "true")
     if (pkg_name != package) {
-        if (!dir.exists (package)) {
-            stop ("'package' should be a local directory.")
-        }
+        checkmate::assert_directory_exists (package, .var.name = "package")
         args <- list (pkg_dir = package)
     } else {
         args <- list (package = package)
@@ -50,14 +48,10 @@ include_functions <- function (package, functions = NULL, exclude = NULL) {
     fns <- m_get_pkg_functions (package)
 
     err_chk <- function (fn_arg, fns, package) {
-        if (!all (fn_arg %in% fns)) {
-            fn_arg <- fn_arg [which (!fn_arg %in% fns)]
-            stop ("The following functions are not in the namespace of ",
-                "package:", package, ": [",
-                paste0 (fn_arg, collapse = ", "), "]",
-                call. = FALSE
-            )
-        }
+        checkmate::assert_subset (
+            fn_arg, fns,
+            .var.name = paste0 ("functions in namespace of package: ", package)
+        )
     }
 
     if (!is.null (functions)) {
@@ -83,7 +77,7 @@ get_unique_fn_pars <- function (traces) {
 
     fn_pars <- unique (traces [, c ("fn_name", "par_name")])
 
-    par_types <- lapply (seq (nrow (fn_pars)), function (i) {
+    par_types <- lapply (seq_len (nrow (fn_pars)), function (i) {
         index <- which (traces$fn_name == fn_pars$fn_name [i] &
             traces$par_name == fn_pars$par_name [i])
         onecol <- function (traces, index, what = "classes") {
@@ -92,7 +86,7 @@ get_unique_fn_pars <- function (traces) {
                 res <- do.call (c, res)
             }
             res <- unique (res)
-            paste0 (res [which (!res == "NULL")], collapse = ", ")
+            toString (res [which (res != "NULL")])
         }
         data.frame (
             class = onecol (traces, index, "class"),
@@ -139,7 +133,8 @@ get_example_fn_pars <- function (trace_files) {
         }
 
         was_demonstrated <- vapply (
-            trace_data [par_index], function (j) !identical (j$par_uneval, "NULL"),
+            trace_data [par_index],
+            function (j) !identical (j$par_uneval, "NULL"),
             logical (1L)
         )
         par_index <- par_index [was_demonstrated]
@@ -178,7 +173,10 @@ get_fn_formals <- function (trace_files) {
 
     res <- lapply (trace_files, function (f) {
         trace_data <- readRDS (f)
-        list (fn_name = trace_data$fn_name, formals = names (trace_data$par_formals))
+        list (
+            fn_name = trace_data$fn_name,
+            formals = names (trace_data$par_formals)
+        )
     })
 
     fn_names <- vapply (res, function (x) x$fn_name, character (1L))

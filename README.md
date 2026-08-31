@@ -1,4 +1,4 @@
-# autotest <a href='https://docs.ropensci.org/autotest'><img src='man/figures/autotest.png' align="right" height=210 width=182></a>
+# autotest <a href='https://docs.ropensci.org/autotest/'><img src='man/figures/autotest.png' align="right" height=210 width=182></a>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -8,7 +8,7 @@
 [![Codecov test
 coverage](https://codecov.io/gh/ropensci-review-tools/autotest/graph/badge.svg)](https://app.codecov.io/gh/ropensci-review-tools/autotest)
 [![Project Status:
-Concept](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
+Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 <!-- badges: end -->
 
 Automatic mutation testing of R packages. Mutation in the sense of
@@ -19,7 +19,7 @@ the parameters input to those functions.
 ## Installation
 
 The easiest way to install this package is via the associated
-[`r-universe`](https://ropensci-review-tools.r-universe.dev/ui#builds).
+[`r-universe`](https://ropensci-review-tools.r-universe.dev/).
 As shown there, simply enable the universe with
 
 ``` r
@@ -166,9 +166,9 @@ print (y)
 #>  1 warning    par_is_d… var     na.rm     <NA>           Check th… "Examp… TRUE 
 #>  2 warning    par_is_d… var     use       <NA>           Check th… "Examp… TRUE 
 #>  3 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
-#>  4 diagnostic subst_in… var     na.rm     single logical Substitu… "(Func… TRUE 
-#>  5 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
-#>  6 diagnostic vector_t… var     y         vector         Convert … "Funct… TRUE 
+#>  4 diagnostic vector_t… var     y         vector         Convert … "Funct… TRUE 
+#>  5 diagnostic subst_in… var     na.rm     single logical Substitu… "(Func… TRUE 
+#>  6 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
 #>  7 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
 #>  8 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
 #>  9 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
@@ -220,13 +220,13 @@ rather than the previous “diagnostic”.
 ## Prior work
 
 1.  The
-    [`great-expectations`](https://github.com/great-expectations/great_expectations)
+    [`great-expectations`](https://github.com/fivetran/great_expectations)
     framework for python, described in [this medium
     article](https://medium.com/@expectgreatdata/down-with-pipeline-debt-introducing-great-expectations-862ddc46782a).
 2.  [`QuickCheck`](https://hackage.haskell.org/package/QuickCheck) for
     Haskell
 3.  [`mutate`](https://github.com/mbj/mutant) for ruby
-4.  [`mutant`](https://github.com/ropensci/mutant) for mutation of R
+4.  [`mutant`](https://github.com/sckott/mutant) for mutation of R
     code itself
 
 ## Code of Conduct

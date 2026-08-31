@@ -206,10 +206,10 @@ test_param_docs_test <- function (x) {
 
             this_class <- class (x$params [[p]])
             class_in_desc <- vapply (
-                this_class, function (i) {
-                    grepl (i, rd_desc)
-                },
-                logical (1)
+                this_class,
+                grepl,
+                logical (1),
+                x = rd_desc
             )
             if (!any (class_in_desc)) {
 
@@ -217,7 +217,7 @@ test_param_docs_test <- function (x) {
                 this_ret$content <- paste0 (
                     "Parameter documentation does ",
                     "not describe class of [",
-                    paste0 (this_class, collapse = ", "),
+                    toString (this_class),
                     "]"
                 )
                 this_ret$type <- "warning"

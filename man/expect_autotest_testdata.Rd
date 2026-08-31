@@ -17,6 +17,15 @@ tests which are not to be run on the local package.}
 Expect \code{autotest_package()} to be clear of errors with some tests switched
 off, and to have note column explaining why those tests are not run.
 }
+\examples{
+test_data <- autotest_types (notest = "vector_to_list_col")
+\dontrun{
+# Called within a 'testthat' test file of the local package itself:
+testthat::test_that ("autotest", {
+    testthat::expect_success (expect_autotest_testdata (test_data))
+})
+}
+}
 \seealso{
 Other expectations:
 \code{\link[=expect_autotest_no_err]{expect_autotest_no_err()}},

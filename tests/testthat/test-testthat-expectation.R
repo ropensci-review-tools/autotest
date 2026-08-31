@@ -41,7 +41,7 @@ test_that ("expect_autotest", {
     # ... but turned off because of #61
 
     x$note <- ""
-    x [grep ("vector_to_list", x$test_name), "note"] <-
+    x [grep ("vector_to_list", x$test_name, fixed = TRUE), "note"] <-
         "these tests have been switched off because ..."
 
     # Adding a note column leads to success:

@@ -20,6 +20,10 @@ function.
 \description{
 List all types of 'autotests' currently implemented.
 }
+\examples{
+x <- autotest_types ()
+x
+}
 \seealso{
 Other main_functions:
 \code{\link[=autotest_package]{autotest_package()}}

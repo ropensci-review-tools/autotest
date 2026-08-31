@@ -8,7 +8,8 @@
 #' \enumerate{
 #'    \item Path to local package source
 #'    \item Name of installed package
-#'    \item Full path to location of installed package if not on \link{.libPaths}, or
+#'    \item Full path to location of installed package if not on
+#'    \link{.libPaths}, or
 #'    \item Default which presumes current directory is within package to be
 #'    tested.
 #' }
@@ -16,8 +17,7 @@
 #' nominated package to be included in 'autotesting'.
 #' @param exclude Optional character vector containing names of any functions of
 #' nominated package to be excluded from 'autotesting'.
-#' @param test If `FALSE`, return only descriptions of tests which would be run
-#' with `test = TRUE`, without actually running them.
+#' @inheritParams autotest_obj
 #' @param test_data Result returned from calling either \link{autotest_types} or
 #' \link{autotest_package} with `test = FALSE` that contains a list of all tests
 #' which would be conducted. These tests have an additional flag, `test`, which
@@ -43,10 +43,11 @@
 #'    \item `parameter_type` Expected type of parameter as identified by
 #'    `autotest`.
 #'    \item `operation` Description of the test
-#'    \item `content` For `test = FALSE`, the expected behaviour of the test; for
-#'    `test = TRUE`, the observed discrepancy with that expected behaviour
-#'    \item `test` If `FALSE` (default), list all tests without implementing them,
-#'    otherwise implement all tests.
+#'    \item `content` For `test = FALSE`, the expected behaviour of the
+#'    test; for `test = TRUE`, the observed discrepancy with that expected
+#'    behaviour
+#'    \item `test` If `FALSE` (default), list all tests without
+#'    implementing them, otherwise implement all tests.
 #' }
 #' Some columns may contain NA values, as explained in the Note.
 #'
@@ -60,6 +61,12 @@
 #'    the corresponding message.
 #' }
 #' @family main_functions
+#'
+#' @examples
+#' \donttest{
+#' x <- autotest_package (package = "stats", functions = "var", test = FALSE)
+#' x
+#' }
 #' @export
 autotest_package <- function (package = ".",
                               functions = NULL,
@@ -67,6 +74,12 @@ autotest_package <- function (package = ".",
                               test = FALSE,
                               test_data = NULL,
                               progress = c ("bar", "tests", "none")) {
+
+    checkmate::assert_string (package)
+    checkmate::assert_character (functions, null.ok = TRUE)
+    checkmate::assert_character (exclude, null.ok = TRUE)
+    checkmate::assert_flag (test)
+    checkmate::assert_data_frame (test_data, null.ok = TRUE)
 
     progress <- match.arg (progress)
     if (progress == "bar" && isTRUE (getOption ("knitr.in.progress"))) {
@@ -81,7 +94,9 @@ autotest_package <- function (package = ".",
     pkg_name <- preload_package (package)
     pkg_dir <- get_package_loc (package)
 
-    traces <- autotest_trace_package (package, functions = functions, exclude = exclude)
+    traces <- autotest_trace_package (package,
+        functions = functions, exclude = exclude
+    )
 
     # 'typetracer::trace_package()' unloads the traced package's namespace
     # once tracing is done, and does not itself reload it into this session
@@ -200,9 +215,7 @@ get_package_loc <- function (package) {
     pkg_dir <- tryCatch (find.package (package), error = function (e) NULL)
 
     if (is.null (pkg_dir)) {
-        if (!dir.exists (package)) {
-            stop ("Directory ['", package, "'] does not exist", call. = FALSE)
-        }
+        checkmate::assert_directory_exists (package, .var.name = "package")
     } else {
         package <- pkg_dir
     }
@@ -216,8 +229,7 @@ get_package_loc <- function (package) {
 #' @param traces A 'typetracer' trace file of function and parameter traces.
 #' @param fn_pars Reduced version of 'typetracer' traces containing only unique
 #' function and parameter name combinations.
-#' @param test If `FALSE`, return only descriptions of tests which would be run
-#' with `test = TRUE`, without actually running them.
+#' @inheritParams autotest_obj
 #' @param test_data Result returned from calling either \link{autotest_types} or
 #' \link{autotest_package} with `test = FALSE` that contains a list of all tests
 #' which would be conducted. These tests have an additional flag, `test`, which
@@ -282,7 +294,7 @@ autotest_single_trace <- function (package,
 
         # rm "no_test" tests switched off from "test_data"
         if (test) {
-            reports <- reports [which (!reports$type == "no_test"), ]
+            reports <- reports [which (reports$type != "no_test"), ]
         }
 
         rownames (reports) <- NULL
@@ -306,8 +318,13 @@ autotest_single_trace <- function (package,
 #' function.
 #' @family main_functions
 #'
+#' @examples
+#' x <- autotest_types ()
+#' x
 #' @export
 autotest_types <- function (notest = NULL) {
+
+    checkmate::assert_character (notest, null.ok = TRUE)
 
     res <- rbind (
         autotest_rectangular (),
@@ -324,10 +341,10 @@ autotest_types <- function (notest = NULL) {
 
     if (!is.null (notest)) {
         index <- match (notest, res$test_name)
-        if (any (is.na (index))) {
+        if (anyNA (index)) {
             message (
                 "notest = [",
-                paste0 (notest [which (is.na (index))], collapse = ", "),
+                toString (notest [which (is.na (index))]),
                 "] does not match any test_name values"
             )
             index <- index [which (!is.na (index))]
@@ -345,7 +362,7 @@ order_at_rows <- function (x) {
         "dummy", "no_test"
     )
     index <- data.frame (
-        index = seq (nrow (x)),
+        index = seq_len (nrow (x)),
         type = match (x$type, type_order)
     )
     index <- index [order (index$type), ]

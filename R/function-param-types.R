@@ -10,7 +10,9 @@ get_param_info <- function (trace_data, fn_pars) {
 
     # get parameter values:
     par_index <- which (!nzchar (names (trace_data)))
-    par_names_i <- vapply (trace_data [par_index], function (j) j$par, character (1L))
+    par_names_i <- vapply (
+        trace_data [par_index], function (j) j$par, character (1L)
+    )
     par_vals_i <- lapply (trace_data [par_index], function (j) j$par_eval)
     names (par_vals_i) <- par_names_i
     index <- which (!vapply (par_vals_i, is.null, logical (1L)))
@@ -32,7 +34,7 @@ get_param_info <- function (trace_data, fn_pars) {
 
     is_single <- vapply (
         fn_pars_i$length, function (j) {
-            all (as.integer (strsplit (j, ",") [[1]]) <= 1L)
+            all (as.integer (strsplit (j, ",", fixed = TRUE) [[1]]) <= 1L)
         },
         logical (1L)
     )
@@ -40,7 +42,7 @@ get_param_info <- function (trace_data, fn_pars) {
 
     is_vector <- vapply (
         fn_pars_i$length, function (j) {
-            any (as.integer (strsplit (j, ",") [[1]]) > 1L)
+            any (as.integer (strsplit (j, ",", fixed = TRUE) [[1]]) > 1L)
         },
         logical (1L)
     )
@@ -57,7 +59,7 @@ get_param_info <- function (trace_data, fn_pars) {
     # reduce class to first non-generic value only
     # start by removing generic classes, which may be first of several items, so
     # first remove all ", " versions.
-    atomics <- paste0 (atomic_modes (), collapse = "|")
+    atomics <- paste (atomic_modes (), collapse = "|")
     atomics <- paste0 (atomics, "|matrix|array|data\\.frame")
     ptn <- paste0 ("(", atomics, "),\\s*")
     param_class <- gsub (ptn, "", fn_pars_i$class)

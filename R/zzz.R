@@ -36,8 +36,11 @@ not_null_and_is <- function (x, is_this) {
 # Conversion of default `package = "."` to proper package path
 dot_to_package <- function (package) {
 
-    ip <- as.data.frame (utils::installed.packages ())
-    if (package %in% ip$Package) {
+    fp <- tryCatch (
+        find.package (package),
+        error = function (e) NULL
+    )
+    if (!is.null (fp)) {
         return (package)
     }
 
@@ -122,69 +125,13 @@ get_git_hash <- function (package) {
 
     ret <- NULL
 
-    wd <- setwd (package)
+    withr::with_dir (package, {
+        if (dir.exists (file.path (package, ".git"))) {
 
-    if (dir.exists (file.path (package, ".git"))) {
-
-        x <- system2 ("git", c ("log", "-1"), stdout = TRUE) [1]
-        ret <- gsub ("commit\\s+", "", x)
-    }
-
-    setwd (wd)
+            x <- system2 ("git", c ("log", "-1"), stdout = TRUE) [1]
+            ret <- gsub ("commit\\s+", "", x)
+        }
+    })
 
     return (ret)
-}
-
-#' @param pkg Either name of locally-installed package or path to package source
-#' @param suggests If `FALSE`, return just names of package Imports, if `TRUE`
-#' then also include Suggests
-#' @return List of package Imports (and optionally Suggests)
-#' @noRd
-get_pkg_deps <- function (pkg, suggests = FALSE) {
-
-    if (pkg_is_source (pkg)) {
-
-        desc <- file.path (pkg, "DESCRIPTION")
-        get_deps <- function (desc, s = "Imports") {
-            deps <- strsplit (read.dcf (desc, s), ",|,\\n") [[1]]
-            ret <- NULL
-            if (!all (is.na (deps))) {
-                ret <- gsub ("\\(.*\\)$", "", deps)
-                ret <- gsub ("^\\s*|\\s*$", "", ret)
-            }
-            return (ret)
-        }
-        deps <- get_deps (desc)
-        if (suggests) {
-            deps <- c (deps, get_deps (desc, "Suggests"))
-        }
-    } else {
-
-        ip <- data.frame (utils::installed.packages (),
-            stringsAsFactors = FALSE
-        )
-        if (!pkg %in% ip$Package) {
-
-            lib <- c (.libPaths (), pkg_lib_path (pkg, root = TRUE))
-
-            ip <- data.frame (utils::installed.packages (lib.loc = lib),
-                stringsAsFactors = FALSE
-            )
-        }
-        deps <- strsplit (ip$Depends [ip$Package == pkg], ",(\\s?)") [[1]]
-        deps <- gsub ("\\s*\\(.*$", "", deps [!is.na (deps)])
-        imports <- strsplit (ip$Imports [ip$Package == pkg], ",(\\s?)") [[1]]
-        deps <- c (deps, gsub ("\\s*\\(.*$", "", imports [!is.na (imports)]))
-        if (suggests) {
-            s <- strsplit (ip$Suggests [ip$Package == pkg], ",(\\s?)") [[1]]
-            deps <- c (deps, gsub ("\\s*\\(.*$", "", s [!is.na (s)]))
-        }
-    }
-    base_pkgs <- c (
-        "stats", "graphics", "grDevices", "utils",
-        "datasets", "methods", "base"
-    )
-    deps <- deps [which (!deps %in% c ("R", base_pkgs))]
-
-    return (deps)
 }

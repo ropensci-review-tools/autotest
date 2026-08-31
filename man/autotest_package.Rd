@@ -18,7 +18,8 @@ autotest_package(
 \enumerate{
 \item Path to local package source
 \item Name of installed package
-\item Full path to location of installed package if not on \link{.libPaths}, or
+\item Full path to location of installed package if not on
+\link{.libPaths}, or
 \item Default which presumes current directory is within package to be
 tested.
 }}
@@ -60,10 +61,11 @@ of "error", "warning", "diagnostic", or "message".
 \item \code{parameter_type} Expected type of parameter as identified by
 \code{autotest}.
 \item \code{operation} Description of the test
-\item \code{content} For \code{test = FALSE}, the expected behaviour of the test; for
-\code{test = TRUE}, the observed discrepancy with that expected behaviour
-\item \code{test} If \code{FALSE} (default), list all tests without implementing them,
-otherwise implement all tests.
+\item \code{content} For \code{test = FALSE}, the expected behaviour of the
+test; for \code{test = TRUE}, the observed discrepancy with that expected
+behaviour
+\item \code{test} If \code{FALSE} (default), list all tests without
+implementing them, otherwise implement all tests.
 }
 Some columns may contain NA values, as explained in the Note.
 }
@@ -81,6 +83,12 @@ functions, such as tests of return values.
 function calls generated directly from example code, in which case \code{type}
 will be "warning" or "error", and \code{content} will contain the content of
 the corresponding message.
+}
+}
+\examples{
+\donttest{
+x <- autotest_package (package = "stats", functions = "var", test = FALSE)
+x
 }
 }
 \seealso{
