@@ -29,10 +29,11 @@ preload_package <- function (package) {
 
     } else {
 
-        ip <- data.frame (utils::installed.packages (),
-            stringsAsFactors = FALSE
+        fp <- tryCatch (
+            find.package (package),
+            error = function (e) NULL
         )
-        if (!isTRUE (checkmate::check_choice (package, ip$Package))) {
+        if (is.null (fp)) {
             stop ("package [", package, "] does not appear to be installed.")
         }
         suppressMessages (

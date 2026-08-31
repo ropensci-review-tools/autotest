@@ -36,8 +36,11 @@ not_null_and_is <- function (x, is_this) {
 # Conversion of default `package = "."` to proper package path
 dot_to_package <- function (package) {
 
-    ip <- as.data.frame (utils::installed.packages ())
-    if (package %in% ip$Package) {
+    fp <- tryCatch (
+        find.package (package),
+        error = function (e) NULL
+    )
+    if (!is.null (fp)) {
         return (package)
     }
 
@@ -160,23 +163,31 @@ get_pkg_deps <- function (pkg, suggests = FALSE) {
         }
     } else {
 
-        ip <- data.frame (utils::installed.packages (),
-            stringsAsFactors = FALSE
+        fp <- tryCatch (
+            find.package (package),
+            error = function (e) NULL
         )
-        if (!pkg %in% ip$Package) {
+        if (is.null (fp)) {
 
             lib <- c (.libPaths (), pkg_lib_path (pkg, root = TRUE))
-
-            ip <- data.frame (utils::installed.packages (lib.loc = lib),
-                stringsAsFactors = FALSE
+            fp <- tryCatch (
+                find.package (package),
+                error = function (e) NULL
             )
         }
-        deps <- strsplit (ip$Depends [ip$Package == pkg], ",(\\s?)") [[1]]
-        deps <- gsub ("\\s*\\(.*$", "", deps [!is.na (deps)])
-        imports <- strsplit (ip$Imports [ip$Package == pkg], ",(\\s?)") [[1]]
+        if (is.null (fp)) {
+            return (NULL)
+        }
+        desc <- data.frame (read.dcf (file.path (fp, "DESCRIPTION")))
+        deps <- NULL
+        if ("Depends" %in% names (desc)) {
+            deps <- strsplit (desc$Depends, ",(\\s?)") [[1]]
+            deps <- gsub ("\\s*\\(.*$", "", deps [!is.na (deps)])
+        }
+        imports <- strsplit (desc$Imports, ",(\\s?)") [[1]]
         deps <- c (deps, gsub ("\\s*\\(.*$", "", imports [!is.na (imports)]))
-        if (suggests) {
-            s <- strsplit (ip$Suggests [ip$Package == pkg], ",(\\s?)") [[1]]
+        if (suggests && "Suggests" %in% names (desc)) {
+            s <- strsplit (desc$Suggests, ",(\\s?)") [[1]]
             deps <- c (deps, gsub ("\\s*\\(.*$", "", s [!is.na (s)]))
         }
     }
