@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.1.0.038
+Version: 0.1.0.039
 Authors@R: c(
     person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2172-5265")),
@@ -46,4 +46,4 @@ Language: en-GB
 LazyData: true
 Roxygen: list(markdown = TRUE)
 Config/ropensci/maintainer: staff
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0
