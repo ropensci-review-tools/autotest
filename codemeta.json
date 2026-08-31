@@ -8,7 +8,7 @@
   "codeRepository": "https://github.com/ropensci-review-tools/autotest",
   "issueTracker": "https://github.com/ropensci-review-tools/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.1.0.034",
+  "version": "0.1.0.035",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -178,6 +178,11 @@
     },
     "3": {
       "@type": "SoftwareApplication",
+      "identifier": "grDevices",
+      "name": "grDevices"
+    },
+    "4": {
+      "@type": "SoftwareApplication",
       "identifier": "here",
       "name": "here",
       "provider": {
@@ -188,7 +193,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=here"
     },
-    "4": {
+    "5": {
       "@type": "SoftwareApplication",
       "identifier": "magrittr",
       "name": "magrittr",
@@ -200,7 +205,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=magrittr"
     },
-    "5": {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "memoise",
       "name": "memoise",
@@ -212,12 +217,12 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=memoise"
     },
-    "6": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "methods",
       "name": "methods"
     },
-    "7": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "pkgload",
       "name": "pkgload",
@@ -229,7 +234,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=pkgload"
     },
-    "8": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "rlang",
       "name": "rlang",
@@ -241,7 +246,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=rlang"
     },
-    "9": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "testthat",
       "name": "testthat",
@@ -253,7 +258,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=testthat"
     },
-    "10": {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "tibble",
       "name": "tibble",
@@ -265,7 +270,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tibble"
     },
-    "11": {
+    "12": {
       "@type": "SoftwareApplication",
       "identifier": "typetracer",
       "name": "typetracer",
@@ -275,9 +280,9 @@
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://github.com/mpadge/typetracer"
+      "sameAs": "https://CRAN.R-project.org/package=typetracer"
     },
-    "12": {
+    "13": {
       "@type": "SoftwareApplication",
       "identifier": "withr",
       "name": "withr",
@@ -291,7 +296,7 @@
     },
     "SystemRequirements": {}
   },
-  "fileSize": "479.037KB",
+  "fileSize": "388.933KB",
   "readme": "https://github.com/ropensci-review-tools/autotest/blob/main/README.md",
   "contIntegration": [
     "https://github.com/ropensci-review-tools/autotest/actions/workflows/R-CMD-check.yaml",
