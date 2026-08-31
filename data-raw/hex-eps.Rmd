@@ -38,6 +38,8 @@ hex <- ggplot () +
     ggimage::geom_image (aes_ (x = ~x, y = ~y, image = ~image), d,
         size = 0.65, asp = 1
     ) +
+    # force output height to exactly equal width, regardless of device shape
+    coord_fixed (ratio = asp) +
     scale_x_continuous (expand = c (0.02, 0.02)) +
     scale_y_continuous (expand = c (0.02, 0.02))
 print (hex)
@@ -87,6 +89,7 @@ hex <- add_one_lab (hex, lab_dat, aes, fs)
 
 th <- theme_minimal ()
 th$panel.background <- element_rect (fill = "transparent", size = 0)
+th$plot.background <- element_rect (fill = "transparent", colour = NA)
 th$line <- element_blank ()
 th$axis.text <- element_blank ()
 th$axis.title <- element_blank ()
@@ -127,6 +130,6 @@ hex + theme_minimal (base_family = "SF Alien Encounters") +
         axis.title.y = element_blank ()
     )
 dev.off ()
-ggsave (fname, hex)
-ggsave ("autotest.png", hex)
+ggsave (fname, hex, width = 7, height = 7, bg = "transparent")
+ggsave ("autotest.png", hex, width = 7, height = 7, bg = "transparent")
 ```
