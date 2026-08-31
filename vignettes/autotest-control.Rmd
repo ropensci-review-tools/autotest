@@ -269,7 +269,10 @@ xt1 <- tibble::tibble (
         "upper-case character parameter"
     ),
     content = c (
-        rep ("Parameter documentation does not describe class of [integer]", 2L),
+        rep (
+            "Parameter documentation does not describe class of [integer]",
+            2L
+        ),
         rep ("Parameter documentation does not describe class of [dist]", 2L),
         "is case dependent"
     ),
@@ -337,7 +340,10 @@ xt2 <- tibble::tibble (
         "upper-case character parameter"
     ),
     content = c (
-        rep ("Parameter documentation does not describe class of [integer]", 2L),
+        rep (
+            "Parameter documentation does not describe class of [integer]",
+            2L
+        ),
         rep ("Parameter documentation does not describe class of [dist]", 2L),
         "is case dependent"
     ),
@@ -397,7 +403,10 @@ xt3 <- tibble::tibble (
         "upper-case character parameter"
     ),
     content = c (
-        rep ("Parameter documentation does not describe class of [integer]", 2L),
+        rep (
+            "Parameter documentation does not describe class of [integer]",
+            2L
+        ),
         rep ("Parameter documentation does not describe class of [dist]", 2L),
         "is case dependent"
     ),
@@ -526,7 +535,8 @@ x <- tibble::tibble (
     fn_name = c ("var", "cov", "var", rep ("cor", 19L)),
     parameter = rep (
         c (
-            "use", "y", "na.rm", "use", "method", "x", "x", "method", "use", "use", "use"
+            "use", "y", "na.rm", "use", "method", "x", "x", "method", "use",
+            "use", "use"
         ),
         2L
     ),
@@ -553,7 +563,10 @@ x <- tibble::tibble (
         rep ("Examples do not demonstrate usage of this parameter", 2L),
         "(Function call should still work unless explicitly prevented)",
         rep ("is case dependent", 2L),
-        rep ("Function [cor] errors on vector columns with different classes", 2L),
+        rep (
+            "Function [cor] errors on vector columns with different classes",
+            2L
+        ),
         rep ("is case dependent", 4L),
         "Function [cov] errors on vector columns with different classes",
         rep ("is case dependent", 6L),
@@ -586,7 +599,7 @@ column containing explanations of why each test has been switched off:
 
 ```{r testthat-demo-success}
 x$note <- ""
-x [grep ("vector_to_list", x$test_name), "note"] <-
+x [grep ("vector_to_list", x$test_name, fixed = TRUE), "note"] <-
     "these tests have been switched off because ..."
 
 expect_success (expect_autotest_notes (x))
