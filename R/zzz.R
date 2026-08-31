@@ -164,21 +164,21 @@ get_pkg_deps <- function (pkg, suggests = FALSE) {
     } else {
 
         fp <- tryCatch (
-            find.package (package),
+            find.package (pkg),
             error = function (e) NULL
         )
         if (is.null (fp)) {
 
             lib <- c (.libPaths (), pkg_lib_path (pkg, root = TRUE))
             fp <- tryCatch (
-                find.package (package),
+                find.package (pkg),
                 error = function (e) NULL
             )
         }
         if (is.null (fp)) {
             return (NULL)
         }
-        desc <- data.frame (read.dcf (file.path (fp, "DESCRIPTION")))
+        desc <- data.frame (read.dcf (file.path (fp [1], "DESCRIPTION")))
         deps <- NULL
         if ("Depends" %in% names (desc)) {
             deps <- strsplit (desc$Depends, ",(\\s?)") [[1]]
