@@ -101,7 +101,7 @@ devtools::load_all (".", export_all = FALSE)
 x0 <- autotest_package (path)
 ```
 
-We use the [`DT` package](https://rstudio.github.io/DT) to display the results
+We use the [`DT` package](https://rstudio.github.io/DT/) to display the results
 here.
 
 ```{r}

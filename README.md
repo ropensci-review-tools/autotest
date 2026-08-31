@@ -1,4 +1,4 @@
-# autotest <a href='https://docs.ropensci.org/autotest'><img src='man/figures/autotest.png' align="right" height=210 width=182></a>
+# autotest <a href='https://docs.ropensci.org/autotest/'><img src='man/figures/autotest.png' align="right" height=210 width=182></a>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -19,7 +19,7 @@ the parameters input to those functions.
 ## Installation
 
 The easiest way to install this package is via the associated
-[`r-universe`](https://ropensci-review-tools.r-universe.dev/ui#builds).
+[`r-universe`](https://ropensci-review-tools.r-universe.dev/).
 As shown there, simply enable the universe with
 
 ``` r
@@ -220,13 +220,13 @@ rather than the previous “diagnostic”.
 ## Prior work
 
 1.  The
-    [`great-expectations`](https://github.com/great-expectations/great_expectations)
+    [`great-expectations`](https://github.com/fivetran/great_expectations)
     framework for python, described in [this medium
     article](https://medium.com/@expectgreatdata/down-with-pipeline-debt-introducing-great-expectations-862ddc46782a).
 2.  [`QuickCheck`](https://hackage.haskell.org/package/QuickCheck) for
     Haskell
 3.  [`mutate`](https://github.com/mbj/mutant) for ruby
-4.  [`mutant`](https://github.com/ropensci/mutant) for mutation of R
+4.  [`mutant`](https://github.com/sckott/mutant) for mutation of R
     code itself
 
 ## Code of Conduct
