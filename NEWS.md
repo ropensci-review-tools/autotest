@@ -5,7 +5,7 @@
 ### New features
 
 * Replaced the entire YAML/example-parsing pipeline that underpinned autotesting since 0.0.x with one built on
-  [`typetracer`](https://github.com/ropensci-review-tools/typetracer): `autotest_package()` now traces actual calls
+  [`typetracer`](https://github.com/mpadge/typetracer): `autotest_package()` now traces actual calls
   made in a package's examples, tests, and vignettes, rather than statically parsing and re-executing example code.
 * Reimplemented the untested-function/untested-parameter checks on top of the new trace-based data.
 * Added a `progress` parameter to `autotest_package()`, replacing `quiet`, for finer control over console output.
