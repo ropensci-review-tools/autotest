@@ -1,7 +1,7 @@
 ---
-created: 2026-07-30T15:13:07Z
+created: 2026-09-01T09:13:30Z
 agent: claude-sonnet-5
-git_hash: 761f096f13e01ab3f05a5eab2ceb3e23c9d7ce8c
+git_hash: bdbd0bc8163aef26b4a4bcb90362bfc126970dd2
 ---
 
 # Design Decisions: autotest
@@ -175,6 +175,12 @@ R-level output, leaking literal ANSI clear-line sequences into rendered document
 signal for this specific context.
 **Stages:** 006
 
+### CRAN readiness over dev-cycle conveniences
+**Outcome:** The `Remotes: mpadge/typetracer` git-remote dependency was dropped from `DESCRIPTION`, the version was bumped from a dev-style `0.1.0.033` to the release version `0.1.1`, `checkmate` was adopted for argument validation, and substantial dead code (`R/text-parsing-fns.R`, `R/example-objects.R`, and other unused internal functions) was removed, alongside lint and documentation polish.
+**Rationale:** Inferred from commit messages and the nature of the changes — `Remotes:` fields, dev version numbers, and dead code are standard CRAN-submission blockers/flags; this cluster of otherwise-unrelated cleanups converges on making the package CRAN-ready now that the typetracer migration (stages 000-006) is stable.
+**Roads not taken:** N/A — no design alternatives were in tension here; this was maintenance convergence rather than a design decision with competing options.
+**Stages:** 007 (auto-retrospective, untracked development)
+
 ## Architectural Evolution
 The project began (2020) as a documentation-driven, static text-parsing
 system: scrape examples, convert to YAML, generate tests from the parsed
@@ -197,7 +203,12 @@ this same discipline to a documentation/build-hygiene concern (stray
 plot files and progress-bar noise from `make knitr`), tracing it through
 to `typetracer`'s in-process example execution and fixing it via a call-
 site wrapper rather than patching the dependency or working around the
-symptom per document.
+symptom per document. With the typetracer migration and its follow-on
+fixes stable, the project's next phase (stage 007, an auto-retrospective
+covering untracked maintenance work) turned to CRAN-submission readiness:
+dropping the git-remote dependency on `typetracer`, moving to a release
+version number, adopting `checkmate` for argument validation, and
+clearing out dead code and lint issues accumulated since 2020.
 
 ## Important Roads Not Taken
 - **Compatibility shim for the yaml pipeline** (stage 001): rejected in

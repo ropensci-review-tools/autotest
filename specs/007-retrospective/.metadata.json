@@ -1,0 +1,12 @@
+{
+  "agents": ["claude-sonnet-5"],
+  "created": "2026-09-01T09:13:30Z",
+  "last_updated": "2026-09-01T09:13:30Z",
+  "sessions": 1,
+  "input_tokens": null,
+  "output_tokens": null,
+  "user_word_count": null,
+  "lines_added": null,
+  "lines_deleted": null,
+  "files_changed": null
+}
