@@ -42,6 +42,9 @@ pkgcheck: ## Run `pkgcheck` and print results to screen.
 spaceout: ## Apply 'spaceout' style to package
 	Rscript -e 'styler::style_pkg(style = spaceout::spaceout_style)'
 
+url: ## Apply 'urlchecker::url_update()' to update all URLs
+	Rscript -e 'urlchecker::url_update()'
+
 clean: ## Clean all junk files, including all pkgdown docs
 	rm -rf *.html *.png Rplots.pdf README_cache docs/
 

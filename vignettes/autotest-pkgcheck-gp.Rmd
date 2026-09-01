@@ -30,7 +30,7 @@ knitr::opts_chunk$set (
 There are three rOpenSci packages to help developers:
 
 - [`autotest`](https://docs.ropensci.org/autotest/) for "_Automatic testing of R packages_";
-- [`goodpractice`](https://docs.ropensci.org/goodpractice) to "_Give advice
+- [`goodpractice`](https://docs.ropensci.org/goodpractice/) to "_Give advice
 about good practices when building R packages_"; and
 - [`pkgcheck`](https://docs.ropensci.org/pkgcheck/) to "_Check whether a package is ready for submission to rOpenSci's
 peer review system_".
@@ -47,7 +47,7 @@ should generally follow the sequence: `autotest` &rarr; `goodpractice` &rarr;
 The [`autotest` package](https://docs.ropensci.org/autotest/) automatically
 tests responses to changes in input parameters for each function.  It is
 distinctly different to both
-[`goodpractice`](https://docs.ropensci.org/goodpractice) and
+[`goodpractice`](https://docs.ropensci.org/goodpractice/) and
 [`pkgcheck`](https://docs.ropensci.org/pkgcheck/), and should generally be used
 before either of those packages. 
 
@@ -72,16 +72,16 @@ results in changes to:
 
 ---
 
-## [`goodpractice`](https://docs.ropensci.org/goodpractice)
+## [`goodpractice`](https://docs.ropensci.org/goodpractice/)
 
-The [`goodpractice` package](https://docs.ropensci.org/goodpractice) is
+The [`goodpractice` package](https://docs.ropensci.org/goodpractice/) is
 intended to,
 
 > Give advice about good practices when building R packages.
 Advice includes functions and syntax to avoid, package structure, code
 complexity, code formatting, etc.
 
-The [`goodpractice`](https://docs.ropensci.org/goodpractice) package was
+The [`goodpractice`](https://docs.ropensci.org/goodpractice/) package was
 initially developed as a wrapper around three separate packages, and produced a
 single integrated report on the output of:
 
@@ -93,7 +93,7 @@ cycylomatic complexity of package functions.
 
 It has since been extended to include many other aspects of general good
 practices in R package development. 
-[`goodpractice`](https://docs.ropensci.org/goodpractice) implements a large
+[`goodpractice`](https://docs.ropensci.org/goodpractice/) implements a large
 suite of checks defined within the following "check groups":
 
 ```{r check-groups-fn, eval = FALSE}
@@ -113,7 +113,7 @@ for (i in seq_along (g)) {
 ### Changes in response to `goodpractice`
 
 All checks groups are run by default, except the optional ["tidyverse" check
-group](https://docs.ropensci.org/goodpractice/articles/goodpractice.html#tidyverse-style-checks).
+group](https://docs.ropensci.org/goodpractice//articles/goodpractice.html#tidyverse-style-checks).
 This check suite covers a huge range of common issues in package structure,
 design, and documentation.  Responding to `goodpractice` recommendations often
 results in changes to most aspects of a package.
@@ -129,7 +129,7 @@ peer review system.
 
 This package implements a suite of additional checks required for all packages
 submitted to rOpenSci. It includes all default
-[`goodpractice`](https://docs.ropensci.org/goodpractice) checks, along with a
+[`goodpractice`](https://docs.ropensci.org/goodpractice/) checks, along with a
 [suite of additional
 checks](https://docs.ropensci.org/pkgcheck/articles/list-checks.html). Most of
 these extend beyond `goodpractice`, to focus on general good practices for
@@ -138,7 +138,7 @@ guides, documentation websites, statistical properties of software in
 comparison to all other packages on CRAN, and many other aspects.
 
 Developers should generally deal with
-[`goodpractice`](https://docs.ropensci.org/goodpractice) checks first.
+[`goodpractice`](https://docs.ropensci.org/goodpractice/) checks first.
 [`pkgcheck`](https://docs.ropensci.org/pkgcheck/) will then re-run all of those
 checks, along with its additional checks.
 
@@ -153,7 +153,7 @@ ensure all checks pass prior to submission.
 ### Changes in response to `pkgcheck`
 
 Unlike both [`autotest`](https://docs.ropensci.org/autotest/) and
-[`goodpractice`](https://docs.ropensci.org/goodpractice), complying with
+[`goodpractice`](https://docs.ropensci.org/goodpractice/), complying with
 [`pkgcheck`](https://docs.ropensci.org/pkgcheck/) suggestions often results in
 files being added to repositories (such as vignettes or contributor
 guidelines), and changes to repository structure on the repository's hosting
@@ -162,4 +162,4 @@ platform, including publication of online documentation.
 Because `pkgcheck` checks these "meta-level" aspects of entire repositories, it
 should generally be run and compolied with only after first addressing all
 issues flagged by [`autotest`](https://docs.ropensci.org/autotest/) and
-[`goodpractice`](https://docs.ropensci.org/goodpractice).
+[`goodpractice`](https://docs.ropensci.org/goodpractice/).
