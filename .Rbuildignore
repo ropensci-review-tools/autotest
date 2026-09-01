@@ -1,6 +1,7 @@
 ^.*\.Rproj$
 ^.claude/
 ^.designlens.json$
+^AGENTS.md$
 ^CODE_OF_CONDUCT\.md$
 ^CONTRIBUTING.md$
 ^Dockerfile$
@@ -12,8 +13,8 @@
 ^\.travis\.yml$
 ^_pkgdown\.yml$
 ^aaa.Rmd$
-^appveyor\.yml$
 ^codemeta\.json$
+^cran-comments\.md$
 ^inst/WORDLIST$
 ^inst/precommit$
 ^makefile$
