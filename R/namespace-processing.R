@@ -2,10 +2,10 @@ get_package_name <- function (package) {
     pkg_name <- NULL
 
     if (pkg_is_source (package)) {
-        desc <- file.path (package, "DESCRIPTION")
+        desc <- fs::path (package, "DESCRIPTION")
         pkg_name <- as.character (read.dcf (desc, "Package"))
     } else {
-        pkg_name <- basename (package)
+        pkg_name <- fs::path_file (package)
     }
 
     return (pkg_name)
@@ -21,9 +21,9 @@ get_pkg_functions <- function (package) {
     e <- as.environment (paste0 ("package:", get_package_name (pkg)))
 
     if (pkg_is_source (package)) {
-        man_dir <- list.files (file.path (package, "man"),
-            pattern = "\\.Rd$",
-            full.names = TRUE
+        man_dir <- fs::dir_ls (fs::path (package, "man"),
+            regexp = "\\.Rd$",
+            fail = FALSE
         )
         fns <- suppressWarnings (
             lapply (man_dir, function (i) {
@@ -33,7 +33,7 @@ get_pkg_functions <- function (package) {
         fns <- unique (unlist (fns))
     } else {
         # package is dir to temp installed version in covr, so:
-        package <- basename (package)
+        package <- fs::path_file (package)
         fns <- ls (paste0 ("package:", package))
     }
 
@@ -82,9 +82,9 @@ fns_without_examples <- function (package) {
 
     if (pkg_is_source (package)) {
 
-        man_dir <- list.files (file.path (package, "man"),
-            pattern = "\\.Rd$",
-            full.names = TRUE
+        man_dir <- fs::dir_ls (fs::path (package, "man"),
+            regexp = "\\.Rd$",
+            fail = FALSE
         )
         ex_alias <- lapply (man_dir, function (i) {
             rd <- suppressWarnings (tools::parse_Rd (i))
@@ -95,12 +95,12 @@ fns_without_examples <- function (package) {
         })
     } else {
 
-        if (basename (package) == package) {
+        if (fs::path_file (package) == package) {
             rd <- tools::Rd_db (package = package)
         } else {
             # packages installed into local tempdir via covr:
             rd <- tools::Rd_db (
-                package = basename (package),
+                package = fs::path_file (package),
                 dir = package
             )
         }
@@ -139,9 +139,9 @@ fns_from_other_pkgs <- function (package) {
 
     if (pkg_is_source (package)) {
 
-        fp <- file.path (package)
+        fp <- fs::path (package)
 
-    } else if (basename (package) != package) {
+    } else if (fs::path_file (package) != package) {
 
         fp <- package
 
@@ -151,7 +151,7 @@ fns_from_other_pkgs <- function (package) {
 
     }
 
-    namespace_file <- file.path (fp, "NAMESPACE")
+    namespace_file <- fs::path (fp, "NAMESPACE")
     checkmate::assert_file_exists (namespace_file, .var.name = "NAMESPACE file")
 
     ns <- readLines (namespace_file)
@@ -183,16 +183,15 @@ fns_from_other_pkgs <- function (package) {
 #' @noRd
 fns_to_topics <- function (x = NULL, package) {
     if (pkg_is_source (package)) {
-        man_dir <- list.files (file.path (package, "man"),
-            pattern = "\\.Rd$",
-            full.names = TRUE
+        man_dir <- fs::dir_ls (fs::path (package, "man"),
+            regexp = "\\.Rd$",
+            fail = FALSE
         )
         alias_topic <- lapply (man_dir, function (i) {
             rd <- suppressWarnings (tools::parse_Rd (i))
             alias <- get_Rd_metadata (rd, "alias")
             topic <- get_Rd_metadata (rd, "name")
-            name <- strsplit (i, .Platform$file.sep) [[1]]
-            name <- name [length (name)]
+            name <- fs::path_file (i)
             cbind (
                 alias,
                 rep (topic, length (alias)),
@@ -200,12 +199,12 @@ fns_to_topics <- function (x = NULL, package) {
             )
         })
     } else {
-        if (basename (package) == package) {
+        if (fs::path_file (package) == package) {
             rd <- tools::Rd_db (package = package)
         } else {
             # packages installed into local tempdir via covr:
             rd <- tools::Rd_db (
-                package = basename (package),
+                package = fs::path_file (package),
                 dir = package
             )
         }
@@ -213,11 +212,7 @@ fns_to_topics <- function (x = NULL, package) {
         alias_topic <- lapply (rd, function (i) {
             alias <- get_Rd_metadata (i, "alias")
             topic <- get_Rd_metadata (i, "name")
-            name <- strsplit (
-                attr (i, "Rdfile"),
-                .Platform$file.sep
-            ) [[1]]
-            name <- name [length (name)]
+            name <- fs::path_file (attr (i, "Rdfile"))
             cbind (
                 alias,
                 rep (topic, length (alias)),

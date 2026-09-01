@@ -23,7 +23,7 @@ summary.autotest_package <- function (object, ...) {
 
     pkg_name <- attr (object, "package")
     if (pkg_is_source (pkg_name)) {
-        desc <- file.path (pkg_name, "DESCRIPTION")
+        desc <- fs::path (pkg_name, "DESCRIPTION")
         pkg_name <- read.dcf (desc, "Package")
         pkg_version <- read.dcf (desc, "Version")
     } else {

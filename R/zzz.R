@@ -49,24 +49,24 @@ dot_to_package <- function (package) {
 
     files <- c ("DESCRIPTION", "NAMESPACE")
 
-    if (package == "." | !all (files %in% list.files (package))) {
+    if (package == "." | !all (files %in% fs::path_file (fs::dir_ls (package, fail = FALSE)))) {
 
-        package <- normalizePath (package)
+        package <- fs::path_abs (package)
 
-        if (!all (files %in% list.files (package))) {
+        if (!all (files %in% fs::path_file (fs::dir_ls (package, fail = FALSE)))) {
 
             for (i in seq_len (.max_depth)) {
 
-                package <- normalizePath (file.path (package, ".."))
+                package <- fs::path_abs (fs::path (package, ".."))
 
-                if (all (files %in% list.files (package))) {
+                if (all (files %in% fs::path_file (fs::dir_ls (package, fail = FALSE)))) {
                     return (package)
                 }
             }
         }
     }
 
-    if (!all (files %in% list.files (package))) {
+    if (!all (files %in% fs::path_file (fs::dir_ls (package, fail = FALSE)))) {
         stop ("Unable to find root directory of an R package")
     }
 
@@ -76,16 +76,16 @@ dot_to_package <- function (package) {
 # same criteria as rprojroot::is_r_package, but without extra dependency.
 pkg_is_source <- function (package) {
 
-    need_these <- file.path (
+    need_these <- fs::path (
         package,
         c ("DESCRIPTION", "NAMESPACE", "R", "man")
     )
 
     is_source <- FALSE
 
-    if (file.exists (package)) {
-        if (all (file.exists (need_these))) {
-            desc <- readLines (file.path (package, "DESCRIPTION"))
+    if (fs::file_exists (package)) {
+        if (all (fs::file_exists (need_these))) {
+            desc <- readLines (fs::path (package, "DESCRIPTION"))
             if (any (grepl ("^Package\\:", desc))) {
                 is_source <- TRUE
             }
@@ -97,8 +97,8 @@ pkg_is_source <- function (package) {
 
 pkg_lib_path <- function (package, root = FALSE) {
 
-    if (dir.exists (package)) {
-        package <- utils::tail (strsplit (package, .Platform$file.sep) [[1]], 1)
+    if (fs::dir_exists (package)) {
+        package <- fs::path_file (package)
     }
 
     if (!paste0 ("package:", package) %in% search ()) {
@@ -106,7 +106,7 @@ pkg_lib_path <- function (package, root = FALSE) {
     }
 
     sp <- vapply (searchpaths (), function (i) {
-        utils::tail (strsplit (i, .Platform$file.sep) [[1]], 1)
+        fs::path_file (i)
     },
     character (1),
     USE.NAMES = TRUE
@@ -115,7 +115,7 @@ pkg_lib_path <- function (package, root = FALSE) {
     path <- names (sp) [which (sp == package)]
 
     if (root) {
-        path <- normalizePath (file.path (path, ".."))
+        path <- fs::path_abs (fs::path (path, ".."))
     }
 
     return (path)
@@ -126,7 +126,7 @@ get_git_hash <- function (package) {
     ret <- NULL
 
     withr::with_dir (package, {
-        if (dir.exists (file.path (package, ".git"))) {
+        if (fs::dir_exists (fs::path (package, ".git"))) {
 
             x <- system2 ("git", c ("log", "-1"), stdout = TRUE) [1]
             ret <- gsub ("commit\\s+", "", x)

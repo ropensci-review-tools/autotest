@@ -300,7 +300,7 @@ pass_one_rect_as_other <- function (x,
     )
     ftmp <- tempfile ()
     msgs <- catch_all_msgs (ftmp, x$fn, x$params)
-    chk <- file.remove (ftmp) # nolint
+    chk <- fs::file_delete (ftmp) # nolint
 
     if (!is.null (msgs)) {
         msgs$parameter <- rep (names (x$params) [x$i], nrow (msgs))
@@ -406,7 +406,7 @@ do_extend_rect_class_struct <- function (x) {
 
     ftmp <- tempfile ()
     msgs <- catch_all_msgs (ftmp, x$fn, x$params)
-    chk <- file.remove (ftmp) # nolint
+    chk <- fs::file_delete (ftmp) # nolint
 
     if (!is.null (msgs)) {
         msgs$parameter <- rep (names (x$params) [x$i], nrow (msgs))

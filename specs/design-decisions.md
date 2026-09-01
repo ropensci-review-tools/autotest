@@ -1,7 +1,7 @@
 ---
-created: 2026-09-01T11:00:00Z
+created: 2026-09-01T13:25:04Z
 agent: claude-sonnet-5
-git_hash: ce2a341c7bc9998e5896d3c2d880289062c69fd8
+git_hash: 4180d2b22d96c1cc0b3a503bba57774b33145ac0
 ---
 
 # Design Decisions: autotest
@@ -226,6 +226,22 @@ functions safely self-testable, was proposed and explicitly declined in
 favor of a future, deliberate stage.
 **Stages:** 008
 
+### `fs` adopted package-wide as the sole path-manipulation layer
+**Outcome:** All path-construction, path-inspection, and path-listing calls
+in `R/` and `tests/testthat/test-statspkg.R` use `fs::` rather than base R
+(`file.path`, `basename`, `dirname`, `normalizePath`, `file.exists`,
+`dir.exists`, `file.remove`, `list.files`, and manual
+`.Platform$file.sep`-based splitting); `fs` moved from an unused `Suggests`
+entry to `Imports`. `tempfile()`/`tempdir()` remain base R, since `fs` only
+manipulates paths that already exist, not creation.
+**Rationale:** Consolidates path handling onto one consistent, more robust
+API rather than base R's scattered path functions.
+**Roads not taken:** Coercing every `fs::` return value back to plain
+`character` at each call site was considered and rejected — `fs_path`
+values behave as character in the comparisons/data frames used throughout
+this codebase, so blanket defensive coercion was judged unnecessary.
+**Stages:** 009
+
 ## Architectural Evolution
 The project began (2020) as a documentation-driven, static text-parsing
 system: scrape examples, convert to YAML, generate tests from the parsed
@@ -258,7 +274,15 @@ turned to test coverage itself, extending the established fixture pattern
 to close several long-standing S3-dispatch coverage gaps and, in the
 process, surfacing and fixing another genuine `typetracer` defect —
 continuing the project's practice of treating validation/testing work as a
-source of real upstream bug discovery, not just a box to check.
+source of real upstream bug discovery, not just a box to check. Stage 009
+was a focused internal refactor, consolidating path manipulation onto the
+`fs` package throughout `R/` and the test suite; the conversion itself
+surfaced two latent bugs in the mechanical base-R-to-`fs` mapping (a
+full-path-vs-basename mismatch, and `regexp` matching full paths rather
+than basenames), both caught only because each converted file was
+re-verified against its tests rather than trusted by inspection —
+consistent with the project's established discipline of verifying
+behavioral equivalence empirically.
 
 ## Important Roads Not Taken
 - **Compatibility shim for the yaml pipeline** (stage 001): rejected in
@@ -309,3 +333,8 @@ source of real upstream bug discovery, not just a box to check.
   mismatch branch that the probing algorithm structurally cannot reach
   were both left uncovered rather than writing contrived fixtures or
   fixing the underlying dead code, since neither was in scope.
+- **Coercing `fs_path` objects to plain `character` at every call site**
+  (stage 009): considered as a defensive measure against `fs::`'s S3-classed
+  return values leaking into comparisons or output; rejected as unneeded
+  verbosity, since `fs_path` already behaves as character throughout this
+  codebase's actual usage.

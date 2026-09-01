@@ -12,9 +12,9 @@ test_that ("autotest var", {
     functions <- "var"
 
     devs_before <- grDevices::dev.list ()
-    rplots <- file.path (getwd (), "Rplots.pdf")
-    if (file.exists (rplots)) {
-        file.remove (rplots)
+    rplots <- fs::path (getwd (), "Rplots.pdf")
+    if (fs::file_exists (rplots)) {
+        fs::file_delete (rplots)
     }
 
     expect_message (
@@ -34,7 +34,7 @@ test_that ("autotest var", {
     # 'var'/'cor'/'cov' example code triggers real plotting as a side effect;
     # confirm that never leaks out to an open device or an 'Rplots.pdf' file.
     expect_identical (grDevices::dev.list (), devs_before)
-    expect_false (file.exists (rplots))
+    expect_false (fs::file_exists (rplots))
 
     for (x in list (x_f, x_t)) {
         expect_is (x, "data.frame")

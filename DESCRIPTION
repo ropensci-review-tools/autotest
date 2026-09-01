@@ -1,6 +1,6 @@
 Package: autotest
 Title: Automatic Package Testing
-Version: 0.1.1.007
+Version: 0.1.1.010
 Authors@R: c(
     person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2172-5265")),
@@ -20,6 +20,7 @@ Imports:
     checkmate,
     cli,
     data.table,
+    fs,
     grDevices,
     here,
     magrittr,
@@ -35,7 +36,6 @@ Suggests:
     devtools,
     dplyr,
     DT,
-    fs,
     goodpractice,
     knitr,
     rmarkdown,
