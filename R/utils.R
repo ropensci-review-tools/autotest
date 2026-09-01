@@ -16,7 +16,7 @@ preload_package <- function (package) {
             devtools::load_all (package, export_all = FALSE)
         }
 
-    } else if (basename (package) != package) {
+    } else if (fs::path_file (package) != package) {
 
         # pkgs installed in tmp_loc via covr
         # 'library()' (not 'requireNamespace()') is required here: the
@@ -24,14 +24,14 @@ preload_package <- function (package) {
         # calls in traced example/test code resolve correctly.
         suppressMessages (
             library ( # nolint
-                basename (package),
-                lib.loc = normalizePath (file.path (package, "..")),
+                fs::path_file (package),
+                lib.loc = fs::path_abs (fs::path (package, "..")),
                 character.only = TRUE,
                 warn.conflicts = FALSE,
                 verbose = FALSE
             )
         )
-        pkg_name <- basename (package)
+        pkg_name <- fs::path_file (package)
 
     } else {
 

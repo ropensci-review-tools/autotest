@@ -10,15 +10,15 @@ get_Rd_value <- function (package, fn_name) { # nolint
     val <- NULL
 
     if (pkg_is_source (package)) {
-        f <- file.path (package, "man", paste0 (fn_name, ".Rd"))
+        f <- fs::path (package, "man", paste0 (fn_name, ".Rd"))
         rd <- suppressWarnings (tools::parse_Rd (f))
     } else {
-        if (basename (package) == package) {
+        if (fs::path_file (package) == package) {
             x <- m_rd_db (package = package)
         } else {
             # packages installed into local tempdir via covr:
             x <- m_rd_db (
-                package = basename (package),
+                package = fs::path_file (package),
                 dir = package
             )
         }
@@ -58,7 +58,7 @@ get_Rd_param <- function (package, fn_name, param_name) { # nolint
 
     if (pkg_is_source (package)) {
 
-        f <- file.path (
+        f <- fs::path (
             package,
             "man",
             a$name [a$alias == fn_name]
@@ -66,14 +66,14 @@ get_Rd_param <- function (package, fn_name, param_name) { # nolint
         rd <- suppressWarnings (tools::parse_Rd (f))
     } else {
 
-        if (basename (package) == package) {
+        if (fs::path_file (package) == package) {
 
             x <- m_rd_db (package = package)
         } else {
 
             # packages installed into local tempdir via covr:
             x <- m_rd_db (
-                package = basename (package),
+                package = fs::path_file (package),
                 dir = package
             )
         }

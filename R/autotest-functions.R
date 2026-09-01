@@ -108,10 +108,10 @@ autotest_package <- function (package = ".",
     # below unable to find its functions. Reload it to be sure.
     preload_package (package)
 
-    trace_files <- list.files (
+    trace_files <- fs::dir_ls (
         get_typetrace_dir (),
-        pattern = "^typetrace\\_.*\\.Rds$",
-        full.names = TRUE
+        glob = "*/typetrace_*.Rds",
+        fail = FALSE
     )
 
     fn_pars <- get_unique_fn_pars (traces)
@@ -194,7 +194,7 @@ autotest_package <- function (package = ".",
 
     if (pkg_is_source (package)) {
 
-        desc <- file.path (package, "DESCRIPTION")
+        desc <- fs::path (package, "DESCRIPTION")
         attr (res, "packageName") <- read.dcf (desc, "Package")
         attr (res, "packageVersion") <- read.dcf (desc, "Version")
         attr (res, "githash") <- get_git_hash (package)
@@ -203,7 +203,7 @@ autotest_package <- function (package = ".",
 
         attr (res, "packageName") <- package
         attr (res, "packageVersion") <-
-            utils::packageVersion (basename (package))
+            utils::packageVersion (fs::path_file (package))
 
     }
 

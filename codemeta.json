@@ -8,7 +8,7 @@
   "codeRepository": "https://github.com/ropensci-review-tools/autotest",
   "issueTracker": "https://github.com/ropensci-review-tools/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.1.1.008",
+  "version": "0.1.1.8",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -77,18 +77,6 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=DT"
-    },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "fs",
-      "name": "fs",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=fs"
     },
     {
       "@type": "SoftwareApplication",
@@ -202,10 +190,22 @@
     },
     "4": {
       "@type": "SoftwareApplication",
+      "identifier": "fs",
+      "name": "fs",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=fs"
+    },
+    "5": {
+      "@type": "SoftwareApplication",
       "identifier": "grDevices",
       "name": "grDevices"
     },
-    "5": {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "here",
       "name": "here",
@@ -217,7 +217,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=here"
     },
-    "6": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "magrittr",
       "name": "magrittr",
@@ -229,7 +229,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=magrittr"
     },
-    "7": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "memoise",
       "name": "memoise",
@@ -241,12 +241,12 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=memoise"
     },
-    "8": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "methods",
       "name": "methods"
     },
-    "9": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "pkgload",
       "name": "pkgload",
@@ -258,7 +258,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=pkgload"
     },
-    "10": {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "rlang",
       "name": "rlang",
@@ -270,7 +270,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=rlang"
     },
-    "11": {
+    "12": {
       "@type": "SoftwareApplication",
       "identifier": "testthat",
       "name": "testthat",
@@ -282,7 +282,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=testthat"
     },
-    "12": {
+    "13": {
       "@type": "SoftwareApplication",
       "identifier": "tibble",
       "name": "tibble",
@@ -294,7 +294,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tibble"
     },
-    "13": {
+    "14": {
       "@type": "SoftwareApplication",
       "identifier": "typetracer",
       "name": "typetracer",
@@ -306,7 +306,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=typetracer"
     },
-    "14": {
+    "15": {
       "@type": "SoftwareApplication",
       "identifier": "withr",
       "name": "withr",
@@ -318,20 +318,12 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=withr"
     },
-    "SystemRequirements": {}
+    "SystemRequirements": null
   },
-  "fileSize": "374.545KB",
+  "fileSize": "387.942KB",
   "releaseNotes": "https://github.com/ropensci-review-tools/autotest/blob/main/NEWS.md",
   "readme": "https://github.com/ropensci-review-tools/autotest/blob/main/README.md",
-  "contIntegration": [
-    "https://github.com/ropensci-review-tools/autotest/actions/workflows/R-CMD-check.yaml",
-    "https://app.codecov.io/gh/ropensci-review-tools/autotest"
-  ],
+  "contIntegration": ["https://github.com/ropensci-review-tools/autotest/actions/workflows/R-CMD-check.yaml", "https://app.codecov.io/gh/ropensci-review-tools/autotest"],
   "developmentStatus": "https://www.repostatus.org/#active",
-  "keywords": [
-    "automated-testing",
-    "fuzzing",
-    "r",
-    "testing"
-  ]
+  "keywords": ["automated-testing", "fuzzing", "r", "testing"]
 }
