@@ -7,7 +7,7 @@ git_hash: a571fbbd3611b205e1f960535e4cb4d22c8e9b8f
 # Tasks: extend-test-coverage
 
 ## T008-1: Test `summary.autotest_package()` directly
-- [ ] T008-1: Add `tests/testthat/test-methods.R`. Hand-build a small
+- [x] T008-1: Add `tests/testthat/test-methods.R`. Hand-build a small
   `data.frame` with class `autotest_package` and columns `fn_name`,
   `type` (mix of `"error"`/`"warning"`/`"message"`/`"diagnostic"`
   values across at least two `fn_name`s), and `content` (including at
@@ -33,7 +33,7 @@ git_hash: a571fbbd3611b205e1f960535e4cb4d22c8e9b8f
   wording, so the test stays resilient to copy changes.
 
 ## T008-2: Add a `make_test_name()` fixture to the local test package
-- [ ] T008-2: In `tests/local-pkg.R`, add `make_test_name(d)` following
+- [x] T008-2: In `tests/local-pkg.R`, add `make_test_name(d)` following
   the exact structure of the existing `make_test_int(d)` (lines 31-72):
   write a source file under `d/R/` defining a small roxygen-documented,
   exported function taking one unquoted name/formula-typed parameter
@@ -46,7 +46,7 @@ git_hash: a571fbbd3611b205e1f960535e4cb4d22c8e9b8f
   `make_test_rect(d)` calls.
 
 ## T008-3: Add a `make_test_logical()` fixture to the local test package
-- [ ] T008-3: In `tests/local-pkg.R`, add `make_test_logical(d)`
+- [x] T008-3: In `tests/local-pkg.R`, add `make_test_logical(d)`
   following the same pattern, defining a small exported function
   taking one logical-typed parameter with a documented example. Design
   the function body so that: negating the default value still runs
@@ -64,7 +64,7 @@ git_hash: a571fbbd3611b205e1f960535e4cb4d22c8e9b8f
   alongside the other `make_test_*(d)` calls.
 
 ## T008-4: Extend `test-local-pkg.R` assertions for the new fixtures
-- [ ] T008-4: In `tests/testthat/test-local-pkg.R`, extend the existing
+- [x] T008-4: In `tests/testthat/test-local-pkg.R`, extend the existing
   `"pkg"` `test_that()` block's assertions (or add adjacent
   `test_that()` blocks in the same file) to check that the
   `xt <- autotest_package(package = package, test = TRUE)` result
@@ -78,7 +78,7 @@ git_hash: a571fbbd3611b205e1f960535e4cb4d22c8e9b8f
   the suite locally rather than guessing the new total.
 
 ## T008-5: Raise `R/input-int.R` coverage via `make_test_int()`
-- [ ] T008-5: Read `test_single_int_range.autotest_obj` in
+- [x] T008-5: Read `test_single_int_range.autotest_obj` in
   `R/input-int.R` (lines ~39-360) end to end and list which of its
   internal mutation branches (e.g. min/max boundary probes, negative
   values, zero, `NA`, non-integer doubles passed as int, overflow
@@ -98,7 +98,7 @@ git_hash: a571fbbd3611b205e1f960535e4cb4d22c8e9b8f
   as T008-4.
 
 ## T008-6: Unit-test `test_these_data()` directly
-- [ ] T008-6: Add `tests/testthat/test-test-data.R`. Call
+- [x] T008-6: Add `tests/testthat/test-test-data.R`. Call
   `test_these_data(test_data, obj)` directly by name (it is unexported
   but in-package, so no `:::` is needed inside `testthat` files run via
   `devtools::test()`/`testthat::test_local()`). Write one `test_that()`
@@ -120,7 +120,7 @@ git_hash: a571fbbd3611b205e1f960535e4cb4d22c8e9b8f
     'test' flag from 'test_data' for...")` message.
 
 ## T008-7: Add success-path tests for `expect_autotest_no_err()`/`expect_autotest_no_warn()`
-- [ ] T008-7: In `tests/testthat/test-testthat-expectation.R` (or a new
+- [x] T008-7: In `tests/testthat/test-testthat-expectation.R` (or a new
   adjacent file), add a `test_that()` block that runs
   `autotest_package(package = package, test = TRUE)` against a target
   with no warning/error-triggering documented examples — reuse the
@@ -131,28 +131,69 @@ git_hash: a571fbbd3611b205e1f960535e4cb4d22c8e9b8f
   existing failure-path assertions against `stats::cov`.
 
 ## T008-8: Test `expect_autotest_no_testdata()` and `expect_autotest_testdata()`
-- [ ] T008-8: In `tests/testthat/test-testthat-expectation.R` (or a new
-  adjacent file), add tests exercising `expect_autotest_no_testdata()`
-  and `expect_autotest_testdata()`, both of which internally call
-  `autotest_package(here::here(), test = TRUE, ...)` — i.e. they run
-  against `autotest`'s own source tree from within its own test suite.
-  Cover: `expect_success(expect_autotest_no_testdata())` (or
-  `expect_failure()`, whichever the current state of `autotest`'s own
-  source actually produces — verify empirically rather than assuming);
-  and `expect_autotest_testdata(test_data)` using
-  `autotest_types(notest = <some test name>)` as `test_data`, checking
-  both the success and (if reachable) the missing-`note`-column failure
-  path already partially exercised in the existing `"expect_autotest"`
-  test block. If this test measurably slows the suite, scope it down
-  with `functions = <small subset>` rather than dropping it, per the
-  plan's Open Questions.
+- [x] T008-8 (concluded without new tests — see below): Investigation
+  found two distinct problems, not one:
+  1. A genuine crash: calling either function against `autotest`'s own
+     source threw `Error in rep(test_traces$test_name, times =
+     test_tr_end - test_tr_start + 1) : invalid 'times' argument` inside
+     `typetracer::join_test_trace_data()` (sibling repo
+     `pre-processing-r/typetracer`, `R/trace-package.R`) — a trailing
+     test's own start trace-number could exceed the global max trace
+     number, making the `rep(times = ...)` argument negative. **Fixed**
+     by clamping the span to `pmax(0L, ...)` before use (span already
+     legitimately reaches 0 elsewhere; a negative span means the test
+     contributed no traces in range, so 0 is the correct value, not an
+     error). Verified fixed via `devtools::load_all()` on the patched
+     source, then installed locally via `devtools::install()` so
+     `autotest`'s normal (non-`load_all`) test suite picks up the fix
+     (installed version confirmed via `typetracer:::join_test_trace_data`
+     containing `pmax`). This fix is **uncommitted in the sibling
+     `typetracer` repo** — needs the user's decision on committing/
+     releasing it, per this project's stage-003 precedent for
+     cross-repo `typetracer` fixes.
+  2. A structural blocker, found after the crash fix, that the crash fix
+     does not and cannot address: `here::here()` resolves once per R
+     session and is empirically **not** redirectable via `setwd()`/
+     `withr::with_dir()` after that, so calling either function *from
+     within `autotest`'s own `tests/testthat/` suite* makes
+     `autotest_package(here::here(), test = TRUE)` trace (and thus
+     re-execute) that same suite from inside itself — including the
+     very test file containing the call — causing unbounded
+     self-recursion (observed: runs exceeding 550s without completing,
+     vs. ~2.5s for an equivalent call from a script outside the suite).
+     `autotest_trace_package()` always traces
+     `types = c("examples", "tests")` with no parameter to opt out, so
+     there is currently no safe way to exercise these two functions
+     from inside `autotest`'s own suite without a `types=` passthrough
+     feature addition (out of scope for this test-coverage stage — user
+     decision: stop here rather than add it).
+  Net result: no new tests were added for these two functions (both
+  remain untested in the suite, as before this task); the real crash
+  found along the way is fixed and installed locally. See
+  `tests/testthat/test-testthat-expectation.R` for the in-code note
+  explaining why no test was added.
 
 ## T008-9: Re-measure coverage and report results
-- [ ] T008-9: After T008-1 through T008-8 are implemented, run
-  `covr::package_coverage()` again and report before/after per-file
-  coverage for all six in-scope files (`R/methods.R`,
-  `R/input-name.R`, `R/input-int.R`, `R/input-logical.R`,
-  `R/test-data.R`, `R/testthat-expections.R`) plus the package-wide
-  total, as this stage's completion evidence. Run the full test suite
-  (`devtools::test()` or `testthat::test_local()`) once more to confirm
-  nothing regressed.
+- [x] T008-9: Final `covr::package_coverage()` re-measurement:
+
+  | File | Before | After |
+  |---|---|---|
+  | Package-wide | 73.3% | **82.2%** |
+  | `R/methods.R` | 0% | **100%** |
+  | `R/test-data.R` | 41.7% | **100%** |
+  | `R/input-name.R` | 22.6% | **93.6%** |
+  | `R/input-logical.R` | 66.7% | **76.3%** |
+  | `R/input-int.R` | 23.5% | **60.2%** |
+  | `R/testthat-expections.R` | 42.3% | 42.3% (unchanged) |
+
+  `R/testthat-expections.R` did not move: its `expect_autotest_no_err()`/
+  `expect_autotest_no_warn()` (the T008-7 additions) contain no internal
+  branching, so the pre-existing failure-path tests already gave them
+  full line coverage — the success-path tests added real behavioral
+  verification but no new *lines* executed. The file's 42.3% ceiling is
+  set entirely by `expect_autotest_no_testdata()`/
+  `expect_autotest_testdata()`, left untested per the T008-8 decision.
+
+  Full test suite (`testthat::test_dir("tests/testthat")`) reconfirmed
+  green with no failures after removing the recursive T008-8 test
+  attempt.

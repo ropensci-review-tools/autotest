@@ -1,7 +1,7 @@
 ---
-created: 2026-09-01T09:13:30Z
+created: 2026-09-01T11:00:00Z
 agent: claude-sonnet-5
-git_hash: bdbd0bc8163aef26b4a4bcb90362bfc126970dd2
+git_hash: ce2a341c7bc9998e5896d3c2d880289062c69fd8
 ---
 
 # Design Decisions: autotest
@@ -181,6 +181,51 @@ signal for this specific context.
 **Roads not taken:** N/A — no design alternatives were in tension here; this was maintenance convergence rather than a design decision with competing options.
 **Stages:** 007 (auto-retrospective, untracked development)
 
+### Coverage work exercises the public dispatch pipeline, extending the existing fixture pattern
+**Outcome:** Unit-test coverage was raised package-wide (73.3% → 82.2%) by
+extending `tests/local-pkg.R`'s synthetic-package fixture pattern
+(`make_test_name()`, `make_test_logical()`, two new documented-range int
+fixtures) and adding direct unit tests for two pure internal/exported
+functions (`test_these_data()`, `summary.autotest_package()`) that don't
+need the full pipeline. A single `test_data`-toggling test was found to
+exercise the shared `if (!is.null(test_data))` guard present in every
+`input-*.R`/`test-*.R` mutation function at once.
+**Rationale:** Consistent with the established convention (stage 000) of
+driving mutation-testing coverage through `autotest_package()`'s public
+entry points and the `autotest_obj` S3 dispatch, rather than calling
+internal generics directly.
+**Roads not taken:** A `subst_for_logical(x = ...)` dead-code branch and a
+`test_single_int_range` "actual range wider than documented" mismatch
+branch were both found to be effectively unreachable through legitimate
+test design (the former is never called with `x` by any caller; the latter
+would require the probing algorithm to overshoot a documented boundary,
+which it structurally never does) — left uncovered rather than force
+contrived fixtures or fix the underlying dead code, which was out of this
+stage's scope.
+**Stages:** 008
+
+### A genuine `typetracer` crash fixed at the source; a deeper self-recursion limitation left for a future stage
+**Outcome:** Testing `expect_autotest_no_testdata()`/`expect_autotest_testdata()`
+crashed with an invalid `rep(times = ...)` argument inside
+`typetracer::join_test_trace_data()`, caused by a trailing test's own start
+trace-number exceeding the global max trace number. Fixed by clamping the
+span to zero, verified, and installed locally. A second, separate problem
+then emerged: `here::here()` (which both functions hardcode) resolves once
+per R session and cannot be redirected afterward, so calling either
+function from inside `autotest`'s own test suite causes the suite to
+recursively re-trace (and thus re-run) itself without bound. Both functions
+remain untested in the suite as a result.
+**Rationale:** Consistent with the project's established practice
+(stage 003) of root-causing genuine `typetracer` bugs at the source rather
+than working around them in `autotest`. The self-recursion problem,
+however, would require a `types=` passthrough on `autotest_package()` — a
+real production-signature change judged out of scope for a test-coverage
+stage.
+**Roads not taken:** Adding the `types=` passthrough now, to make these two
+functions safely self-testable, was proposed and explicitly declined in
+favor of a future, deliberate stage.
+**Stages:** 008
+
 ## Architectural Evolution
 The project began (2020) as a documentation-driven, static text-parsing
 system: scrape examples, convert to YAML, generate tests from the parsed
@@ -208,7 +253,12 @@ fixes stable, the project's next phase (stage 007, an auto-retrospective
 covering untracked maintenance work) turned to CRAN-submission readiness:
 dropping the git-remote dependency on `typetracer`, moving to a release
 version number, adopting `checkmate` for argument validation, and
-clearing out dead code and lint issues accumulated since 2020.
+clearing out dead code and lint issues accumulated since 2020. Stage 008
+turned to test coverage itself, extending the established fixture pattern
+to close several long-standing S3-dispatch coverage gaps and, in the
+process, surfacing and fixing another genuine `typetracer` defect —
+continuing the project's practice of treating validation/testing work as a
+source of real upstream bug discovery, not just a box to check.
 
 ## Important Roads Not Taken
 - **Compatibility shim for the yaml pipeline** (stage 001): rejected in
@@ -249,3 +299,13 @@ clearing out dead code and lint issues accumulated since 2020.
   trace_package()`'s in-process example execution; wrapping the single
   call site into it from `autotest`'s own code was sufficient and
   preferred over modifying the external package.
+- **Adding a `types=` passthrough to `autotest_package()`** (stage 008):
+  proposed as the real fix that would let `expect_autotest_no_testdata()`/
+  `expect_autotest_testdata()` avoid self-recursive test-suite tracing;
+  declined as a production-signature change out of scope for a
+  test-coverage stage, leaving both functions untested for now.
+- **Forcing coverage of dead/unreachable branches** (stage 008): a
+  `subst_for_logical()` dead-code path and a `test_single_int_range`
+  mismatch branch that the probing algorithm structurally cannot reach
+  were both left uncovered rather than writing contrived fixtures or
+  fixing the underlying dead code, since neither was in scope.
