@@ -36,6 +36,7 @@ Suggests:
     dplyr,
     DT,
     fs,
+    goodpractice,
     knitr,
     rmarkdown,
     roxygen2,

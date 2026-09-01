@@ -1,0 +1,165 @@
+---
+title: "autotest, pkgcheck, goodpractice - which tool does what?"
+author: 
+  - "Mark Padgham"
+date: "`r Sys.Date()`"
+output: 
+    html_document:
+        toc: true
+        toc_float: true
+        number_sections: false
+        theme: flatly
+always_allow_html: true
+vignette: >
+  %\VignetteIndexEntry{autotest, pkgcheck, goodpractice - which tool does what?}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set (
+    collapse = TRUE,
+    warning = TRUE,
+    message = TRUE,
+    width = 120,
+    comment = "#>",
+    fig.retina = 2
+)
+```
+
+There are three rOpenSci packages to help developers:
+
+- [`autotest`](https://docs.ropensci.org/autotest/) for "_Automatic testing of R packages_";
+- [`goodpractice`](https://docs.ropensci.org/goodpractice) to "_Give advice
+about good practices when building R packages_"; and
+- [`pkgcheck`](https://docs.ropensci.org/pkgcheck/) to "_Check whether a package is ready for submission to rOpenSci's
+peer review system_".
+
+This vignette describes when and where each of these tools should be used.
+Package authors are likely to find all three tools useful, and if in doubt,
+should generally follow the sequence: `autotest` &rarr; `goodpractice` &rarr;
+`pkgcheck`.
+
+---
+
+## [`autotest`](https://docs.ropensci.org/autotest/)
+
+The [`autotest` package](https://docs.ropensci.org/autotest/) automatically
+tests responses to changes in input parameters for each function.  It is
+distinctly different to both
+[`goodpractice`](https://docs.ropensci.org/goodpractice) and
+[`pkgcheck`](https://docs.ropensci.org/pkgcheck/), and should generally be used
+before either of those packages. 
+
+[`autotest` ](https://docs.ropensci.org/autotest/) dynamically analyses what
+your package does when running all examples and test files. It gathers
+information using [the `typetracker`
+package](https://mpadge.github.io/typetracer/), and uses this to automatically
+analyse and modify each parameter, and then to examine how each function
+responds.
+
+The package also analyses documentation entries for each parameter, to assess
+whether text descriptions truly reflect observed behaviour.
+
+### Changes in response to `autotest`
+
+Use of the [`autotest` package](https://docs.ropensci.org/autotest/) generally
+results in changes to:
+
+- Tests and example code.
+- Descriptions of function parameters.
+- Additional changes to function behaviour to rectify any problems identified.
+
+---
+
+## [`goodpractice`](https://docs.ropensci.org/goodpractice)
+
+The [`goodpractice` package](https://docs.ropensci.org/goodpractice) is
+intended to,
+
+> Give advice about good practices when building R packages.
+Advice includes functions and syntax to avoid, package structure, code
+complexity, code formatting, etc.
+
+The [`goodpractice`](https://docs.ropensci.org/goodpractice) package was
+initially developed as a wrapper around three separate packages, and produced a
+single integrated report on the output of:
+
+- [`rcmdcheck`](https://rcmdcheck.r-lib.org) to run `R CMD check` within an R
+session;
+- [`covr`](https://covr.r-lib.org) to analyse and report on test coverage; and
+- [`cyclocomp`](https://github.com/gaborcsardi/cyclocomp) to analyse the
+cycylomatic complexity of package functions.
+
+It has since been extended to include many other aspects of general good
+practices in R package development. 
+[`goodpractice`](https://docs.ropensci.org/goodpractice) implements a large
+suite of checks defined within the following "check groups":
+
+```{r check-groups-fn, eval = FALSE}
+goodpractice::describe_check_groups ()
+```
+
+
+```{r check-groups-formatted, echo = FALSE, eval = TRUE, results = "asis"}
+g <- goodpractice::describe_check_groups ()
+for (i in seq_along (g)) {
+    out <- paste0 ("**", names (g) [i], "**: ", g [[i]], "\n\n")
+    cat (out)
+}
+```
+
+
+### Changes in response to `goodpractice`
+
+All checks groups are run by default, except the optional ["tidyverse" check
+group](https://docs.ropensci.org/goodpractice/articles/goodpractice.html#tidyverse-style-checks).
+This check suite covers a huge range of common issues in package structure,
+design, and documentation.  Responding to `goodpractice` recommendations often
+results in changes to most aspects of a package.
+
+---
+
+## [`pkgcheck`](https://docs.ropensci.org/pkgcheck/)
+
+The [`pkgcheck` package](https://docs.ropensci.org/pkgcheck/) is intended to,
+
+> Check whether a package is ready for submission to rOpenSci's
+peer review system.
+
+This package implements a suite of additional checks required for all packages
+submitted to rOpenSci. It includes all default
+[`goodpractice`](https://docs.ropensci.org/goodpractice) checks, along with a
+[suite of additional
+checks](https://docs.ropensci.org/pkgcheck/articles/list-checks.html). Most of
+these extend beyond `goodpractice`, to focus on general good practices for
+online repository management, including appropriate licensing, contribution
+guides, documentation websites, statistical properties of software in
+comparison to all other packages on CRAN, and many other aspects.
+
+Developers should generally deal with
+[`goodpractice`](https://docs.ropensci.org/goodpractice) checks first.
+[`pkgcheck`](https://docs.ropensci.org/pkgcheck/) will then re-run all of those
+checks, along with its additional checks.
+
+The [`pkgcheck` package](https://docs.ropensci.org/pkgcheck/) is also available
+as [a `pkgcheck-action` GitHub
+action](https://github.com/ropensci-review-tools/pkgcheck-action) that will run
+every time local changes are pushed to GitHub. This action generates a detailed
+report in a dedicated GitHub issue. Authors intending to submit packages to
+rOpenSci for peer review are recommended to install and use this action to
+ensure all checks pass prior to submission. 
+
+### Changes in response to `pkgcheck`
+
+Unlike both [`autotest`](https://docs.ropensci.org/autotest/) and
+[`goodpractice`](https://docs.ropensci.org/goodpractice), complying with
+[`pkgcheck`](https://docs.ropensci.org/pkgcheck/) suggestions often results in
+files being added to repositories (such as vignettes or contributor
+guidelines), and changes to repository structure on the repository's hosting
+platform, including publication of online documentation.
+
+Because `pkgcheck` checks these "meta-level" aspects of entire repositories, it
+should generally be run and compolied with only after first addressing all
+issues flagged by [`autotest`](https://docs.ropensci.org/autotest/) and
+[`goodpractice`](https://docs.ropensci.org/goodpractice).
