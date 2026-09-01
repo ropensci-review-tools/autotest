@@ -8,7 +8,7 @@
   "codeRepository": "https://github.com/ropensci-review-tools/autotest",
   "issueTracker": "https://github.com/ropensci-review-tools/autotest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.1.1.8",
+  "version": "0.1.1.009",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -318,12 +318,20 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=withr"
     },
-    "SystemRequirements": null
+    "SystemRequirements": {}
   },
   "fileSize": "387.942KB",
   "releaseNotes": "https://github.com/ropensci-review-tools/autotest/blob/main/NEWS.md",
   "readme": "https://github.com/ropensci-review-tools/autotest/blob/main/README.md",
-  "contIntegration": ["https://github.com/ropensci-review-tools/autotest/actions/workflows/R-CMD-check.yaml", "https://app.codecov.io/gh/ropensci-review-tools/autotest"],
+  "contIntegration": [
+    "https://github.com/ropensci-review-tools/autotest/actions/workflows/R-CMD-check.yaml",
+    "https://app.codecov.io/gh/ropensci-review-tools/autotest"
+  ],
   "developmentStatus": "https://www.repostatus.org/#active",
-  "keywords": ["automated-testing", "fuzzing", "r", "testing"]
+  "keywords": [
+    "automated-testing",
+    "fuzzing",
+    "r",
+    "testing"
+  ]
 }
