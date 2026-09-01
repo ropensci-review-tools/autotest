@@ -11,6 +11,12 @@ context ("testthat expectation")
 
 test_that ("expect_autotest", {
 
+    # typetracer::reload_pkg() mis-parses Windows tempdir() paths as regular
+    # expressions (grepl() called without fixed = TRUE), causing this to error
+    # on Windows. Fixed in typetracer dev version; remove this skip once CRAN
+    # typetracer > 0.2.5.
+    skip_on_os ("windows")
+
     x <- autotest_package (
         package = "stats",
         functions = "cov",

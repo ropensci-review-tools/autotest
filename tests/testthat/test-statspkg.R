@@ -2,6 +2,12 @@ context ("stats-package")
 
 test_that ("autotest var", {
 
+    # typetracer::reload_pkg() mis-parses Windows tempdir() paths as regular
+    # expressions (grepl() called without fixed = TRUE), causing this to error
+    # on Windows. Fixed in typetracer dev version; remove this skip once CRAN
+    # typetracer > 0.2.5.
+    skip_on_os ("windows")
+
     package <- "stats"
     functions <- "var"
 
@@ -48,6 +54,12 @@ test_that ("autotest var", {
 
 test_that ("autotest_package progress falls back under knitr", {
 
+    # typetracer::reload_pkg() mis-parses Windows tempdir() paths as regular
+    # expressions (grepl() called without fixed = TRUE), causing this to error
+    # on Windows. Fixed in typetracer dev version; remove this skip once CRAN
+    # typetracer > 0.2.5.
+    skip_on_os ("windows")
+
     withr::local_options (list (knitr.in.progress = TRUE))
 
     out <- utils::capture.output (
@@ -64,6 +76,12 @@ test_that ("autotest_package progress falls back under knitr", {
 })
 
 test_that ("autotest rnorm", {
+
+    # typetracer::reload_pkg() mis-parses Windows tempdir() paths as regular
+    # expressions (grepl() called without fixed = TRUE), causing this to error
+    # on Windows. Fixed in typetracer dev version; remove this skip once CRAN
+    # typetracer > 0.2.5.
+    skip_on_os ("windows")
 
     package <- "stats"
     functions <- "rnorm"
