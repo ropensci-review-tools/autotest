@@ -59,10 +59,8 @@ options (repos = c (
 ))
 ```
 
-And then calling `install.packages()`.
-
-The package can also be installed from many other remote locations using any
-one of the following lines:
+And then calling `install.packages()`. The package can also be installed from
+many other remote locations using any one of the following lines:
 
 ```{r gh-installation, eval = FALSE}
 # install.packages("remotes")
@@ -74,7 +72,7 @@ remotes::install_git ("https://git.sr.ht/~mpadge/autotest")
 remotes::install_bitbucket ("mpadge/autotest")
 ```
 
-The package can then be loaded the usual way:
+To start using, load the package with:
 ```{r load, eval = TRUE}
 library (autotest)
 ```

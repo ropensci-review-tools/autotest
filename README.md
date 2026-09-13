@@ -38,10 +38,8 @@ options (repos = c (
 ))
 ```
 
-And then calling `install.packages()`.
-
-The package can also be installed from many other remote locations using
-any one of the following lines:
+And then calling `install.packages()`. The package can also be installed
+from many other remote locations using any one of the following lines:
 
 ``` r
 # install.packages("remotes")
@@ -53,7 +51,7 @@ remotes::install_git ("https://git.sr.ht/~mpadge/autotest")
 remotes::install_bitbucket ("mpadge/autotest")
 ```
 
-The package can then be loaded the usual way:
+To start using, load the package with:
 
 ``` r
 library (autotest)
@@ -143,14 +141,14 @@ print (x)
 #>    <chr>   <chr>        <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
 #>  1 warning par_is_demo… var     na.rm     <NA>           Check th… Exampl… TRUE 
 #>  2 warning par_is_demo… var     use       <NA>           Check th… Exampl… TRUE 
-#>  3 dummy   int_as_nume… var     x         integer vector Integer … (Shoul… TRUE 
+#>  3 dummy   trivial_noi… var     x         numeric        Add triv… (Shoul… TRUE 
 #>  4 dummy   vector_to_l… var     x         vector         Convert … (Shoul… TRUE 
-#>  5 dummy   int_as_nume… var     y         integer vector Integer … (Shoul… TRUE 
-#>  6 dummy   vector_to_l… var     y         vector         Convert … (Shoul… TRUE 
-#>  7 dummy   negate_logi… var     na.rm     single logical Negate d… (Funct… TRUE 
-#>  8 dummy   subst_int_f… var     na.rm     single logical Substitu… (Funct… TRUE 
-#>  9 dummy   subst_char_… var     na.rm     single logical Substitu… should… TRUE 
-#> 10 dummy   single_par_… var     na.rm     single logical Length 2… Should… TRUE 
+#>  5 dummy   negate_logi… var     na.rm     single logical Negate d… (Funct… TRUE 
+#>  6 dummy   subst_int_f… var     na.rm     single logical Substitu… (Funct… TRUE 
+#>  7 dummy   subst_char_… var     na.rm     single logical Substitu… should… TRUE 
+#>  8 dummy   single_par_… var     na.rm     single logical Length 2… Should… TRUE 
+#>  9 dummy   return_succ… var     (return … (return objec… Check th… <NA>    TRUE 
+#> 10 dummy   return_val_… var     (return … (return objec… Check th… <NA>    TRUE 
 #> # ℹ 11 more rows
 ```
 
@@ -176,9 +174,9 @@ print (y)
 #>  5 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
 #>  6 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
 #>  7 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
-#>  8 diagnostic vector_t… var     y         vector         Convert … "Funct… TRUE 
+#>  8 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
 #>  9 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
-#> 10 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
+#> 10 diagnostic vector_t… var     y         vector         Convert … "Funct… TRUE 
 #> 11 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE
 ```
 
