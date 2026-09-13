@@ -43,9 +43,14 @@ those functions.
 
 ## Installation
 
-The easiest way to install this package is via the associated
-[`r-universe`](https://ropensci-review-tools.r-universe.dev/). As
-shown there, simply enable the universe with
+`autotest` is [on CRAN](https://cran.r-project.org/package=autotest), so can be
+installed with
+```{r install, eval = FALSE}
+install.packages ("autotest")
+```
+
+The current development version can be installed by first enabling 
+[`r-universe`](https://ropensci-review-tools.r-universe.dev/) with
 
 ```{r options, eval = FALSE}
 options (repos = c (
@@ -54,14 +59,10 @@ options (repos = c (
 ))
 ```
 
-And then install the usual way with,
+And then calling `install.packages()`.
 
-```{r install, eval = FALSE}
-install.packages ("autotest")
-```
-
-Alternatively, the package can be installed by running one of the following
-lines:
+The package can also be installed from many other remote locations using any
+one of the following lines:
 
 ```{r gh-installation, eval = FALSE}
 # install.packages("remotes")
@@ -74,11 +75,8 @@ remotes::install_bitbucket ("mpadge/autotest")
 ```
 
 The package can then be loaded the usual way:
-```{r load-fakey, eval = FALSE}
+```{r load, eval = TRUE}
 library (autotest)
-```
-```{r load, echo = FALSE, message = FALSE}
-devtools::load_all (".", export_all = FALSE)
 ```
 
 ## Usage

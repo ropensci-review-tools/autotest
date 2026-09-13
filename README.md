@@ -21,9 +21,15 @@ the parameters input to those functions.
 
 ## Installation
 
-The easiest way to install this package is via the associated
-[`r-universe`](https://ropensci-review-tools.r-universe.dev/). As shown
-there, simply enable the universe with
+`autotest` is [on CRAN](https://cran.r-project.org/package=autotest), so
+can be installed with
+
+``` r
+install.packages ("autotest")
+```
+
+The current development version can be installed by first enabling
+[`r-universe`](https://ropensci-review-tools.r-universe.dev/) with
 
 ``` r
 options (repos = c (
@@ -32,14 +38,10 @@ options (repos = c (
 ))
 ```
 
-And then install the usual way with,
+And then calling `install.packages()`.
 
-``` r
-install.packages ("autotest")
-```
-
-Alternatively, the package can be installed by running one of the
-following lines:
+The package can also be installed from many other remote locations using
+any one of the following lines:
 
 ``` r
 # install.packages("remotes")
@@ -134,20 +136,21 @@ x <- autotest_package (package = "stats", functions = "var", test = FALSE)
 #> namespace 'stats' is already loaded so argument 'keep.source' will be ignored.
 #> Error in cov(swM, use = "all") : missing observations in cov/cor
 #> R^2 = 0.21
+#> Loading required namespace: testthat
 print (x)
 #> # A tibble: 21 × 8
 #>    type    test_name    fn_name parameter parameter_type operation content test 
 #>    <chr>   <chr>        <chr>   <chr>     <chr>          <chr>     <chr>   <lgl>
 #>  1 warning par_is_demo… var     na.rm     <NA>           Check th… Exampl… TRUE 
 #>  2 warning par_is_demo… var     use       <NA>           Check th… Exampl… TRUE 
-#>  3 dummy   trivial_noi… var     x         numeric        Add triv… (Shoul… TRUE 
+#>  3 dummy   int_as_nume… var     x         integer vector Integer … (Shoul… TRUE 
 #>  4 dummy   vector_to_l… var     x         vector         Convert … (Shoul… TRUE 
-#>  5 dummy   negate_logi… var     na.rm     single logical Negate d… (Funct… TRUE 
-#>  6 dummy   subst_int_f… var     na.rm     single logical Substitu… (Funct… TRUE 
-#>  7 dummy   subst_char_… var     na.rm     single logical Substitu… should… TRUE 
-#>  8 dummy   single_par_… var     na.rm     single logical Length 2… Should… TRUE 
-#>  9 dummy   return_succ… var     (return … (return objec… Check th… <NA>    TRUE 
-#> 10 dummy   return_val_… var     (return … (return objec… Check th… <NA>    TRUE 
+#>  5 dummy   int_as_nume… var     y         integer vector Integer … (Shoul… TRUE 
+#>  6 dummy   vector_to_l… var     y         vector         Convert … (Shoul… TRUE 
+#>  7 dummy   negate_logi… var     na.rm     single logical Negate d… (Funct… TRUE 
+#>  8 dummy   subst_int_f… var     na.rm     single logical Substitu… (Funct… TRUE 
+#>  9 dummy   subst_char_… var     na.rm     single logical Substitu… should… TRUE 
+#> 10 dummy   single_par_… var     na.rm     single logical Length 2… Should… TRUE 
 #> # ℹ 11 more rows
 ```
 
@@ -173,9 +176,9 @@ print (y)
 #>  5 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
 #>  6 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
 #>  7 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
-#>  8 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
+#>  8 diagnostic vector_t… var     y         vector         Convert … "Funct… TRUE 
 #>  9 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
-#> 10 diagnostic vector_t… var     y         vector         Convert … "Funct… TRUE 
+#> 10 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE 
 #> 11 diagnostic vector_t… var     x         vector         Convert … "Funct… TRUE
 ```
 
